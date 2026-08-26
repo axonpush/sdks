@@ -12,7 +12,7 @@ export interface AxonPushOptions {
   orgId?: string;
   /** Default app id used by resources that need one but didn't get one. */
   appId?: string;
-  /** REST API base URL. Defaults to `http://localhost:3000`. */
+  /** REST API base URL. Defaults to `https://api.axonpush.xyz`. */
   baseUrl?: string;
   /** Logical environment label (e.g. `production`, `staging`). */
   environment?: string;
@@ -20,13 +20,19 @@ export interface AxonPushOptions {
   iotEndpoint?: string;
   /** Override websocket URL; defaults to `iotEndpoint` when omitted. */
   wsUrl?: string;
-  /** Request timeout in milliseconds. Default `30_000`. */
+  /**
+   * Request timeout in milliseconds. Default `30_000`.
+   *
+   * `AXONPUSH_TIMEOUT` is expressed in **seconds**, matching the Python and
+   * .NET SDKs; this option stays in milliseconds.
+   */
   timeout?: number;
   /** Maximum number of retry attempts for retryable errors. Default `3`. */
   maxRetries?: number;
   /**
    * When true, swallow {@link APIConnectionError} and resolve `null` instead
-   * of throwing. Useful in fire-and-forget telemetry paths. Default `false`.
+   * of throwing. Default `true`, so a telemetry outage cannot take down the
+   * calling application. Set `false` to surface transport failures.
    */
   failOpen?: boolean;
   /** Content capture mode. Safe default is metadata-only. */
@@ -59,8 +65,8 @@ export interface ResolvedSettings {
   maxContentLength: number;
 }
 
-const DEFAULT_BASE_URL = "http://localhost:3000";
-const DEFAULT_TIMEOUT_MS = 30_000;
+const DEFAULT_BASE_URL = "https://api.axonpush.xyz";
+const DEFAULT_TIMEOUT_SECONDS = 30;
 const DEFAULT_MAX_RETRIES = 3;
 
 function envString(name: string): string | undefined {
@@ -110,9 +116,9 @@ export function resolveSettings(options?: AxonPushOptions): ResolvedSettings {
     environment: opts.environment ?? envString("AXONPUSH_ENVIRONMENT"),
     iotEndpoint: opts.iotEndpoint ?? envString("AXONPUSH_IOT_ENDPOINT"),
     wsUrl: opts.wsUrl ?? envString("AXONPUSH_WS_URL"),
-    timeout: opts.timeout ?? envInt("AXONPUSH_TIMEOUT") ?? DEFAULT_TIMEOUT_MS,
+    timeout: opts.timeout ?? (envInt("AXONPUSH_TIMEOUT") ?? DEFAULT_TIMEOUT_SECONDS) * 1000,
     maxRetries: opts.maxRetries ?? envInt("AXONPUSH_MAX_RETRIES") ?? DEFAULT_MAX_RETRIES,
-    failOpen: opts.failOpen ?? envBool("AXONPUSH_FAIL_OPEN") ?? false,
+    failOpen: opts.failOpen ?? envBool("AXONPUSH_FAIL_OPEN") ?? true,
     contentCaptureMode: opts.contentCaptureMode ?? envContentCaptureMode() ?? "metadata_only",
     redactKeys:
       opts.redactKeys ??

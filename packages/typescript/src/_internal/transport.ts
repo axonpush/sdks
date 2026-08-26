@@ -1,4 +1,4 @@
-import type { ResolvedSettings } from "../config.js";
+import { type ResolvedSettings, resolveSettings } from "../config.js";
 import {
   APIConnectionError,
   AxonPushError,
@@ -10,24 +10,10 @@ import { currentTrace } from "../tracing.js";
 import type { Config } from "./api/client/index.js";
 import type { CreateClientConfig } from "./api/client.gen.js";
 
-const DEFAULT_BASE_URL = "http://localhost:3000";
-
-let currentSettings: ResolvedSettings = {
-  apiKey: undefined,
-  tenantId: undefined,
-  orgId: undefined,
-  appId: undefined,
-  baseUrl: DEFAULT_BASE_URL,
-  environment: undefined,
-  iotEndpoint: undefined,
-  wsUrl: undefined,
-  timeout: 30_000,
-  maxRetries: 3,
-  failOpen: false,
-  contentCaptureMode: "metadata_only",
-  redactKeys: [],
-  maxContentLength: 4_096,
-};
+// Placeholder until an AxonPush instance calls setSettings. Derived from
+// config so the two cannot drift; they previously disagreed on the base URL,
+// the timeout unit and the fail-open default.
+let currentSettings: ResolvedSettings = resolveSettings({});
 
 /**
  * `createClientConfig` is invoked by the generated `client.gen.ts` exactly
@@ -148,7 +134,7 @@ export function getSettings(): ResolvedSettings {
 // biome-ignore lint/suspicious/noExplicitAny: see doc comment above.
 export type GeneratedOp<T = unknown> = (args: any) => Promise<{ data?: T; [k: string]: unknown }>;
 
-const RETRY_BACKOFF_MS = [250, 500, 1000, 2000, 4000] as const;
+export const RETRY_BACKOFF_MS = [250, 500, 1000, 2000, 4000] as const;
 
 function delayFor(attempt: number, retryAfter?: number): number {
   if (retryAfter !== undefined) return Math.max(0, retryAfter * 1000);

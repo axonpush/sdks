@@ -27,7 +27,7 @@ class Settings(BaseSettings):
             ``repr()`` output.
         tenant_id: Tenant / organisation id (``AXONPUSH_TENANT_ID``).
         base_url: Backend base URL (``AXONPUSH_BASE_URL``). Defaults to
-            ``http://localhost:3000``.
+            ``https://api.axonpush.xyz``.
         environment: Logical environment name, propagated as
             ``X-Axonpush-Environment`` (``AXONPUSH_ENVIRONMENT``).
         timeout: Per-request timeout in seconds (``AXONPUSH_TIMEOUT``).
@@ -42,7 +42,7 @@ class Settings(BaseSettings):
 
     api_key: SecretStr | None = None
     tenant_id: str | None = None
-    base_url: HttpUrl = HttpUrl("http://localhost:3000")
+    base_url: HttpUrl = HttpUrl("https://api.axonpush.xyz")
     environment: str | None = None
     timeout: float = 30.0
     max_retries: int = 3

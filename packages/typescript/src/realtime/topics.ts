@@ -12,13 +12,18 @@ const DEFAULT_ENV = "default";
 const FALLBACK_SEGMENT = "_";
 const WILDCARD = "+";
 
+/**
+ * `null` is accepted alongside `undefined` for the optional segments: the
+ * server treats undefined, null and "" identically, and callers routinely have
+ * a nullable value to hand.
+ */
 export interface TopicParts {
   orgId: string;
-  envSlug?: string;
+  envSlug?: string | null;
   appId: string;
   channelId: string;
-  eventType?: string;
-  agentId?: string;
+  eventType?: string | null;
+  agentId?: string | null;
 }
 
 /**
@@ -57,9 +62,22 @@ export function buildPublishTopic(parts: TopicParts): string {
  * @param parts orgId is required; everything else may be omitted
  * @returns the 7-segment subscribe topic, possibly containing wildcards
  */
-export function buildSubscribeTopic(parts: Partial<TopicParts> & { orgId: string }): string {
-  const wildcardOr = (v: string | undefined): string =>
-    v === undefined || v === "" ? WILDCARD : sanitiseSegment(v);
+/** Every segment but the org is optional on subscribe, and becomes `+`. */
+export interface SubscribeTopicParts {
+  orgId: string;
+  envSlug?: string | null;
+  appId?: string | null;
+  channelId?: string | null;
+  eventType?: string | null;
+  agentId?: string | null;
+}
+
+export function buildSubscribeTopic(parts: SubscribeTopicParts): string {
+  // null counts as absent: the server treats undefined, null and "" alike, and
+  // missing it here sent a subscriber to `_` instead of the wildcard, so it
+  // silently matched nothing
+  const wildcardOr = (v: string | null | undefined): string =>
+    v === undefined || v === null || v === "" ? WILDCARD : sanitiseSegment(v);
   return [
     PREFIX,
     sanitiseSegment(parts.orgId),

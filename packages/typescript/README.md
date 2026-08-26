@@ -63,13 +63,13 @@ client.close();
 | `tenantId` | `AXONPUSH_TENANT_ID` | — | Org UUID; falls back to `AXONPUSH_ORG_ID`. |
 | `orgId` | `AXONPUSH_ORG_ID` | mirrors `tenantId` | |
 | `appId` | `AXONPUSH_APP_ID` | — | Default app for resources that need one. |
-| `baseUrl` | `AXONPUSH_BASE_URL` | `http://localhost:3000` | REST API root. |
+| `baseUrl` | `AXONPUSH_BASE_URL` | `https://api.axonpush.xyz` | REST API root. |
 | `environment` | `AXONPUSH_ENVIRONMENT` | — | Logical env slug (`production`, `staging`). |
 | `iotEndpoint` | `AXONPUSH_IOT_ENDPOINT` | — | AWS IoT Core MQTT-over-WSS endpoint. |
 | `wsUrl` | `AXONPUSH_WS_URL` | mirrors `iotEndpoint` | Realtime override. |
-| `timeout` | `AXONPUSH_TIMEOUT` | `30_000` | Per-request timeout (ms). |
+| `timeout` | `AXONPUSH_TIMEOUT` | `30` | Per-request timeout. The option is milliseconds; the environment variable is seconds. |
 | `maxRetries` | `AXONPUSH_MAX_RETRIES` | `3` | Retries on `RetryableError`. |
-| `failOpen` | `AXONPUSH_FAIL_OPEN` | `false` | Swallow `APIConnectionError` and resolve `null`. |
+| `failOpen` | `AXONPUSH_FAIL_OPEN` | `true` | Swallow `APIConnectionError` and resolve `null`, so telemetry cannot take your app down. |
 
 Caller-supplied options always win when defined.
 

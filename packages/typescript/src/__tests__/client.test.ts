@@ -56,8 +56,8 @@ describe("AxonPush facade", () => {
 
   it("falls back to defaults when no options or env are present", () => {
     const c = new AxonPush();
-    expect(c.settings.baseUrl).toBe("http://localhost:3000");
-    expect(c.settings.failOpen).toBe(false);
+    expect(c.settings.baseUrl).toBe("https://api.axonpush.xyz");
+    expect(c.settings.failOpen).toBe(true);
     expect(c.settings.maxRetries).toBe(3);
     expect(c.settings.timeout).toBe(30_000);
     expect(c.settings.contentCaptureMode).toBe("metadata_only");
@@ -81,7 +81,7 @@ describe("AxonPush facade", () => {
     expect(c.environment).toBe("staging");
     expect(c.settings.failOpen).toBe(true);
     expect(c.settings.maxRetries).toBe(5);
-    expect(c.settings.timeout).toBe(12345);
+    expect(c.settings.timeout).toBe(12_345_000);
   });
 
   it("kwargs override env vars", () => {

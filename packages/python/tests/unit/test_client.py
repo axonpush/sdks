@@ -25,7 +25,7 @@ class _FakeResponse:
 
 class TestSyncFacadeConstruction:
     def test_construction_kwargs_only(self) -> None:
-        c = AxonPush(api_key="ak_x", tenant_id="42", base_url="http://localhost:3000")
+        c = AxonPush(api_key="ak_x", tenant_id="42", base_url="https://api.axonpush.xyz")
         assert c.settings.api_key is not None
         assert c.settings.api_key.get_secret_value() == "ak_x"
         assert c.settings.tenant_id == "42"
@@ -200,7 +200,7 @@ class TestSettingsModel:
         assert s.content_capture_mode == "metadata_only"
         assert s.redact_keys == []
         assert s.max_content_length == 4096
-        assert str(s.base_url).rstrip("/") == "http://localhost:3000"
+        assert str(s.base_url).rstrip("/") == "https://api.axonpush.xyz"
 
     def test_capture_policy_environment_and_redaction(
         self, monkeypatch: pytest.MonkeyPatch
