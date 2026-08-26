@@ -62,10 +62,15 @@ Tags are namespaced per package, because `v0.0.6` means three different things
 across these histories:
 
 ```
-sdk-ts-v0.0.8       ->  npm publish --provenance
-sdk-py-v0.0.15      ->  uv publish (trusted publishing)
-sdk-dotnet-v0.1.0   ->  dotnet nuget push
+sdk-ts-v0.0.8       ->  npm
+sdk-py-v0.0.15      ->  PyPI
+sdk-dotnet-v0.1.0   ->  NuGet
 ```
+
+All three publish through trusted publishing: the workflow's OIDC identity is
+exchanged for a credential that expires in minutes, so there is no registry
+token stored anywhere and nothing to rotate. npm attaches provenance
+automatically as a result.
 
 Each publish workflow refuses to run if the tag disagrees with the version in
 the package manifest. Versions are independent: the Python SDK moving is no

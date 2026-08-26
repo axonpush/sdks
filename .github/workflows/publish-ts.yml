@@ -32,12 +32,18 @@ jobs:
         run: bun run build
       - working-directory: packages/typescript
         run: bunx publint
+      # Trusted publishing: npm exchanges the workflow's OIDC identity for a
+      # short-lived credential, so there is no NPM_TOKEN to store or rotate.
+      # Provenance is attached automatically, so no --provenance flag.
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          registry-url: https://registry.npmjs.org
+      - name: Use an npm new enough for trusted publishing
+        run: npm install -g npm@latest
       - name: Publish
         working-directory: packages/typescript
-        run: npm publish --provenance --access public
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-          NPM_CONFIG_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: npm publish --access public
       - uses: softprops/action-gh-release@v2
         with:
           files: packages/typescript/dist/*
