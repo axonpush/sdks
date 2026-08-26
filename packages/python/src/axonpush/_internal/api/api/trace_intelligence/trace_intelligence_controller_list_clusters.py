@@ -17,11 +17,11 @@ def _get_kwargs(
     app_id: str,
     cursor: str | Unset = UNSET,
     environment_id: str,
-    from_: str,
+    from_: str | Unset = UNSET,
     limit: float | Unset = UNSET,
     search: str | Unset = UNSET,
     signal_kind: str | Unset = UNSET,
-    to: str,
+    to: str | Unset = UNSET,
 ) -> dict[str, Any]:
 
     params: dict[str, Any] = {}
@@ -84,22 +84,22 @@ def sync_detailed(
     app_id: str,
     cursor: str | Unset = UNSET,
     environment_id: str,
-    from_: str,
+    from_: str | Unset = UNSET,
     limit: float | Unset = UNSET,
     search: str | Unset = UNSET,
     signal_kind: str | Unset = UNSET,
-    to: str,
+    to: str | Unset = UNSET,
 ) -> Response[TraceIntelligenceClusterListResponseDto]:
     """
     Args:
         app_id (str):
         cursor (str | Unset):
         environment_id (str):
-        from_ (str):
+        from_ (str | Unset):
         limit (float | Unset):
         search (str | Unset):
         signal_kind (str | Unset):
-        to (str):
+        to (str | Unset):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -133,22 +133,22 @@ def sync(
     app_id: str,
     cursor: str | Unset = UNSET,
     environment_id: str,
-    from_: str,
+    from_: str | Unset = UNSET,
     limit: float | Unset = UNSET,
     search: str | Unset = UNSET,
     signal_kind: str | Unset = UNSET,
-    to: str,
+    to: str | Unset = UNSET,
 ) -> TraceIntelligenceClusterListResponseDto | None:
     """
     Args:
         app_id (str):
         cursor (str | Unset):
         environment_id (str):
-        from_ (str):
+        from_ (str | Unset):
         limit (float | Unset):
         search (str | Unset):
         signal_kind (str | Unset):
-        to (str):
+        to (str | Unset):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -177,22 +177,22 @@ async def asyncio_detailed(
     app_id: str,
     cursor: str | Unset = UNSET,
     environment_id: str,
-    from_: str,
+    from_: str | Unset = UNSET,
     limit: float | Unset = UNSET,
     search: str | Unset = UNSET,
     signal_kind: str | Unset = UNSET,
-    to: str,
+    to: str | Unset = UNSET,
 ) -> Response[TraceIntelligenceClusterListResponseDto]:
     """
     Args:
         app_id (str):
         cursor (str | Unset):
         environment_id (str):
-        from_ (str):
+        from_ (str | Unset):
         limit (float | Unset):
         search (str | Unset):
         signal_kind (str | Unset):
-        to (str):
+        to (str | Unset):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -224,22 +224,22 @@ async def asyncio(
     app_id: str,
     cursor: str | Unset = UNSET,
     environment_id: str,
-    from_: str,
+    from_: str | Unset = UNSET,
     limit: float | Unset = UNSET,
     search: str | Unset = UNSET,
     signal_kind: str | Unset = UNSET,
-    to: str,
+    to: str | Unset = UNSET,
 ) -> TraceIntelligenceClusterListResponseDto | None:
     """
     Args:
         app_id (str):
         cursor (str | Unset):
         environment_id (str):
-        from_ (str):
+        from_ (str | Unset):
         limit (float | Unset):
         search (str | Unset):
         signal_kind (str | Unset):
-        to (str):
+        to (str | Unset):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.

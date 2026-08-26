@@ -11,6 +11,7 @@ from ..types import UNSET, Unset
 
 if TYPE_CHECKING:
     from ..models.capability_flags_dto import CapabilityFlagsDto
+    from ..models.license_state_dto import LicenseStateDto
 
 
 T = TypeVar("T", bound="CapabilitiesResponseDto")
@@ -22,22 +23,31 @@ class CapabilitiesResponseDto:
     Attributes:
         capabilities (CapabilityFlagsDto):
         deployment_mode (DeploymentMode):
+        git_sha (str): Commit this build was made from.
+        license_ (LicenseStateDto):
         server_version (str):
         version (float): Shape version of this document.
     """
 
     capabilities: CapabilityFlagsDto
     deployment_mode: DeploymentMode
+    git_sha: str
+    license_: LicenseStateDto
     server_version: str
     version: float
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
         from ..models.capability_flags_dto import CapabilityFlagsDto
+        from ..models.license_state_dto import LicenseStateDto
 
         capabilities = self.capabilities.to_dict()
 
         deployment_mode = self.deployment_mode.value
+
+        git_sha = self.git_sha
+
+        license_ = self.license_.to_dict()
 
         server_version = self.server_version
 
@@ -49,6 +59,8 @@ class CapabilitiesResponseDto:
             {
                 "capabilities": capabilities,
                 "deploymentMode": deployment_mode,
+                "gitSha": git_sha,
+                "license": license_,
                 "serverVersion": server_version,
                 "version": version,
             }
@@ -59,11 +71,16 @@ class CapabilitiesResponseDto:
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         from ..models.capability_flags_dto import CapabilityFlagsDto
+        from ..models.license_state_dto import LicenseStateDto
 
         d = dict(src_dict)
         capabilities = CapabilityFlagsDto.from_dict(d.pop("capabilities"))
 
         deployment_mode = DeploymentMode(d.pop("deploymentMode"))
+
+        git_sha = d.pop("gitSha")
+
+        license_ = LicenseStateDto.from_dict(d.pop("license"))
 
         server_version = d.pop("serverVersion")
 
@@ -72,6 +89,8 @@ class CapabilitiesResponseDto:
         capabilities_response_dto = cls(
             capabilities=capabilities,
             deployment_mode=deployment_mode,
+            git_sha=git_sha,
+            license_=license_,
             server_version=server_version,
             version=version,
         )

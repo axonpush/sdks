@@ -8,14 +8,14 @@ from attrs import field as _attrs_field
 
 from ..types import UNSET, Unset
 
-T = TypeVar("T", bound="EventListMetaDtoCursorType0")
+T = TypeVar("T", bound="TraceV2ControllerFacetsAttrMin")
 
 
 @_attrs_define
-class EventListMetaDtoCursorType0:
+class TraceV2ControllerFacetsAttrMin:
     """ """
 
-    additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
+    additional_properties: dict[str, float] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
 
@@ -27,19 +27,19 @@ class EventListMetaDtoCursorType0:
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         d = dict(src_dict)
-        event_list_meta_dto_cursor_type_0 = cls()
+        trace_v2_controller_facets_attr_min = cls()
 
-        event_list_meta_dto_cursor_type_0.additional_properties = d
-        return event_list_meta_dto_cursor_type_0
+        trace_v2_controller_facets_attr_min.additional_properties = d
+        return trace_v2_controller_facets_attr_min
 
     @property
     def additional_keys(self) -> list[str]:
         return list(self.additional_properties.keys())
 
-    def __getitem__(self, key: str) -> Any:
+    def __getitem__(self, key: str) -> float:
         return self.additional_properties[key]
 
-    def __setitem__(self, key: str, value: Any) -> None:
+    def __setitem__(self, key: str, value: float) -> None:
         self.additional_properties[key] = value
 
     def __delitem__(self, key: str) -> None:

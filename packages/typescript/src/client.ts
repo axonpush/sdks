@@ -2,13 +2,25 @@ import { type GeneratedOp, invokeSync, setSettings } from "./_internal/transport
 import { type AxonPushOptions, type ResolvedSettings, resolveSettings } from "./config.js";
 import type { RealtimeClient, RealtimeOptions } from "./realtime/index.js";
 import { redactTelemetry as applyTelemetryRedaction } from "./redaction.js";
+import { AlertsResource } from "./resources/alerts.js";
+import { AnalyticsResource } from "./resources/analytics.js";
 import { ApiKeysResource } from "./resources/api-keys.js";
 import { AppsResource } from "./resources/apps.js";
+import { AssessmentsResource } from "./resources/assessments.js";
 import { ChannelsResource } from "./resources/channels.js";
+import { DatasetsResource } from "./resources/datasets.js";
 import { EnvironmentsResource } from "./resources/environments.js";
+import { EvaluationTargetsResource } from "./resources/evaluation-targets.js";
+import { EvaluatorsResource } from "./resources/evaluators.js";
 import { EventsResource } from "./resources/events.js";
+import { ExperimentsResource } from "./resources/experiments.js";
+import { IssuesResource } from "./resources/issues.js";
+import { OnlineEvaluationsResource } from "./resources/online-evaluations.js";
 import { OrganizationsResource } from "./resources/organizations.js";
+import { PromptsResource } from "./resources/prompts.js";
+import { TraceIntelligenceResource } from "./resources/trace-intelligence.js";
 import { TracesResource } from "./resources/traces.js";
+import { TracesV2Resource } from "./resources/traces-v2.js";
 import { WebhooksResource } from "./resources/webhooks.js";
 import { getOrCreateTrace, type TraceContext } from "./tracing.js";
 
@@ -39,6 +51,30 @@ export class AxonPush {
   readonly apiKeys: ApiKeysResource;
   /** Organizations resource — `create`, `get`, `list`, `update`, `delete`, `invite`, `removeMember`, `transferOwnership`. */
   readonly organizations: OrganizationsResource;
+  /** Prompt registry. */
+  readonly prompts: PromptsResource;
+  /** Evaluation datasets and revisions. */
+  readonly datasets: DatasetsResource;
+  /** Evaluators and their versions. */
+  readonly evaluators: EvaluatorsResource;
+  /** Evaluation runs, results and the gate. */
+  readonly experiments: ExperimentsResource;
+  /** Systems an experiment runs against. */
+  readonly evaluationTargets: EvaluationTargetsResource;
+  /** Alert rules over metric thresholds. */
+  readonly alerts: AlertsResource;
+  /** Judgements attached to a trace. */
+  readonly assessments: AssessmentsResource;
+  /** Timeseries, breakdowns and comparisons. */
+  readonly analytics: AnalyticsResource;
+  /** Clustered failures and triage. */
+  readonly issues: IssuesResource;
+  /** Rules that evaluate live traffic. */
+  readonly onlineEvaluations: OnlineEvaluationsResource;
+  /** Semantic clustering over traces. */
+  readonly traceIntelligence: TraceIntelligenceResource;
+  /** Trace search with facets and spans. */
+  readonly tracesV2: TracesV2Resource;
 
   /**
    * @param options Optional caller overrides; falsy fields fall through to
@@ -55,6 +91,18 @@ export class AxonPush {
     this.traces = new TracesResource(this);
     this.apiKeys = new ApiKeysResource(this);
     this.organizations = new OrganizationsResource(this);
+    this.prompts = new PromptsResource(this);
+    this.datasets = new DatasetsResource(this);
+    this.evaluators = new EvaluatorsResource(this);
+    this.experiments = new ExperimentsResource(this);
+    this.evaluationTargets = new EvaluationTargetsResource(this);
+    this.alerts = new AlertsResource(this);
+    this.assessments = new AssessmentsResource(this);
+    this.analytics = new AnalyticsResource(this);
+    this.issues = new IssuesResource(this);
+    this.onlineEvaluations = new OnlineEvaluationsResource(this);
+    this.traceIntelligence = new TraceIntelligenceResource(this);
+    this.tracesV2 = new TracesV2Resource(this);
   }
 
   /** The configured environment label (or `undefined` if none). */

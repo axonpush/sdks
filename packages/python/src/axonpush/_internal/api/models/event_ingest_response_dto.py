@@ -10,12 +10,6 @@ from dateutil.parser import isoparse
 
 from ..types import UNSET, Unset
 
-if TYPE_CHECKING:
-    from ..models.event_ingest_response_dto_environment_id_type_0 import (
-        EventIngestResponseDtoEnvironmentIdType0,
-    )
-
-
 T = TypeVar("T", bound="EventIngestResponseDto")
 
 
@@ -30,7 +24,7 @@ class EventIngestResponseDto:
         identifier (str):
         queued (bool):
         duplicate (bool | Unset):
-        environment_id (EventIngestResponseDtoEnvironmentIdType0 | None | Unset):
+        environment_id (None | str | Unset):
     """
 
     created_at: datetime.datetime
@@ -40,14 +34,10 @@ class EventIngestResponseDto:
     identifier: str
     queued: bool
     duplicate: bool | Unset = UNSET
-    environment_id: EventIngestResponseDtoEnvironmentIdType0 | None | Unset = UNSET
+    environment_id: None | str | Unset = UNSET
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
-        from ..models.event_ingest_response_dto_environment_id_type_0 import (
-            EventIngestResponseDtoEnvironmentIdType0,
-        )
-
         created_at = self.created_at.isoformat()
 
         dedup_key = self.dedup_key
@@ -62,11 +52,9 @@ class EventIngestResponseDto:
 
         duplicate = self.duplicate
 
-        environment_id: dict[str, Any] | None | Unset
+        environment_id: None | str | Unset
         if isinstance(self.environment_id, Unset):
             environment_id = UNSET
-        elif isinstance(self.environment_id, EventIngestResponseDtoEnvironmentIdType0):
-            environment_id = self.environment_id.to_dict()
         else:
             environment_id = self.environment_id
 
@@ -91,10 +79,6 @@ class EventIngestResponseDto:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        from ..models.event_ingest_response_dto_environment_id_type_0 import (
-            EventIngestResponseDtoEnvironmentIdType0,
-        )
-
         d = dict(src_dict)
         created_at = isoparse(d.pop("createdAt"))
 
@@ -110,22 +94,12 @@ class EventIngestResponseDto:
 
         duplicate = d.pop("duplicate", UNSET)
 
-        def _parse_environment_id(
-            data: object,
-        ) -> EventIngestResponseDtoEnvironmentIdType0 | None | Unset:
+        def _parse_environment_id(data: object) -> None | str | Unset:
             if data is None:
                 return data
             if isinstance(data, Unset):
                 return data
-            try:
-                if not isinstance(data, dict):
-                    raise TypeError()
-                environment_id_type_0 = EventIngestResponseDtoEnvironmentIdType0.from_dict(data)
-
-                return environment_id_type_0
-            except (TypeError, ValueError, AttributeError, KeyError):
-                pass
-            return cast(EventIngestResponseDtoEnvironmentIdType0 | None | Unset, data)
+            return cast(None | str | Unset, data)
 
         environment_id = _parse_environment_id(d.pop("environmentId", UNSET))
 

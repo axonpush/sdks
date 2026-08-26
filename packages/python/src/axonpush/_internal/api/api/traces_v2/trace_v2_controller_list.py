@@ -7,6 +7,10 @@ import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
 from ...models.trace_list_v2_response_dto import TraceListV2ResponseDto
+from ...models.trace_v2_controller_list_attr import TraceV2ControllerListAttr
+from ...models.trace_v2_controller_list_attr_max import TraceV2ControllerListAttrMax
+from ...models.trace_v2_controller_list_attr_min import TraceV2ControllerListAttrMin
+from ...models.trace_v2_controller_list_res import TraceV2ControllerListRes
 from ...models.trace_v2_controller_list_sort import TraceV2ControllerListSort
 from ...types import UNSET, Response, Unset
 
@@ -14,19 +18,38 @@ from ...types import UNSET, Response, Unset
 def _get_kwargs(
     *,
     agent: str | Unset = UNSET,
+    app_id: str | Unset = UNSET,
+    attr: TraceV2ControllerListAttr | Unset = UNSET,
+    attr_max: TraceV2ControllerListAttrMax | Unset = UNSET,
+    attr_min: TraceV2ControllerListAttrMin | Unset = UNSET,
     cursor: str | Unset = UNSET,
+    environment: str | Unset = UNSET,
+    environment_id: str | Unset = UNSET,
+    fields: str | Unset = UNSET,
     from_: str | Unset = UNSET,
     limit: float | Unset = UNSET,
+    max_cost_usd: str | Unset = UNSET,
+    max_duration_ms: str | Unset = UNSET,
+    max_tokens: str | Unset = UNSET,
+    min_cost_usd: str | Unset = UNSET,
+    min_duration_ms: str | Unset = UNSET,
+    min_tokens: str | Unset = UNSET,
     model: str | Unset = UNSET,
     prompt_id: str | Unset = UNSET,
     prompt_version_id: str | Unset = UNSET,
     provider: str | Unset = UNSET,
     query: str | Unset = UNSET,
     release: str | Unset = UNSET,
+    res: TraceV2ControllerListRes | Unset = UNSET,
     semantic_kind: str | Unset = UNSET,
     service: str | Unset = UNSET,
     session_id: str | Unset = UNSET,
     sort: TraceV2ControllerListSort | Unset = UNSET,
+    span_kind: str | Unset = UNSET,
+    span_min_duration_ms: str | Unset = UNSET,
+    span_model: str | Unset = UNSET,
+    span_status: str | Unset = UNSET,
+    span_tool: str | Unset = UNSET,
     status: str | Unset = UNSET,
     to: str | Unset = UNSET,
     tool: str | Unset = UNSET,
@@ -37,11 +60,49 @@ def _get_kwargs(
 
     params["agent"] = agent
 
+    params["appId"] = app_id
+
+    json_attr: dict[str, Any] | Unset = UNSET
+    if not isinstance(attr, Unset):
+        json_attr = attr.to_dict()
+    if not isinstance(json_attr, Unset):
+        params.update(json_attr)
+
+    json_attr_max: dict[str, Any] | Unset = UNSET
+    if not isinstance(attr_max, Unset):
+        json_attr_max = attr_max.to_dict()
+    if not isinstance(json_attr_max, Unset):
+        params.update(json_attr_max)
+
+    json_attr_min: dict[str, Any] | Unset = UNSET
+    if not isinstance(attr_min, Unset):
+        json_attr_min = attr_min.to_dict()
+    if not isinstance(json_attr_min, Unset):
+        params.update(json_attr_min)
+
     params["cursor"] = cursor
+
+    params["environment"] = environment
+
+    params["environmentId"] = environment_id
+
+    params["fields"] = fields
 
     params["from"] = from_
 
     params["limit"] = limit
+
+    params["maxCostUsd"] = max_cost_usd
+
+    params["maxDurationMs"] = max_duration_ms
+
+    params["maxTokens"] = max_tokens
+
+    params["minCostUsd"] = min_cost_usd
+
+    params["minDurationMs"] = min_duration_ms
+
+    params["minTokens"] = min_tokens
 
     params["model"] = model
 
@@ -55,6 +116,12 @@ def _get_kwargs(
 
     params["release"] = release
 
+    json_res: dict[str, Any] | Unset = UNSET
+    if not isinstance(res, Unset):
+        json_res = res.to_dict()
+    if not isinstance(json_res, Unset):
+        params.update(json_res)
+
     params["semanticKind"] = semantic_kind
 
     params["service"] = service
@@ -66,6 +133,16 @@ def _get_kwargs(
         json_sort = sort.value
 
     params["sort"] = json_sort
+
+    params["spanKind"] = span_kind
+
+    params["spanMinDurationMs"] = span_min_duration_ms
+
+    params["spanModel"] = span_model
+
+    params["spanStatus"] = span_status
+
+    params["spanTool"] = span_tool
 
     params["status"] = status
 
@@ -115,19 +192,38 @@ def sync_detailed(
     *,
     client: AuthenticatedClient | Client,
     agent: str | Unset = UNSET,
+    app_id: str | Unset = UNSET,
+    attr: TraceV2ControllerListAttr | Unset = UNSET,
+    attr_max: TraceV2ControllerListAttrMax | Unset = UNSET,
+    attr_min: TraceV2ControllerListAttrMin | Unset = UNSET,
     cursor: str | Unset = UNSET,
+    environment: str | Unset = UNSET,
+    environment_id: str | Unset = UNSET,
+    fields: str | Unset = UNSET,
     from_: str | Unset = UNSET,
     limit: float | Unset = UNSET,
+    max_cost_usd: str | Unset = UNSET,
+    max_duration_ms: str | Unset = UNSET,
+    max_tokens: str | Unset = UNSET,
+    min_cost_usd: str | Unset = UNSET,
+    min_duration_ms: str | Unset = UNSET,
+    min_tokens: str | Unset = UNSET,
     model: str | Unset = UNSET,
     prompt_id: str | Unset = UNSET,
     prompt_version_id: str | Unset = UNSET,
     provider: str | Unset = UNSET,
     query: str | Unset = UNSET,
     release: str | Unset = UNSET,
+    res: TraceV2ControllerListRes | Unset = UNSET,
     semantic_kind: str | Unset = UNSET,
     service: str | Unset = UNSET,
     session_id: str | Unset = UNSET,
     sort: TraceV2ControllerListSort | Unset = UNSET,
+    span_kind: str | Unset = UNSET,
+    span_min_duration_ms: str | Unset = UNSET,
+    span_model: str | Unset = UNSET,
+    span_status: str | Unset = UNSET,
+    span_tool: str | Unset = UNSET,
     status: str | Unset = UNSET,
     to: str | Unset = UNSET,
     tool: str | Unset = UNSET,
@@ -136,19 +232,38 @@ def sync_detailed(
     """
     Args:
         agent (str | Unset):
+        app_id (str | Unset):
+        attr (TraceV2ControllerListAttr | Unset):
+        attr_max (TraceV2ControllerListAttrMax | Unset):
+        attr_min (TraceV2ControllerListAttrMin | Unset):
         cursor (str | Unset):
+        environment (str | Unset):
+        environment_id (str | Unset):
+        fields (str | Unset):
         from_ (str | Unset):
         limit (float | Unset):
+        max_cost_usd (str | Unset):
+        max_duration_ms (str | Unset):
+        max_tokens (str | Unset):
+        min_cost_usd (str | Unset):
+        min_duration_ms (str | Unset):
+        min_tokens (str | Unset):
         model (str | Unset):
         prompt_id (str | Unset):
         prompt_version_id (str | Unset):
         provider (str | Unset):
         query (str | Unset):
         release (str | Unset):
+        res (TraceV2ControllerListRes | Unset):
         semantic_kind (str | Unset):
         service (str | Unset):
         session_id (str | Unset):
         sort (TraceV2ControllerListSort | Unset):
+        span_kind (str | Unset):
+        span_min_duration_ms (str | Unset):
+        span_model (str | Unset):
+        span_status (str | Unset):
+        span_tool (str | Unset):
         status (str | Unset):
         to (str | Unset):
         tool (str | Unset):
@@ -164,19 +279,38 @@ def sync_detailed(
 
     kwargs = _get_kwargs(
         agent=agent,
+        app_id=app_id,
+        attr=attr,
+        attr_max=attr_max,
+        attr_min=attr_min,
         cursor=cursor,
+        environment=environment,
+        environment_id=environment_id,
+        fields=fields,
         from_=from_,
         limit=limit,
+        max_cost_usd=max_cost_usd,
+        max_duration_ms=max_duration_ms,
+        max_tokens=max_tokens,
+        min_cost_usd=min_cost_usd,
+        min_duration_ms=min_duration_ms,
+        min_tokens=min_tokens,
         model=model,
         prompt_id=prompt_id,
         prompt_version_id=prompt_version_id,
         provider=provider,
         query=query,
         release=release,
+        res=res,
         semantic_kind=semantic_kind,
         service=service,
         session_id=session_id,
         sort=sort,
+        span_kind=span_kind,
+        span_min_duration_ms=span_min_duration_ms,
+        span_model=span_model,
+        span_status=span_status,
+        span_tool=span_tool,
         status=status,
         to=to,
         tool=tool,
@@ -194,19 +328,38 @@ def sync(
     *,
     client: AuthenticatedClient | Client,
     agent: str | Unset = UNSET,
+    app_id: str | Unset = UNSET,
+    attr: TraceV2ControllerListAttr | Unset = UNSET,
+    attr_max: TraceV2ControllerListAttrMax | Unset = UNSET,
+    attr_min: TraceV2ControllerListAttrMin | Unset = UNSET,
     cursor: str | Unset = UNSET,
+    environment: str | Unset = UNSET,
+    environment_id: str | Unset = UNSET,
+    fields: str | Unset = UNSET,
     from_: str | Unset = UNSET,
     limit: float | Unset = UNSET,
+    max_cost_usd: str | Unset = UNSET,
+    max_duration_ms: str | Unset = UNSET,
+    max_tokens: str | Unset = UNSET,
+    min_cost_usd: str | Unset = UNSET,
+    min_duration_ms: str | Unset = UNSET,
+    min_tokens: str | Unset = UNSET,
     model: str | Unset = UNSET,
     prompt_id: str | Unset = UNSET,
     prompt_version_id: str | Unset = UNSET,
     provider: str | Unset = UNSET,
     query: str | Unset = UNSET,
     release: str | Unset = UNSET,
+    res: TraceV2ControllerListRes | Unset = UNSET,
     semantic_kind: str | Unset = UNSET,
     service: str | Unset = UNSET,
     session_id: str | Unset = UNSET,
     sort: TraceV2ControllerListSort | Unset = UNSET,
+    span_kind: str | Unset = UNSET,
+    span_min_duration_ms: str | Unset = UNSET,
+    span_model: str | Unset = UNSET,
+    span_status: str | Unset = UNSET,
+    span_tool: str | Unset = UNSET,
     status: str | Unset = UNSET,
     to: str | Unset = UNSET,
     tool: str | Unset = UNSET,
@@ -215,19 +368,38 @@ def sync(
     """
     Args:
         agent (str | Unset):
+        app_id (str | Unset):
+        attr (TraceV2ControllerListAttr | Unset):
+        attr_max (TraceV2ControllerListAttrMax | Unset):
+        attr_min (TraceV2ControllerListAttrMin | Unset):
         cursor (str | Unset):
+        environment (str | Unset):
+        environment_id (str | Unset):
+        fields (str | Unset):
         from_ (str | Unset):
         limit (float | Unset):
+        max_cost_usd (str | Unset):
+        max_duration_ms (str | Unset):
+        max_tokens (str | Unset):
+        min_cost_usd (str | Unset):
+        min_duration_ms (str | Unset):
+        min_tokens (str | Unset):
         model (str | Unset):
         prompt_id (str | Unset):
         prompt_version_id (str | Unset):
         provider (str | Unset):
         query (str | Unset):
         release (str | Unset):
+        res (TraceV2ControllerListRes | Unset):
         semantic_kind (str | Unset):
         service (str | Unset):
         session_id (str | Unset):
         sort (TraceV2ControllerListSort | Unset):
+        span_kind (str | Unset):
+        span_min_duration_ms (str | Unset):
+        span_model (str | Unset):
+        span_status (str | Unset):
+        span_tool (str | Unset):
         status (str | Unset):
         to (str | Unset):
         tool (str | Unset):
@@ -244,19 +416,38 @@ def sync(
     return sync_detailed(
         client=client,
         agent=agent,
+        app_id=app_id,
+        attr=attr,
+        attr_max=attr_max,
+        attr_min=attr_min,
         cursor=cursor,
+        environment=environment,
+        environment_id=environment_id,
+        fields=fields,
         from_=from_,
         limit=limit,
+        max_cost_usd=max_cost_usd,
+        max_duration_ms=max_duration_ms,
+        max_tokens=max_tokens,
+        min_cost_usd=min_cost_usd,
+        min_duration_ms=min_duration_ms,
+        min_tokens=min_tokens,
         model=model,
         prompt_id=prompt_id,
         prompt_version_id=prompt_version_id,
         provider=provider,
         query=query,
         release=release,
+        res=res,
         semantic_kind=semantic_kind,
         service=service,
         session_id=session_id,
         sort=sort,
+        span_kind=span_kind,
+        span_min_duration_ms=span_min_duration_ms,
+        span_model=span_model,
+        span_status=span_status,
+        span_tool=span_tool,
         status=status,
         to=to,
         tool=tool,
@@ -268,19 +459,38 @@ async def asyncio_detailed(
     *,
     client: AuthenticatedClient | Client,
     agent: str | Unset = UNSET,
+    app_id: str | Unset = UNSET,
+    attr: TraceV2ControllerListAttr | Unset = UNSET,
+    attr_max: TraceV2ControllerListAttrMax | Unset = UNSET,
+    attr_min: TraceV2ControllerListAttrMin | Unset = UNSET,
     cursor: str | Unset = UNSET,
+    environment: str | Unset = UNSET,
+    environment_id: str | Unset = UNSET,
+    fields: str | Unset = UNSET,
     from_: str | Unset = UNSET,
     limit: float | Unset = UNSET,
+    max_cost_usd: str | Unset = UNSET,
+    max_duration_ms: str | Unset = UNSET,
+    max_tokens: str | Unset = UNSET,
+    min_cost_usd: str | Unset = UNSET,
+    min_duration_ms: str | Unset = UNSET,
+    min_tokens: str | Unset = UNSET,
     model: str | Unset = UNSET,
     prompt_id: str | Unset = UNSET,
     prompt_version_id: str | Unset = UNSET,
     provider: str | Unset = UNSET,
     query: str | Unset = UNSET,
     release: str | Unset = UNSET,
+    res: TraceV2ControllerListRes | Unset = UNSET,
     semantic_kind: str | Unset = UNSET,
     service: str | Unset = UNSET,
     session_id: str | Unset = UNSET,
     sort: TraceV2ControllerListSort | Unset = UNSET,
+    span_kind: str | Unset = UNSET,
+    span_min_duration_ms: str | Unset = UNSET,
+    span_model: str | Unset = UNSET,
+    span_status: str | Unset = UNSET,
+    span_tool: str | Unset = UNSET,
     status: str | Unset = UNSET,
     to: str | Unset = UNSET,
     tool: str | Unset = UNSET,
@@ -289,19 +499,38 @@ async def asyncio_detailed(
     """
     Args:
         agent (str | Unset):
+        app_id (str | Unset):
+        attr (TraceV2ControllerListAttr | Unset):
+        attr_max (TraceV2ControllerListAttrMax | Unset):
+        attr_min (TraceV2ControllerListAttrMin | Unset):
         cursor (str | Unset):
+        environment (str | Unset):
+        environment_id (str | Unset):
+        fields (str | Unset):
         from_ (str | Unset):
         limit (float | Unset):
+        max_cost_usd (str | Unset):
+        max_duration_ms (str | Unset):
+        max_tokens (str | Unset):
+        min_cost_usd (str | Unset):
+        min_duration_ms (str | Unset):
+        min_tokens (str | Unset):
         model (str | Unset):
         prompt_id (str | Unset):
         prompt_version_id (str | Unset):
         provider (str | Unset):
         query (str | Unset):
         release (str | Unset):
+        res (TraceV2ControllerListRes | Unset):
         semantic_kind (str | Unset):
         service (str | Unset):
         session_id (str | Unset):
         sort (TraceV2ControllerListSort | Unset):
+        span_kind (str | Unset):
+        span_min_duration_ms (str | Unset):
+        span_model (str | Unset):
+        span_status (str | Unset):
+        span_tool (str | Unset):
         status (str | Unset):
         to (str | Unset):
         tool (str | Unset):
@@ -317,19 +546,38 @@ async def asyncio_detailed(
 
     kwargs = _get_kwargs(
         agent=agent,
+        app_id=app_id,
+        attr=attr,
+        attr_max=attr_max,
+        attr_min=attr_min,
         cursor=cursor,
+        environment=environment,
+        environment_id=environment_id,
+        fields=fields,
         from_=from_,
         limit=limit,
+        max_cost_usd=max_cost_usd,
+        max_duration_ms=max_duration_ms,
+        max_tokens=max_tokens,
+        min_cost_usd=min_cost_usd,
+        min_duration_ms=min_duration_ms,
+        min_tokens=min_tokens,
         model=model,
         prompt_id=prompt_id,
         prompt_version_id=prompt_version_id,
         provider=provider,
         query=query,
         release=release,
+        res=res,
         semantic_kind=semantic_kind,
         service=service,
         session_id=session_id,
         sort=sort,
+        span_kind=span_kind,
+        span_min_duration_ms=span_min_duration_ms,
+        span_model=span_model,
+        span_status=span_status,
+        span_tool=span_tool,
         status=status,
         to=to,
         tool=tool,
@@ -345,19 +593,38 @@ async def asyncio(
     *,
     client: AuthenticatedClient | Client,
     agent: str | Unset = UNSET,
+    app_id: str | Unset = UNSET,
+    attr: TraceV2ControllerListAttr | Unset = UNSET,
+    attr_max: TraceV2ControllerListAttrMax | Unset = UNSET,
+    attr_min: TraceV2ControllerListAttrMin | Unset = UNSET,
     cursor: str | Unset = UNSET,
+    environment: str | Unset = UNSET,
+    environment_id: str | Unset = UNSET,
+    fields: str | Unset = UNSET,
     from_: str | Unset = UNSET,
     limit: float | Unset = UNSET,
+    max_cost_usd: str | Unset = UNSET,
+    max_duration_ms: str | Unset = UNSET,
+    max_tokens: str | Unset = UNSET,
+    min_cost_usd: str | Unset = UNSET,
+    min_duration_ms: str | Unset = UNSET,
+    min_tokens: str | Unset = UNSET,
     model: str | Unset = UNSET,
     prompt_id: str | Unset = UNSET,
     prompt_version_id: str | Unset = UNSET,
     provider: str | Unset = UNSET,
     query: str | Unset = UNSET,
     release: str | Unset = UNSET,
+    res: TraceV2ControllerListRes | Unset = UNSET,
     semantic_kind: str | Unset = UNSET,
     service: str | Unset = UNSET,
     session_id: str | Unset = UNSET,
     sort: TraceV2ControllerListSort | Unset = UNSET,
+    span_kind: str | Unset = UNSET,
+    span_min_duration_ms: str | Unset = UNSET,
+    span_model: str | Unset = UNSET,
+    span_status: str | Unset = UNSET,
+    span_tool: str | Unset = UNSET,
     status: str | Unset = UNSET,
     to: str | Unset = UNSET,
     tool: str | Unset = UNSET,
@@ -366,19 +633,38 @@ async def asyncio(
     """
     Args:
         agent (str | Unset):
+        app_id (str | Unset):
+        attr (TraceV2ControllerListAttr | Unset):
+        attr_max (TraceV2ControllerListAttrMax | Unset):
+        attr_min (TraceV2ControllerListAttrMin | Unset):
         cursor (str | Unset):
+        environment (str | Unset):
+        environment_id (str | Unset):
+        fields (str | Unset):
         from_ (str | Unset):
         limit (float | Unset):
+        max_cost_usd (str | Unset):
+        max_duration_ms (str | Unset):
+        max_tokens (str | Unset):
+        min_cost_usd (str | Unset):
+        min_duration_ms (str | Unset):
+        min_tokens (str | Unset):
         model (str | Unset):
         prompt_id (str | Unset):
         prompt_version_id (str | Unset):
         provider (str | Unset):
         query (str | Unset):
         release (str | Unset):
+        res (TraceV2ControllerListRes | Unset):
         semantic_kind (str | Unset):
         service (str | Unset):
         session_id (str | Unset):
         sort (TraceV2ControllerListSort | Unset):
+        span_kind (str | Unset):
+        span_min_duration_ms (str | Unset):
+        span_model (str | Unset):
+        span_status (str | Unset):
+        span_tool (str | Unset):
         status (str | Unset):
         to (str | Unset):
         tool (str | Unset):
@@ -396,19 +682,38 @@ async def asyncio(
         await asyncio_detailed(
             client=client,
             agent=agent,
+            app_id=app_id,
+            attr=attr,
+            attr_max=attr_max,
+            attr_min=attr_min,
             cursor=cursor,
+            environment=environment,
+            environment_id=environment_id,
+            fields=fields,
             from_=from_,
             limit=limit,
+            max_cost_usd=max_cost_usd,
+            max_duration_ms=max_duration_ms,
+            max_tokens=max_tokens,
+            min_cost_usd=min_cost_usd,
+            min_duration_ms=min_duration_ms,
+            min_tokens=min_tokens,
             model=model,
             prompt_id=prompt_id,
             prompt_version_id=prompt_version_id,
             provider=provider,
             query=query,
             release=release,
+            res=res,
             semantic_kind=semantic_kind,
             service=service,
             session_id=session_id,
             sort=sort,
+            span_kind=span_kind,
+            span_min_duration_ms=span_min_duration_ms,
+            span_model=span_model,
+            span_status=span_status,
+            span_tool=span_tool,
             status=status,
             to=to,
             tool=tool,

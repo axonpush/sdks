@@ -7,15 +7,15 @@ import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
 from ...models.trace_intelligence_coverage_response_dto import TraceIntelligenceCoverageResponseDto
-from ...types import UNSET, Response
+from ...types import UNSET, Response, Unset
 
 
 def _get_kwargs(
     *,
     app_id: str,
     environment_id: str,
-    from_: str,
-    to: str,
+    from_: str | Unset = UNSET,
+    to: str | Unset = UNSET,
 ) -> dict[str, Any]:
 
     params: dict[str, Any] = {}
@@ -69,15 +69,15 @@ def sync_detailed(
     client: AuthenticatedClient | Client,
     app_id: str,
     environment_id: str,
-    from_: str,
-    to: str,
+    from_: str | Unset = UNSET,
+    to: str | Unset = UNSET,
 ) -> Response[TraceIntelligenceCoverageResponseDto]:
     """
     Args:
         app_id (str):
         environment_id (str):
-        from_ (str):
-        to (str):
+        from_ (str | Unset):
+        to (str | Unset):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -106,15 +106,15 @@ def sync(
     client: AuthenticatedClient | Client,
     app_id: str,
     environment_id: str,
-    from_: str,
-    to: str,
+    from_: str | Unset = UNSET,
+    to: str | Unset = UNSET,
 ) -> TraceIntelligenceCoverageResponseDto | None:
     """
     Args:
         app_id (str):
         environment_id (str):
-        from_ (str):
-        to (str):
+        from_ (str | Unset):
+        to (str | Unset):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -138,15 +138,15 @@ async def asyncio_detailed(
     client: AuthenticatedClient | Client,
     app_id: str,
     environment_id: str,
-    from_: str,
-    to: str,
+    from_: str | Unset = UNSET,
+    to: str | Unset = UNSET,
 ) -> Response[TraceIntelligenceCoverageResponseDto]:
     """
     Args:
         app_id (str):
         environment_id (str):
-        from_ (str):
-        to (str):
+        from_ (str | Unset):
+        to (str | Unset):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -173,15 +173,15 @@ async def asyncio(
     client: AuthenticatedClient | Client,
     app_id: str,
     environment_id: str,
-    from_: str,
-    to: str,
+    from_: str | Unset = UNSET,
+    to: str | Unset = UNSET,
 ) -> TraceIntelligenceCoverageResponseDto | None:
     """
     Args:
         app_id (str):
         environment_id (str):
-        from_ (str):
-        to (str):
+        from_ (str | Unset):
+        to (str | Unset):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.

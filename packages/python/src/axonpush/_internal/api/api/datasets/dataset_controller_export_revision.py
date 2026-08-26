@@ -6,6 +6,9 @@ import httpx
 
 from ... import errors
 from ...client import AuthenticatedClient, Client
+from ...models.dataset_controller_export_revision_format import (
+    DatasetControllerExportRevisionFormat,
+)
 from ...models.dataset_export_dto import DatasetExportDto
 from ...types import UNSET, Response
 
@@ -13,7 +16,7 @@ from ...types import UNSET, Response
 def _get_kwargs(
     dataset_id: str,
     revision: float,
-    format_: str,
+    format_: DatasetControllerExportRevisionFormat,
 ) -> dict[str, Any]:
 
     _kwargs: dict[str, Any] = {
@@ -56,7 +59,7 @@ def _build_response(
 def sync_detailed(
     dataset_id: str,
     revision: float,
-    format_: str,
+    format_: DatasetControllerExportRevisionFormat,
     *,
     client: AuthenticatedClient | Client,
 ) -> Response[DatasetExportDto]:
@@ -64,7 +67,7 @@ def sync_detailed(
     Args:
         dataset_id (str):
         revision (float):
-        format_ (str):
+        format_ (DatasetControllerExportRevisionFormat):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -90,7 +93,7 @@ def sync_detailed(
 def sync(
     dataset_id: str,
     revision: float,
-    format_: str,
+    format_: DatasetControllerExportRevisionFormat,
     *,
     client: AuthenticatedClient | Client,
 ) -> DatasetExportDto | None:
@@ -98,7 +101,7 @@ def sync(
     Args:
         dataset_id (str):
         revision (float):
-        format_ (str):
+        format_ (DatasetControllerExportRevisionFormat):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -119,7 +122,7 @@ def sync(
 async def asyncio_detailed(
     dataset_id: str,
     revision: float,
-    format_: str,
+    format_: DatasetControllerExportRevisionFormat,
     *,
     client: AuthenticatedClient | Client,
 ) -> Response[DatasetExportDto]:
@@ -127,7 +130,7 @@ async def asyncio_detailed(
     Args:
         dataset_id (str):
         revision (float):
-        format_ (str):
+        format_ (DatasetControllerExportRevisionFormat):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -151,7 +154,7 @@ async def asyncio_detailed(
 async def asyncio(
     dataset_id: str,
     revision: float,
-    format_: str,
+    format_: DatasetControllerExportRevisionFormat,
     *,
     client: AuthenticatedClient | Client,
 ) -> DatasetExportDto | None:
@@ -159,7 +162,7 @@ async def asyncio(
     Args:
         dataset_id (str):
         revision (float):
-        format_ (str):
+        format_ (DatasetControllerExportRevisionFormat):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.

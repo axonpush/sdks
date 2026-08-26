@@ -8,12 +8,6 @@ from attrs import field as _attrs_field
 
 from ..types import UNSET, Unset
 
-if TYPE_CHECKING:
-    from ..models.trace_intelligence_cluster_list_meta_dto_cursor_type_0 import (
-        TraceIntelligenceClusterListMetaDtoCursorType0,
-    )
-
-
 T = TypeVar("T", bound="TraceIntelligenceClusterListMetaDto")
 
 
@@ -22,25 +16,19 @@ class TraceIntelligenceClusterListMetaDto:
     """
     Attributes:
         has_more (bool):
-        cursor (None | TraceIntelligenceClusterListMetaDtoCursorType0 | Unset):
+        cursor (None | str | Unset):
     """
 
     has_more: bool
-    cursor: None | TraceIntelligenceClusterListMetaDtoCursorType0 | Unset = UNSET
+    cursor: None | str | Unset = UNSET
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
-        from ..models.trace_intelligence_cluster_list_meta_dto_cursor_type_0 import (
-            TraceIntelligenceClusterListMetaDtoCursorType0,
-        )
-
         has_more = self.has_more
 
-        cursor: dict[str, Any] | None | Unset
+        cursor: None | str | Unset
         if isinstance(self.cursor, Unset):
             cursor = UNSET
-        elif isinstance(self.cursor, TraceIntelligenceClusterListMetaDtoCursorType0):
-            cursor = self.cursor.to_dict()
         else:
             cursor = self.cursor
 
@@ -58,29 +46,15 @@ class TraceIntelligenceClusterListMetaDto:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        from ..models.trace_intelligence_cluster_list_meta_dto_cursor_type_0 import (
-            TraceIntelligenceClusterListMetaDtoCursorType0,
-        )
-
         d = dict(src_dict)
         has_more = d.pop("hasMore")
 
-        def _parse_cursor(
-            data: object,
-        ) -> None | TraceIntelligenceClusterListMetaDtoCursorType0 | Unset:
+        def _parse_cursor(data: object) -> None | str | Unset:
             if data is None:
                 return data
             if isinstance(data, Unset):
                 return data
-            try:
-                if not isinstance(data, dict):
-                    raise TypeError()
-                cursor_type_0 = TraceIntelligenceClusterListMetaDtoCursorType0.from_dict(data)
-
-                return cursor_type_0
-            except (TypeError, ValueError, AttributeError, KeyError):
-                pass
-            return cast(None | TraceIntelligenceClusterListMetaDtoCursorType0 | Unset, data)
+            return cast(None | str | Unset, data)
 
         cursor = _parse_cursor(d.pop("cursor", UNSET))
 

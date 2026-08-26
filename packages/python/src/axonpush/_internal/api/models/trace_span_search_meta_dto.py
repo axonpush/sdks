@@ -8,29 +8,67 @@ from attrs import field as _attrs_field
 
 from ..types import UNSET, Unset
 
-T = TypeVar("T", bound="WebhookEndpointCreateResponseDtoSecretPrefix")
+T = TypeVar("T", bound="TraceSpanSearchMetaDto")
 
 
 @_attrs_define
-class WebhookEndpointCreateResponseDtoSecretPrefix:
-    """Prefix of the signing secret"""
+class TraceSpanSearchMetaDto:
+    """
+    Attributes:
+        limit (float):
+        query (str):
+        scanned (float): Spans searched, matching or not.
+        total (float): Matches found before the response cap.
+    """
 
+    limit: float
+    query: str
+    scanned: float
+    total: float
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
+        limit = self.limit
+
+        query = self.query
+
+        scanned = self.scanned
+
+        total = self.total
 
         field_dict: dict[str, Any] = {}
         field_dict.update(self.additional_properties)
+        field_dict.update(
+            {
+                "limit": limit,
+                "query": query,
+                "scanned": scanned,
+                "total": total,
+            }
+        )
 
         return field_dict
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         d = dict(src_dict)
-        webhook_endpoint_create_response_dto_secret_prefix = cls()
+        limit = d.pop("limit")
 
-        webhook_endpoint_create_response_dto_secret_prefix.additional_properties = d
-        return webhook_endpoint_create_response_dto_secret_prefix
+        query = d.pop("query")
+
+        scanned = d.pop("scanned")
+
+        total = d.pop("total")
+
+        trace_span_search_meta_dto = cls(
+            limit=limit,
+            query=query,
+            scanned=scanned,
+            total=total,
+        )
+
+        trace_span_search_meta_dto.additional_properties = d
+        return trace_span_search_meta_dto
 
     @property
     def additional_keys(self) -> list[str]:

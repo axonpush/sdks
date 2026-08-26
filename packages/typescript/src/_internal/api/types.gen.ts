@@ -4,6 +4,17 @@ export type ClientOptions = {
     baseUrl: string;
 };
 
+export type AddIssueToDatasetDto = {
+    datasetId: string;
+    note?: string;
+};
+
+export type AddTraceClusterToDatasetDto = {
+    datasetId: string;
+    maxTraces?: number;
+    note?: string;
+};
+
 export type AlertDeleteDto = {
     deleted: boolean;
 };
@@ -156,11 +167,22 @@ export type AssessmentTargetType = 'trace' | 'span' | 'session';
 
 export type AssessmentValueType = 'numeric' | 'boolean' | 'categorical' | 'text';
 
+export type BackfillOnlineRuleDto = {
+    from: string;
+    limit?: number;
+    to: string;
+};
+
 export type BackfillStatus = 'queued' | 'running' | 'completed' | 'failed';
 
 export type CapabilitiesResponseDto = {
     capabilities: CapabilityFlagsDto;
     deploymentMode: DeploymentMode;
+    /**
+     * Commit this build was made from.
+     */
+    gitSha: string;
+    license: LicenseStateDto;
     serverVersion: string;
     /**
      * Shape version of this document.
@@ -195,6 +217,24 @@ export type ChannelResponseDto = {
 };
 
 export type ContentCaptureMode = 'metadata_only' | 'redacted' | 'full';
+
+export type CreateAlertRuleDto = {
+    appId?: string;
+    /**
+     * Email address or an existing webhook endpoint ID.
+     */
+    destination: string;
+    destinationType: AlertDestinationType;
+    enabled?: boolean;
+    environmentId?: string;
+    metric: AlertMetric;
+    model?: string;
+    name: string;
+    operator: AlertOperator;
+    release?: string;
+    service?: string;
+    threshold: number;
+};
 
 export type CreateApiKeyDto = {
     /**
@@ -233,6 +273,18 @@ export type CreateAssessmentDto = {
     valueType: AssessmentValueType;
 };
 
+export type CreateDatasetDto = {
+    description?: string;
+    items?: Array<DatasetItemInputDto>;
+    name: string;
+};
+
+export type CreateDatasetRevisionDto = {
+    items: Array<DatasetItemInputDto>;
+    note?: string;
+    source?: DatasetRevisionSource;
+};
+
 export type CreateEnvironmentDto = {
     cloneFromEnvId?: string;
     color?: string;
@@ -240,6 +292,48 @@ export type CreateEnvironmentDto = {
     isProduction?: boolean;
     name: string;
     slug?: string;
+};
+
+export type CreateEvaluationTargetDto = {
+    config?: {
+        [key: string]: unknown;
+    };
+    enabled?: boolean;
+    endpoint?: string;
+    name: string;
+    /**
+     * Reference to a separately managed secret. Raw credentials are never accepted.
+     */
+    secretRef?: string;
+    type: EvaluationTargetType;
+};
+
+export type CreateEvaluatorDto = {
+    config: {
+        [key: string]: unknown;
+    };
+    description?: string;
+    kind: EvaluatorKind;
+    model?: string;
+    name: string;
+    outputSchema?: {
+        [key: string]: unknown;
+    };
+    provider?: string;
+    rubric?: string;
+};
+
+export type CreateEvaluatorVersionDto = {
+    config: {
+        [key: string]: unknown;
+    };
+    kind: EvaluatorKind;
+    model?: string;
+    outputSchema?: {
+        [key: string]: unknown;
+    };
+    provider?: string;
+    rubric?: string;
 };
 
 export type CreateEventDto = {
@@ -265,6 +359,26 @@ export type CreateEventDto = {
      */
     sync?: boolean;
     traceId?: string;
+};
+
+export type CreateExperimentDto = {
+    baselineExperimentId?: string;
+    configuration?: {
+        [key: string]: unknown;
+    };
+    datasetId: string;
+    datasetRevision: number;
+    evaluatorVersions: Array<EvaluatorVersionRefDto>;
+    gitBranch?: string;
+    gitCommit?: string;
+    gitDirty?: boolean;
+    modelConfiguration?: {
+        [key: string]: unknown;
+    };
+    name: string;
+    promptVersionId?: string;
+    release?: string;
+    targetId: string;
 };
 
 export type CreateExportDestinationDto = {
@@ -308,16 +422,65 @@ export type CreateIotTokenDto = {
     name: string;
 };
 
+export type CreateOnlineRuleDto = {
+    assessmentName?: string;
+    dailyBudget?: number;
+    enabled?: boolean;
+    evaluatorId: string;
+    evaluatorVersion: number;
+    filters?: OnlineRuleFiltersDto;
+    name: string;
+    perOrgConcurrency?: number;
+    sampleRate?: number;
+    timeoutMs?: number;
+};
+
 export type CreateOrganizationDto = {
     description?: string;
     name: string;
     slug: string;
 };
 
+export type CreatePromptDto = {
+    description?: string;
+    modelConfiguration?: {
+        [key: string]: unknown;
+    };
+    name: string;
+    note?: string;
+    tags?: Array<string>;
+    template: string;
+    toolConfiguration?: {
+        [key: string]: unknown;
+    };
+    variables?: Array<string>;
+};
+
+export type CreatePromptVersionDto = {
+    modelConfiguration?: {
+        [key: string]: unknown;
+    };
+    note?: string;
+    tags?: Array<string>;
+    template: string;
+    toolConfiguration?: {
+        [key: string]: unknown;
+    };
+    variables?: Array<string>;
+};
+
 export type CreatePublicTokenDto = {
     channelId: string;
     environmentId: string;
     name: string;
+};
+
+export type CreateTraceIntelligenceBackfillDto = {
+    appId: string;
+    environmentId: string;
+    from: string;
+    maxTraces?: number;
+    to: string;
 };
 
 export type CreateWebhookEndpointDto = {
@@ -353,6 +516,30 @@ export type DatasetExportDto = {
 };
 
 export type DatasetExportFormat = 'jsonl' | 'csv';
+
+export type DatasetItemInputDto = {
+    attachments?: {
+        [key: string]: unknown;
+    };
+    expectedOutput?: {
+        [key: string]: unknown;
+    };
+    /**
+     * Redacted before persistence according to the organization policy.
+     */
+    input: {
+        [key: string]: unknown;
+    };
+    itemId?: string;
+    metadata?: {
+        [key: string]: unknown;
+    };
+    sourceSpanId?: string;
+    sourceTraceId?: string;
+    toolTrajectory?: {
+        [key: string]: unknown;
+    };
+};
 
 export type DatasetListDto = {
     data: Array<DatasetDto>;
@@ -401,6 +588,8 @@ export type DatasetRevisionItemsDto = {
 export type DatasetRevisionListDto = {
     data: Array<DatasetRevisionDto>;
 };
+
+export type DatasetRevisionSource = 'manual' | 'import' | 'trace' | 'bulk_trace';
 
 export type DeleteResultDto = {
     deleted: boolean;
@@ -502,9 +691,7 @@ export type EventIngestResponseDto = {
     createdAt: string;
     dedupKey: string;
     duplicate?: boolean;
-    environmentId?: {
-        [key: string]: unknown;
-    } | null;
+    environmentId?: string | null;
     eventId: string;
     /**
      * Alias of eventId, populated by the global IdAliasInterceptor.
@@ -515,9 +702,7 @@ export type EventIngestResponseDto = {
 };
 
 export type EventListMetaDto = {
-    cursor?: {
-        [key: string]: unknown;
-    } | null;
+    cursor?: string | null;
     hasMore: boolean;
 };
 
@@ -632,6 +817,16 @@ export type ExperimentDto = {
     updatedAt: string;
 };
 
+export type ExperimentGateDto = {
+    maxCostIncreasePercent?: number;
+    maxCostUsd?: number;
+    maxFailureRate?: number;
+    maxLatencyIncreasePercent?: number;
+    maxLatencyMs?: number;
+    minScore?: number;
+    minScoreDelta?: number;
+};
+
 export type ExperimentGateResultDto = {
     baselineExperimentId?: string;
     experimentId: string;
@@ -699,12 +894,26 @@ export type ExportDestinationResponseDto = {
 
 export type ExportSignal = 'logs' | 'traces';
 
+export type Function = {
+    [key: string]: unknown;
+};
+
 export type HealthResponseDto = {
     flags: {
         [key: string]: unknown;
     };
     status: string;
     timestamp: string;
+    version: string;
+};
+
+export type ImportDatasetRevisionDto = {
+    /**
+     * UTF-8 JSONL or CSV content.
+     */
+    content: string;
+    format: DatasetExportFormat;
+    note?: string;
 };
 
 export type IntelligenceJobResponseDto = {
@@ -857,6 +1066,35 @@ export type IssueSeverity = 'low' | 'medium' | 'high' | 'critical';
 
 export type IssueStatus = 'open' | 'resolved' | 'dismissed' | 'merged' | 'regressed';
 
+export type LicenseStateDto = {
+    applicable: boolean;
+    expiresAt: string | null;
+    graceEndsAt: string | null;
+    lastDiagnosticsAt: string | null;
+    message: string | null;
+    reason: string | null;
+    status: LicenseStatus;
+    tier: string | null;
+};
+
+export type LicenseStatus = 'active' | 'warning' | 'grace' | 'stopped' | 'unlicensed';
+
+export type LocalExperimentResultDto = {
+    costUsd?: number;
+    error?: string;
+    itemId: string;
+    latencyMs?: number;
+    output: {
+        [key: string]: unknown;
+    };
+    totalTokens?: number;
+    traceId?: string;
+};
+
+export type MergeIssueDto = {
+    targetIssueId: string;
+};
+
 export type MessageResponseDto = {
     message: string;
 };
@@ -967,6 +1205,17 @@ export type OrganizationResponseDto = {
 
 export type OrganizationRole = 'user' | 'admin';
 
+export type PromotePromptDto = {
+    /**
+     * Must be true. Promotion is intentionally human-approved.
+     */
+    approved: boolean;
+    environment: string;
+    release?: string;
+    version: number;
+    webhookEndpointId?: string;
+};
+
 export type PromptComparisonDto = {
     baseline: PromptVersionDto;
     candidate: PromptVersionDto;
@@ -1068,7 +1317,30 @@ export type PublicIngestTokenResponseDto = {
     tokenId: string;
 };
 
+export type RollbackPromptDto = {
+    approved: boolean;
+    environment: string;
+    release?: string;
+    /**
+     * Defaults to the immediately previous promoted version.
+     */
+    version?: number;
+    webhookEndpointId?: string;
+};
+
+export type RunIntelligenceDto = {
+    evaluatorId?: string;
+    evaluatorVersion?: number;
+    maxCostUsd?: number;
+    maxLabels?: number;
+    minimumCohortSize?: number;
+};
+
 export type SignalsStatus = 'pending' | 'completed' | 'failed' | 'skipped';
+
+export type SubmitLocalExperimentResultsDto = {
+    results: Array<LocalExperimentResultDto>;
+};
 
 export type SuccessResponseDto = {
     success: boolean;
@@ -1104,10 +1376,52 @@ export type TelemetryRegexRuleDto = {
     replacement: string;
 };
 
+export type TestTraceIntelligenceProviderDto = {
+    /**
+     * Write-only credential used only for this test
+     */
+    apiKey?: string;
+    authMode?: ProviderAuthMode;
+    baseUrl?: string;
+    chatModel?: string;
+    chatPath?: string;
+    embeddingModel?: string;
+    embeddingPath?: string;
+    secretRef?: string;
+};
+
+export type TraceAttributeKeyDto = {
+    /**
+     * Spans carrying the key, or traces for the resource scope.
+     */
+    count: number;
+    /**
+     * Approximate: derived from a `uniq` sketch, not the value set.
+     */
+    distinctValues: number;
+    key: string;
+    /**
+     * True when the key accepts attrMin/attrMax comparisons.
+     */
+    numeric: boolean;
+    scope: TraceAttributeScope;
+};
+
+export type TraceAttributeKeysV2ResponseDto = {
+    data: Array<TraceAttributeKeyDto>;
+};
+
+export type TraceAttributeScope = 'span' | 'resource';
+
 export type TraceClusterDatasetActionResponseDto = {
     datasetId: string;
     itemCount: number;
     revision: number;
+};
+
+export type TraceDatasetSelectionDto = {
+    note?: string;
+    traceIds: Array<string>;
 };
 
 export type TraceDetailV2ResponseDto = {
@@ -1117,6 +1431,28 @@ export type TraceDetailV2ResponseDto = {
 
 export type TraceEventsV2ResponseDto = {
     data: Array<EventResponseDto>;
+};
+
+export type TraceFacetValueDto = {
+    /**
+     * Matching traces, not spans, so it predicts the filtered list size.
+     */
+    count: number;
+    value: string;
+};
+
+export type TraceFacetsDto = {
+    agent?: Array<TraceFacetValueDto>;
+    model?: Array<TraceFacetValueDto>;
+    provider?: Array<TraceFacetValueDto>;
+    release?: Array<TraceFacetValueDto>;
+    semanticKind?: Array<TraceFacetValueDto>;
+    service?: Array<TraceFacetValueDto>;
+    tool?: Array<TraceFacetValueDto>;
+};
+
+export type TraceFacetsV2ResponseDto = {
+    data: TraceFacetsDto;
 };
 
 export type TraceFlowStatus = 'provider_not_configured' | 'consent_required' | 'insufficient_cohort' | 'processing' | 'ready' | 'failed';
@@ -1196,9 +1532,7 @@ export type TraceIntelligenceBackfillResponseDto = {
 };
 
 export type TraceIntelligenceClusterListMetaDto = {
-    cursor?: {
-        [key: string]: unknown;
-    } | null;
+    cursor?: string | null;
     hasMore: boolean;
 };
 
@@ -1272,6 +1606,23 @@ export type TraceIntelligenceFlowResponseDto = {
     trends: Array<{
         [key: string]: unknown;
     }>;
+};
+
+export type TraceIntelligenceProviderDto = {
+    /**
+     * Write-only provider credential
+     */
+    apiKey?: string;
+    authMode: ProviderAuthMode;
+    baseUrl: string;
+    chatModel: string;
+    chatPath?: string;
+    embeddingModel: string;
+    embeddingPath?: string;
+    /**
+     * Existing secret name or ARN under the configured prefix
+     */
+    secretRef?: string;
 };
 
 export type TraceIntelligenceProviderResponseDto = {
@@ -1354,6 +1705,14 @@ export type TraceListV2MetaDto = {
     cursor?: string | null;
     hasMore: boolean;
     limit: number;
+    /**
+     * Matching traces across the whole window, not just this page. Null when the store cannot count cheaply.
+     */
+    total?: number | null;
+    /**
+     * True when `total` is a floor rather than an exact count.
+     */
+    truncated: boolean;
 };
 
 export type TraceListV2ResponseDto = {
@@ -1362,6 +1721,43 @@ export type TraceListV2ResponseDto = {
 };
 
 export type TraceSignalKind = 'goal' | 'behavior' | 'outcome' | 'sentiment';
+
+export type TraceSpanMatchDto = {
+    agentName?: string;
+    durationMs?: number;
+    eventId: string;
+    model?: string;
+    occurredAt: string;
+    operationName?: string;
+    parentSpanId?: string;
+    semanticKind?: string;
+    serviceName?: string;
+    /**
+     * Text either side of the first match, for highlighting.
+     */
+    snippet: string;
+    spanId?: string;
+    status?: string;
+    toolName?: string;
+};
+
+export type TraceSpanSearchMetaDto = {
+    limit: number;
+    query: string;
+    /**
+     * Spans searched, matching or not.
+     */
+    scanned: number;
+    /**
+     * Matches found before the response cap.
+     */
+    total: number;
+};
+
+export type TraceSpanSearchV2ResponseDto = {
+    data: Array<TraceSpanMatchDto>;
+    meta: TraceSpanSearchMetaDto;
+};
 
 export type TraceStatus = 'ok' | 'error' | 'running';
 
@@ -1410,10 +1806,42 @@ export type TransferOwnershipDto = {
     userId: string;
 };
 
+export type UpdateAlertRuleDto = {
+    appId?: string;
+    /**
+     * Email address or an existing webhook endpoint ID.
+     */
+    destination?: string;
+    destinationType?: AlertDestinationType;
+    enabled?: boolean;
+    environmentId?: string;
+    metric?: AlertMetric;
+    model?: string;
+    name?: string;
+    operator?: AlertOperator;
+    release?: string;
+    service?: string;
+    threshold?: number;
+};
+
 export type UpdateEnvironmentDto = {
     color?: string;
     name?: string;
     requireConfirmationForDestructive?: boolean;
+};
+
+export type UpdateEvaluationTargetDto = {
+    config?: {
+        [key: string]: unknown;
+    };
+    enabled?: boolean;
+    endpoint?: string;
+    name?: string;
+    /**
+     * Reference to a separately managed secret. Raw credentials are never accepted.
+     */
+    secretRef?: string;
+    type?: EvaluationTargetType;
 };
 
 export type UpdateExportDestinationDto = {
@@ -1429,6 +1857,49 @@ export type UpdateExportDestinationDto = {
     name?: string;
     serviceName?: string;
     signals?: Array<ExportSignal>;
+};
+
+export type UpdateIssueDto = {
+    datasetId?: string;
+    evaluatorId?: string;
+    experimentId?: string;
+    ownerId?: string;
+    reviewQueueId?: string;
+    severity?: IssueSeverity;
+    status?: IssueStatus;
+};
+
+export type UpdateOnlineRuleDto = {
+    assessmentName?: string;
+    dailyBudget?: number;
+    enabled?: boolean;
+    evaluatorId?: string;
+    evaluatorVersion?: number;
+    filters?: OnlineRuleFiltersDto;
+    name?: string;
+    perOrgConcurrency?: number;
+    sampleRate?: number;
+    timeoutMs?: number;
+};
+
+export type UpdatePromptDto = {
+    archived?: boolean;
+    description?: string;
+    name?: string;
+    tags?: Array<string>;
+};
+
+export type UpdateTraceIntelligenceSettingsDto = {
+    /**
+     * Explicitly consent to sending captured content
+     */
+    contentConsent?: boolean;
+    dailyTraceLimit?: number;
+    enabled?: boolean;
+    provider?: TraceIntelligenceProviderDto;
+    retentionDays?: number;
+    samplingRate?: number;
+    scope?: TraceIntelligenceScope;
 };
 
 export type WebhookDeliveryResponseDto = {
@@ -1466,9 +1937,7 @@ export type WebhookEndpointCreateResponseDto = {
     /**
      * Prefix of the signing secret
      */
-    secretPrefix?: {
-        [key: string]: unknown;
-    };
+    secretPrefix?: string | null;
     signingSecretPrefix?: string;
     updatedAt?: string;
     url: string;
@@ -1796,7 +2265,7 @@ export type ChannelControllerGetChannelResponses = {
 export type ChannelControllerGetChannelResponse = ChannelControllerGetChannelResponses[keyof ChannelControllerGetChannelResponses];
 
 export type ChannelControllerUpdateChannelData = {
-    body?: never;
+    body: Function;
     path: {
         id: string;
     };
@@ -1994,8 +2463,8 @@ export type EventsSearchControllerSearchResponse = EventsSearchControllerSearchR
 export type ExportControllerListData = {
     body?: never;
     path?: never;
-    query: {
-        envSlug: string;
+    query?: {
+        envSlug?: string;
     };
     url: '/export-destinations';
 };
@@ -2216,7 +2685,7 @@ export type OrganizationControllerGetTelemetryPolicyResponses = {
 export type OrganizationControllerGetTelemetryPolicyResponse = OrganizationControllerGetTelemetryPolicyResponses[keyof OrganizationControllerGetTelemetryPolicyResponses];
 
 export type OrganizationControllerUpdateTelemetryPolicyData = {
-    body?: never;
+    body: TelemetryPolicyDto;
     path: {
         id: string;
     };
@@ -2467,7 +2936,7 @@ export type AlertControllerListResponses = {
 export type AlertControllerListResponse = AlertControllerListResponses[keyof AlertControllerListResponses];
 
 export type AlertControllerCreateData = {
-    body?: never;
+    body: CreateAlertRuleDto;
     path?: never;
     query?: never;
     url: '/v2/alerts';
@@ -2495,7 +2964,7 @@ export type AlertControllerRemoveResponses = {
 export type AlertControllerRemoveResponse = AlertControllerRemoveResponses[keyof AlertControllerRemoveResponses];
 
 export type AlertControllerUpdateData = {
-    body?: never;
+    body: UpdateAlertRuleDto;
     path: {
         alertRuleId: string;
     };
@@ -2513,11 +2982,61 @@ export type AnalyticsControllerBreakdownData = {
     body?: never;
     path?: never;
     query: {
+        agent?: string;
+        appId?: string;
+        /**
+         * attr[<attribute key>]=<value>
+         */
+        attr?: {
+            [key: string]: string;
+        };
+        /**
+         * attrMax[<attribute key>]=<value>
+         */
+        attrMax?: {
+            [key: string]: number;
+        };
+        /**
+         * attrMin[<attribute key>]=<value>
+         */
+        attrMin?: {
+            [key: string]: number;
+        };
         dimension: 'status' | 'service' | 'agent' | 'tool' | 'model' | 'provider' | 'release' | 'prompt' | 'prompt_version' | 'semantic_kind' | 'environment';
         environment?: string;
+        environmentId?: string;
         from?: string;
+        maxCostUsd?: string;
+        maxDurationMs?: string;
+        maxTokens?: string;
         measure?: 'traces' | 'errors' | 'success_rate' | 'latency_avg' | 'latency_p50' | 'latency_p95' | 'latency_p99' | 'tokens' | 'cost' | 'score';
+        minCostUsd?: string;
+        minDurationMs?: string;
+        minTokens?: string;
+        model?: string;
+        promptId?: string;
+        promptVersionId?: string;
+        provider?: string;
+        query?: string;
+        release?: string;
+        /**
+         * res[<attribute key>]=<value>
+         */
+        res?: {
+            [key: string]: string;
+        };
+        semanticKind?: string;
+        service?: string;
+        sessionId?: string;
+        spanKind?: string;
+        spanMinDurationMs?: string;
+        spanModel?: string;
+        spanStatus?: string;
+        spanTool?: string;
+        status?: string;
         to?: string;
+        tool?: string;
+        userId?: string;
     };
     url: '/v2/analytics/breakdown';
 };
@@ -2532,13 +3051,60 @@ export type AnalyticsControllerCompareData = {
     body?: never;
     path?: never;
     query: {
+        agent?: string;
+        appId?: string;
+        /**
+         * attr[<attribute key>]=<value>
+         */
+        attr?: {
+            [key: string]: string;
+        };
+        /**
+         * attrMax[<attribute key>]=<value>
+         */
+        attrMax?: {
+            [key: string]: number;
+        };
+        /**
+         * attrMin[<attribute key>]=<value>
+         */
+        attrMin?: {
+            [key: string]: number;
+        };
         baseline: string;
         candidate: string;
         dimension: 'release' | 'prompt_version' | 'model' | 'provider' | 'service' | 'environment';
         environment?: string;
-        from: string;
-        measure: string;
-        to: string;
+        environmentId?: string;
+        maxCostUsd?: string;
+        maxDurationMs?: string;
+        maxTokens?: string;
+        minCostUsd?: string;
+        minDurationMs?: string;
+        minTokens?: string;
+        model?: string;
+        promptId?: string;
+        promptVersionId?: string;
+        provider?: string;
+        query?: string;
+        release?: string;
+        /**
+         * res[<attribute key>]=<value>
+         */
+        res?: {
+            [key: string]: string;
+        };
+        semanticKind?: string;
+        service?: string;
+        sessionId?: string;
+        spanKind?: string;
+        spanMinDurationMs?: string;
+        spanModel?: string;
+        spanStatus?: string;
+        spanTool?: string;
+        status?: string;
+        tool?: string;
+        userId?: string;
     };
     url: '/v2/analytics/compare';
 };
@@ -2553,11 +3119,61 @@ export type AnalyticsControllerTimeseriesData = {
     body?: never;
     path?: never;
     query?: {
+        agent?: string;
+        appId?: string;
+        /**
+         * attr[<attribute key>]=<value>
+         */
+        attr?: {
+            [key: string]: string;
+        };
+        /**
+         * attrMax[<attribute key>]=<value>
+         */
+        attrMax?: {
+            [key: string]: number;
+        };
+        /**
+         * attrMin[<attribute key>]=<value>
+         */
+        attrMin?: {
+            [key: string]: number;
+        };
         environment?: string;
+        environmentId?: string;
         from?: string;
         interval?: 'hour' | 'day';
+        maxCostUsd?: string;
+        maxDurationMs?: string;
+        maxTokens?: string;
         measure?: 'traces' | 'errors' | 'success_rate' | 'latency_avg' | 'latency_p50' | 'latency_p95' | 'latency_p99' | 'tokens' | 'cost' | 'score';
+        minCostUsd?: string;
+        minDurationMs?: string;
+        minTokens?: string;
+        model?: string;
+        promptId?: string;
+        promptVersionId?: string;
+        provider?: string;
+        query?: string;
+        release?: string;
+        /**
+         * res[<attribute key>]=<value>
+         */
+        res?: {
+            [key: string]: string;
+        };
+        semanticKind?: string;
+        service?: string;
+        sessionId?: string;
+        spanKind?: string;
+        spanMinDurationMs?: string;
+        spanModel?: string;
+        spanStatus?: string;
+        spanTool?: string;
+        status?: string;
         to?: string;
+        tool?: string;
+        userId?: string;
     };
     url: '/v2/analytics/timeseries';
 };
@@ -2582,7 +3198,7 @@ export type DatasetControllerListResponses = {
 export type DatasetControllerListResponse = DatasetControllerListResponses[keyof DatasetControllerListResponses];
 
 export type DatasetControllerCreateData = {
-    body?: never;
+    body: CreateDatasetDto;
     path?: never;
     query?: never;
     url: '/v2/datasets';
@@ -2640,7 +3256,7 @@ export type DatasetControllerRevisionsResponses = {
 export type DatasetControllerRevisionsResponse = DatasetControllerRevisionsResponses[keyof DatasetControllerRevisionsResponses];
 
 export type DatasetControllerCreateRevisionData = {
-    body?: never;
+    body: CreateDatasetRevisionDto;
     path: {
         datasetId: string;
     };
@@ -2655,7 +3271,7 @@ export type DatasetControllerCreateRevisionResponses = {
 export type DatasetControllerCreateRevisionResponse = DatasetControllerCreateRevisionResponses[keyof DatasetControllerCreateRevisionResponses];
 
 export type DatasetControllerFromTracesData = {
-    body?: never;
+    body: TraceDatasetSelectionDto;
     path: {
         datasetId: string;
     };
@@ -2670,7 +3286,7 @@ export type DatasetControllerFromTracesResponses = {
 export type DatasetControllerFromTracesResponse = DatasetControllerFromTracesResponses[keyof DatasetControllerFromTracesResponses];
 
 export type DatasetControllerImportRevisionData = {
-    body?: never;
+    body: ImportDatasetRevisionDto;
     path: {
         datasetId: string;
     };
@@ -2688,7 +3304,7 @@ export type DatasetControllerExportRevisionData = {
     body?: never;
     path: {
         datasetId: string;
-        format: string;
+        format: 'jsonl' | 'csv';
         revision: number;
     };
     query?: never;
@@ -2731,7 +3347,7 @@ export type EvaluationTargetControllerListResponses = {
 export type EvaluationTargetControllerListResponse = EvaluationTargetControllerListResponses[keyof EvaluationTargetControllerListResponses];
 
 export type EvaluationTargetControllerCreateData = {
-    body?: never;
+    body: CreateEvaluationTargetDto;
     path?: never;
     query?: never;
     url: '/v2/evaluation-targets';
@@ -2774,7 +3390,7 @@ export type EvaluationTargetControllerGetResponses = {
 export type EvaluationTargetControllerGetResponse = EvaluationTargetControllerGetResponses[keyof EvaluationTargetControllerGetResponses];
 
 export type EvaluationTargetControllerUpdateData = {
-    body?: never;
+    body: UpdateEvaluationTargetDto;
     path: {
         targetId: string;
     };
@@ -2802,7 +3418,7 @@ export type EvaluatorControllerListResponses = {
 export type EvaluatorControllerListResponse = EvaluatorControllerListResponses[keyof EvaluatorControllerListResponses];
 
 export type EvaluatorControllerCreateData = {
-    body?: never;
+    body: CreateEvaluatorDto;
     path?: never;
     query?: never;
     url: '/v2/evaluators';
@@ -2860,7 +3476,7 @@ export type EvaluatorControllerVersionsResponses = {
 export type EvaluatorControllerVersionsResponse = EvaluatorControllerVersionsResponses[keyof EvaluatorControllerVersionsResponses];
 
 export type EvaluatorControllerCreateVersionData = {
-    body?: never;
+    body: CreateEvaluatorVersionDto;
     path: {
         evaluatorId: string;
     };
@@ -2904,7 +3520,7 @@ export type ExperimentControllerListResponses = {
 export type ExperimentControllerListResponse = ExperimentControllerListResponses[keyof ExperimentControllerListResponses];
 
 export type ExperimentControllerCreateData = {
-    body?: never;
+    body: CreateExperimentDto;
     path?: never;
     query?: never;
     url: '/v2/experiments';
@@ -2979,7 +3595,7 @@ export type ExperimentControllerCompareResponses = {
 export type ExperimentControllerCompareResponse = ExperimentControllerCompareResponses[keyof ExperimentControllerCompareResponses];
 
 export type ExperimentControllerGateData = {
-    body?: never;
+    body: ExperimentGateDto;
     path: {
         experimentId: string;
     };
@@ -3009,7 +3625,7 @@ export type ExperimentControllerResultsResponses = {
 export type ExperimentControllerResultsResponse = ExperimentControllerResultsResponses[keyof ExperimentControllerResultsResponses];
 
 export type ExperimentControllerSubmitResultsData = {
-    body?: never;
+    body: SubmitLocalExperimentResultsDto;
     path: {
         experimentId: string;
     };
@@ -3052,7 +3668,7 @@ export type IntelligenceControllerListResponses = {
 export type IntelligenceControllerListResponse = IntelligenceControllerListResponses[keyof IntelligenceControllerListResponses];
 
 export type IntelligenceControllerRunData = {
-    body?: never;
+    body: RunIntelligenceDto;
     path?: never;
     query?: never;
     url: '/v2/intelligence/jobs';
@@ -3082,9 +3698,9 @@ export type IntelligenceControllerGetResponse = IntelligenceControllerGetRespons
 export type IssueControllerListData = {
     body?: never;
     path?: never;
-    query: {
-        severity: string;
-        status: string;
+    query?: {
+        severity?: string;
+        status?: string;
     };
     url: '/v2/issues';
 };
@@ -3111,7 +3727,7 @@ export type IssueControllerGetResponses = {
 export type IssueControllerGetResponse = IssueControllerGetResponses[keyof IssueControllerGetResponses];
 
 export type IssueControllerUpdateData = {
-    body?: never;
+    body: UpdateIssueDto;
     path: {
         issueId: string;
     };
@@ -3126,7 +3742,7 @@ export type IssueControllerUpdateResponses = {
 export type IssueControllerUpdateResponse = IssueControllerUpdateResponses[keyof IssueControllerUpdateResponses];
 
 export type IssueControllerAddToDatasetData = {
-    body?: never;
+    body: AddIssueToDatasetDto;
     path: {
         issueId: string;
     };
@@ -3141,7 +3757,7 @@ export type IssueControllerAddToDatasetResponses = {
 export type IssueControllerAddToDatasetResponse = IssueControllerAddToDatasetResponses[keyof IssueControllerAddToDatasetResponses];
 
 export type IssueControllerMergeData = {
-    body?: never;
+    body: MergeIssueDto;
     path: {
         issueId: string;
     };
@@ -3184,7 +3800,7 @@ export type OnlineEvaluationControllerListResponses = {
 export type OnlineEvaluationControllerListResponse = OnlineEvaluationControllerListResponses[keyof OnlineEvaluationControllerListResponses];
 
 export type OnlineEvaluationControllerCreateData = {
-    body?: never;
+    body: CreateOnlineRuleDto;
     path?: never;
     query?: never;
     url: '/v2/online-evaluation-rules';
@@ -3227,7 +3843,7 @@ export type OnlineEvaluationControllerGetResponses = {
 export type OnlineEvaluationControllerGetResponse = OnlineEvaluationControllerGetResponses[keyof OnlineEvaluationControllerGetResponses];
 
 export type OnlineEvaluationControllerUpdateData = {
-    body?: never;
+    body: UpdateOnlineRuleDto;
     path: {
         ruleId: string;
     };
@@ -3242,7 +3858,7 @@ export type OnlineEvaluationControllerUpdateResponses = {
 export type OnlineEvaluationControllerUpdateResponse = OnlineEvaluationControllerUpdateResponses[keyof OnlineEvaluationControllerUpdateResponses];
 
 export type OnlineEvaluationControllerBackfillData = {
-    body?: never;
+    body: BackfillOnlineRuleDto;
     path: {
         ruleId: string;
     };
@@ -3285,7 +3901,7 @@ export type PromptControllerListResponses = {
 export type PromptControllerListResponse = PromptControllerListResponses[keyof PromptControllerListResponses];
 
 export type PromptControllerCreateData = {
-    body?: never;
+    body: CreatePromptDto;
     path?: never;
     query?: never;
     url: '/v2/prompts';
@@ -3328,7 +3944,7 @@ export type PromptControllerGetResponses = {
 export type PromptControllerGetResponse = PromptControllerGetResponses[keyof PromptControllerGetResponses];
 
 export type PromptControllerUpdateData = {
-    body?: never;
+    body: UpdatePromptDto;
     path: {
         promptId: string;
     };
@@ -3376,7 +3992,7 @@ export type PromptControllerDeploymentsResponses = {
 export type PromptControllerDeploymentsResponse = PromptControllerDeploymentsResponses[keyof PromptControllerDeploymentsResponses];
 
 export type PromptControllerPromoteData = {
-    body?: never;
+    body: PromotePromptDto;
     path: {
         promptId: string;
     };
@@ -3391,7 +4007,7 @@ export type PromptControllerPromoteResponses = {
 export type PromptControllerPromoteResponse = PromptControllerPromoteResponses[keyof PromptControllerPromoteResponses];
 
 export type PromptControllerRollbackData = {
-    body?: never;
+    body: RollbackPromptDto;
     path: {
         promptId: string;
     };
@@ -3421,7 +4037,7 @@ export type PromptControllerVersionsResponses = {
 export type PromptControllerVersionsResponse = PromptControllerVersionsResponses[keyof PromptControllerVersionsResponses];
 
 export type PromptControllerCreateVersionData = {
-    body?: never;
+    body: CreatePromptVersionDto;
     path: {
         promptId: string;
     };
@@ -3465,7 +4081,7 @@ export type TraceIntelligenceControllerListBackfillsResponses = {
 export type TraceIntelligenceControllerListBackfillsResponse = TraceIntelligenceControllerListBackfillsResponses[keyof TraceIntelligenceControllerListBackfillsResponses];
 
 export type TraceIntelligenceControllerCreateBackfillData = {
-    body?: never;
+    body: CreateTraceIntelligenceBackfillDto;
     path?: never;
     query?: never;
     url: '/v2/trace-intelligence/backfills';
@@ -3499,11 +4115,11 @@ export type TraceIntelligenceControllerListClustersData = {
         appId: string;
         cursor?: string;
         environmentId: string;
-        from: string;
+        from?: string;
         limit?: number;
         search?: string;
         signalKind?: string;
-        to: string;
+        to?: string;
     };
     url: '/v2/trace-intelligence/clusters';
 };
@@ -3530,7 +4146,7 @@ export type TraceIntelligenceControllerGetClusterResponses = {
 export type TraceIntelligenceControllerGetClusterResponse = TraceIntelligenceControllerGetClusterResponses[keyof TraceIntelligenceControllerGetClusterResponses];
 
 export type TraceIntelligenceControllerAddToDatasetData = {
-    body?: never;
+    body: AddTraceClusterToDatasetDto;
     path: {
         clusterId: string;
     };
@@ -3550,8 +4166,8 @@ export type TraceIntelligenceControllerCoverageData = {
     query: {
         appId: string;
         environmentId: string;
-        from: string;
-        to: string;
+        from?: string;
+        to?: string;
     };
     url: '/v2/trace-intelligence/coverage';
 };
@@ -3596,7 +4212,7 @@ export type TraceIntelligenceControllerGetSettingsResponses = {
 export type TraceIntelligenceControllerGetSettingsResponse = TraceIntelligenceControllerGetSettingsResponses[keyof TraceIntelligenceControllerGetSettingsResponses];
 
 export type TraceIntelligenceControllerUpdateSettingsData = {
-    body?: never;
+    body: UpdateTraceIntelligenceSettingsDto;
     path?: never;
     query?: never;
     url: '/v2/trace-intelligence/settings';
@@ -3609,7 +4225,7 @@ export type TraceIntelligenceControllerUpdateSettingsResponses = {
 export type TraceIntelligenceControllerUpdateSettingsResponse = TraceIntelligenceControllerUpdateSettingsResponses[keyof TraceIntelligenceControllerUpdateSettingsResponses];
 
 export type TraceIntelligenceControllerTestProviderData = {
-    body?: never;
+    body: TestTraceIntelligenceProviderDto;
     path?: never;
     query?: never;
     url: '/v2/trace-intelligence/settings/provider/test';
@@ -3641,19 +4257,58 @@ export type TraceV2ControllerListData = {
     path?: never;
     query?: {
         agent?: string;
+        appId?: string;
+        /**
+         * attr[<attribute key>]=<value>
+         */
+        attr?: {
+            [key: string]: string;
+        };
+        /**
+         * attrMax[<attribute key>]=<value>
+         */
+        attrMax?: {
+            [key: string]: number;
+        };
+        /**
+         * attrMin[<attribute key>]=<value>
+         */
+        attrMin?: {
+            [key: string]: number;
+        };
         cursor?: string;
+        environment?: string;
+        environmentId?: string;
+        fields?: string;
         from?: string;
         limit?: number;
+        maxCostUsd?: string;
+        maxDurationMs?: string;
+        maxTokens?: string;
+        minCostUsd?: string;
+        minDurationMs?: string;
+        minTokens?: string;
         model?: string;
         promptId?: string;
         promptVersionId?: string;
         provider?: string;
         query?: string;
         release?: string;
+        /**
+         * res[<attribute key>]=<value>
+         */
+        res?: {
+            [key: string]: string;
+        };
         semanticKind?: string;
         service?: string;
         sessionId?: string;
         sort?: 'last_seen_desc' | 'last_seen_asc' | 'duration_desc' | 'cost_desc' | 'tokens_desc';
+        spanKind?: string;
+        spanMinDurationMs?: string;
+        spanModel?: string;
+        spanStatus?: string;
+        spanTool?: string;
         status?: string;
         to?: string;
         tool?: string;
@@ -3667,6 +4322,146 @@ export type TraceV2ControllerListResponses = {
 };
 
 export type TraceV2ControllerListResponse = TraceV2ControllerListResponses[keyof TraceV2ControllerListResponses];
+
+export type TraceV2ControllerAttributeKeysData = {
+    body?: never;
+    path?: never;
+    query?: {
+        agent?: string;
+        appId?: string;
+        /**
+         * attr[<attribute key>]=<value>
+         */
+        attr?: {
+            [key: string]: string;
+        };
+        /**
+         * attrMax[<attribute key>]=<value>
+         */
+        attrMax?: {
+            [key: string]: number;
+        };
+        /**
+         * attrMin[<attribute key>]=<value>
+         */
+        attrMin?: {
+            [key: string]: number;
+        };
+        environment?: string;
+        environmentId?: string;
+        from?: string;
+        maxCostUsd?: string;
+        maxDurationMs?: string;
+        maxTokens?: string;
+        minCostUsd?: string;
+        minDurationMs?: string;
+        minTokens?: string;
+        model?: string;
+        prefix?: string;
+        promptId?: string;
+        promptVersionId?: string;
+        provider?: string;
+        query?: string;
+        release?: string;
+        /**
+         * res[<attribute key>]=<value>
+         */
+        res?: {
+            [key: string]: string;
+        };
+        scope?: 'span' | 'resource';
+        semanticKind?: string;
+        service?: string;
+        sessionId?: string;
+        spanKind?: string;
+        spanMinDurationMs?: string;
+        spanModel?: string;
+        spanStatus?: string;
+        spanTool?: string;
+        status?: string;
+        to?: string;
+        tool?: string;
+        userId?: string;
+    };
+    url: '/v2/traces/attribute-keys';
+};
+
+export type TraceV2ControllerAttributeKeysResponses = {
+    200: TraceAttributeKeysV2ResponseDto;
+};
+
+export type TraceV2ControllerAttributeKeysResponse = TraceV2ControllerAttributeKeysResponses[keyof TraceV2ControllerAttributeKeysResponses];
+
+export type TraceV2ControllerFacetsData = {
+    body?: never;
+    path?: never;
+    query?: {
+        agent?: string;
+        appId?: string;
+        /**
+         * attr[<attribute key>]=<value>
+         */
+        attr?: {
+            [key: string]: string;
+        };
+        /**
+         * attrMax[<attribute key>]=<value>
+         */
+        attrMax?: {
+            [key: string]: number;
+        };
+        /**
+         * attrMin[<attribute key>]=<value>
+         */
+        attrMin?: {
+            [key: string]: number;
+        };
+        environment?: string;
+        environmentId?: string;
+        /**
+         * Comma-separated: service, model, agent, tool, provider, release, semanticKind. Defaults to all.
+         */
+        fields?: string;
+        from?: string;
+        maxCostUsd?: string;
+        maxDurationMs?: string;
+        maxTokens?: string;
+        minCostUsd?: string;
+        minDurationMs?: string;
+        minTokens?: string;
+        model?: string;
+        promptId?: string;
+        promptVersionId?: string;
+        provider?: string;
+        query?: string;
+        release?: string;
+        /**
+         * res[<attribute key>]=<value>
+         */
+        res?: {
+            [key: string]: string;
+        };
+        semanticKind?: string;
+        service?: string;
+        sessionId?: string;
+        spanKind?: string;
+        spanMinDurationMs?: string;
+        spanModel?: string;
+        spanStatus?: string;
+        spanTool?: string;
+        status?: string;
+        to?: string;
+        tool?: string;
+        userId?: string;
+    };
+    url: '/v2/traces/facets';
+};
+
+export type TraceV2ControllerFacetsResponses = {
+    200: TraceFacetsV2ResponseDto;
+};
+
+export type TraceV2ControllerFacetsResponse = TraceV2ControllerFacetsResponses[keyof TraceV2ControllerFacetsResponses];
 
 export type TraceV2ControllerDetailData = {
     body?: never;
@@ -3760,6 +4555,24 @@ export type TraceV2ControllerEventsResponses = {
 };
 
 export type TraceV2ControllerEventsResponse = TraceV2ControllerEventsResponses[keyof TraceV2ControllerEventsResponses];
+
+export type TraceV2ControllerSpansData = {
+    body?: never;
+    path: {
+        traceId: string;
+    };
+    query?: {
+        limit?: number;
+        q?: string;
+    };
+    url: '/v2/traces/{traceId}/spans';
+};
+
+export type TraceV2ControllerSpansResponses = {
+    200: TraceSpanSearchV2ResponseDto;
+};
+
+export type TraceV2ControllerSpansResponse = TraceV2ControllerSpansResponses[keyof TraceV2ControllerSpansResponses];
 
 export type WebhookControllerGetDeliveriesData = {
     body?: never;

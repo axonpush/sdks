@@ -1,6 +1,40 @@
 {
   "components": {
     "schemas": {
+      "AddIssueToDatasetDto": {
+        "properties": {
+          "datasetId": {
+            "type": "string"
+          },
+          "note": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "datasetId"
+        ],
+        "type": "object"
+      },
+      "AddTraceClusterToDatasetDto": {
+        "properties": {
+          "datasetId": {
+            "type": "string"
+          },
+          "maxTraces": {
+            "default": 100,
+            "maximum": 1000,
+            "minimum": 1,
+            "type": "number"
+          },
+          "note": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "datasetId"
+        ],
+        "type": "object"
+      },
       "AlertDeleteDto": {
         "properties": {
           "deleted": {
@@ -557,6 +591,29 @@
         ],
         "type": "string"
       },
+      "BackfillOnlineRuleDto": {
+        "properties": {
+          "from": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "limit": {
+            "default": 1000,
+            "maximum": 10000,
+            "minimum": 1,
+            "type": "number"
+          },
+          "to": {
+            "format": "date-time",
+            "type": "string"
+          }
+        },
+        "required": [
+          "from",
+          "to"
+        ],
+        "type": "object"
+      },
       "BackfillStatus": {
         "enum": [
           "queued",
@@ -578,6 +635,13 @@
               }
             ]
           },
+          "gitSha": {
+            "description": "Commit this build was made from.",
+            "type": "string"
+          },
+          "license": {
+            "$ref": "#/components/schemas/LicenseStateDto"
+          },
           "serverVersion": {
             "type": "string"
           },
@@ -590,6 +654,8 @@
           "version",
           "deploymentMode",
           "serverVersion",
+          "gitSha",
+          "license",
           "capabilities"
         ],
         "type": "object"
@@ -695,6 +761,69 @@
           "full"
         ],
         "type": "string"
+      },
+      "CreateAlertRuleDto": {
+        "properties": {
+          "appId": {
+            "type": "string"
+          },
+          "destination": {
+            "description": "Email address or an existing webhook endpoint ID.",
+            "type": "string"
+          },
+          "destinationType": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/AlertDestinationType"
+              }
+            ]
+          },
+          "enabled": {
+            "default": true,
+            "type": "boolean"
+          },
+          "environmentId": {
+            "type": "string"
+          },
+          "metric": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/AlertMetric"
+              }
+            ]
+          },
+          "model": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "operator": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/AlertOperator"
+              }
+            ]
+          },
+          "release": {
+            "type": "string"
+          },
+          "service": {
+            "type": "string"
+          },
+          "threshold": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "name",
+          "metric",
+          "operator",
+          "threshold",
+          "destinationType",
+          "destination"
+        ],
+        "type": "object"
       },
       "CreateApiKeyDto": {
         "properties": {
@@ -812,6 +941,50 @@
         ],
         "type": "object"
       },
+      "CreateDatasetDto": {
+        "properties": {
+          "description": {
+            "type": "string"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/DatasetItemInputDto"
+            },
+            "type": "array"
+          },
+          "name": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "name"
+        ],
+        "type": "object"
+      },
+      "CreateDatasetRevisionDto": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/DatasetItemInputDto"
+            },
+            "type": "array"
+          },
+          "note": {
+            "type": "string"
+          },
+          "source": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/DatasetRevisionSource"
+              }
+            ]
+          }
+        },
+        "required": [
+          "items"
+        ],
+        "type": "object"
+      },
       "CreateEnvironmentDto": {
         "properties": {
           "cloneFromEnvId": {
@@ -835,6 +1008,111 @@
         },
         "required": [
           "name"
+        ],
+        "type": "object"
+      },
+      "CreateEvaluationTargetDto": {
+        "properties": {
+          "config": {
+            "additionalProperties": true,
+            "type": "object"
+          },
+          "enabled": {
+            "default": true,
+            "type": "boolean"
+          },
+          "endpoint": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "secretRef": {
+            "description": "Reference to a separately managed secret. Raw credentials are never accepted.",
+            "type": "string"
+          },
+          "type": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/EvaluationTargetType"
+              }
+            ]
+          }
+        },
+        "required": [
+          "name",
+          "type"
+        ],
+        "type": "object"
+      },
+      "CreateEvaluatorDto": {
+        "properties": {
+          "config": {
+            "additionalProperties": true,
+            "type": "object"
+          },
+          "description": {
+            "type": "string"
+          },
+          "kind": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/EvaluatorKind"
+              }
+            ]
+          },
+          "model": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "outputSchema": {
+            "type": "object"
+          },
+          "provider": {
+            "type": "string"
+          },
+          "rubric": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "kind",
+          "config",
+          "name"
+        ],
+        "type": "object"
+      },
+      "CreateEvaluatorVersionDto": {
+        "properties": {
+          "config": {
+            "additionalProperties": true,
+            "type": "object"
+          },
+          "kind": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/EvaluatorKind"
+              }
+            ]
+          },
+          "model": {
+            "type": "string"
+          },
+          "outputSchema": {
+            "type": "object"
+          },
+          "provider": {
+            "type": "string"
+          },
+          "rubric": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "kind",
+          "config"
         ],
         "type": "object"
       },
@@ -892,6 +1170,62 @@
         ],
         "type": "object"
       },
+      "CreateExperimentDto": {
+        "properties": {
+          "baselineExperimentId": {
+            "type": "string"
+          },
+          "configuration": {
+            "additionalProperties": true,
+            "type": "object"
+          },
+          "datasetId": {
+            "type": "string"
+          },
+          "datasetRevision": {
+            "type": "number"
+          },
+          "evaluatorVersions": {
+            "items": {
+              "$ref": "#/components/schemas/EvaluatorVersionRefDto"
+            },
+            "type": "array"
+          },
+          "gitBranch": {
+            "type": "string"
+          },
+          "gitCommit": {
+            "type": "string"
+          },
+          "gitDirty": {
+            "type": "boolean"
+          },
+          "modelConfiguration": {
+            "additionalProperties": true,
+            "type": "object"
+          },
+          "name": {
+            "type": "string"
+          },
+          "promptVersionId": {
+            "type": "string"
+          },
+          "release": {
+            "type": "string"
+          },
+          "targetId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "datasetId",
+          "datasetRevision",
+          "targetId",
+          "evaluatorVersions"
+        ],
+        "type": "object"
+      },
       "CreateExportDestinationDto": {
         "properties": {
           "active": {
@@ -900,6 +1234,7 @@
           },
           "endpointUrl": {
             "description": "OTLP/HTTP base URL (v1/logs and v1/traces are appended)",
+            "format": "uri",
             "type": "string"
           },
           "envSlug": {
@@ -931,6 +1266,7 @@
             "items": {
               "$ref": "#/components/schemas/ExportSignal"
             },
+            "minItems": 1,
             "type": "array"
           }
         },
@@ -966,15 +1302,71 @@
           "expiresInDays": {
             "description": "Token lifetime in days (default 365)",
             "example": 365,
+            "maximum": 3650,
+            "minimum": 1,
             "type": "number"
           },
           "name": {
             "example": "Factory floor gateway",
+            "maxLength": 80,
             "type": "string"
           }
         },
         "required": [
           "name"
+        ],
+        "type": "object"
+      },
+      "CreateOnlineRuleDto": {
+        "properties": {
+          "assessmentName": {
+            "type": "string"
+          },
+          "dailyBudget": {
+            "default": 1000,
+            "maximum": 100000,
+            "minimum": 1,
+            "type": "number"
+          },
+          "enabled": {
+            "default": true,
+            "type": "boolean"
+          },
+          "evaluatorId": {
+            "type": "string"
+          },
+          "evaluatorVersion": {
+            "type": "number"
+          },
+          "filters": {
+            "$ref": "#/components/schemas/OnlineRuleFiltersDto"
+          },
+          "name": {
+            "type": "string"
+          },
+          "perOrgConcurrency": {
+            "default": 4,
+            "maximum": 32,
+            "minimum": 1,
+            "type": "number"
+          },
+          "sampleRate": {
+            "default": 1,
+            "maximum": 1,
+            "minimum": 0,
+            "type": "number"
+          },
+          "timeoutMs": {
+            "default": 15000,
+            "maximum": 120000,
+            "minimum": 100,
+            "type": "number"
+          }
+        },
+        "required": [
+          "name",
+          "evaluatorId",
+          "evaluatorVersion"
         ],
         "type": "object"
       },
@@ -993,6 +1385,81 @@
         "required": [
           "name",
           "slug"
+        ],
+        "type": "object"
+      },
+      "CreatePromptDto": {
+        "properties": {
+          "description": {
+            "type": "string"
+          },
+          "modelConfiguration": {
+            "additionalProperties": true,
+            "type": "object"
+          },
+          "name": {
+            "type": "string"
+          },
+          "note": {
+            "type": "string"
+          },
+          "tags": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "template": {
+            "type": "string"
+          },
+          "toolConfiguration": {
+            "additionalProperties": true,
+            "type": "object"
+          },
+          "variables": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "template",
+          "name"
+        ],
+        "type": "object"
+      },
+      "CreatePromptVersionDto": {
+        "properties": {
+          "modelConfiguration": {
+            "additionalProperties": true,
+            "type": "object"
+          },
+          "note": {
+            "type": "string"
+          },
+          "tags": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "template": {
+            "type": "string"
+          },
+          "toolConfiguration": {
+            "additionalProperties": true,
+            "type": "object"
+          },
+          "variables": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "template"
         ],
         "type": "object"
       },
@@ -1015,6 +1482,37 @@
         ],
         "type": "object"
       },
+      "CreateTraceIntelligenceBackfillDto": {
+        "properties": {
+          "appId": {
+            "type": "string"
+          },
+          "environmentId": {
+            "type": "string"
+          },
+          "from": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "maxTraces": {
+            "default": 1000,
+            "maximum": 10000,
+            "minimum": 1,
+            "type": "number"
+          },
+          "to": {
+            "format": "date-time",
+            "type": "string"
+          }
+        },
+        "required": [
+          "appId",
+          "environmentId",
+          "from",
+          "to"
+        ],
+        "type": "object"
+      },
       "CreateWebhookEndpointDto": {
         "properties": {
           "channelId": {
@@ -1034,6 +1532,7 @@
             "type": "string"
           },
           "url": {
+            "format": "uri",
             "type": "string"
           }
         },
@@ -1124,6 +1623,40 @@
         ],
         "type": "string"
       },
+      "DatasetItemInputDto": {
+        "properties": {
+          "attachments": {
+            "type": "object"
+          },
+          "expectedOutput": {
+            "type": "object"
+          },
+          "input": {
+            "description": "Redacted before persistence according to the organization policy.",
+            "type": "object"
+          },
+          "itemId": {
+            "type": "string"
+          },
+          "metadata": {
+            "additionalProperties": true,
+            "type": "object"
+          },
+          "sourceSpanId": {
+            "type": "string"
+          },
+          "sourceTraceId": {
+            "type": "string"
+          },
+          "toolTrajectory": {
+            "type": "object"
+          }
+        },
+        "required": [
+          "input"
+        ],
+        "type": "object"
+      },
       "DatasetListDto": {
         "properties": {
           "data": {
@@ -1161,6 +1694,7 @@
             "type": "string"
           },
           "metadata": {
+            "additionalProperties": true,
             "type": "object"
           },
           "sourceSpanId": {
@@ -1243,6 +1777,15 @@
           "data"
         ],
         "type": "object"
+      },
+      "DatasetRevisionSource": {
+        "enum": [
+          "manual",
+          "import",
+          "trace",
+          "bulk_trace"
+        ],
+        "type": "string"
       },
       "DeleteResultDto": {
         "properties": {
@@ -1332,6 +1875,7 @@
       "EvaluationTargetDto": {
         "properties": {
           "config": {
+            "additionalProperties": true,
             "type": "object"
           },
           "createdAt": {
@@ -1482,6 +2026,7 @@
       "EvaluatorVersionDto": {
         "properties": {
           "config": {
+            "additionalProperties": true,
             "type": "object"
           },
           "createdAt": {
@@ -1570,7 +2115,7 @@
           },
           "environmentId": {
             "nullable": true,
-            "type": "object"
+            "type": "string"
           },
           "eventId": {
             "type": "string"
@@ -1600,7 +2145,7 @@
         "properties": {
           "cursor": {
             "nullable": true,
-            "type": "object"
+            "type": "string"
           },
           "hasMore": {
             "type": "boolean"
@@ -1793,18 +2338,21 @@
       "ExperimentComparisonDto": {
         "properties": {
           "baseline": {
+            "additionalProperties": true,
             "type": "object"
           },
           "baselineExperimentId": {
             "type": "string"
           },
           "candidate": {
+            "additionalProperties": true,
             "type": "object"
           },
           "candidateExperimentId": {
             "type": "string"
           },
           "delta": {
+            "additionalProperties": true,
             "type": "object"
           }
         },
@@ -1837,6 +2385,7 @@
             "type": "number"
           },
           "configuration": {
+            "additionalProperties": true,
             "type": "object"
           },
           "costUsd": {
@@ -1877,6 +2426,7 @@
             "type": "number"
           },
           "modelConfiguration": {
+            "additionalProperties": true,
             "type": "object"
           },
           "name": {
@@ -1932,6 +2482,32 @@
         ],
         "type": "object"
       },
+      "ExperimentGateDto": {
+        "properties": {
+          "maxCostIncreasePercent": {
+            "type": "number"
+          },
+          "maxCostUsd": {
+            "type": "number"
+          },
+          "maxFailureRate": {
+            "type": "number"
+          },
+          "maxLatencyIncreasePercent": {
+            "type": "number"
+          },
+          "maxLatencyMs": {
+            "type": "number"
+          },
+          "minScore": {
+            "type": "number"
+          },
+          "minScoreDelta": {
+            "type": "number"
+          }
+        },
+        "type": "object"
+      },
       "ExperimentGateResultDto": {
         "properties": {
           "baselineExperimentId": {
@@ -1941,6 +2517,7 @@
             "type": "string"
           },
           "metrics": {
+            "additionalProperties": true,
             "type": "object"
           },
           "passed": {
@@ -2147,6 +2724,10 @@
         ],
         "type": "string"
       },
+      "Function": {
+        "properties": {},
+        "type": "object"
+      },
       "HealthResponseDto": {
         "properties": {
           "flags": {
@@ -2158,12 +2739,39 @@
           },
           "timestamp": {
             "type": "string"
+          },
+          "version": {
+            "type": "string"
           }
         },
         "required": [
           "status",
+          "version",
           "timestamp",
           "flags"
+        ],
+        "type": "object"
+      },
+      "ImportDatasetRevisionDto": {
+        "properties": {
+          "content": {
+            "description": "UTF-8 JSONL or CSV content.",
+            "type": "string"
+          },
+          "format": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/DatasetExportFormat"
+              }
+            ]
+          },
+          "note": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "format",
+          "content"
         ],
         "type": "object"
       },
@@ -2461,6 +3069,7 @@
             "type": "string"
           },
           "evidence": {
+            "additionalProperties": true,
             "type": "object"
           },
           "fingerprint": {
@@ -2564,6 +3173,7 @@
             "type": "string"
           },
           "labelProvenance": {
+            "additionalProperties": true,
             "type": "object"
           },
           "lastSeenAt": {
@@ -2656,6 +3266,109 @@
           "regressed"
         ],
         "type": "string"
+      },
+      "LicenseStateDto": {
+        "properties": {
+          "applicable": {
+            "type": "boolean"
+          },
+          "expiresAt": {
+            "format": "date-time",
+            "nullable": true,
+            "type": "string"
+          },
+          "graceEndsAt": {
+            "format": "date-time",
+            "nullable": true,
+            "type": "string"
+          },
+          "lastDiagnosticsAt": {
+            "format": "date-time",
+            "nullable": true,
+            "type": "string"
+          },
+          "message": {
+            "nullable": true,
+            "type": "string"
+          },
+          "reason": {
+            "nullable": true,
+            "type": "string"
+          },
+          "status": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/LicenseStatus"
+              }
+            ]
+          },
+          "tier": {
+            "nullable": true,
+            "type": "string"
+          }
+        },
+        "required": [
+          "status",
+          "applicable",
+          "tier",
+          "expiresAt",
+          "graceEndsAt",
+          "message",
+          "lastDiagnosticsAt",
+          "reason"
+        ],
+        "type": "object"
+      },
+      "LicenseStatus": {
+        "enum": [
+          "active",
+          "warning",
+          "grace",
+          "stopped",
+          "unlicensed"
+        ],
+        "type": "string"
+      },
+      "LocalExperimentResultDto": {
+        "properties": {
+          "costUsd": {
+            "type": "number"
+          },
+          "error": {
+            "type": "string"
+          },
+          "itemId": {
+            "type": "string"
+          },
+          "latencyMs": {
+            "type": "number"
+          },
+          "output": {
+            "type": "object"
+          },
+          "totalTokens": {
+            "type": "number"
+          },
+          "traceId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "itemId",
+          "output"
+        ],
+        "type": "object"
+      },
+      "MergeIssueDto": {
+        "properties": {
+          "targetIssueId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "targetIssueId"
+        ],
+        "type": "object"
       },
       "MessageResponseDto": {
         "properties": {
@@ -3062,6 +3775,32 @@
         ],
         "type": "string"
       },
+      "PromotePromptDto": {
+        "properties": {
+          "approved": {
+            "description": "Must be true. Promotion is intentionally human-approved.",
+            "type": "boolean"
+          },
+          "environment": {
+            "type": "string"
+          },
+          "release": {
+            "type": "string"
+          },
+          "version": {
+            "type": "number"
+          },
+          "webhookEndpointId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "version",
+          "environment",
+          "approved"
+        ],
+        "type": "object"
+      },
       "PromptComparisonDto": {
         "properties": {
           "baseline": {
@@ -3218,6 +3957,7 @@
             "type": "string"
           },
           "modelConfiguration": {
+            "additionalProperties": true,
             "type": "object"
           },
           "note": {
@@ -3239,6 +3979,7 @@
             "type": "string"
           },
           "toolConfiguration": {
+            "additionalProperties": true,
             "type": "object"
           },
           "variables": {
@@ -3402,6 +4143,60 @@
         ],
         "type": "object"
       },
+      "RollbackPromptDto": {
+        "properties": {
+          "approved": {
+            "type": "boolean"
+          },
+          "environment": {
+            "type": "string"
+          },
+          "release": {
+            "type": "string"
+          },
+          "version": {
+            "description": "Defaults to the immediately previous promoted version.",
+            "type": "number"
+          },
+          "webhookEndpointId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "environment",
+          "approved"
+        ],
+        "type": "object"
+      },
+      "RunIntelligenceDto": {
+        "properties": {
+          "evaluatorId": {
+            "type": "string"
+          },
+          "evaluatorVersion": {
+            "type": "number"
+          },
+          "maxCostUsd": {
+            "default": 0,
+            "maximum": 1000,
+            "minimum": 0,
+            "type": "number"
+          },
+          "maxLabels": {
+            "default": 0,
+            "maximum": 100,
+            "minimum": 0,
+            "type": "number"
+          },
+          "minimumCohortSize": {
+            "default": 3,
+            "maximum": 100,
+            "minimum": 2,
+            "type": "number"
+          }
+        },
+        "type": "object"
+      },
       "SignalsStatus": {
         "enum": [
           "pending",
@@ -3410,6 +4205,20 @@
           "skipped"
         ],
         "type": "string"
+      },
+      "SubmitLocalExperimentResultsDto": {
+        "properties": {
+          "results": {
+            "items": {
+              "$ref": "#/components/schemas/LocalExperimentResultDto"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "results"
+        ],
+        "type": "object"
       },
       "SuccessResponseDto": {
         "properties": {
@@ -3533,6 +4342,95 @@
         ],
         "type": "object"
       },
+      "TestTraceIntelligenceProviderDto": {
+        "properties": {
+          "apiKey": {
+            "description": "Write-only credential used only for this test",
+            "type": "string"
+          },
+          "authMode": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ProviderAuthMode"
+              }
+            ]
+          },
+          "baseUrl": {
+            "type": "string"
+          },
+          "chatModel": {
+            "type": "string"
+          },
+          "chatPath": {
+            "type": "string"
+          },
+          "embeddingModel": {
+            "type": "string"
+          },
+          "embeddingPath": {
+            "type": "string"
+          },
+          "secretRef": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "TraceAttributeKeyDto": {
+        "properties": {
+          "count": {
+            "description": "Spans carrying the key, or traces for the resource scope.",
+            "type": "number"
+          },
+          "distinctValues": {
+            "description": "Approximate: derived from a `uniq` sketch, not the value set.",
+            "type": "number"
+          },
+          "key": {
+            "type": "string"
+          },
+          "numeric": {
+            "description": "True when the key accepts attrMin/attrMax comparisons.",
+            "type": "boolean"
+          },
+          "scope": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/TraceAttributeScope"
+              }
+            ]
+          }
+        },
+        "required": [
+          "key",
+          "scope",
+          "count",
+          "distinctValues",
+          "numeric"
+        ],
+        "type": "object"
+      },
+      "TraceAttributeKeysV2ResponseDto": {
+        "properties": {
+          "data": {
+            "items": {
+              "$ref": "#/components/schemas/TraceAttributeKeyDto"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "data"
+        ],
+        "type": "object"
+      },
+      "TraceAttributeScope": {
+        "enum": [
+          "span",
+          "resource"
+        ],
+        "type": "string"
+      },
       "TraceClusterDatasetActionResponseDto": {
         "properties": {
           "datasetId": {
@@ -3549,6 +4447,23 @@
           "datasetId",
           "revision",
           "itemCount"
+        ],
+        "type": "object"
+      },
+      "TraceDatasetSelectionDto": {
+        "properties": {
+          "note": {
+            "type": "string"
+          },
+          "traceIds": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "traceIds"
         ],
         "type": "object"
       },
@@ -3577,6 +4492,80 @@
               "$ref": "#/components/schemas/EventResponseDto"
             },
             "type": "array"
+          }
+        },
+        "required": [
+          "data"
+        ],
+        "type": "object"
+      },
+      "TraceFacetValueDto": {
+        "properties": {
+          "count": {
+            "description": "Matching traces, not spans, so it predicts the filtered list size.",
+            "type": "number"
+          },
+          "value": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "value",
+          "count"
+        ],
+        "type": "object"
+      },
+      "TraceFacetsDto": {
+        "properties": {
+          "agent": {
+            "items": {
+              "$ref": "#/components/schemas/TraceFacetValueDto"
+            },
+            "type": "array"
+          },
+          "model": {
+            "items": {
+              "$ref": "#/components/schemas/TraceFacetValueDto"
+            },
+            "type": "array"
+          },
+          "provider": {
+            "items": {
+              "$ref": "#/components/schemas/TraceFacetValueDto"
+            },
+            "type": "array"
+          },
+          "release": {
+            "items": {
+              "$ref": "#/components/schemas/TraceFacetValueDto"
+            },
+            "type": "array"
+          },
+          "semanticKind": {
+            "items": {
+              "$ref": "#/components/schemas/TraceFacetValueDto"
+            },
+            "type": "array"
+          },
+          "service": {
+            "items": {
+              "$ref": "#/components/schemas/TraceFacetValueDto"
+            },
+            "type": "array"
+          },
+          "tool": {
+            "items": {
+              "$ref": "#/components/schemas/TraceFacetValueDto"
+            },
+            "type": "array"
+          }
+        },
+        "type": "object"
+      },
+      "TraceFacetsV2ResponseDto": {
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/TraceFacetsDto"
           }
         },
         "required": [
@@ -3825,7 +4814,7 @@
         "properties": {
           "cursor": {
             "nullable": true,
-            "type": "object"
+            "type": "string"
           },
           "hasMore": {
             "type": "boolean"
@@ -4099,6 +5088,49 @@
           "links",
           "topPaths",
           "trends"
+        ],
+        "type": "object"
+      },
+      "TraceIntelligenceProviderDto": {
+        "properties": {
+          "apiKey": {
+            "description": "Write-only provider credential",
+            "type": "string"
+          },
+          "authMode": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ProviderAuthMode"
+              }
+            ]
+          },
+          "baseUrl": {
+            "type": "string"
+          },
+          "chatModel": {
+            "type": "string"
+          },
+          "chatPath": {
+            "default": "/v1/chat/completions",
+            "type": "string"
+          },
+          "embeddingModel": {
+            "type": "string"
+          },
+          "embeddingPath": {
+            "default": "/v1/embeddings",
+            "type": "string"
+          },
+          "secretRef": {
+            "description": "Existing secret name or ARN under the configured prefix",
+            "type": "string"
+          }
+        },
+        "required": [
+          "baseUrl",
+          "chatModel",
+          "embeddingModel",
+          "authMode"
         ],
         "type": "object"
       },
@@ -4386,11 +5418,21 @@
           },
           "limit": {
             "type": "number"
+          },
+          "total": {
+            "description": "Matching traces across the whole window, not just this page. Null when the store cannot count cheaply.",
+            "nullable": true,
+            "type": "number"
+          },
+          "truncated": {
+            "description": "True when `total` is a floor rather than an exact count.",
+            "type": "boolean"
           }
         },
         "required": [
           "hasMore",
-          "limit"
+          "limit",
+          "truncated"
         ],
         "type": "object"
       },
@@ -4420,6 +5462,100 @@
           "sentiment"
         ],
         "type": "string"
+      },
+      "TraceSpanMatchDto": {
+        "properties": {
+          "agentName": {
+            "type": "string"
+          },
+          "durationMs": {
+            "type": "number"
+          },
+          "eventId": {
+            "type": "string"
+          },
+          "model": {
+            "type": "string"
+          },
+          "occurredAt": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "operationName": {
+            "type": "string"
+          },
+          "parentSpanId": {
+            "type": "string"
+          },
+          "semanticKind": {
+            "type": "string"
+          },
+          "serviceName": {
+            "type": "string"
+          },
+          "snippet": {
+            "description": "Text either side of the first match, for highlighting.",
+            "type": "string"
+          },
+          "spanId": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          },
+          "toolName": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "eventId",
+          "occurredAt",
+          "snippet"
+        ],
+        "type": "object"
+      },
+      "TraceSpanSearchMetaDto": {
+        "properties": {
+          "limit": {
+            "type": "number"
+          },
+          "query": {
+            "type": "string"
+          },
+          "scanned": {
+            "description": "Spans searched, matching or not.",
+            "type": "number"
+          },
+          "total": {
+            "description": "Matches found before the response cap.",
+            "type": "number"
+          }
+        },
+        "required": [
+          "query",
+          "scanned",
+          "total",
+          "limit"
+        ],
+        "type": "object"
+      },
+      "TraceSpanSearchV2ResponseDto": {
+        "properties": {
+          "data": {
+            "items": {
+              "$ref": "#/components/schemas/TraceSpanMatchDto"
+            },
+            "type": "array"
+          },
+          "meta": {
+            "$ref": "#/components/schemas/TraceSpanSearchMetaDto"
+          }
+        },
+        "required": [
+          "data",
+          "meta"
+        ],
+        "type": "object"
       },
       "TraceStatus": {
         "enum": [
@@ -4627,6 +5763,61 @@
         ],
         "type": "object"
       },
+      "UpdateAlertRuleDto": {
+        "properties": {
+          "appId": {
+            "type": "string"
+          },
+          "destination": {
+            "description": "Email address or an existing webhook endpoint ID.",
+            "type": "string"
+          },
+          "destinationType": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/AlertDestinationType"
+              }
+            ]
+          },
+          "enabled": {
+            "default": true,
+            "type": "boolean"
+          },
+          "environmentId": {
+            "type": "string"
+          },
+          "metric": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/AlertMetric"
+              }
+            ]
+          },
+          "model": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "operator": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/AlertOperator"
+              }
+            ]
+          },
+          "release": {
+            "type": "string"
+          },
+          "service": {
+            "type": "string"
+          },
+          "threshold": {
+            "type": "number"
+          }
+        },
+        "type": "object"
+      },
       "UpdateEnvironmentDto": {
         "properties": {
           "color": {
@@ -4641,12 +5832,43 @@
         },
         "type": "object"
       },
+      "UpdateEvaluationTargetDto": {
+        "properties": {
+          "config": {
+            "additionalProperties": true,
+            "type": "object"
+          },
+          "enabled": {
+            "default": true,
+            "type": "boolean"
+          },
+          "endpoint": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "secretRef": {
+            "description": "Reference to a separately managed secret. Raw credentials are never accepted.",
+            "type": "string"
+          },
+          "type": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/EvaluationTargetType"
+              }
+            ]
+          }
+        },
+        "type": "object"
+      },
       "UpdateExportDestinationDto": {
         "properties": {
           "active": {
             "type": "boolean"
           },
           "endpointUrl": {
+            "format": "uri",
             "type": "string"
           },
           "eventTypeFilter": {
@@ -4672,7 +5894,138 @@
             "items": {
               "$ref": "#/components/schemas/ExportSignal"
             },
+            "minItems": 1,
             "type": "array"
+          }
+        },
+        "type": "object"
+      },
+      "UpdateIssueDto": {
+        "properties": {
+          "datasetId": {
+            "type": "string"
+          },
+          "evaluatorId": {
+            "type": "string"
+          },
+          "experimentId": {
+            "type": "string"
+          },
+          "ownerId": {
+            "type": "string"
+          },
+          "reviewQueueId": {
+            "type": "string"
+          },
+          "severity": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/IssueSeverity"
+              }
+            ]
+          },
+          "status": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/IssueStatus"
+              }
+            ]
+          }
+        },
+        "type": "object"
+      },
+      "UpdateOnlineRuleDto": {
+        "properties": {
+          "assessmentName": {
+            "type": "string"
+          },
+          "dailyBudget": {
+            "type": "number"
+          },
+          "enabled": {
+            "type": "boolean"
+          },
+          "evaluatorId": {
+            "type": "string"
+          },
+          "evaluatorVersion": {
+            "type": "number"
+          },
+          "filters": {
+            "$ref": "#/components/schemas/OnlineRuleFiltersDto"
+          },
+          "name": {
+            "type": "string"
+          },
+          "perOrgConcurrency": {
+            "type": "number"
+          },
+          "sampleRate": {
+            "type": "number"
+          },
+          "timeoutMs": {
+            "type": "number"
+          }
+        },
+        "type": "object"
+      },
+      "UpdatePromptDto": {
+        "properties": {
+          "archived": {
+            "type": "boolean"
+          },
+          "description": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "tags": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          }
+        },
+        "type": "object"
+      },
+      "UpdateTraceIntelligenceSettingsDto": {
+        "properties": {
+          "contentConsent": {
+            "description": "Explicitly consent to sending captured content",
+            "type": "boolean"
+          },
+          "dailyTraceLimit": {
+            "default": 1000,
+            "maximum": 100000,
+            "minimum": 1,
+            "type": "number"
+          },
+          "enabled": {
+            "type": "boolean"
+          },
+          "provider": {
+            "$ref": "#/components/schemas/TraceIntelligenceProviderDto"
+          },
+          "retentionDays": {
+            "default": 30,
+            "maximum": 365,
+            "minimum": 1,
+            "type": "number"
+          },
+          "samplingRate": {
+            "default": 0.1,
+            "maximum": 1,
+            "minimum": 0,
+            "type": "number"
+          },
+          "scope": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/TraceIntelligenceScope"
+              }
+            ],
+            "default": "app_environment"
           }
         },
         "type": "object"
@@ -4786,7 +6139,8 @@
           },
           "secretPrefix": {
             "description": "Prefix of the signing secret",
-            "type": "object"
+            "nullable": true,
+            "type": "string"
           },
           "signingSecretPrefix": {
             "type": "string"
@@ -5540,6 +6894,16 @@
             }
           }
         ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Function"
+              }
+            }
+          },
+          "required": true
+        },
         "responses": {
           "200": {
             "content": {
@@ -6015,7 +7379,7 @@
           {
             "in": "query",
             "name": "envSlug",
-            "required": true,
+            "required": false,
             "schema": {
               "type": "string"
             }
@@ -6510,6 +7874,16 @@
             }
           }
         ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TelemetryPolicyDto"
+              }
+            }
+          },
+          "required": true
+        },
         "responses": {
           "200": {
             "content": {
@@ -7166,6 +8540,16 @@
       "post": {
         "operationId": "AlertController_create",
         "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateAlertRuleDto"
+              }
+            }
+          },
+          "required": true
+        },
         "responses": {
           "200": {
             "content": {
@@ -7230,6 +8614,16 @@
             }
           }
         ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateAlertRuleDto"
+              }
+            }
+          },
+          "required": true
+        },
         "responses": {
           "200": {
             "content": {
@@ -7254,6 +8648,64 @@
       "get": {
         "operationId": "AnalyticsController_breakdown",
         "parameters": [
+          {
+            "in": "query",
+            "name": "agent",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "appId",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "attr[<attribute key>]=<value>",
+            "explode": true,
+            "in": "query",
+            "name": "attr",
+            "required": false,
+            "schema": {
+              "additionalProperties": {
+                "type": "string"
+              },
+              "type": "object"
+            },
+            "style": "deepObject"
+          },
+          {
+            "description": "attrMax[<attribute key>]=<value>",
+            "explode": true,
+            "in": "query",
+            "name": "attrMax",
+            "required": false,
+            "schema": {
+              "additionalProperties": {
+                "type": "number"
+              },
+              "type": "object"
+            },
+            "style": "deepObject"
+          },
+          {
+            "description": "attrMin[<attribute key>]=<value>",
+            "explode": true,
+            "in": "query",
+            "name": "attrMin",
+            "required": false,
+            "schema": {
+              "additionalProperties": {
+                "type": "number"
+              },
+              "type": "object"
+            },
+            "style": "deepObject"
+          },
           {
             "in": "query",
             "name": "dimension",
@@ -7285,7 +8737,39 @@
           },
           {
             "in": "query",
+            "name": "environmentId",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
             "name": "from",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "maxCostUsd",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "maxDurationMs",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "maxTokens",
             "required": false,
             "schema": {
               "type": "string"
@@ -7313,7 +8797,181 @@
           },
           {
             "in": "query",
+            "name": "minCostUsd",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "minDurationMs",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "minTokens",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "model",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "promptId",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "promptVersionId",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "provider",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "release",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "res[<attribute key>]=<value>",
+            "explode": true,
+            "in": "query",
+            "name": "res",
+            "required": false,
+            "schema": {
+              "additionalProperties": {
+                "type": "string"
+              },
+              "type": "object"
+            },
+            "style": "deepObject"
+          },
+          {
+            "in": "query",
+            "name": "semanticKind",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "service",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "sessionId",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "spanKind",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "spanMinDurationMs",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "spanModel",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "spanStatus",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "spanTool",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "status",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
             "name": "to",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "tool",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "userId",
             "required": false,
             "schema": {
               "type": "string"
@@ -7344,6 +9002,64 @@
       "get": {
         "operationId": "AnalyticsController_compare",
         "parameters": [
+          {
+            "in": "query",
+            "name": "agent",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "appId",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "attr[<attribute key>]=<value>",
+            "explode": true,
+            "in": "query",
+            "name": "attr",
+            "required": false,
+            "schema": {
+              "additionalProperties": {
+                "type": "string"
+              },
+              "type": "object"
+            },
+            "style": "deepObject"
+          },
+          {
+            "description": "attrMax[<attribute key>]=<value>",
+            "explode": true,
+            "in": "query",
+            "name": "attrMax",
+            "required": false,
+            "schema": {
+              "additionalProperties": {
+                "type": "number"
+              },
+              "type": "object"
+            },
+            "style": "deepObject"
+          },
+          {
+            "description": "attrMin[<attribute key>]=<value>",
+            "explode": true,
+            "in": "query",
+            "name": "attrMin",
+            "required": false,
+            "schema": {
+              "additionalProperties": {
+                "type": "number"
+              },
+              "type": "object"
+            },
+            "style": "deepObject"
+          },
           {
             "in": "query",
             "name": "baseline",
@@ -7386,24 +9102,206 @@
           },
           {
             "in": "query",
-            "name": "from",
-            "required": true,
+            "name": "environmentId",
+            "required": false,
             "schema": {
               "type": "string"
             }
           },
           {
             "in": "query",
-            "name": "measure",
-            "required": true,
+            "name": "maxCostUsd",
+            "required": false,
             "schema": {
               "type": "string"
             }
           },
           {
             "in": "query",
-            "name": "to",
-            "required": true,
+            "name": "maxDurationMs",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "maxTokens",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "minCostUsd",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "minDurationMs",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "minTokens",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "model",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "promptId",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "promptVersionId",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "provider",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "release",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "res[<attribute key>]=<value>",
+            "explode": true,
+            "in": "query",
+            "name": "res",
+            "required": false,
+            "schema": {
+              "additionalProperties": {
+                "type": "string"
+              },
+              "type": "object"
+            },
+            "style": "deepObject"
+          },
+          {
+            "in": "query",
+            "name": "semanticKind",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "service",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "sessionId",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "spanKind",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "spanMinDurationMs",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "spanModel",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "spanStatus",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "spanTool",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "status",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "tool",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "userId",
+            "required": false,
             "schema": {
               "type": "string"
             }
@@ -7435,7 +9333,73 @@
         "parameters": [
           {
             "in": "query",
+            "name": "agent",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "appId",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "attr[<attribute key>]=<value>",
+            "explode": true,
+            "in": "query",
+            "name": "attr",
+            "required": false,
+            "schema": {
+              "additionalProperties": {
+                "type": "string"
+              },
+              "type": "object"
+            },
+            "style": "deepObject"
+          },
+          {
+            "description": "attrMax[<attribute key>]=<value>",
+            "explode": true,
+            "in": "query",
+            "name": "attrMax",
+            "required": false,
+            "schema": {
+              "additionalProperties": {
+                "type": "number"
+              },
+              "type": "object"
+            },
+            "style": "deepObject"
+          },
+          {
+            "description": "attrMin[<attribute key>]=<value>",
+            "explode": true,
+            "in": "query",
+            "name": "attrMin",
+            "required": false,
+            "schema": {
+              "additionalProperties": {
+                "type": "number"
+              },
+              "type": "object"
+            },
+            "style": "deepObject"
+          },
+          {
+            "in": "query",
             "name": "environment",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "environmentId",
             "required": false,
             "schema": {
               "type": "string"
@@ -7463,6 +9427,30 @@
           },
           {
             "in": "query",
+            "name": "maxCostUsd",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "maxDurationMs",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "maxTokens",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
             "name": "measure",
             "required": false,
             "schema": {
@@ -7483,7 +9471,181 @@
           },
           {
             "in": "query",
+            "name": "minCostUsd",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "minDurationMs",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "minTokens",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "model",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "promptId",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "promptVersionId",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "provider",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "release",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "res[<attribute key>]=<value>",
+            "explode": true,
+            "in": "query",
+            "name": "res",
+            "required": false,
+            "schema": {
+              "additionalProperties": {
+                "type": "string"
+              },
+              "type": "object"
+            },
+            "style": "deepObject"
+          },
+          {
+            "in": "query",
+            "name": "semanticKind",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "service",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "sessionId",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "spanKind",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "spanMinDurationMs",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "spanModel",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "spanStatus",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "spanTool",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "status",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
             "name": "to",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "tool",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "userId",
             "required": false,
             "schema": {
               "type": "string"
@@ -7536,6 +9698,16 @@
       "post": {
         "operationId": "DatasetController_create",
         "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateDatasetDto"
+              }
+            }
+          },
+          "required": true
+        },
         "responses": {
           "200": {
             "content": {
@@ -7664,6 +9836,16 @@
             }
           }
         ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateDatasetRevisionDto"
+              }
+            }
+          },
+          "required": true
+        },
         "responses": {
           "200": {
             "content": {
@@ -7697,6 +9879,16 @@
             }
           }
         ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TraceDatasetSelectionDto"
+              }
+            }
+          },
+          "required": true
+        },
         "responses": {
           "200": {
             "content": {
@@ -7730,6 +9922,16 @@
             }
           }
         ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ImportDatasetRevisionDto"
+              }
+            }
+          },
+          "required": true
+        },
         "responses": {
           "200": {
             "content": {
@@ -7767,6 +9969,10 @@
             "name": "format",
             "required": true,
             "schema": {
+              "enum": [
+                "jsonl",
+                "csv"
+              ],
               "type": "string"
             }
           },
@@ -7866,6 +10072,16 @@
       "post": {
         "operationId": "EvaluationTargetController_create",
         "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateEvaluationTargetDto"
+              }
+            }
+          },
+          "required": true
+        },
         "responses": {
           "200": {
             "content": {
@@ -7961,6 +10177,16 @@
             }
           }
         ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateEvaluationTargetDto"
+              }
+            }
+          },
+          "required": true
+        },
         "responses": {
           "200": {
             "content": {
@@ -8007,6 +10233,16 @@
       "post": {
         "operationId": "EvaluatorController_create",
         "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateEvaluatorDto"
+              }
+            }
+          },
+          "required": true
+        },
         "responses": {
           "200": {
             "content": {
@@ -8135,6 +10371,16 @@
             }
           }
         ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateEvaluatorVersionDto"
+              }
+            }
+          },
+          "required": true
+        },
         "responses": {
           "200": {
             "content": {
@@ -8222,6 +10468,16 @@
       "post": {
         "operationId": "ExperimentController_create",
         "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateExperimentDto"
+              }
+            }
+          },
+          "required": true
+        },
         "responses": {
           "200": {
             "content": {
@@ -8393,6 +10649,16 @@
             }
           }
         ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ExperimentGateDto"
+              }
+            }
+          },
+          "required": true
+        },
         "responses": {
           "200": {
             "content": {
@@ -8457,6 +10723,16 @@
             }
           }
         ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SubmitLocalExperimentResultsDto"
+              }
+            }
+          },
+          "required": true
+        },
         "responses": {
           "200": {
             "content": {
@@ -8539,6 +10815,16 @@
       "post": {
         "operationId": "IntelligenceController_run",
         "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RunIntelligenceDto"
+              }
+            }
+          },
+          "required": true
+        },
         "responses": {
           "201": {
             "content": {
@@ -8599,7 +10885,7 @@
           {
             "in": "query",
             "name": "severity",
-            "required": true,
+            "required": false,
             "schema": {
               "type": "string"
             }
@@ -8607,7 +10893,7 @@
           {
             "in": "query",
             "name": "status",
-            "required": true,
+            "required": false,
             "schema": {
               "type": "string"
             }
@@ -8680,6 +10966,16 @@
             }
           }
         ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateIssueDto"
+              }
+            }
+          },
+          "required": true
+        },
         "responses": {
           "200": {
             "content": {
@@ -8713,6 +11009,16 @@
             }
           }
         ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AddIssueToDatasetDto"
+              }
+            }
+          },
+          "required": true
+        },
         "responses": {
           "201": {
             "content": {
@@ -8746,6 +11052,16 @@
             }
           }
         ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MergeIssueDto"
+              }
+            }
+          },
+          "required": true
+        },
         "responses": {
           "201": {
             "content": {
@@ -8831,6 +11147,16 @@
       "post": {
         "operationId": "OnlineEvaluationController_create",
         "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateOnlineRuleDto"
+              }
+            }
+          },
+          "required": true
+        },
         "responses": {
           "201": {
             "content": {
@@ -8926,6 +11252,16 @@
             }
           }
         ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateOnlineRuleDto"
+              }
+            }
+          },
+          "required": true
+        },
         "responses": {
           "200": {
             "content": {
@@ -8959,6 +11295,16 @@
             }
           }
         ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BackfillOnlineRuleDto"
+              }
+            }
+          },
+          "required": true
+        },
         "responses": {
           "201": {
             "content": {
@@ -9044,6 +11390,16 @@
       "post": {
         "operationId": "PromptController_create",
         "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreatePromptDto"
+              }
+            }
+          },
+          "required": true
+        },
         "responses": {
           "200": {
             "content": {
@@ -9139,6 +11495,16 @@
             }
           }
         ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdatePromptDto"
+              }
+            }
+          },
+          "required": true
+        },
         "responses": {
           "200": {
             "content": {
@@ -9254,6 +11620,16 @@
             }
           }
         ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PromotePromptDto"
+              }
+            }
+          },
+          "required": true
+        },
         "responses": {
           "200": {
             "content": {
@@ -9287,6 +11663,16 @@
             }
           }
         ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RollbackPromptDto"
+              }
+            }
+          },
+          "required": true
+        },
         "responses": {
           "200": {
             "content": {
@@ -9351,6 +11737,16 @@
             }
           }
         ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreatePromptVersionDto"
+              }
+            }
+          },
+          "required": true
+        },
         "responses": {
           "200": {
             "content": {
@@ -9441,6 +11837,16 @@
       "post": {
         "operationId": "TraceIntelligenceController_createBackfill",
         "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateTraceIntelligenceBackfillDto"
+              }
+            }
+          },
+          "required": true
+        },
         "responses": {
           "201": {
             "content": {
@@ -9525,7 +11931,7 @@
           {
             "in": "query",
             "name": "from",
-            "required": true,
+            "required": false,
             "schema": {
               "type": "string"
             }
@@ -9557,7 +11963,7 @@
           {
             "in": "query",
             "name": "to",
-            "required": true,
+            "required": false,
             "schema": {
               "type": "string"
             }
@@ -9629,6 +12035,16 @@
             }
           }
         ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AddTraceClusterToDatasetDto"
+              }
+            }
+          },
+          "required": true
+        },
         "responses": {
           "201": {
             "content": {
@@ -9673,7 +12089,7 @@
           {
             "in": "query",
             "name": "from",
-            "required": true,
+            "required": false,
             "schema": {
               "type": "string"
             }
@@ -9681,7 +12097,7 @@
           {
             "in": "query",
             "name": "to",
-            "required": true,
+            "required": false,
             "schema": {
               "type": "string"
             }
@@ -9806,6 +12222,16 @@
       "put": {
         "operationId": "TraceIntelligenceController_updateSettings",
         "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateTraceIntelligenceSettingsDto"
+              }
+            }
+          },
+          "required": true
+        },
         "responses": {
           "200": {
             "content": {
@@ -9830,6 +12256,16 @@
       "post": {
         "operationId": "TraceIntelligenceController_testProvider",
         "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TestTraceIntelligenceProviderDto"
+              }
+            }
+          },
+          "required": true
+        },
         "responses": {
           "201": {
             "content": {
@@ -9897,7 +12333,81 @@
           },
           {
             "in": "query",
+            "name": "appId",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "attr[<attribute key>]=<value>",
+            "explode": true,
+            "in": "query",
+            "name": "attr",
+            "required": false,
+            "schema": {
+              "additionalProperties": {
+                "type": "string"
+              },
+              "type": "object"
+            },
+            "style": "deepObject"
+          },
+          {
+            "description": "attrMax[<attribute key>]=<value>",
+            "explode": true,
+            "in": "query",
+            "name": "attrMax",
+            "required": false,
+            "schema": {
+              "additionalProperties": {
+                "type": "number"
+              },
+              "type": "object"
+            },
+            "style": "deepObject"
+          },
+          {
+            "description": "attrMin[<attribute key>]=<value>",
+            "explode": true,
+            "in": "query",
+            "name": "attrMin",
+            "required": false,
+            "schema": {
+              "additionalProperties": {
+                "type": "number"
+              },
+              "type": "object"
+            },
+            "style": "deepObject"
+          },
+          {
+            "in": "query",
             "name": "cursor",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "environment",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "environmentId",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "fields",
             "required": false,
             "schema": {
               "type": "string"
@@ -9917,6 +12427,54 @@
             "required": false,
             "schema": {
               "type": "number"
+            }
+          },
+          {
+            "in": "query",
+            "name": "maxCostUsd",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "maxDurationMs",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "maxTokens",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "minCostUsd",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "minDurationMs",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "minTokens",
+            "required": false,
+            "schema": {
+              "type": "string"
             }
           },
           {
@@ -9968,6 +12526,20 @@
             }
           },
           {
+            "description": "res[<attribute key>]=<value>",
+            "explode": true,
+            "in": "query",
+            "name": "res",
+            "required": false,
+            "schema": {
+              "additionalProperties": {
+                "type": "string"
+              },
+              "type": "object"
+            },
+            "style": "deepObject"
+          },
+          {
             "in": "query",
             "name": "semanticKind",
             "required": false,
@@ -10003,6 +12575,46 @@
                 "cost_desc",
                 "tokens_desc"
               ],
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "spanKind",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "spanMinDurationMs",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "spanModel",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "spanStatus",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "spanTool",
+            "required": false,
+            "schema": {
               "type": "string"
             }
           },
@@ -10045,6 +12657,661 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/TraceListV2ResponseDto"
+                }
+              }
+            },
+            "description": ""
+          }
+        },
+        "tags": [
+          "traces-v2"
+        ],
+        "x-axonpush-scopes": [
+          "traces:read"
+        ]
+      }
+    },
+    "/v2/traces/attribute-keys": {
+      "get": {
+        "operationId": "TraceV2Controller_attributeKeys",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "agent",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "appId",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "attr[<attribute key>]=<value>",
+            "explode": true,
+            "in": "query",
+            "name": "attr",
+            "required": false,
+            "schema": {
+              "additionalProperties": {
+                "type": "string"
+              },
+              "type": "object"
+            },
+            "style": "deepObject"
+          },
+          {
+            "description": "attrMax[<attribute key>]=<value>",
+            "explode": true,
+            "in": "query",
+            "name": "attrMax",
+            "required": false,
+            "schema": {
+              "additionalProperties": {
+                "type": "number"
+              },
+              "type": "object"
+            },
+            "style": "deepObject"
+          },
+          {
+            "description": "attrMin[<attribute key>]=<value>",
+            "explode": true,
+            "in": "query",
+            "name": "attrMin",
+            "required": false,
+            "schema": {
+              "additionalProperties": {
+                "type": "number"
+              },
+              "type": "object"
+            },
+            "style": "deepObject"
+          },
+          {
+            "in": "query",
+            "name": "environment",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "environmentId",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "from",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "maxCostUsd",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "maxDurationMs",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "maxTokens",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "minCostUsd",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "minDurationMs",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "minTokens",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "model",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "prefix",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "promptId",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "promptVersionId",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "provider",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "release",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "res[<attribute key>]=<value>",
+            "explode": true,
+            "in": "query",
+            "name": "res",
+            "required": false,
+            "schema": {
+              "additionalProperties": {
+                "type": "string"
+              },
+              "type": "object"
+            },
+            "style": "deepObject"
+          },
+          {
+            "in": "query",
+            "name": "scope",
+            "required": false,
+            "schema": {
+              "enum": [
+                "span",
+                "resource"
+              ],
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "semanticKind",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "service",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "sessionId",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "spanKind",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "spanMinDurationMs",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "spanModel",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "spanStatus",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "spanTool",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "status",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "to",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "tool",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "userId",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TraceAttributeKeysV2ResponseDto"
+                }
+              }
+            },
+            "description": ""
+          }
+        },
+        "tags": [
+          "traces-v2"
+        ],
+        "x-axonpush-scopes": [
+          "traces:read"
+        ]
+      }
+    },
+    "/v2/traces/facets": {
+      "get": {
+        "operationId": "TraceV2Controller_facets",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "agent",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "appId",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "attr[<attribute key>]=<value>",
+            "explode": true,
+            "in": "query",
+            "name": "attr",
+            "required": false,
+            "schema": {
+              "additionalProperties": {
+                "type": "string"
+              },
+              "type": "object"
+            },
+            "style": "deepObject"
+          },
+          {
+            "description": "attrMax[<attribute key>]=<value>",
+            "explode": true,
+            "in": "query",
+            "name": "attrMax",
+            "required": false,
+            "schema": {
+              "additionalProperties": {
+                "type": "number"
+              },
+              "type": "object"
+            },
+            "style": "deepObject"
+          },
+          {
+            "description": "attrMin[<attribute key>]=<value>",
+            "explode": true,
+            "in": "query",
+            "name": "attrMin",
+            "required": false,
+            "schema": {
+              "additionalProperties": {
+                "type": "number"
+              },
+              "type": "object"
+            },
+            "style": "deepObject"
+          },
+          {
+            "in": "query",
+            "name": "environment",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "environmentId",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "Comma-separated: service, model, agent, tool, provider, release, semanticKind. Defaults to all.",
+            "in": "query",
+            "name": "fields",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "from",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "maxCostUsd",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "maxDurationMs",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "maxTokens",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "minCostUsd",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "minDurationMs",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "minTokens",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "model",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "promptId",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "promptVersionId",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "provider",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "release",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "res[<attribute key>]=<value>",
+            "explode": true,
+            "in": "query",
+            "name": "res",
+            "required": false,
+            "schema": {
+              "additionalProperties": {
+                "type": "string"
+              },
+              "type": "object"
+            },
+            "style": "deepObject"
+          },
+          {
+            "in": "query",
+            "name": "semanticKind",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "service",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "sessionId",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "spanKind",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "spanMinDurationMs",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "spanModel",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "spanStatus",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "spanTool",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "status",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "to",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "tool",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "userId",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TraceFacetsV2ResponseDto"
                 }
               }
             },
@@ -10265,6 +13532,55 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/TraceEventsV2ResponseDto"
+                }
+              }
+            },
+            "description": ""
+          }
+        },
+        "tags": [
+          "traces-v2"
+        ],
+        "x-axonpush-scopes": [
+          "traces:read"
+        ]
+      }
+    },
+    "/v2/traces/{traceId}/spans": {
+      "get": {
+        "operationId": "TraceV2Controller_spans",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "traceId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "in": "query",
+            "name": "q",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TraceSpanSearchV2ResponseDto"
                 }
               }
             },

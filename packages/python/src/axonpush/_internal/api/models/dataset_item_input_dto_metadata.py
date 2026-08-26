@@ -8,11 +8,11 @@ from attrs import field as _attrs_field
 
 from ..types import UNSET, Unset
 
-T = TypeVar("T", bound="TraceIntelligenceClusterListMetaDtoCursorType0")
+T = TypeVar("T", bound="DatasetItemInputDtoMetadata")
 
 
 @_attrs_define
-class TraceIntelligenceClusterListMetaDtoCursorType0:
+class DatasetItemInputDtoMetadata:
     """ """
 
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
@@ -27,10 +27,10 @@ class TraceIntelligenceClusterListMetaDtoCursorType0:
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         d = dict(src_dict)
-        trace_intelligence_cluster_list_meta_dto_cursor_type_0 = cls()
+        dataset_item_input_dto_metadata = cls()
 
-        trace_intelligence_cluster_list_meta_dto_cursor_type_0.additional_properties = d
-        return trace_intelligence_cluster_list_meta_dto_cursor_type_0
+        dataset_item_input_dto_metadata.additional_properties = d
+        return dataset_item_input_dto_metadata
 
     @property
     def additional_keys(self) -> list[str]:

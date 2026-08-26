@@ -7,13 +7,13 @@ import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
 from ...models.issue_response_dto import IssueResponseDto
-from ...types import UNSET, Response
+from ...types import UNSET, Response, Unset
 
 
 def _get_kwargs(
     *,
-    severity: str,
-    status: str,
+    severity: str | Unset = UNSET,
+    status: str | Unset = UNSET,
 ) -> dict[str, Any]:
 
     params: dict[str, Any] = {}
@@ -66,13 +66,13 @@ def _build_response(
 def sync_detailed(
     *,
     client: AuthenticatedClient | Client,
-    severity: str,
-    status: str,
+    severity: str | Unset = UNSET,
+    status: str | Unset = UNSET,
 ) -> Response[list[IssueResponseDto]]:
     """
     Args:
-        severity (str):
-        status (str):
+        severity (str | Unset):
+        status (str | Unset):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -97,13 +97,13 @@ def sync_detailed(
 def sync(
     *,
     client: AuthenticatedClient | Client,
-    severity: str,
-    status: str,
+    severity: str | Unset = UNSET,
+    status: str | Unset = UNSET,
 ) -> list[IssueResponseDto] | None:
     """
     Args:
-        severity (str):
-        status (str):
+        severity (str | Unset):
+        status (str | Unset):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -123,13 +123,13 @@ def sync(
 async def asyncio_detailed(
     *,
     client: AuthenticatedClient | Client,
-    severity: str,
-    status: str,
+    severity: str | Unset = UNSET,
+    status: str | Unset = UNSET,
 ) -> Response[list[IssueResponseDto]]:
     """
     Args:
-        severity (str):
-        status (str):
+        severity (str | Unset):
+        status (str | Unset):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -152,13 +152,13 @@ async def asyncio_detailed(
 async def asyncio(
     *,
     client: AuthenticatedClient | Client,
-    severity: str,
-    status: str,
+    severity: str | Unset = UNSET,
+    status: str | Unset = UNSET,
 ) -> list[IssueResponseDto] | None:
     """
     Args:
-        severity (str):
-        status (str):
+        severity (str | Unset):
+        status (str | Unset):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.

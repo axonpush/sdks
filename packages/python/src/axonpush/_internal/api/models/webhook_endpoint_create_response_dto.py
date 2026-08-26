@@ -10,12 +10,6 @@ from dateutil.parser import isoparse
 
 from ..types import UNSET, Unset
 
-if TYPE_CHECKING:
-    from ..models.webhook_endpoint_create_response_dto_secret_prefix import (
-        WebhookEndpointCreateResponseDtoSecretPrefix,
-    )
-
-
 T = TypeVar("T", bound="WebhookEndpointCreateResponseDto")
 
 
@@ -35,7 +29,7 @@ class WebhookEndpointCreateResponseDto:
         has_secret (bool | Unset):
         org_id (str | Unset):
         raw_secret (str | Unset): Raw signing secret, only returned at creation time
-        secret_prefix (WebhookEndpointCreateResponseDtoSecretPrefix | Unset): Prefix of the signing secret
+        secret_prefix (None | str | Unset): Prefix of the signing secret
         signing_secret_prefix (str | Unset):
         updated_at (datetime.datetime | Unset):
     """
@@ -52,16 +46,12 @@ class WebhookEndpointCreateResponseDto:
     has_secret: bool | Unset = UNSET
     org_id: str | Unset = UNSET
     raw_secret: str | Unset = UNSET
-    secret_prefix: WebhookEndpointCreateResponseDtoSecretPrefix | Unset = UNSET
+    secret_prefix: None | str | Unset = UNSET
     signing_secret_prefix: str | Unset = UNSET
     updated_at: datetime.datetime | Unset = UNSET
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
-        from ..models.webhook_endpoint_create_response_dto_secret_prefix import (
-            WebhookEndpointCreateResponseDtoSecretPrefix,
-        )
-
         active = self.active
 
         channel_id = self.channel_id
@@ -90,9 +80,11 @@ class WebhookEndpointCreateResponseDto:
 
         raw_secret = self.raw_secret
 
-        secret_prefix: dict[str, Any] | Unset = UNSET
-        if not isinstance(self.secret_prefix, Unset):
-            secret_prefix = self.secret_prefix.to_dict()
+        secret_prefix: None | str | Unset
+        if isinstance(self.secret_prefix, Unset):
+            secret_prefix = UNSET
+        else:
+            secret_prefix = self.secret_prefix
 
         signing_secret_prefix = self.signing_secret_prefix
 
@@ -135,10 +127,6 @@ class WebhookEndpointCreateResponseDto:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        from ..models.webhook_endpoint_create_response_dto_secret_prefix import (
-            WebhookEndpointCreateResponseDtoSecretPrefix,
-        )
-
         d = dict(src_dict)
         active = d.pop("active")
 
@@ -169,12 +157,14 @@ class WebhookEndpointCreateResponseDto:
 
         raw_secret = d.pop("rawSecret", UNSET)
 
-        _secret_prefix = d.pop("secretPrefix", UNSET)
-        secret_prefix: WebhookEndpointCreateResponseDtoSecretPrefix | Unset
-        if isinstance(_secret_prefix, Unset):
-            secret_prefix = UNSET
-        else:
-            secret_prefix = WebhookEndpointCreateResponseDtoSecretPrefix.from_dict(_secret_prefix)
+        def _parse_secret_prefix(data: object) -> None | str | Unset:
+            if data is None:
+                return data
+            if isinstance(data, Unset):
+                return data
+            return cast(None | str | Unset, data)
+
+        secret_prefix = _parse_secret_prefix(d.pop("secretPrefix", UNSET))
 
         signing_secret_prefix = d.pop("signingSecretPrefix", UNSET)
 

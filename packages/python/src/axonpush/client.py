@@ -258,6 +258,66 @@ class AxonPush:
         """Organizations resource accessor (lazy import)."""
         return self._resource("organizations", "Organizations")
 
+    @property
+    def prompts(self) -> Any:
+        """Prompt registry. Lazy import."""
+        return self._resource("prompts", "Prompts")
+
+    @property
+    def datasets(self) -> Any:
+        """Evaluation datasets and revisions. Lazy import."""
+        return self._resource("datasets", "Datasets")
+
+    @property
+    def evaluators(self) -> Any:
+        """Evaluators and their versions. Lazy import."""
+        return self._resource("evaluators", "Evaluators")
+
+    @property
+    def experiments(self) -> Any:
+        """Evaluation runs, results and the gate. Lazy import."""
+        return self._resource("experiments", "Experiments")
+
+    @property
+    def evaluation_targets(self) -> Any:
+        """Systems an experiment runs against. Lazy import."""
+        return self._resource("evaluation_targets", "EvaluationTargets")
+
+    @property
+    def alerts(self) -> Any:
+        """Alert rules over metric thresholds. Lazy import."""
+        return self._resource("alerts", "Alerts")
+
+    @property
+    def assessments(self) -> Any:
+        """Judgements attached to a trace. Lazy import."""
+        return self._resource("assessments", "Assessments")
+
+    @property
+    def analytics(self) -> Any:
+        """Timeseries, breakdowns and comparisons. Lazy import."""
+        return self._resource("analytics", "Analytics")
+
+    @property
+    def issues(self) -> Any:
+        """Clustered failures and triage. Lazy import."""
+        return self._resource("issues", "Issues")
+
+    @property
+    def online_evaluations(self) -> Any:
+        """Rules that evaluate live traffic. Lazy import."""
+        return self._resource("online_evaluations", "OnlineEvaluations")
+
+    @property
+    def trace_intelligence(self) -> Any:
+        """Semantic clustering over traces. Lazy import."""
+        return self._resource("trace_intelligence", "TraceIntelligence")
+
+    @property
+    def traces_v2(self) -> Any:
+        """Trace search with facets and spans. Lazy import."""
+        return self._resource("traces_v2", "TracesV2")
+
     def connect_realtime(self, **kwargs: Any) -> Any:
         """Open a realtime (MQTT) connection.
 
@@ -474,6 +534,66 @@ class AsyncAxonPush:
     def organizations(self) -> Any:
         """Organizations resource accessor (lazy import)."""
         return self._resource("organizations", "AsyncOrganizations")
+
+    @property
+    def prompts(self) -> Any:
+        """Prompt registry. Lazy import."""
+        return self._resource("prompts", "AsyncPrompts")
+
+    @property
+    def datasets(self) -> Any:
+        """Evaluation datasets and revisions. Lazy import."""
+        return self._resource("datasets", "AsyncDatasets")
+
+    @property
+    def evaluators(self) -> Any:
+        """Evaluators and their versions. Lazy import."""
+        return self._resource("evaluators", "AsyncEvaluators")
+
+    @property
+    def experiments(self) -> Any:
+        """Evaluation runs, results and the gate. Lazy import."""
+        return self._resource("experiments", "AsyncExperiments")
+
+    @property
+    def evaluation_targets(self) -> Any:
+        """Systems an experiment runs against. Lazy import."""
+        return self._resource("evaluation_targets", "AsyncEvaluationTargets")
+
+    @property
+    def alerts(self) -> Any:
+        """Alert rules over metric thresholds. Lazy import."""
+        return self._resource("alerts", "AsyncAlerts")
+
+    @property
+    def assessments(self) -> Any:
+        """Judgements attached to a trace. Lazy import."""
+        return self._resource("assessments", "AsyncAssessments")
+
+    @property
+    def analytics(self) -> Any:
+        """Timeseries, breakdowns and comparisons. Lazy import."""
+        return self._resource("analytics", "AsyncAnalytics")
+
+    @property
+    def issues(self) -> Any:
+        """Clustered failures and triage. Lazy import."""
+        return self._resource("issues", "AsyncIssues")
+
+    @property
+    def online_evaluations(self) -> Any:
+        """Rules that evaluate live traffic. Lazy import."""
+        return self._resource("online_evaluations", "AsyncOnlineEvaluations")
+
+    @property
+    def trace_intelligence(self) -> Any:
+        """Semantic clustering over traces. Lazy import."""
+        return self._resource("trace_intelligence", "AsyncTraceIntelligence")
+
+    @property
+    def traces_v2(self) -> Any:
+        """Trace search with facets and spans. Lazy import."""
+        return self._resource("traces_v2", "AsyncTracesV2")
 
     async def connect_realtime(self, **kwargs: Any) -> Any:
         """Open an asynchronous realtime (MQTT) connection.

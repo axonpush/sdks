@@ -22,11 +22,13 @@ class HealthResponseDto:
         flags (HealthResponseDtoFlags):
         status (str):
         timestamp (str):
+        version (str):
     """
 
     flags: HealthResponseDtoFlags
     status: str
     timestamp: str
+    version: str
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
@@ -38,6 +40,8 @@ class HealthResponseDto:
 
         timestamp = self.timestamp
 
+        version = self.version
+
         field_dict: dict[str, Any] = {}
         field_dict.update(self.additional_properties)
         field_dict.update(
@@ -45,6 +49,7 @@ class HealthResponseDto:
                 "flags": flags,
                 "status": status,
                 "timestamp": timestamp,
+                "version": version,
             }
         )
 
@@ -61,10 +66,13 @@ class HealthResponseDto:
 
         timestamp = d.pop("timestamp")
 
+        version = d.pop("version")
+
         health_response_dto = cls(
             flags=flags,
             status=status,
             timestamp=timestamp,
+            version=version,
         )
 
         health_response_dto.additional_properties = d

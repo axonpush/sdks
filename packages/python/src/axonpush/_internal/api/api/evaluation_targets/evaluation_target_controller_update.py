@@ -7,12 +7,16 @@ import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
 from ...models.evaluation_target_dto import EvaluationTargetDto
+from ...models.update_evaluation_target_dto import UpdateEvaluationTargetDto
 from ...types import UNSET, Response
 
 
 def _get_kwargs(
     target_id: str,
+    *,
+    body: UpdateEvaluationTargetDto,
 ) -> dict[str, Any]:
+    headers: dict[str, Any] = {}
 
     _kwargs: dict[str, Any] = {
         "method": "patch",
@@ -21,6 +25,11 @@ def _get_kwargs(
         ),
     }
 
+    _kwargs["json"] = body.to_dict()
+
+    headers["Content-Type"] = "application/json"
+
+    _kwargs["headers"] = headers
     return _kwargs
 
 
@@ -53,10 +62,12 @@ def sync_detailed(
     target_id: str,
     *,
     client: AuthenticatedClient | Client,
+    body: UpdateEvaluationTargetDto,
 ) -> Response[EvaluationTargetDto]:
     """
     Args:
         target_id (str):
+        body (UpdateEvaluationTargetDto):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -68,6 +79,7 @@ def sync_detailed(
 
     kwargs = _get_kwargs(
         target_id=target_id,
+        body=body,
     )
 
     response = client.get_httpx_client().request(
@@ -81,10 +93,12 @@ def sync(
     target_id: str,
     *,
     client: AuthenticatedClient | Client,
+    body: UpdateEvaluationTargetDto,
 ) -> EvaluationTargetDto | None:
     """
     Args:
         target_id (str):
+        body (UpdateEvaluationTargetDto):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -97,6 +111,7 @@ def sync(
     return sync_detailed(
         target_id=target_id,
         client=client,
+        body=body,
     ).parsed
 
 
@@ -104,10 +119,12 @@ async def asyncio_detailed(
     target_id: str,
     *,
     client: AuthenticatedClient | Client,
+    body: UpdateEvaluationTargetDto,
 ) -> Response[EvaluationTargetDto]:
     """
     Args:
         target_id (str):
+        body (UpdateEvaluationTargetDto):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -119,6 +136,7 @@ async def asyncio_detailed(
 
     kwargs = _get_kwargs(
         target_id=target_id,
+        body=body,
     )
 
     response = await client.get_async_httpx_client().request(**kwargs)
@@ -130,10 +148,12 @@ async def asyncio(
     target_id: str,
     *,
     client: AuthenticatedClient | Client,
+    body: UpdateEvaluationTargetDto,
 ) -> EvaluationTargetDto | None:
     """
     Args:
         target_id (str):
+        body (UpdateEvaluationTargetDto):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -147,5 +167,6 @@ async def asyncio(
         await asyncio_detailed(
             target_id=target_id,
             client=client,
+            body=body,
         )
     ).parsed

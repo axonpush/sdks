@@ -8,11 +8,11 @@ from attrs import field as _attrs_field
 
 from ..types import UNSET, Unset
 
-T = TypeVar("T", bound="EventIngestResponseDtoEnvironmentIdType0")
+T = TypeVar("T", bound="Function")
 
 
 @_attrs_define
-class EventIngestResponseDtoEnvironmentIdType0:
+class Function:
     """ """
 
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
@@ -27,10 +27,10 @@ class EventIngestResponseDtoEnvironmentIdType0:
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         d = dict(src_dict)
-        event_ingest_response_dto_environment_id_type_0 = cls()
+        function = cls()
 
-        event_ingest_response_dto_environment_id_type_0.additional_properties = d
-        return event_ingest_response_dto_environment_id_type_0
+        function.additional_properties = d
+        return function
 
     @property
     def additional_keys(self) -> list[str]:
