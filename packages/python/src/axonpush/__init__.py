@@ -37,7 +37,6 @@ from axonpush.models import (
     TraceListItem,
     TraceStats,
     TraceSummary,
-    User,
     WebhookDelivery,
     WebhookEndpoint,
     WebhookEndpointCreateResponseDto,

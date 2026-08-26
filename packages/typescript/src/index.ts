@@ -6,8 +6,8 @@
  */
 
 // Core (Stream A)
-export { AxonPush } from "./client";
-export type { AxonPushOptions } from "./config";
+export { AxonPush } from "./client.js";
+export type { AxonPushOptions } from "./config.js";
 export {
   APIConnectionError,
   AuthenticationError,
@@ -18,7 +18,7 @@ export {
   RetryableError,
   ServerError,
   ValidationError,
-} from "./errors";
+} from "./errors.js";
 export type {
   CreateExperimentOptions,
   DatasetItem,
@@ -31,7 +31,7 @@ export type {
   LocalEvaluationInput,
   LocalEvaluationOutput,
   LocalRunnerOptions,
-} from "./evaluation";
+} from "./evaluation/index.js";
 // Evaluation runner — customer code remains local and communicates through JSONL.
 export {
   captureGitLineage,
@@ -42,7 +42,7 @@ export {
   toGitHubSummary,
   toJsonReport,
   toJUnitXml,
-} from "./evaluation";
+} from "./evaluation/index.js";
 // Integrations — primitives + helpers (Stream D).
 // Framework-specific installers are reachable via
 // `@axonpush/sdk/integrations/<name>` per package.json `exports`.
@@ -52,13 +52,13 @@ export {
   type IntegrationConfig,
   safePublish,
   truncate,
-} from "./integrations/_base";
+} from "./integrations/_base.js";
 export {
   BullMQPublisher,
   type BullMQPublisherOptions,
   type BullMQWorkerOptions,
   createBullMQWorker,
-} from "./integrations/_bullmq_publisher";
+} from "./integrations/_bullmq_publisher.js";
 export {
   BackgroundPublisher,
   type BackgroundPublisherOptions,
@@ -69,36 +69,36 @@ export {
   flushAfterInvocation,
   type OverflowPolicy,
   type PublisherMode,
-} from "./integrations/_publisher";
-export { AxonPushAnthropicTracer } from "./integrations/anthropic";
+} from "./integrations/_publisher.js";
+export { AxonPushAnthropicTracer } from "./integrations/anthropic.js";
 export {
   type ConsoleCaptureConfig,
   type ConsoleCaptureHandle,
   setupConsoleCapture,
-} from "./integrations/console";
-export { axonPushADKCallbacks } from "./integrations/google-adk";
-export { AxonPushCallbackHandler } from "./integrations/langchain";
-export { AxonPushLangGraphHandler } from "./integrations/langgraph";
-export { AxonPushLlamaIndexHandler } from "./integrations/llamaindex";
-export { AxonPushMastraExporter, AxonPushMastraHooks } from "./integrations/mastra";
-export { AxonPushRunHooks } from "./integrations/openai-agents";
-export { AxonPushSpanExporter, type OtelExporterConfig } from "./integrations/otel";
+} from "./integrations/console.js";
+export { axonPushADKCallbacks } from "./integrations/google-adk.js";
+export { AxonPushCallbackHandler } from "./integrations/langchain.js";
+export { AxonPushLangGraphHandler } from "./integrations/langgraph.js";
+export { AxonPushLlamaIndexHandler } from "./integrations/llamaindex.js";
+export { AxonPushMastraExporter, AxonPushMastraHooks } from "./integrations/mastra.js";
+export { AxonPushRunHooks } from "./integrations/openai-agents.js";
+export { AxonPushSpanExporter, type OtelExporterConfig } from "./integrations/otel.js";
 export {
   type AxonPushPinoStream,
   createAxonPushPinoStream,
   type PinoStreamConfig,
-} from "./integrations/pino";
+} from "./integrations/pino.js";
 export {
   buildDsn as buildSentryDsn,
   type InstallSentryOptions,
   installSentry,
   type SentryLike,
-} from "./integrations/sentry";
-export { axonPushMiddleware } from "./integrations/vercel-ai";
+} from "./integrations/sentry.js";
+export { axonPushMiddleware } from "./integrations/vercel-ai.js";
 export {
   createAxonPushWinstonTransport,
   type WinstonTransportConfig,
-} from "./integrations/winston";
+} from "./integrations/winston.js";
 // Models + Resources (Stream B)
 export type {
   ApiKey,
@@ -118,23 +118,23 @@ export type {
   WebhookDeliveryStatus,
   WebhookEndpoint,
   WebhookEndpointCreateResponseDto,
-} from "./models";
+} from "./models.js";
 export type {
   IotCredentials,
   PublishData,
   RealtimeOptions,
   SubscribeFilters,
   TopicParts,
-} from "./realtime";
+} from "./realtime/index.js";
 // Realtime (Stream C)
-export { RealtimeClient } from "./realtime";
-export { ApiKeysResource } from "./resources/api-keys";
-export { AppsResource } from "./resources/apps";
-export { ChannelsResource } from "./resources/channels";
-export { EnvironmentsResource } from "./resources/environments";
-export { EventsResource } from "./resources/events";
-export { OrganizationsResource } from "./resources/organizations";
-export { TracesResource } from "./resources/traces";
-export { WebhooksResource } from "./resources/webhooks";
-export { currentTrace, getOrCreateTrace, TraceContext } from "./tracing";
-export { __version__ } from "./version";
+export { RealtimeClient } from "./realtime/index.js";
+export { ApiKeysResource } from "./resources/api-keys.js";
+export { AppsResource } from "./resources/apps.js";
+export { ChannelsResource } from "./resources/channels.js";
+export { EnvironmentsResource } from "./resources/environments.js";
+export { EventsResource } from "./resources/events.js";
+export { OrganizationsResource } from "./resources/organizations.js";
+export { TracesResource } from "./resources/traces.js";
+export { WebhooksResource } from "./resources/webhooks.js";
+export { currentTrace, getOrCreateTrace, TraceContext } from "./tracing.js";
+export { __version__ } from "./version.js";

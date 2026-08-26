@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import type { GeneratedOp } from "../_internal/transport";
-import { AxonPush } from "../client";
-import { APIConnectionError, AuthenticationError, RateLimitError, ServerError } from "../errors";
+import type { GeneratedOp } from "../_internal/transport.js";
+import { AxonPush } from "../client.js";
+import { APIConnectionError, AuthenticationError, RateLimitError, ServerError } from "../errors.js";
 
 const ENV_KEYS = [
   "AXONPUSH_API_KEY",

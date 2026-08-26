@@ -77,7 +77,7 @@ jobs:
         working-directory: packages/typescript
         run: |
           bunx publint
-          bunx @arethetypeswrong/cli --pack --ignore-rules cjs-resolves-to-esm
+          bunx @arethetypeswrong/cli --pack --profile esm-only
 
   codegen-clean:
     name: Generated clients match the contract

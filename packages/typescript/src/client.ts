@@ -1,16 +1,16 @@
-import { type GeneratedOp, invokeSync, setSettings } from "./_internal/transport";
-import { type AxonPushOptions, type ResolvedSettings, resolveSettings } from "./config";
-import type { RealtimeClient, RealtimeOptions } from "./realtime";
-import { redactTelemetry as applyTelemetryRedaction } from "./redaction";
-import { ApiKeysResource } from "./resources/api-keys";
-import { AppsResource } from "./resources/apps";
-import { ChannelsResource } from "./resources/channels";
-import { EnvironmentsResource } from "./resources/environments";
-import { EventsResource } from "./resources/events";
-import { OrganizationsResource } from "./resources/organizations";
-import { TracesResource } from "./resources/traces";
-import { WebhooksResource } from "./resources/webhooks";
-import { getOrCreateTrace, type TraceContext } from "./tracing";
+import { type GeneratedOp, invokeSync, setSettings } from "./_internal/transport.js";
+import { type AxonPushOptions, type ResolvedSettings, resolveSettings } from "./config.js";
+import type { RealtimeClient, RealtimeOptions } from "./realtime/index.js";
+import { redactTelemetry as applyTelemetryRedaction } from "./redaction.js";
+import { ApiKeysResource } from "./resources/api-keys.js";
+import { AppsResource } from "./resources/apps.js";
+import { ChannelsResource } from "./resources/channels.js";
+import { EnvironmentsResource } from "./resources/environments.js";
+import { EventsResource } from "./resources/events.js";
+import { OrganizationsResource } from "./resources/organizations.js";
+import { TracesResource } from "./resources/traces.js";
+import { WebhooksResource } from "./resources/webhooks.js";
+import { getOrCreateTrace, type TraceContext } from "./tracing.js";
 
 /**
  * High-level facade over the AxonPush REST + realtime APIs.
@@ -76,7 +76,7 @@ export class AxonPush {
    * @returns A `RealtimeClient` instance ready to subscribe / publish.
    */
   async connectRealtime(opts?: RealtimeOptions): Promise<RealtimeClient> {
-    const { RealtimeClient: Ctor } = await import("./realtime");
+    const { RealtimeClient: Ctor } = await import("./realtime/index.js");
     return new Ctor(this, opts);
   }
 
@@ -117,4 +117,4 @@ export class AxonPush {
   }
 }
 
-export type { AxonPushOptions } from "./config";
+export type { AxonPushOptions } from "./config.js";

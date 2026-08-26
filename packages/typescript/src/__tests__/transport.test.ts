@@ -1,11 +1,16 @@
 import { HttpResponse, http } from "msw";
 import { setupServer } from "msw/node";
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
-import { healthControllerCheck } from "../_internal/api";
-import { invokeSync, setSettings } from "../_internal/transport";
-import { resolveSettings } from "../config";
-import { APIConnectionError, AuthenticationError, ServerError, ValidationError } from "../errors";
-import { setCurrentTrace, TraceContext } from "../tracing";
+import { healthControllerCheck } from "../_internal/api/index.js";
+import { invokeSync, setSettings } from "../_internal/transport.js";
+import { resolveSettings } from "../config.js";
+import {
+  APIConnectionError,
+  AuthenticationError,
+  ServerError,
+  ValidationError,
+} from "../errors.js";
+import { setCurrentTrace, TraceContext } from "../tracing.js";
 
 const BASE = "http://transport-test.local";
 

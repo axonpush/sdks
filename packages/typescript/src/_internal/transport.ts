@@ -1,14 +1,14 @@
-import type { ResolvedSettings } from "../config";
+import type { ResolvedSettings } from "../config.js";
 import {
   APIConnectionError,
   AxonPushError,
   fromResponse,
   isRetryable,
   RateLimitError,
-} from "../errors";
-import { currentTrace } from "../tracing";
-import type { Config } from "./api/client";
-import type { CreateClientConfig } from "./api/client.gen";
+} from "../errors.js";
+import { currentTrace } from "../tracing.js";
+import type { Config } from "./api/client/index.js";
+import type { CreateClientConfig } from "./api/client.gen.js";
 
 const DEFAULT_BASE_URL = "http://localhost:3000";
 
@@ -54,7 +54,7 @@ let lastAppliedBaseUrl: string | undefined;
 async function ensureInterceptors(): Promise<void> {
   if (interceptorsAttached) return;
   interceptorsAttached = true;
-  const { client } = await import("./api/client.gen");
+  const { client } = await import("./api/client.gen.js");
   if (!client) {
     interceptorsAttached = false;
     return;
@@ -123,7 +123,7 @@ export function setSettings(s: ResolvedSettings): void {
 
 async function applyBaseUrlIfChanged(): Promise<void> {
   if (lastAppliedBaseUrl === currentSettings.baseUrl) return;
-  const { client } = await import("./api/client.gen");
+  const { client } = await import("./api/client.gen.js");
   if (!client) return;
   client.setConfig({ baseUrl: currentSettings.baseUrl });
   lastAppliedBaseUrl = currentSettings.baseUrl;

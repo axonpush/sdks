@@ -12,9 +12,10 @@
  *   bun run tools/surface-diff.ts
  */
 import { readdirSync, readFileSync } from "node:fs";
-import { join } from "node:path";
+import { dirname, join } from "node:path";
+import { fileURLToPath } from "node:url";
 
-const root = join(import.meta.dir, "..");
+const root = join(dirname(fileURLToPath(import.meta.url)), "..");
 
 const normalise = (name: string): string => name.replace(/[_-]/g, "").toLowerCase();
 
