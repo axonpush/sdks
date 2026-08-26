@@ -1,0 +1,70 @@
+{
+  "description": "HTTP status to SDK exception mapping.",
+  "base": "AxonPushError",
+  "carries": [
+    "request_id",
+    "status_code",
+    "code",
+    "hint"
+  ],
+  "mapping": [
+    {
+      "status": 401,
+      "name": "AuthenticationError",
+      "retryable": false
+    },
+    {
+      "status": 403,
+      "name": "ForbiddenError",
+      "retryable": false
+    },
+    {
+      "status": 404,
+      "name": "NotFoundError",
+      "retryable": false
+    },
+    {
+      "status": 408,
+      "name": "APIConnectionError",
+      "retryable": true
+    },
+    {
+      "status": 422,
+      "name": "ValidationError",
+      "retryable": false
+    },
+    {
+      "status": 429,
+      "name": "RateLimitError",
+      "retryable": true,
+      "carries": [
+        "retry_after"
+      ]
+    },
+    {
+      "status": 500,
+      "name": "ServerError",
+      "retryable": true
+    },
+    {
+      "status": 502,
+      "name": "ServerError",
+      "retryable": true
+    },
+    {
+      "status": 503,
+      "name": "ServerError",
+      "retryable": true
+    },
+    {
+      "status": 504,
+      "name": "ServerError",
+      "retryable": true
+    }
+  ],
+  "connectionError": {
+    "name": "APIConnectionError",
+    "retryable": true
+  },
+  "retryableMixin": "RetryableError"
+}

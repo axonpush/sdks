@@ -1,0 +1,44 @@
+name: Publish @axonpush/sdk
+
+# Tags are namespaced per package. v0.0.2 through v0.0.7 mean different things
+# in the ts and python histories, so a bare v* trigger would publish both.
+on:
+  push:
+    tags: ["sdk-ts-v*"]
+
+permissions:
+  contents: write
+  id-token: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+      - run: bun install --frozen-lockfile
+      - name: Tag matches package.json
+        run: |
+          tag="${GITHUB_REF_NAME#sdk-ts-v}"
+          pkg="$(node -p "require('./packages/typescript/package.json').version")"
+          [ "$tag" = "$pkg" ] || { echo "::error::tag $tag != package.json $pkg"; exit 1; }
+      - run: bun run tools/check-versions.ts
+      - run: bunx biome check .
+      - working-directory: packages/typescript
+        run: bunx tsc --noEmit
+      - working-directory: packages/typescript
+        run: bunx vitest run
+      - working-directory: packages/typescript
+        run: bun run build
+      - working-directory: packages/typescript
+        run: bunx publint
+      - name: Publish
+        working-directory: packages/typescript
+        run: npm publish --provenance --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          NPM_CONFIG_TOKEN: ${{ secrets.NPM_TOKEN }}
+      - uses: softprops/action-gh-release@v2
+        with:
+          files: packages/typescript/dist/*
+          generate_release_notes: true

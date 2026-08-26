@@ -4,394 +4,521 @@ export type ClientOptions = {
     baseUrl: string;
 };
 
-export type Function = {
-    [key: string]: unknown;
+export type AlertDeleteDto = {
+    deleted: boolean;
 };
 
-export type UserCreateDto = {
-    email: string;
-    username: string;
-    first_name: string;
-    last_name: string;
-    password: string;
-    action: 'create' | 'join';
-    orgCreateProps?: Function;
-    invitationCode?: string;
-};
+export type AlertDestinationType = 'email' | 'webhook';
 
-export type UserResponseDto = {
-    id: string;
-    first_name: string;
-    last_name: string;
-    email: string;
-    username: string;
-    googleId: string | null;
-    roles: Array<'user' | 'admin' | 'owner'>;
-    organizationId: string | null;
-    /**
-     * Whether this account has product-wide superadmin (admin panel) access
-     */
-    isSuperAdmin: boolean;
-    deletedAt?: string | null;
-};
+export type AlertMetric = 'error_count' | 'error_rate' | 'latency_ms' | 'cost_usd' | 'score';
 
-export type SignInDto = {
-    email: string;
-    password: string;
-};
+export type AlertOperator = 'gt' | 'gte' | 'lt' | 'lte';
 
-export type AuthTokensResponseDto = {
-    access_token: string;
-    refresh_token: string;
-};
-
-export type GoogleAuthDto = {
-    code?: string;
-    idToken?: string;
-};
-
-export type GoogleAuthResponseDto = {
-    access_token: string;
-    refresh_token: string;
-    needsOrg?: boolean;
-};
-
-export type CreateOrganizationDto = {
-    name: string;
-    slug: string;
-    description?: string;
-};
-
-export type SetupOrgDto = {
-    action: 'create' | 'join';
-    orgCreateProps?: CreateOrganizationDto;
-    invitationCode?: string;
-};
-
-export type RefreshTokenDto = {
-    refresh_token: string;
-};
-
-export type IotCredentialsResponseDto = {
-    endpoint: string;
-    presignedWssUrl: string;
-    expiresAt: string;
-    /**
-     * Org-scoped MQTT topic prefix. Subscribe topics must extend this with `/{envSlug}/{appId}/{channelId}/{eventType}/{agentId}` (use `+` for wildcards).
-     */
-    topicPrefix: string;
-    /**
-     * Default environment slug for this org. Frontends should slot this segment between `topicPrefix` and the appId when subscribing without an explicit env.
-     */
-    envSlug: string;
-    /**
-     * Human-readable template showing every topic segment the broker will publish to. Mirrors the publish-side topic-builder layout.
-     */
-    topicTemplate: string;
-    clientId: string;
-    region: string;
-    /**
-     * IoT custom authorizer name to invoke. Already encoded in `presignedWssUrl` query string; exposed for clients that need to set it via header.
-     */
-    authorizerName?: string;
-    /**
-     * Bearer token to pass as the MQTT CONNECT username. The IoT custom authorizer reads it from `mqttContext.username`.
-     */
-    authToken?: string;
-};
-
-export type UpdateProfileDto = {
-    first_name?: string;
-    last_name?: string;
-};
-
-export type InvitationResponseDto = {
-    id: string;
-    invitationId: string;
-    orgId: string;
-    invitedEmail: string;
-    role: string;
-    inviteRole?: string;
-    code?: string;
-    status: string;
-    expiresAt?: string;
-    acceptedAt?: string;
+export type AlertRuleDto = {
+    alertRuleId: string;
+    appId?: string;
     createdAt: string;
+    /**
+     * Email address or an existing webhook endpoint ID.
+     */
+    destination: string;
+    destinationType: AlertDestinationType;
+    enabled?: boolean;
+    environmentId?: string;
+    metric: AlertMetric;
+    model?: string;
+    name: string;
+    operator: AlertOperator;
+    orgId: string;
+    release?: string;
+    service?: string;
+    threshold: number;
+    updatedAt: string;
+};
+
+export type AlertRuleListDto = {
+    data: Array<AlertRuleDto>;
+};
+
+export type AnalyticsBreakdownPointDto = {
+    count: number;
+    key: string;
+    value?: number | null;
+};
+
+export type AnalyticsBreakdownResponseDto = {
+    data: Array<AnalyticsBreakdownPointDto>;
+};
+
+export type AnalyticsCompareResponseDto = {
+    baseline: AnalyticsCompareSideDto;
+    candidate: AnalyticsCompareSideDto;
+    delta?: number | null;
+    dimension: string;
+    measure: string;
+    percentDelta?: number | null;
+};
+
+export type AnalyticsCompareSideDto = {
+    count: number;
+    key: string;
+    value?: number | null;
+};
+
+export type AnalyticsPointDto = {
+    bucket: string;
+    count: number;
+    value?: number | null;
+};
+
+export type AnalyticsTimeseriesResponseDto = {
+    data: Array<AnalyticsPointDto>;
+};
+
+export type ApiKeyCreateResponseDto = {
+    allowEnvironmentOverride: boolean;
+    createdAt: string;
+    environmentId?: string;
+    id: string;
+    /**
+     * Raw API key, only returned at creation time
+     */
+    key: string;
+    name: string;
+    prefix?: string;
+    scopes: Array<ApiKeyScope>;
+};
+
+export type ApiKeyPurpose = 'general' | 'ingest';
+
+export type ApiKeyResponseDto = {
+    allowEnvironmentOverride: boolean;
+    appId?: string;
+    createdAt: string;
+    environmentId?: string;
+    id: string;
+    lastUsedAt?: string;
+    name: string;
+    prefix?: string;
+    purpose?: ApiKeyPurpose;
+    scopes: Array<ApiKeyScope>;
+};
+
+export type ApiKeyScope = 'publish' | 'subscribe' | 'events:read' | 'traces:read' | 'analytics:read' | 'assessments:write' | 'alerts:manage' | 'evaluations:manage' | 'intelligence:manage' | 'prompts:manage' | 'apps:manage' | 'channels:manage' | 'webhooks:manage';
+
+export type AppResponseDto = {
+    appId: string;
+    channels?: Array<ChannelResponseDto>;
+    createdAt: string;
+    creatorUserId?: string;
+    deletedAt?: string;
+    id: string;
+    name: string;
+    orgId: string;
     updatedAt?: string;
 };
 
-export type EnvironmentResponseDto = {
-    id: string;
-    environmentId: string;
-    orgId: string;
-    name: string;
-    slug: string;
-    color?: string;
-    isDefault?: boolean;
-    isProduction?: boolean;
-    isEphemeral?: boolean;
-    expiresAt?: string;
-    createdAt: string;
-    updatedAt?: string;
-    deletedAt?: string;
+export type AssessmentDeleteResponseDto = {
+    deleted: boolean;
 };
 
-export type OrganizationResponseDto = {
-    id: string;
-    orgId: string;
-    name: string;
-    slug: string;
-    description?: string;
-    plan: string;
-    ssoEnforced: boolean;
-    eventsQuotaUsedCurrent: number;
-    eventsQuotaMonthly?: number;
-    retentionDays?: number;
-    seatLimit?: number;
-    lemonsqueezySubscriptionId?: string;
-    lemonsqueezyCustomerId?: string;
-    ssoConnectionId?: string;
-    createdAt: string;
-    updatedAt?: string;
-    deletedAt?: string;
-    invitations?: Array<InvitationResponseDto>;
-    environments?: Array<EnvironmentResponseDto>;
-};
-
-export type UserOrganizationWithOrgResponseDto = {
-    userId: string;
-    orgId: string;
-    role: string;
-    joinedAt: string;
-    deletedAt?: string;
-    organization?: OrganizationResponseDto | null;
-};
-
-export type SwitchOrgDto = {
-    organizationId: string;
-};
-
-export type SwitchActiveOrgResponseDto = {
-    access_token: string;
-    refresh_token: string;
-    user?: UserResponseDto;
-};
-
-export type MessageResponseDto = {
-    message: string;
-};
-
-export type OrganizationCreateResponseDto = {
-    id: string;
-    orgId: string;
-    name: string;
-    slug: string;
-    description?: string;
-    plan: string;
-    ssoEnforced: boolean;
-    eventsQuotaUsedCurrent: number;
-    eventsQuotaMonthly?: number;
-    retentionDays?: number;
-    seatLimit?: number;
-    lemonsqueezySubscriptionId?: string;
-    lemonsqueezyCustomerId?: string;
-    ssoConnectionId?: string;
-    createdAt: string;
-    updatedAt?: string;
-    deletedAt?: string;
-    invitations?: Array<InvitationResponseDto>;
-    environments?: Array<EnvironmentResponseDto>;
-    access_token: string;
-    refresh_token: string;
-};
-
-export type OkResponseDto = {
-    ok: boolean;
-};
-
-export type CreateInvitationDto = {
-    invitedEmail: string;
-    desired_role: 'user' | 'admin';
-};
-
-export type SuccessResponseDto = {
-    success: boolean;
-};
-
-export type TransferOwnershipDto = {
-    userId: string;
-};
-
-export type PlanFeaturesDto = {
-    rbac?: boolean;
-    auditLog?: boolean;
-    sso?: boolean;
-    customRetention?: boolean;
-};
-
-export type PlanVariantsDto = {
-    monthly?: string;
-    annual?: string;
-};
-
-export type PlanLimitsDto = {
-    events: number | null;
-    retentionDays: number | null;
-    seats: number | null;
-    features: PlanFeaturesDto;
-    lemonsqueezyVariants?: PlanVariantsDto;
-};
-
-export type BillingPlansResponseDto = {
-    /**
-     * Plan id keyed by Plan enum value (free, pro, team, scale, selfhost).
-     */
-    plans: PlanLimitsDto;
-};
-
-export type BillingUsageResponseDto = {
-    plan: string;
-    used: number;
-    limit?: number | null;
-    retentionDays?: number | null;
-    seats?: number | null;
-    cycleStartedAt?: string | null;
-    subscriptionStatus: 'active' | 'past_due' | 'paused' | 'trialing' | 'trial_expired';
-    /**
-     * ISO timestamp; null when no trial active
-     */
-    trialEndsAt?: string | null;
-    /**
-     * Whether a LemonSqueezy customer portal exists (a real subscription created one)
-     */
-    hasBillingPortal: boolean;
-};
-
-export type BillingCheckoutRequestDto = {
-    plan: 'pro' | 'team';
-    cadence?: 'monthly' | 'annual';
-};
-
-export type BillingCheckoutResponseDto = {
-    url: string;
-};
-
-export type BillingPortalResponseDto = {
-    url: string;
-};
-
-export type BillingWebhookResponseDto = {
-    ok: boolean;
-    deduped?: boolean;
-    skipped?: string;
-    enqueuedRetry?: boolean;
-};
-
-export type FeatureFlagsResponseDto = {
-    environments: boolean;
-    sentryIngest: boolean;
-    asyncIngest: boolean;
-    mcpServer: boolean;
-};
-
-export type CreateEnvironmentDto = {
-    name: string;
-    slug?: string;
-    color?: string;
-    isProduction?: boolean;
-    isDefault?: boolean;
-    cloneFromEnvId?: string;
-};
-
-export type UpdateEnvironmentDto = {
-    name?: string;
-    color?: string;
-    requireConfirmationForDestructive?: boolean;
-};
-
-export type CreateEventDto = {
-    identifier: string;
-    payload: {
+export type AssessmentDto = {
+    actorId?: string;
+    assessmentId: string;
+    correction?: {
         [key: string]: unknown;
     };
-    channel_id: string;
-    agentId?: string;
-    traceId?: string;
-    spanId?: string;
-    parentSpanId?: string;
-    parentEventId?: string;
-    eventType?: 'agent.start' | 'agent.end' | 'agent.message' | 'agent.tool_call.start' | 'agent.tool_call.end' | 'agent.error' | 'agent.handoff' | 'agent.llm.token' | 'agent.log' | 'app.log' | 'app.span' | 'custom';
+    createdAt: string;
+    evaluatorVersionId?: string;
+    explanation?: string;
+    idempotencyKey?: string;
     metadata?: {
         [key: string]: unknown;
     };
+    name: string;
+    orgId: string;
+    source: AssessmentSource;
+    targetId?: string;
+    targetType: AssessmentTargetType;
+    traceId: string;
+    updatedAt: string;
+    value: number | boolean | string;
+    valueType: AssessmentValueType;
+};
+
+export type AssessmentListResponseDto = {
+    data: Array<AssessmentDto>;
+};
+
+export type AssessmentSource = 'end_user' | 'reviewer' | 'evaluator' | 'import';
+
+export type AssessmentTargetType = 'trace' | 'span' | 'session';
+
+export type AssessmentValueType = 'numeric' | 'boolean' | 'categorical' | 'text';
+
+export type BackfillStatus = 'queued' | 'running' | 'completed' | 'failed';
+
+export type CapabilitiesResponseDto = {
+    capabilities: CapabilityFlagsDto;
+    deploymentMode: DeploymentMode;
+    serverVersion: string;
+    /**
+     * Shape version of this document.
+     */
+    version: number;
+};
+
+export type CapabilityFlagsDto = {
+    analytics_v2: boolean;
+    assessments: boolean;
+    canonical_ingest: boolean;
+    evaluations: boolean;
+    failure_intelligence: boolean;
+    issues: boolean;
+    online_evaluations: boolean;
+    prompt_registry: boolean;
+    trace_intelligence: boolean;
+    trace_v2_read: boolean;
+    trace_v2_write: boolean;
+};
+
+export type ChannelResponseDto = {
+    app?: AppResponseDto;
+    appId: string;
+    channelId: string;
+    createdAt: string;
+    deletedAt?: string;
+    id: string;
+    name: string;
+    orgId: string;
+    updatedAt?: string;
+};
+
+export type ContentCaptureMode = 'metadata_only' | 'redacted' | 'full';
+
+export type CreateApiKeyDto = {
+    /**
+     * When true, the caller may override the env via X-Axonpush-Environment header or the event.environment field. Defaults to false for safety.
+     */
+    allowEnvironmentOverride?: boolean;
+    appId?: string;
+    /**
+     * Environment this key is bound to. All events published with this key will be tagged with this environment (unless allowEnvironmentOverride=true and the request specifies a different one).
+     */
+    environmentId?: string;
+    name: string;
+    organizationId: string;
+    scopes?: Array<ApiKeyScope>;
+};
+
+export type CreateAppDto = {
+    name: string;
+};
+
+export type CreateAssessmentDto = {
+    correction?: {
+        [key: string]: unknown;
+    };
+    evaluatorVersionId?: string;
+    explanation?: string;
+    idempotencyKey?: string;
+    metadata?: {
+        [key: string]: unknown;
+    };
+    name: string;
+    source: AssessmentSource;
+    targetId?: string;
+    targetType: AssessmentTargetType;
+    value: number | boolean | string;
+    valueType: AssessmentValueType;
+};
+
+export type CreateEnvironmentDto = {
+    cloneFromEnvId?: string;
+    color?: string;
+    isDefault?: boolean;
+    isProduction?: boolean;
+    name: string;
+    slug?: string;
+};
+
+export type CreateEventDto = {
+    agentId?: string;
+    channel_id: string;
     /**
      * Environment slug override. Only honored when the API key has allowEnvironmentOverride=true.
      */
     environment?: string;
+    eventType?: EventType;
+    identifier: string;
+    metadata?: {
+        [key: string]: unknown;
+    };
+    parentEventId?: string;
+    parentSpanId?: string;
+    payload: {
+        [key: string]: unknown;
+    };
+    spanId?: string;
     /**
      * When true, wait for the event to be persisted to the DB before returning. Use only for audit-critical calls — the default async path returns in under a millisecond.
      */
     sync?: boolean;
+    traceId?: string;
+};
+
+export type CreateExportDestinationDto = {
+    active?: boolean;
+    /**
+     * OTLP/HTTP base URL (v1/logs and v1/traces are appended)
+     */
+    endpointUrl: string;
+    /**
+     * Environment slug this destination is scoped to (e.g. "prod")
+     */
+    envSlug: string;
+    /**
+     * Allow-list of event types to export (empty = all types)
+     */
+    eventTypeFilter?: Array<string>;
+    /**
+     * Header name -> value map (e.g. DD-API-KEY). Stored server-side, never returned.
+     */
+    headers?: {
+        [key: string]: string;
+    };
+    name: string;
+    /**
+     * service.name attribute stamped on exported resources
+     */
+    serviceName?: string;
+    signals: Array<ExportSignal>;
+};
+
+export type CreateInvitationDto = {
+    desired_role: OrganizationRole;
+    invitedEmail: string;
+};
+
+export type CreateIotTokenDto = {
+    /**
+     * Token lifetime in days (default 365)
+     */
+    expiresInDays?: number;
+    name: string;
+};
+
+export type CreateOrganizationDto = {
+    description?: string;
+    name: string;
+    slug: string;
+};
+
+export type CreatePublicTokenDto = {
+    channelId: string;
+    environmentId: string;
+    name: string;
+};
+
+export type CreateWebhookEndpointDto = {
+    channelId: string;
+    description?: string;
+    /**
+     * Event types to filter (null = all)
+     */
+    eventTypes?: Array<string>;
+    secret?: string;
+    url: string;
+};
+
+export type DatasetDeleteDto = {
+    deleted: boolean;
+};
+
+export type DatasetDto = {
+    createdAt: string;
+    datasetId: string;
+    description?: string;
+    itemCount: number;
+    latestRevision: number;
+    name: string;
+    orgId: string;
+    updatedAt: string;
+};
+
+export type DatasetExportDto = {
+    content: string;
+    filename: string;
+    format: DatasetExportFormat;
+};
+
+export type DatasetExportFormat = 'jsonl' | 'csv';
+
+export type DatasetListDto = {
+    data: Array<DatasetDto>;
+};
+
+export type DatasetRevisionDataItemDto = {
+    attachments?: {
+        [key: string]: unknown;
+    };
+    contentHash: string;
+    createdAt: string;
+    expectedOutput?: {
+        [key: string]: unknown;
+    };
+    /**
+     * Redacted before persistence according to the organization policy.
+     */
+    input: {
+        [key: string]: unknown;
+    };
+    itemId?: string;
+    metadata?: {
+        [key: string]: unknown;
+    };
+    sourceSpanId?: string;
+    sourceTraceId?: string;
+    toolTrajectory?: {
+        [key: string]: unknown;
+    };
+};
+
+export type DatasetRevisionDto = {
+    contentHash: string;
+    createdAt: string;
+    datasetId: string;
+    itemCount: number;
+    orgId: string;
+    revision: number;
+    source: string;
+};
+
+export type DatasetRevisionItemsDto = {
+    data: Array<DatasetRevisionDataItemDto>;
+};
+
+export type DatasetRevisionListDto = {
+    data: Array<DatasetRevisionDto>;
+};
+
+export type DeleteResultDto = {
+    deleted: boolean;
+};
+
+export type DeploymentMode = 'cloud' | 'selfhost';
+
+export type EnvironmentResponseDto = {
+    color?: string;
+    createdAt: string;
+    deletedAt?: string;
+    environmentId: string;
+    expiresAt?: string;
+    id: string;
+    isDefault?: boolean;
+    isEphemeral?: boolean;
+    isProduction?: boolean;
+    name: string;
+    orgId: string;
+    slug: string;
+    updatedAt?: string;
+};
+
+export type EvaluationTargetDeleteDto = {
+    deleted: boolean;
+};
+
+export type EvaluationTargetDto = {
+    config?: {
+        [key: string]: unknown;
+    };
+    createdAt: string;
+    enabled?: boolean;
+    endpoint?: string;
+    name: string;
+    orgId: string;
+    /**
+     * Reference to a separately managed secret. Raw credentials are never accepted.
+     */
+    secretRef?: string;
+    targetId: string;
+    type: EvaluationTargetType;
+    updatedAt: string;
+};
+
+export type EvaluationTargetListDto = {
+    data: Array<EvaluationTargetDto>;
+};
+
+export type EvaluationTargetType = 'local' | 'https' | 'prompt_model';
+
+export type EvaluatorDeleteDto = {
+    deleted: boolean;
+};
+
+export type EvaluatorDto = {
+    createdAt: string;
+    evaluatorId: string;
+    kind: EvaluatorKind;
+    latestVersion: number;
+    name: string;
+    orgId: string;
+    updatedAt: string;
+};
+
+export type EvaluatorKind = 'exact_match' | 'contains' | 'regex' | 'json_schema' | 'remote' | 'managed_llm';
+
+export type EvaluatorListDto = {
+    data: Array<EvaluatorDto>;
+};
+
+export type EvaluatorVersionDto = {
+    config: {
+        [key: string]: unknown;
+    };
+    createdAt: string;
+    evaluatorId: string;
+    kind: EvaluatorKind;
+    model?: string;
+    orgId: string;
+    outputSchema?: {
+        [key: string]: unknown;
+    };
+    provider?: string;
+    rubric?: string;
+    version: number;
+};
+
+export type EvaluatorVersionListDto = {
+    data: Array<EvaluatorVersionDto>;
+};
+
+export type EvaluatorVersionRefDto = {
+    evaluatorId: string;
+    version: number;
 };
 
 export type EventIngestResponseDto = {
+    createdAt: string;
+    dedupKey: string;
+    duplicate?: boolean;
+    environmentId?: {
+        [key: string]: unknown;
+    } | null;
+    eventId: string;
     /**
      * Alias of eventId, populated by the global IdAliasInterceptor.
      */
     id: string;
-    eventId: string;
     identifier: string;
-    dedupKey: string;
-    createdAt: string;
     queued: boolean;
-    duplicate?: boolean;
-    environmentId?: string | null;
-};
-
-export type EventResponseDto = {
-    id: string;
-    eventId: string;
-    orgId: string;
-    appId: string;
-    channelId: string;
-    environmentId?: string;
-    eventType: string;
-    agentId?: string;
-    traceId?: string;
-    spanId?: string;
-    parentSpanId?: string;
-    parentEventId?: string;
-    identifier?: string;
-    payload?: {
-        [key: string]: unknown;
-    };
-    metadata?: {
-        [key: string]: unknown;
-    };
-    createdAt: string;
-    occurredAt?: string;
-    startTimeUnixNano?: string;
-    endTimeUnixNano?: string;
-    source?: string;
-    semanticKind?: string;
-    operationName?: string;
-    durationMs?: number;
-    status?: string;
-    serviceName?: string;
-    serviceVersion?: string;
-    providerName?: string;
-    requestModel?: string;
-    responseModel?: string;
-    toolName?: string;
-    totalTokens?: number;
-    costUsd?: number;
-    updatedAt?: string;
-    ttl?: number;
 };
 
 export type EventListMetaDto = {
+    cursor?: {
+        [key: string]: unknown;
+    } | null;
     hasMore: boolean;
-    cursor?: string | null;
 };
 
 export type EventListResponseDto = {
@@ -399,177 +526,939 @@ export type EventListResponseDto = {
     meta: EventListMetaDto;
 };
 
-export type ChannelResponseDto = {
-    id: string;
+export type EventResponseDto = {
+    agentId?: string;
+    appId: string;
+    cacheReadTokens?: number;
+    cacheWriteTokens?: number;
     channelId: string;
-    orgId: string;
-    appId: string;
-    name: string;
+    costUsd?: number;
     createdAt: string;
-    updatedAt?: string;
-    deletedAt?: string;
-    app?: AppResponseDto;
-};
-
-export type AppResponseDto = {
+    durationMs?: number;
+    endTimeUnixNano?: string;
+    environmentId?: string;
+    eventId: string;
+    eventType: string;
+    /**
+     * Model stop/finish reason, e.g. "stop", "length", "tool_calls".
+     */
+    finishReason?: string;
     id: string;
-    appId: string;
+    identifier?: string;
+    inputTokens?: number;
+    metadata?: {
+        [key: string]: unknown;
+    };
+    occurredAt?: string;
+    operationName?: string;
     orgId: string;
-    name: string;
-    creatorUserId?: string;
-    createdAt: string;
+    outputTokens?: number;
+    parentEventId?: string;
+    parentSpanId?: string;
+    payload?: {
+        [key: string]: unknown;
+    };
+    providerName?: string;
+    reasoningTokens?: number;
+    requestModel?: string;
+    responseModel?: string;
+    semanticKind?: string;
+    serviceName?: string;
+    serviceVersion?: string;
+    source?: string;
+    spanId?: string;
+    startTimeUnixNano?: string;
+    status?: string;
+    /**
+     * Time-to-first-token latency in milliseconds (streamed LLM calls).
+     */
+    timeToFirstTokenMs?: number;
+    toolName?: string;
+    totalTokens?: number;
+    traceId?: string;
+    ttl?: number;
     updatedAt?: string;
-    deletedAt?: string;
-    channels?: Array<ChannelResponseDto>;
 };
 
-export type CreateChannelDto = {
+export type EventType = 'agent.start' | 'agent.end' | 'agent.message' | 'agent.tool_call.start' | 'agent.tool_call.end' | 'agent.error' | 'agent.handoff' | 'agent.llm.token' | 'agent.log' | 'app.log' | 'app.span' | 'custom';
+
+export type ExperimentComparisonDto = {
+    baseline: {
+        [key: string]: unknown;
+    };
+    baselineExperimentId: string;
+    candidate: {
+        [key: string]: unknown;
+    };
+    candidateExperimentId: string;
+    delta: {
+        [key: string]: unknown;
+    };
+};
+
+export type ExperimentDeleteDto = {
+    deleted: boolean;
+};
+
+export type ExperimentDto = {
+    baselineExperimentId?: string;
+    completedItems: number;
+    configuration?: {
+        [key: string]: unknown;
+    };
+    costUsd?: number;
+    createdAt: string;
+    datasetId: string;
+    datasetRevision: number;
+    evaluatorVersions: Array<EvaluatorVersionRefDto>;
+    experimentId: string;
+    failedItems: number;
+    gitBranch?: string;
+    gitCommit?: string;
+    gitDirty?: boolean;
+    latencyMs?: number;
+    modelConfiguration?: {
+        [key: string]: unknown;
+    };
     name: string;
-    appId: string;
+    orgId: string;
+    promptVersionId?: string;
+    release?: string;
+    score?: number;
+    status: ExperimentStatus;
+    targetId: string;
+    totalItems: number;
+    totalTokens?: number;
+    updatedAt: string;
 };
 
-export type CreateAppDto = {
+export type ExperimentGateResultDto = {
+    baselineExperimentId?: string;
+    experimentId: string;
+    metrics: {
+        [key: string]: unknown;
+    };
+    passed: boolean;
+    reasons: Array<string>;
+};
+
+export type ExperimentListDto = {
+    data: Array<ExperimentDto>;
+};
+
+export type ExperimentResultDto = {
+    attempts: number;
+    costUsd?: number;
+    createdAt: string;
+    error?: string;
+    evaluatorResults?: {
+        [key: string]: unknown;
+    };
+    explanation?: string;
+    itemId: string;
+    latencyMs?: number;
+    output: {
+        [key: string]: unknown;
+    };
+    score?: number;
+    status: ExperimentResultStatus;
+    totalTokens?: number;
+    traceId?: string;
+    updatedAt: string;
+};
+
+export type ExperimentResultListDto = {
+    data: Array<ExperimentResultDto>;
+};
+
+export type ExperimentResultStatus = 'pending' | 'running' | 'passed' | 'failed' | 'error';
+
+export type ExperimentStatus = 'draft' | 'queued' | 'running' | 'completed' | 'failed' | 'cancelled';
+
+export type ExportDestinationResponseDto = {
+    active: boolean;
+    createdAt: string;
+    destinationId: string;
+    endpointUrl: string;
+    envSlug: string;
+    eventTypeFilter?: Array<string>;
+    /**
+     * Configured header names (values are masked)
+     */
+    headerKeys: Array<string>;
+    id: string;
     name: string;
+    orgId: string;
+    serviceName?: string;
+    /**
+     * OTLP signals: logs and/or traces
+     */
+    signals: Array<string>;
+    updatedAt?: string;
 };
 
-export type CreateApiKeyDto = {
+export type ExportSignal = 'logs' | 'traces';
+
+export type HealthResponseDto = {
+    flags: {
+        [key: string]: unknown;
+    };
+    status: string;
+    timestamp: string;
+};
+
+export type IntelligenceJobResponseDto = {
+    algorithm: string;
+    clusterCount: number;
+    clusters: Array<{
+        [key: string]: unknown;
+    }>;
+    completedAt?: string;
+    costUsd: number;
+    createdAt: string;
+    createdBy?: string;
+    error?: string;
+    evaluatorId?: string;
+    evaluatorVersion?: number;
+    issueCount: number;
+    jobId: string;
+    labelledCount: number;
+    maxCostUsd: number;
+    maxLabels: number;
+    minimumCohortSize: number;
+    model?: string;
+    orgId: string;
+    provider?: string;
+    status: IntelligenceJobStatus;
+    updatedAt: string;
+};
+
+export type IntelligenceJobStatus = 'running' | 'completed' | 'failed';
+
+export type InvitationResponseDto = {
+    acceptedAt?: string;
+    code?: string;
+    createdAt: string;
+    expiresAt?: string;
+    id: string;
+    invitationId: string;
+    inviteRole?: string;
+    invitedEmail: string;
+    orgId: string;
+    role: string;
+    status: string;
+    updatedAt?: string;
+};
+
+export type IotCredentialsResponseDto = {
+    /**
+     * Bearer token to pass as the MQTT CONNECT username. The IoT custom authorizer reads it from `mqttContext.username`.
+     */
+    authToken?: string;
+    /**
+     * IoT custom authorizer name to invoke. Already encoded in `presignedWssUrl` query string; exposed for clients that need to set it via header.
+     */
+    authorizerName?: string;
+    clientId: string;
+    endpoint: string;
+    /**
+     * Default environment slug for this org. Frontends should slot this segment between `topicPrefix` and the appId when subscribing without an explicit env.
+     */
+    envSlug: string;
+    expiresAt: string;
+    presignedWssUrl: string;
+    region: string;
+    /**
+     * Org-scoped MQTT topic prefix. Subscribe topics must extend this with `/{envSlug}/{appId}/{channelId}/{eventType}/{agentId}` (use `+` for wildcards).
+     */
+    topicPrefix: string;
+    /**
+     * Human-readable template showing every topic segment the broker will publish to. Mirrors the publish-side topic-builder layout.
+     */
+    topicTemplate: string;
+};
+
+export type IotTokenCreateResponseDto = {
+    createdAt: string;
+    expiresAt?: string;
+    id: string;
+    lastUsedAt?: string;
     name: string;
     organizationId: string;
-    appId?: string;
+    prefix: string;
     /**
-     * Environment this key is bound to. All events published with this key will be tagged with this environment (unless allowEnvironmentOverride=true and the request specifies a different one).
+     * Raw IoT token, returned only once at creation time
      */
-    environmentId?: string;
-    /**
-     * When true, the caller may override the env via X-Axonpush-Environment header or the event.environment field. Defaults to false for safety.
-     */
-    allowEnvironmentOverride?: boolean;
-    scopes?: Array<'publish' | 'subscribe' | 'events:read' | 'traces:read' | 'apps:manage' | 'channels:manage' | 'webhooks:manage'>;
+    token: string;
 };
 
-export type ApiKeyCreateResponseDto = {
-    id: string;
-    name: string;
-    prefix?: string;
-    /**
-     * Raw API key, only returned at creation time
-     */
-    key: string;
-    scopes: Array<'publish' | 'subscribe' | 'events:read' | 'traces:read' | 'apps:manage' | 'channels:manage' | 'webhooks:manage'>;
-    environmentId?: string;
-    allowEnvironmentOverride: boolean;
+export type IotTokenResponseDto = {
     createdAt: string;
-};
-
-export type ApiKeyResponseDto = {
+    expiresAt?: string;
     id: string;
-    appId?: string;
-    environmentId?: string;
-    name: string;
-    scopes: Array<'publish' | 'subscribe' | 'events:read' | 'traces:read' | 'apps:manage' | 'channels:manage' | 'webhooks:manage'>;
-    allowEnvironmentOverride: boolean;
-    purpose?: 'general' | 'ingest';
-    prefix?: string;
     lastUsedAt?: string;
-    createdAt: string;
+    name: string;
+    organizationId: string;
+    prefix: string;
 };
 
-export type CreatePublicTokenDto = {
-    name: string;
-    channelId: string;
-    environmentId: string;
+export type IssueOccurrenceResponseDto = {
+    createdAt: string;
+    eventId: string;
+    evidence: {
+        [key: string]: unknown;
+    };
+    fingerprint: string;
+    issueId: string;
+    model?: string;
+    occurredAt: string;
+    occurrenceId: string;
+    orgId: string;
+    release?: string;
+    service?: string;
+    spanId?: string;
+    traceId: string;
 };
+
+export type IssueResponseDto = {
+    affectedModels: Array<string>;
+    affectedReleases: Array<string>;
+    affectedServices: Array<string>;
+    createdAt: string;
+    datasetId?: string;
+    description?: string;
+    errorTemplate?: string;
+    errorType?: string;
+    evaluatorId?: string;
+    experimentId?: string;
+    fingerprint: string;
+    firstSeenAt: string;
+    generatedLabel?: string;
+    issueId: string;
+    labelProvenance?: {
+        [key: string]: unknown;
+    };
+    lastSeenAt: string;
+    mergedIntoIssueId?: string;
+    occurrenceCount: number;
+    operation?: string;
+    orgId: string;
+    ownerId?: string;
+    representativeTraceIds: Array<string>;
+    reviewQueueId?: string;
+    semanticKind?: string;
+    severity: IssueSeverity;
+    status: IssueStatus;
+    title: string;
+    updatedAt: string;
+};
+
+export type IssueSeverity = 'low' | 'medium' | 'high' | 'critical';
+
+export type IssueStatus = 'open' | 'resolved' | 'dismissed' | 'merged' | 'regressed';
+
+export type MessageResponseDto = {
+    message: string;
+};
+
+export type OkResponseDto = {
+    ok: boolean;
+};
+
+export type OnlineRuleFiltersDto = {
+    appId?: string;
+    environmentId?: string;
+    maximumDurationMs?: number;
+    minimumDurationMs?: number;
+    models?: Array<string>;
+    releases?: Array<string>;
+    semanticKinds?: Array<string>;
+    services?: Array<string>;
+    status?: TraceStatus;
+};
+
+export type OnlineRuleResponseDto = {
+    assessmentName: string;
+    createdAt: string;
+    createdBy?: string;
+    dailyBudget: number;
+    enabled: boolean;
+    evaluatorId: string;
+    evaluatorVersion: number;
+    filters: OnlineRuleFiltersDto;
+    name: string;
+    orgId: string;
+    perOrgConcurrency: number;
+    ruleId: string;
+    sampleRate: number;
+    timeoutMs: number;
+    updatedAt: string;
+};
+
+export type OnlineRuleRunResponseDto = {
+    assessmentId?: string;
+    completedAt?: string;
+    costUsd?: number;
+    createdAt: string;
+    error?: string;
+    evaluatorVersion: number;
+    model?: string;
+    orgId: string;
+    passed?: boolean;
+    provider?: string;
+    reason?: string;
+    ruleId: string;
+    runId: string;
+    score?: number;
+    status: OnlineRuleRunStatus;
+    totalTokens?: number;
+    traceId: string;
+    traceRevision: string;
+    updatedAt: string;
+};
+
+export type OnlineRuleRunStatus = 'queued' | 'running' | 'completed' | 'failed' | 'skipped';
+
+export type OrganizationCreateResponseDto = {
+    access_token: string;
+    createdAt: string;
+    deletedAt?: string;
+    description?: string;
+    environments?: Array<EnvironmentResponseDto>;
+    eventsQuotaMonthly?: number;
+    eventsQuotaUsedCurrent: number;
+    id: string;
+    invitations?: Array<InvitationResponseDto>;
+    lemonsqueezyCustomerId?: string;
+    lemonsqueezySubscriptionId?: string;
+    name: string;
+    orgId: string;
+    plan: string;
+    refresh_token: string;
+    retentionDays?: number;
+    seatLimit?: number;
+    slug: string;
+    ssoConnectionId?: string;
+    ssoEnforced: boolean;
+    updatedAt?: string;
+};
+
+export type OrganizationResponseDto = {
+    createdAt: string;
+    deletedAt?: string;
+    description?: string;
+    environments?: Array<EnvironmentResponseDto>;
+    eventsQuotaMonthly?: number;
+    eventsQuotaUsedCurrent: number;
+    id: string;
+    invitations?: Array<InvitationResponseDto>;
+    lemonsqueezyCustomerId?: string;
+    lemonsqueezySubscriptionId?: string;
+    name: string;
+    orgId: string;
+    plan: string;
+    retentionDays?: number;
+    seatLimit?: number;
+    slug: string;
+    ssoConnectionId?: string;
+    ssoEnforced: boolean;
+    updatedAt?: string;
+};
+
+export type OrganizationRole = 'user' | 'admin';
+
+export type PromptComparisonDto = {
+    baseline: PromptVersionDto;
+    candidate: PromptVersionDto;
+    changedFields: Array<string>;
+};
+
+export type PromptDeleteDto = {
+    deleted: boolean;
+};
+
+export type PromptDeploymentDto = {
+    environment: string;
+    orgId: string;
+    previousVersion?: number;
+    promotedAt: string;
+    promptId: string;
+    release?: string;
+    revision: number;
+    version: number;
+};
+
+export type PromptDeploymentListDto = {
+    data: Array<PromptDeploymentDto>;
+};
+
+export type PromptDto = {
+    archived: boolean;
+    createdAt: string;
+    description?: string;
+    latestVersion: number;
+    name: string;
+    orgId: string;
+    promptId: string;
+    tags: Array<string>;
+    updatedAt: string;
+};
+
+export type PromptListDto = {
+    data: Array<PromptDto>;
+};
+
+export type PromptVersionDto = {
+    contentHash: string;
+    createdAt: string;
+    modelConfiguration?: {
+        [key: string]: unknown;
+    };
+    note?: string;
+    orgId: string;
+    promptId: string;
+    tags?: Array<string>;
+    template: string;
+    toolConfiguration?: {
+        [key: string]: unknown;
+    };
+    variables?: Array<string>;
+    version: number;
+};
+
+export type PromptVersionListDto = {
+    data: Array<PromptVersionDto>;
+};
+
+export type ProviderAuthMode = 'bearer' | 'api-key';
+
+export type ProviderSecretSource = 'managed' | 'reference';
 
 export type PublicIngestTokenCreateResponseDto = {
-    id: string;
-    tokenId: string;
-    orgId: string;
     appId?: string;
     channelId?: string;
-    environmentId?: string;
-    name: string;
-    scopes?: Array<string>;
-    prefix?: string;
-    lastUsedAt?: string;
     createdAt: string;
+    environmentId?: string;
+    id: string;
+    lastUsedAt?: string;
+    name: string;
+    orgId: string;
+    prefix?: string;
     revokedAt?: string;
+    scopes?: Array<string>;
     /**
      * Raw token, only returned at creation time
      */
     token: string;
+    tokenId: string;
 };
 
 export type PublicIngestTokenResponseDto = {
-    id: string;
-    tokenId: string;
-    orgId: string;
     appId?: string;
     channelId?: string;
+    createdAt: string;
     environmentId?: string;
+    id: string;
+    lastUsedAt?: string;
     name: string;
-    scopes?: Array<string>;
+    orgId: string;
     prefix?: string;
-    lastUsedAt?: string;
-    createdAt: string;
     revokedAt?: string;
+    scopes?: Array<string>;
+    tokenId: string;
 };
 
-export type CreateMcpTokenDto = {
-    name: string;
-    access: 'debug' | 'setup_debug';
+export type SignalsStatus = 'pending' | 'completed' | 'failed' | 'skipped';
+
+export type SuccessResponseDto = {
+    success: boolean;
 };
 
-export type McpTokenCreateResponseDto = {
-    id: string;
-    name: string;
-    prefix: string;
-    access: 'debug' | 'setup_debug';
-    scopes: Array<string>;
-    createdAt: string;
-    expiresAt: string;
-    lastUsedAt?: string;
+export type TelemetryPolicyDto = {
+    contentCaptureMode: ContentCaptureMode;
     /**
-     * Raw MCP token, returned only once at creation time
+     * Per-environment overrides, keyed by environment slug.
      */
-    token: string;
+    environmentOverrides: {
+        [key: string]: TelemetryPolicyOverrideDto;
+    };
+    maxStringLength: number;
+    redactedPaths: Array<string>;
+    regexRules: Array<TelemetryRegexRuleDto>;
 };
 
-export type McpTokenResponseDto = {
-    id: string;
-    name: string;
-    prefix: string;
-    access: 'debug' | 'setup_debug';
-    scopes: Array<string>;
-    createdAt: string;
-    expiresAt: string;
-    lastUsedAt?: string;
+export type TelemetryPolicyOverrideDto = {
+    contentCaptureMode?: ContentCaptureMode;
+    maxStringLength?: number;
+    redactedPaths?: Array<string>;
+    regexRules?: Array<TelemetryRegexRuleDto>;
 };
 
-export type CreateWebhookEndpointDto = {
-    url: string;
+export type TelemetryPolicyResponseDto = {
+    policy: TelemetryPolicyDto;
+    version: number;
+};
+
+export type TelemetryRegexRuleDto = {
+    pattern: string;
+    replacement: string;
+};
+
+export type TraceClusterDatasetActionResponseDto = {
+    datasetId: string;
+    itemCount: number;
+    revision: number;
+};
+
+export type TraceDetailV2ResponseDto = {
+    hierarchy: Array<TraceHierarchyItemDto>;
+    summary: TraceSummaryV2Dto;
+};
+
+export type TraceEventsV2ResponseDto = {
+    data: Array<EventResponseDto>;
+};
+
+export type TraceFlowStatus = 'provider_not_configured' | 'consent_required' | 'insufficient_cohort' | 'processing' | 'ready' | 'failed';
+
+export type TraceHierarchyItemDto = {
+    active: boolean;
+    agentId?: string;
+    appId: string;
+    cacheReadTokens?: number;
+    cacheWriteTokens?: number;
     channelId: string;
-    secret?: string;
+    costUsd?: number;
+    createdAt: string;
+    depth: number;
+    durationMs?: number;
+    endTimeUnixNano?: string;
+    environmentId?: string;
+    eventId: string;
+    eventType: string;
     /**
-     * Event types to filter (null = all)
+     * Model stop/finish reason, e.g. "stop", "length", "tool_calls".
      */
-    eventTypes?: Array<string>;
-    description?: string;
+    finishReason?: string;
+    id: string;
+    identifier?: string;
+    inputTokens?: number;
+    metadata?: {
+        [key: string]: unknown;
+    };
+    occurredAt?: string;
+    operationName?: string;
+    orgId: string;
+    orphanedParent: boolean;
+    outputTokens?: number;
+    parentEventId?: string;
+    parentSpanId?: string;
+    payload?: {
+        [key: string]: unknown;
+    };
+    providerName?: string;
+    reasoningTokens?: number;
+    requestModel?: string;
+    responseModel?: string;
+    semanticKind?: string;
+    serviceName?: string;
+    serviceVersion?: string;
+    source?: string;
+    spanId?: string;
+    startTimeUnixNano?: string;
+    status?: string;
+    /**
+     * Time-to-first-token latency in milliseconds (streamed LLM calls).
+     */
+    timeToFirstTokenMs?: number;
+    toolName?: string;
+    totalTokens?: number;
+    traceId?: string;
+    ttl?: number;
+    updatedAt?: string;
 };
+
+export type TraceIntelligenceBackfillResponseDto = {
+    appId: string;
+    completedAt?: string;
+    createdAt: string;
+    environmentId: string;
+    error?: string;
+    failedCount: number;
+    from: string;
+    jobId: string;
+    maxTraces: number;
+    processedCount: number;
+    queuedCount: number;
+    status: BackfillStatus;
+    to: string;
+    updatedAt: string;
+};
+
+export type TraceIntelligenceClusterListMetaDto = {
+    cursor?: {
+        [key: string]: unknown;
+    } | null;
+    hasMore: boolean;
+};
+
+export type TraceIntelligenceClusterListResponseDto = {
+    data: Array<TraceIntelligenceClusterResponseDto>;
+    meta: TraceIntelligenceClusterListMetaDto;
+};
+
+export type TraceIntelligenceClusterResponseDto = {
+    algorithmVersion?: string;
+    appId: string;
+    clusterId: string;
+    confidence?: number;
+    description: string;
+    downstream?: Array<TraceIntelligenceRelatedClusterResponseDto>;
+    environmentId: string;
+    extractionVersion?: string;
+    label: string;
+    lineage?: {
+        [key: string]: unknown;
+    };
+    percentage: number;
+    providerModel?: string;
+    representativeTraceIds: Array<string>;
+    signalKind: TraceSignalKind;
+    snapshotId: string;
+    traceCount: number;
+    trend?: number;
+    updatedAt: string;
+    upstream?: Array<TraceIntelligenceRelatedClusterResponseDto>;
+};
+
+export type TraceIntelligenceCoverageResponseDto = {
+    analyzed: number;
+    eligible: number;
+    failed: number;
+    pending: number;
+    skipped: number;
+};
+
+export type TraceIntelligenceFlowLinkResponseDto = {
+    source: string;
+    target: string;
+    value: number;
+};
+
+export type TraceIntelligenceFlowNodeResponseDto = {
+    confidence?: number;
+    description: string;
+    id: string;
+    label: string;
+    percentage: number;
+    representativeTraceIds?: Array<string>;
+    signalKind: TraceSignalKind;
+    traceCount: number;
+    trend?: number;
+    unclustered?: boolean;
+};
+
+export type TraceIntelligenceFlowResponseDto = {
+    algorithm?: {
+        [key: string]: unknown;
+    };
+    columns: Array<TraceSignalKind>;
+    coverage: TraceIntelligenceCoverageResponseDto;
+    links: Array<TraceIntelligenceFlowLinkResponseDto>;
+    nodes: Array<TraceIntelligenceFlowNodeResponseDto>;
+    snapshot?: TraceIntelligenceSnapshotResponseDto;
+    status: TraceFlowStatus;
+    topPaths: Array<TraceIntelligenceTopPathResponseDto>;
+    trends: Array<{
+        [key: string]: unknown;
+    }>;
+};
+
+export type TraceIntelligenceProviderResponseDto = {
+    authMode: ProviderAuthMode;
+    baseUrl: string;
+    chatModel: string;
+    chatPath: string;
+    embeddingModel: string;
+    embeddingPath: string;
+    secretConfigured: boolean;
+    secretSource?: ProviderSecretSource;
+};
+
+export type TraceIntelligenceProviderTestResponseDto = {
+    chatModel: string;
+    dimensions: number;
+    embeddingModel: string;
+    ok: boolean;
+};
+
+export type TraceIntelligenceRelatedClusterResponseDto = {
+    clusterId: string;
+    count: number;
+};
+
+export type TraceIntelligenceScope = 'app_environment';
+
+export type TraceIntelligenceSettingsResponseDto = {
+    algorithmVersion: string;
+    contentConsentAt?: string;
+    dailyTraceLimit: number;
+    enabled: boolean;
+    extractionVersion: string;
+    provider: TraceIntelligenceProviderResponseDto;
+    retentionDays: number;
+    samplingRate: number;
+    scope: TraceIntelligenceScope;
+    updatedAt?: string;
+};
+
+export type TraceIntelligenceSignalValueResponseDto = {
+    confidence: number;
+    description: string;
+    label: string;
+    polarity?: number;
+    success?: boolean;
+};
+
+export type TraceIntelligenceSignalsPayloadResponseDto = {
+    behavior: TraceIntelligenceSignalValueResponseDto;
+    goal: TraceIntelligenceSignalValueResponseDto;
+    outcome: TraceIntelligenceSignalValueResponseDto;
+    sentiment: TraceIntelligenceSignalValueResponseDto;
+};
+
+export type TraceIntelligenceSignalsResponseDto = {
+    analyzedAt: string;
+    extractionVersion: string;
+    failureReason?: string;
+    signals?: TraceIntelligenceSignalsPayloadResponseDto;
+    skipReason?: string;
+    status: SignalsStatus;
+    traceId: string;
+    traceRevision: string;
+};
+
+export type TraceIntelligenceSnapshotResponseDto = {
+    analyzedThrough: string;
+    createdAt: string;
+    snapshotId: string;
+    sourceTraceCount: number;
+};
+
+export type TraceIntelligenceTopPathResponseDto = {
+    clusters: Array<string>;
+    count: number;
+};
+
+export type TraceListV2MetaDto = {
+    cursor?: string | null;
+    hasMore: boolean;
+    limit: number;
+};
+
+export type TraceListV2ResponseDto = {
+    data: Array<TraceSummaryV2Dto>;
+    meta: TraceListV2MetaDto;
+};
+
+export type TraceSignalKind = 'goal' | 'behavior' | 'outcome' | 'sentiment';
+
+export type TraceStatus = 'ok' | 'error' | 'running';
+
+export type TraceSummaryV2Dto = {
+    agents: Array<string>;
+    appId: string;
+    cacheReadTokens: number;
+    cacheWriteTokens: number;
+    channelId: string;
+    /**
+     * Omitted when every underlying span has unknown pricing.
+     */
+    costUsd?: number | null;
+    durationMs: number;
+    endTime: string;
+    environmentId?: string;
+    errorCount: number;
+    eventCount: number;
+    handoffCount: number;
+    inputTokens: number;
+    lastSeenAt: string;
+    models: Array<string>;
+    outputTokens: number;
+    promptIds: Array<string>;
+    promptVersionIds: Array<string>;
+    providers: Array<string>;
+    reasoningTokens: number;
+    releases: Array<string>;
+    revision: string;
+    rootOperation?: string;
+    score?: number | null;
+    semanticKinds: Array<string>;
+    services: Array<string>;
+    sessionIds: Array<string>;
+    startTime: string;
+    status: TraceStatus;
+    toolCallCount: number;
+    tools: Array<string>;
+    totalTokens: number;
+    traceId: string;
+    updatedAt: string;
+    userIds: Array<string>;
+};
+
+export type TransferOwnershipDto = {
+    userId: string;
+};
+
+export type UpdateEnvironmentDto = {
+    color?: string;
+    name?: string;
+    requireConfirmationForDestructive?: boolean;
+};
+
+export type UpdateExportDestinationDto = {
+    active?: boolean;
+    endpointUrl?: string;
+    eventTypeFilter?: Array<string>;
+    /**
+     * Replaces the stored header map. Never returned by the API.
+     */
+    headers?: {
+        [key: string]: string;
+    };
+    name?: string;
+    serviceName?: string;
+    signals?: Array<ExportSignal>;
+};
+
+export type WebhookDeliveryResponseDto = {
+    attempts: number;
+    createdAt: string;
+    deliveryId: string;
+    endpointId: string;
+    error?: string;
+    eventId: string;
+    id: string;
+    lastAttemptAt?: string;
+    nextAttemptAt?: string;
+    responseBody?: string;
+    status: WebhookDeliveryStatus;
+    statusCode?: number;
+};
+
+export type WebhookDeliveryStatus = 'pending' | 'success' | 'failed' | 'retrying';
 
 export type WebhookEndpointCreateResponseDto = {
-    id: string;
-    endpointId: string;
-    orgId?: string;
-    channelId: string;
-    url: string;
-    eventTypes?: Array<string>;
-    signingSecretPrefix?: string;
-    hasSecret?: boolean;
-    description?: string;
     active: boolean;
+    channelId: string;
     createdAt: string;
-    updatedAt?: string;
     deletedAt?: string;
+    description?: string;
+    endpointId: string;
+    eventTypes?: Array<string>;
+    hasSecret?: boolean;
+    id: string;
+    orgId?: string;
     /**
      * Raw signing secret, only returned at creation time
      */
@@ -577,556 +1466,203 @@ export type WebhookEndpointCreateResponseDto = {
     /**
      * Prefix of the signing secret
      */
-    secretPrefix?: string | null;
+    secretPrefix?: {
+        [key: string]: unknown;
+    };
+    signingSecretPrefix?: string;
+    updatedAt?: string;
+    url: string;
 };
 
 export type WebhookEndpointResponseDto = {
-    id: string;
-    endpointId: string;
-    orgId?: string;
-    channelId: string;
-    url: string;
-    eventTypes?: Array<string>;
-    signingSecretPrefix?: string;
-    hasSecret?: boolean;
-    description?: string;
     active: boolean;
+    channelId: string;
     createdAt: string;
-    updatedAt?: string;
     deletedAt?: string;
-};
-
-export type WebhookDeliveryResponseDto = {
-    id: string;
-    deliveryId: string;
+    description?: string;
     endpointId: string;
-    eventId: string;
-    status: 'pending' | 'success' | 'failed' | 'retrying';
-    statusCode?: number;
-    responseBody?: string;
-    attempts: number;
-    lastAttemptAt?: string;
-    nextAttemptAt?: string;
-    error?: string;
-    createdAt: string;
+    eventTypes?: Array<string>;
+    hasSecret?: boolean;
+    id: string;
+    orgId?: string;
+    signingSecretPrefix?: string;
+    updatedAt?: string;
+    url: string;
 };
 
 export type WebhookIngestResponseDto = {
-    status: string;
     eventId: string;
-};
-
-export type CreateExportDestinationDto = {
-    name: string;
-    /**
-     * Environment slug this destination is scoped to (e.g. "prod")
-     */
-    envSlug: string;
-    /**
-     * OTLP/HTTP base URL (v1/logs and v1/traces are appended)
-     */
-    endpointUrl: string;
-    /**
-     * Header name -> value map (e.g. DD-API-KEY). Stored server-side, never returned.
-     */
-    headers?: {
-        [key: string]: string;
-    };
-    signals: 'logs' | 'traces';
-    /**
-     * Allow-list of event types to export (empty = all types)
-     */
-    eventTypeFilter?: Array<string>;
-    /**
-     * service.name attribute stamped on exported resources
-     */
-    serviceName?: string;
-    active?: boolean;
-};
-
-export type ExportDestinationResponseDto = {
-    id: string;
-    destinationId: string;
-    orgId: string;
-    envSlug: string;
-    name: string;
-    endpointUrl: string;
-    /**
-     * OTLP signals: logs and/or traces
-     */
-    signals: Array<string>;
-    eventTypeFilter?: Array<string>;
-    serviceName?: string;
-    /**
-     * Configured header names (values are masked)
-     */
-    headerKeys: Array<string>;
-    active: boolean;
-    createdAt: string;
-    updatedAt?: string;
-};
-
-export type UpdateExportDestinationDto = {
-    name?: string;
-    endpointUrl?: string;
-    /**
-     * Replaces the stored header map. Never returned by the API.
-     */
-    headers?: {
-        [key: string]: string;
-    };
-    signals?: 'logs' | 'traces';
-    eventTypeFilter?: Array<string>;
-    serviceName?: string;
-    active?: boolean;
-};
-
-export type AuditLogActorDto = {
-    id: string;
-    first_name?: string;
-    last_name?: string;
-    email?: string;
-    username?: string;
-};
-
-export type AuditLogResponseDto = {
-    id: string;
-    auditId: string;
-    organizationId?: string;
-    orgId?: string;
-    actorId?: string | null;
-    action: string;
-    resourceType: string;
-    resourceId?: string;
-    metadata?: {
-        [key: string]: unknown;
-    } | null;
-    ipAddress?: string | null;
-    actor?: AuditLogActorDto | null;
-    createdAt: string;
-};
-
-export type AuditLogListMetaDto = {
-    total: number;
-    page: number;
-    limit: number;
-    totalPages: number;
-};
-
-export type AuditLogListResponseDto = {
-    data: Array<AuditLogResponseDto>;
-    meta: AuditLogListMetaDto;
-};
-
-export type HealthResponseDto = {
     status: string;
-    timestamp: string;
-    flags: {
-        [key: string]: unknown;
-    };
 };
 
-export type CreateReleaseDto = {
-    version: string;
-    projects?: Array<string>;
-    dateReleased?: string;
-};
-
-export type ReleaseResponseDto = {
-    orgId: string;
-    version: string;
-    projects?: string;
-    dateCreated: string;
-    dateReleased?: string;
-    firstEventAt?: string;
-    lastEventAt?: string;
-};
-
-export type ReleaseArtifactResponseDto = {
-    orgId: string;
-    version: string;
-    artifactId: string;
+export type CreateChannelDto = {
+    appId: string;
     name: string;
-    contentType?: string;
-    sizeBytes: number;
-    storagePath: string;
-    sha256?: string;
-    createdAt: string;
 };
 
-export type SsoConnectionResponseDto = {
-    clientID: string;
-    tenant?: string;
-    product?: string;
-    defaultRedirectUrl?: string;
-    redirectUrl?: Array<string>;
-};
-
-export type ToggleEnforcementDto = {
-    enforced: boolean;
-};
-
-export type SsoEnforcementResponseDto = {
-    ok: boolean;
-    enforced: boolean;
-};
-
-export type SsoAuthorizeResponseDto = {
-    redirect_url: string;
-};
-
-export type SsoCallbackDto = {
-    code: string;
-};
-
-export type AdminTotalsDto = {
-    orgs: number;
-    users: number;
-};
-
-export type AdminEventsDto = {
-    /**
-     * All-time events ingested (sum of per-org events_total counters)
-     */
-    total: number;
-    /**
-     * Events ingested today (UTC)
-     */
-    today: number;
-    /**
-     * Sum of every org’s events used in its current billing cycle
-     */
-    thisCycle: number;
-};
-
-export type CountByKeyDto = {
-    /**
-     * The grouped key, e.g. a plan or subscription status
-     */
-    key: string;
-    count: number;
-};
-
-export type MrrByPlanDto = {
-    plan: string;
-    count: number;
-    /**
-     * Estimated monthly recurring revenue (USD) from this plan
-     */
-    mrrUsd: number;
-};
-
-export type AdminMrrDto = {
-    /**
-     * Approximate monthly recurring revenue (USD)
-     */
-    estimateUsd: number;
-    payingOrgs: number;
-    byPlan: Array<MrrByPlanDto>;
-};
-
-export type AdminOverviewDto = {
-    totals: AdminTotalsDto;
-    events: AdminEventsDto;
-    /**
-     * Org count grouped by plan
-     */
-    planDistribution: Array<CountByKeyDto>;
-    /**
-     * Org count grouped by subscription status
-     */
-    subscriptionStatusDistribution: Array<CountByKeyDto>;
-    mrr: AdminMrrDto;
-};
-
-export type AdminRecentOrgDto = {
-    orgId: string;
-    name: string;
-    slug: string;
-    plan: string;
-    subscriptionStatus: string | null;
-    createdAt: string;
-};
-
-export type AdminRecentUserDto = {
-    userId: string;
-    email: string;
-    organizationId: string | null;
-    createdAt: string;
-};
-
-export type AdminSignupPointDto = {
-    /**
-     * UTC day, YYYY-MM-DD
-     */
-    day: string;
-    orgs: number;
-    users: number;
-};
-
-export type AdminSignupsDto = {
-    recentOrgs: Array<AdminRecentOrgDto>;
-    recentUsers: Array<AdminRecentUserDto>;
-    /**
-     * Signups per UTC day
-     */
-    series: Array<AdminSignupPointDto>;
-};
-
-export type AdminOrgListItemDto = {
-    orgId: string;
-    name: string;
-    slug: string;
-    plan: string;
-    subscriptionStatus: string | null;
-    eventsQuotaUsedCurrent: number | null;
-    eventsQuotaMonthly: number | null;
-    seatLimit: number | null;
-    billingMonthlyAmountUsd: number | null;
-    billingNotes: string | null;
-    trialEndsAt: string | null;
-    createdAt: string;
-};
-
-export type AdminOrgListDto = {
-    /**
-     * Number of orgs matching the query (before the response cap)
-     */
-    total: number;
-    /**
-     * True when results were capped and not all matches are returned
-     */
-    truncated: boolean;
-    orgs: Array<AdminOrgListItemDto>;
-};
-
-export type AdminCreateCustomerDto = {
-    name: string;
-    slug: string;
-    ownerEmail: string;
-    plan: 'free' | 'pro' | 'team' | 'scale' | 'selfhost';
-    trialDays: number;
-    billingMonthlyAmountUsd: number;
-    billingNotes?: string;
-};
-
-export type AdminOrgInvitationDto = {
-    invitationId: string;
-    invitedEmail: string;
-    inviteRole: string;
-    status: string;
-    code: string;
-    createdAt: string;
-};
-
-export type AdminCreateCustomerResponseDto = {
-    org: AdminOrgListItemDto;
-    invitation: AdminOrgInvitationDto;
-};
-
-export type AdminOrgLimitDto = {
-    /**
-     * Plan-derived default (null = unlimited)
-     */
-    planDefault: number | null;
-    /**
-     * Raw durable override: a number, -1 for unlimited, or null when unset
-     */
-    override: number | null;
-    /**
-     * Effective value in force (null = unlimited)
-     */
-    effective: number | null;
-};
-
-export type AdminOrgLimitsDto = {
-    seats: AdminOrgLimitDto;
-    retentionDays: AdminOrgLimitDto;
-    eventsQuotaMonthly: AdminOrgLimitDto;
-};
-
-export type AdminOrgMemberDto = {
-    userId: string;
-    email: string;
-    roles: Array<string>;
-    createdAt: string;
-};
-
-export type AdminOrgDetailDto = {
-    org: AdminOrgListItemDto;
-    /**
-     * Per-limit plan default / override / effective
-     */
-    limits: AdminOrgLimitsDto;
-    members: Array<AdminOrgMemberDto>;
-    invitations: Array<AdminOrgInvitationDto>;
-};
-
-export type AdminSetPlanDto = {
-    plan: 'free' | 'pro' | 'team' | 'scale' | 'selfhost';
-};
-
-export type AdminOrgMutationResponseDto = {
-    ok: boolean;
-    subscriptionStatus: string | null;
-    plan: string | null;
-};
-
-export type AdminSetLimitsDto = {
-    /**
-     * Seat limit override: >=1 for a value, -1 for unlimited, null to clear
-     */
-    seatLimit?: number | null;
-    /**
-     * Retention days override: >=1 for a value, -1 for unlimited, null to clear
-     */
-    retentionDays?: number | null;
-    /**
-     * Monthly events quota override: >=0 for a value, -1 for unlimited, null to clear
-     */
-    eventsQuotaMonthly?: number | null;
-};
-
-export type AdminSetStatusDto = {
-    subscriptionStatus: 'active' | 'past_due' | 'paused' | 'trialing' | 'trial_expired';
-};
-
-export type AdminSetTrialDto = {
-    /**
-     * Trial length in days from now
-     */
-    days: number;
-};
-
-export type AdminUpdateBillingDto = {
-    billingMonthlyAmountUsd: number;
-    billingNotes?: string;
-};
-
-export type AdminUserListItemDto = {
-    userId: string;
-    email: string;
-    firstName: string | null;
-    lastName: string | null;
-    organizationId: string | null;
-    disabledAt: string | null;
-    createdAt: string;
-    trialStartedAt: string | null;
-    trialEndsAt: string | null;
-};
-
-export type AdminUserListDto = {
-    total: number;
-    truncated: boolean;
-    users: Array<AdminUserListItemDto>;
-};
-
-export type AdminOkResponseDto = {
-    ok: boolean;
-};
-
-export type AdminBillingEventListItemDto = {
-    id: string;
-    orgId: string;
-    externalId: string;
-    eventName: string;
-    createdAt: string;
-    processedAt: string | null;
-    error: string | null;
-};
-
-export type AdminBillingEventListDto = {
-    events: Array<AdminBillingEventListItemDto>;
-};
-
-export type AdminBillingEventReplayResponseDto = {
-    ok: boolean;
-    error: string | null;
-};
-
-export type AppControllerGetHelloData = {
+export type ApiKeyControllerListApiKeysData = {
     body?: never;
     path?: never;
     query?: never;
-    url: '/';
+    url: '/api-keys';
 };
 
-export type AppControllerGetHelloResponses = {
-    200: string;
+export type ApiKeyControllerListApiKeysResponses = {
+    200: Array<ApiKeyResponseDto>;
 };
 
-export type AppControllerGetHelloResponse = AppControllerGetHelloResponses[keyof AppControllerGetHelloResponses];
+export type ApiKeyControllerListApiKeysResponse = ApiKeyControllerListApiKeysResponses[keyof ApiKeyControllerListApiKeysResponses];
 
-export type AuthControllerSignUpData = {
-    body: UserCreateDto;
+export type ApiKeyControllerCreateApiKeyData = {
+    body: CreateApiKeyDto;
     path?: never;
     query?: never;
-    url: '/auth/signup';
+    url: '/api-keys';
 };
 
-export type AuthControllerSignUpResponses = {
-    201: UserResponseDto;
+export type ApiKeyControllerCreateApiKeyResponses = {
+    201: ApiKeyCreateResponseDto;
 };
 
-export type AuthControllerSignUpResponse = AuthControllerSignUpResponses[keyof AuthControllerSignUpResponses];
+export type ApiKeyControllerCreateApiKeyResponse = ApiKeyControllerCreateApiKeyResponses[keyof ApiKeyControllerCreateApiKeyResponses];
 
-export type AuthControllerSignInData = {
-    body: SignInDto;
-    path?: never;
-    query?: never;
-    url: '/auth/signin';
-};
-
-export type AuthControllerSignInResponses = {
-    200: AuthTokensResponseDto;
-    201: unknown;
-};
-
-export type AuthControllerSignInResponse = AuthControllerSignInResponses[keyof AuthControllerSignInResponses];
-
-export type AuthControllerGoogleAuthData = {
-    body: GoogleAuthDto;
-    path?: never;
-    query?: never;
-    url: '/auth/google';
-};
-
-export type AuthControllerGoogleAuthResponses = {
-    200: GoogleAuthResponseDto;
-    201: {
-        [key: string]: unknown;
+export type ApiKeyControllerRevokeApiKeyData = {
+    body?: never;
+    path: {
+        id: string;
     };
-};
-
-export type AuthControllerGoogleAuthResponse = AuthControllerGoogleAuthResponses[keyof AuthControllerGoogleAuthResponses];
-
-export type AuthControllerSetupOrgData = {
-    body: SetupOrgDto;
-    path?: never;
     query?: never;
-    url: '/auth/setup-org';
+    url: '/api-keys/{id}';
 };
 
-export type AuthControllerSetupOrgResponses = {
-    200: AuthTokensResponseDto;
+export type ApiKeyControllerRevokeApiKeyResponses = {
+    200: MessageResponseDto;
+};
+
+export type ApiKeyControllerRevokeApiKeyResponse = ApiKeyControllerRevokeApiKeyResponses[keyof ApiKeyControllerRevokeApiKeyResponses];
+
+export type SentryControllerIngestEnvelopeData = {
+    body?: never;
+    path: {
+        projectId: string;
+    };
+    query?: never;
+    url: '/api/{projectId}/envelope';
+};
+
+export type SentryControllerIngestEnvelopeResponses = {
     201: unknown;
 };
 
-export type AuthControllerSetupOrgResponse = AuthControllerSetupOrgResponses[keyof AuthControllerSetupOrgResponses];
-
-export type AuthControllerRefreshData = {
-    body: RefreshTokenDto;
-    path?: never;
+export type SentryControllerIngestMinidumpData = {
+    body?: never;
+    path: {
+        projectId: string;
+    };
     query?: never;
-    url: '/auth/refresh';
+    url: '/api/{projectId}/minidump';
 };
 
-export type AuthControllerRefreshResponses = {
-    200: AuthTokensResponseDto;
+export type SentryControllerIngestMinidumpResponses = {
     201: unknown;
 };
 
-export type AuthControllerRefreshResponse = AuthControllerRefreshResponses[keyof AuthControllerRefreshResponses];
+export type SentryControllerIngestSecurityData = {
+    body?: never;
+    path: {
+        projectId: string;
+    };
+    query?: never;
+    url: '/api/{projectId}/security';
+};
+
+export type SentryControllerIngestSecurityResponses = {
+    201: unknown;
+};
+
+export type SentryControllerIngestStoreData = {
+    body?: never;
+    path: {
+        projectId: string;
+    };
+    query?: never;
+    url: '/api/{projectId}/store';
+};
+
+export type SentryControllerIngestStoreResponses = {
+    201: unknown;
+};
+
+export type AppsControllerGetAllAppsData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/apps';
+};
+
+export type AppsControllerGetAllAppsResponses = {
+    200: Array<AppResponseDto>;
+};
+
+export type AppsControllerGetAllAppsResponse = AppsControllerGetAllAppsResponses[keyof AppsControllerGetAllAppsResponses];
+
+export type AppsControllerCreateAppData = {
+    body: CreateAppDto;
+    path?: never;
+    query?: never;
+    url: '/apps';
+};
+
+export type AppsControllerCreateAppResponses = {
+    201: AppResponseDto;
+};
+
+export type AppsControllerCreateAppResponse = AppsControllerCreateAppResponses[keyof AppsControllerCreateAppResponses];
+
+export type AppsControllerDeleteAppData = {
+    body?: never;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/apps/{id}';
+};
+
+export type AppsControllerDeleteAppResponses = {
+    200: OkResponseDto;
+};
+
+export type AppsControllerDeleteAppResponse = AppsControllerDeleteAppResponses[keyof AppsControllerDeleteAppResponses];
+
+export type AppsControllerGetAppData = {
+    body?: never;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/apps/{id}';
+};
+
+export type AppsControllerGetAppResponses = {
+    200: AppResponseDto;
+};
+
+export type AppsControllerGetAppResponse = AppsControllerGetAppResponses[keyof AppsControllerGetAppResponses];
+
+export type AppsControllerEditAppData = {
+    body: CreateAppDto;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/apps/{id}';
+};
+
+export type AppsControllerEditAppResponses = {
+    200: OkResponseDto;
+};
+
+export type AppsControllerEditAppResponse = AppsControllerEditAppResponses[keyof AppsControllerEditAppResponses];
 
 export type IotCredentialsControllerGetCredentialsData = {
     body?: never;
@@ -1141,338 +1677,46 @@ export type IotCredentialsControllerGetCredentialsResponses = {
 
 export type IotCredentialsControllerGetCredentialsResponse = IotCredentialsControllerGetCredentialsResponses[keyof IotCredentialsControllerGetCredentialsResponses];
 
-export type UserControllerGetMeData = {
+export type IotTokenControllerListData = {
     body?: never;
     path?: never;
     query?: never;
-    url: '/users/me';
+    url: '/auth/iot-tokens';
 };
 
-export type UserControllerGetMeResponses = {
-    200: UserResponseDto;
+export type IotTokenControllerListResponses = {
+    200: Array<IotTokenResponseDto>;
 };
 
-export type UserControllerGetMeResponse = UserControllerGetMeResponses[keyof UserControllerGetMeResponses];
+export type IotTokenControllerListResponse = IotTokenControllerListResponses[keyof IotTokenControllerListResponses];
 
-export type UserControllerUpdateMeData = {
-    body: UpdateProfileDto;
+export type IotTokenControllerCreateData = {
+    body: CreateIotTokenDto;
     path?: never;
     query?: never;
-    url: '/users/me';
+    url: '/auth/iot-tokens';
 };
 
-export type UserControllerUpdateMeResponses = {
-    200: UserResponseDto;
+export type IotTokenControllerCreateResponses = {
+    201: IotTokenCreateResponseDto;
 };
 
-export type UserControllerUpdateMeResponse = UserControllerUpdateMeResponses[keyof UserControllerUpdateMeResponses];
+export type IotTokenControllerCreateResponse = IotTokenControllerCreateResponses[keyof IotTokenControllerCreateResponses];
 
-export type UserControllerGetMyOrganizationsData = {
-    body?: never;
-    path?: never;
-    query?: never;
-    url: '/users/me/organizations';
-};
-
-export type UserControllerGetMyOrganizationsResponses = {
-    200: Array<UserOrganizationWithOrgResponseDto>;
-};
-
-export type UserControllerGetMyOrganizationsResponse = UserControllerGetMyOrganizationsResponses[keyof UserControllerGetMyOrganizationsResponses];
-
-export type UserControllerSwitchActiveOrgData = {
-    body: SwitchOrgDto;
-    path?: never;
-    query?: never;
-    url: '/users/me/active-org';
-};
-
-export type UserControllerSwitchActiveOrgResponses = {
-    200: SwitchActiveOrgResponseDto;
-};
-
-export type UserControllerSwitchActiveOrgResponse = UserControllerSwitchActiveOrgResponses[keyof UserControllerSwitchActiveOrgResponses];
-
-export type UserControllerGetUsersData = {
-    body?: never;
-    path?: never;
-    query?: never;
-    url: '/users';
-};
-
-export type UserControllerGetUsersResponses = {
-    200: Array<UserResponseDto>;
-};
-
-export type UserControllerGetUsersResponse = UserControllerGetUsersResponses[keyof UserControllerGetUsersResponses];
-
-export type UserControllerDeleteUserData = {
+export type IotTokenControllerRevokeData = {
     body?: never;
     path: {
         id: string;
     };
     query?: never;
-    url: '/users/{id}';
+    url: '/auth/iot-tokens/{id}';
 };
 
-export type UserControllerDeleteUserResponses = {
+export type IotTokenControllerRevokeResponses = {
     200: MessageResponseDto;
 };
 
-export type UserControllerDeleteUserResponse = UserControllerDeleteUserResponses[keyof UserControllerDeleteUserResponses];
-
-export type UserControllerUpdateUserData = {
-    body: UpdateProfileDto;
-    path: {
-        id: string;
-    };
-    query?: never;
-    url: '/users/{id}';
-};
-
-export type UserControllerUpdateUserResponses = {
-    200: UserResponseDto;
-};
-
-export type UserControllerUpdateUserResponse = UserControllerUpdateUserResponses[keyof UserControllerUpdateUserResponses];
-
-export type OrganizationControllerGetAllOrganizationsData = {
-    body?: never;
-    path?: never;
-    query?: never;
-    url: '/organizations';
-};
-
-export type OrganizationControllerGetAllOrganizationsResponses = {
-    200: Array<OrganizationResponseDto>;
-};
-
-export type OrganizationControllerGetAllOrganizationsResponse = OrganizationControllerGetAllOrganizationsResponses[keyof OrganizationControllerGetAllOrganizationsResponses];
-
-export type OrganizationControllerCreateOrganizationData = {
-    body: CreateOrganizationDto;
-    path?: never;
-    query?: never;
-    url: '/organizations';
-};
-
-export type OrganizationControllerCreateOrganizationResponses = {
-    201: OrganizationCreateResponseDto;
-};
-
-export type OrganizationControllerCreateOrganizationResponse = OrganizationControllerCreateOrganizationResponses[keyof OrganizationControllerCreateOrganizationResponses];
-
-export type OrganizationControllerDeleteOrganizationData = {
-    body?: never;
-    path: {
-        id: string;
-    };
-    query?: never;
-    url: '/organizations/{id}';
-};
-
-export type OrganizationControllerDeleteOrganizationResponses = {
-    200: OkResponseDto;
-};
-
-export type OrganizationControllerDeleteOrganizationResponse = OrganizationControllerDeleteOrganizationResponses[keyof OrganizationControllerDeleteOrganizationResponses];
-
-export type OrganizationControllerGetOrganizationData = {
-    body?: never;
-    path: {
-        id: string;
-    };
-    query?: never;
-    url: '/organizations/{id}';
-};
-
-export type OrganizationControllerGetOrganizationResponses = {
-    200: OrganizationResponseDto;
-};
-
-export type OrganizationControllerGetOrganizationResponse = OrganizationControllerGetOrganizationResponses[keyof OrganizationControllerGetOrganizationResponses];
-
-export type OrganizationControllerEditOrganizationData = {
-    body: CreateOrganizationDto;
-    path: {
-        id: string;
-    };
-    query?: never;
-    url: '/organizations/{id}';
-};
-
-export type OrganizationControllerEditOrganizationResponses = {
-    200: OkResponseDto;
-};
-
-export type OrganizationControllerEditOrganizationResponse = OrganizationControllerEditOrganizationResponses[keyof OrganizationControllerEditOrganizationResponses];
-
-export type OrganizationControllerGetTelemetryPolicyData = {
-    body?: never;
-    path: {
-        id: string;
-    };
-    query?: never;
-    url: '/organizations/{id}/telemetry-policy';
-};
-
-export type OrganizationControllerGetTelemetryPolicyResponses = {
-    200: unknown;
-};
-
-export type OrganizationControllerUpdateTelemetryPolicyData = {
-    body?: never;
-    path: {
-        id: string;
-    };
-    query?: never;
-    url: '/organizations/{id}/telemetry-policy';
-};
-
-export type OrganizationControllerUpdateTelemetryPolicyResponses = {
-    200: unknown;
-};
-
-export type OrganizationControllerCreateInvitationData = {
-    body: CreateInvitationDto;
-    path: {
-        id: string;
-    };
-    query?: never;
-    url: '/organizations/{id}/invitations';
-};
-
-export type OrganizationControllerCreateInvitationResponses = {
-    201: InvitationResponseDto;
-};
-
-export type OrganizationControllerCreateInvitationResponse = OrganizationControllerCreateInvitationResponses[keyof OrganizationControllerCreateInvitationResponses];
-
-export type OrganizationControllerRemoveMemberData = {
-    body?: never;
-    path: {
-        id: string;
-        userId: string;
-    };
-    query?: never;
-    url: '/organizations/{id}/members/{userId}';
-};
-
-export type OrganizationControllerRemoveMemberResponses = {
-    200: SuccessResponseDto;
-};
-
-export type OrganizationControllerRemoveMemberResponse = OrganizationControllerRemoveMemberResponses[keyof OrganizationControllerRemoveMemberResponses];
-
-export type OrganizationControllerTransferOwnershipData = {
-    body: TransferOwnershipDto;
-    path: {
-        id: string;
-    };
-    query?: never;
-    url: '/organizations/{id}/transfer-ownership';
-};
-
-export type OrganizationControllerTransferOwnershipResponses = {
-    200: SuccessResponseDto;
-    201: unknown;
-};
-
-export type OrganizationControllerTransferOwnershipResponse = OrganizationControllerTransferOwnershipResponses[keyof OrganizationControllerTransferOwnershipResponses];
-
-export type OrganizationControllerDeleteInvitationData = {
-    body?: never;
-    path: {
-        id: string;
-        invitationId: string;
-    };
-    query?: never;
-    url: '/organizations/{id}/invitations/{invitationId}';
-};
-
-export type OrganizationControllerDeleteInvitationResponses = {
-    200: SuccessResponseDto;
-};
-
-export type OrganizationControllerDeleteInvitationResponse = OrganizationControllerDeleteInvitationResponses[keyof OrganizationControllerDeleteInvitationResponses];
-
-export type BillingControllerGetPlansData = {
-    body?: never;
-    path?: never;
-    query?: never;
-    url: '/billing/plans';
-};
-
-export type BillingControllerGetPlansResponses = {
-    200: BillingPlansResponseDto;
-};
-
-export type BillingControllerGetPlansResponse = BillingControllerGetPlansResponses[keyof BillingControllerGetPlansResponses];
-
-export type BillingControllerGetUsageData = {
-    body?: never;
-    path?: never;
-    query?: never;
-    url: '/billing/usage';
-};
-
-export type BillingControllerGetUsageResponses = {
-    200: BillingUsageResponseDto;
-};
-
-export type BillingControllerGetUsageResponse = BillingControllerGetUsageResponses[keyof BillingControllerGetUsageResponses];
-
-export type BillingControllerCreateCheckoutData = {
-    body: BillingCheckoutRequestDto;
-    path?: never;
-    query?: never;
-    url: '/billing/checkout';
-};
-
-export type BillingControllerCreateCheckoutResponses = {
-    201: BillingCheckoutResponseDto;
-};
-
-export type BillingControllerCreateCheckoutResponse = BillingControllerCreateCheckoutResponses[keyof BillingControllerCreateCheckoutResponses];
-
-export type BillingControllerGetPortalData = {
-    body?: never;
-    path?: never;
-    query?: never;
-    url: '/billing/portal';
-};
-
-export type BillingControllerGetPortalResponses = {
-    200: BillingPortalResponseDto;
-};
-
-export type BillingControllerGetPortalResponse = BillingControllerGetPortalResponses[keyof BillingControllerGetPortalResponses];
-
-export type BillingControllerHandleWebhookData = {
-    body?: never;
-    path?: never;
-    query?: never;
-    url: '/billing/webhook';
-};
-
-export type BillingControllerHandleWebhookResponses = {
-    201: BillingWebhookResponseDto;
-};
-
-export type BillingControllerHandleWebhookResponse = BillingControllerHandleWebhookResponses[keyof BillingControllerHandleWebhookResponses];
-
-export type FeatureFlagsControllerMeData = {
-    body?: never;
-    path?: never;
-    query?: never;
-    url: '/feature-flags/me';
-};
-
-export type FeatureFlagsControllerMeResponses = {
-    200: FeatureFlagsResponseDto;
-};
-
-export type FeatureFlagsControllerMeResponse = FeatureFlagsControllerMeResponses[keyof FeatureFlagsControllerMeResponses];
+export type IotTokenControllerRevokeResponse = IotTokenControllerRevokeResponses[keyof IotTokenControllerRevokeResponses];
 
 export type CapabilitiesControllerGetCapabilitiesData = {
     body?: never;
@@ -1485,192 +1729,10 @@ export type CapabilitiesControllerGetCapabilitiesResponses = {
     /**
      * Backend-authoritative product and deployment capabilities
      */
-    200: unknown;
+    200: CapabilitiesResponseDto;
 };
 
-export type EnvironmentControllerListData = {
-    body?: never;
-    path?: never;
-    query?: never;
-    url: '/environments';
-};
-
-export type EnvironmentControllerListResponses = {
-    200: Array<EnvironmentResponseDto>;
-};
-
-export type EnvironmentControllerListResponse = EnvironmentControllerListResponses[keyof EnvironmentControllerListResponses];
-
-export type EnvironmentControllerCreateData = {
-    body: CreateEnvironmentDto;
-    path?: never;
-    query?: never;
-    url: '/environments';
-};
-
-export type EnvironmentControllerCreateResponses = {
-    201: EnvironmentResponseDto;
-};
-
-export type EnvironmentControllerCreateResponse = EnvironmentControllerCreateResponses[keyof EnvironmentControllerCreateResponses];
-
-export type EnvironmentControllerRemoveData = {
-    body?: never;
-    path: {
-        id: string;
-    };
-    query?: never;
-    url: '/environments/{id}';
-};
-
-export type EnvironmentControllerRemoveResponses = {
-    200: OkResponseDto;
-};
-
-export type EnvironmentControllerRemoveResponse = EnvironmentControllerRemoveResponses[keyof EnvironmentControllerRemoveResponses];
-
-export type EnvironmentControllerUpdateData = {
-    body: UpdateEnvironmentDto;
-    path: {
-        id: string;
-    };
-    query?: never;
-    url: '/environments/{id}';
-};
-
-export type EnvironmentControllerUpdateResponses = {
-    200: EnvironmentResponseDto;
-};
-
-export type EnvironmentControllerUpdateResponse = EnvironmentControllerUpdateResponses[keyof EnvironmentControllerUpdateResponses];
-
-export type EnvironmentControllerPromoteData = {
-    body?: never;
-    path: {
-        id: string;
-    };
-    query?: never;
-    url: '/environments/{id}/promote-to-default';
-};
-
-export type EnvironmentControllerPromoteResponses = {
-    200: EnvironmentResponseDto;
-    201: {
-        [key: string]: unknown;
-    };
-};
-
-export type EnvironmentControllerPromoteResponse = EnvironmentControllerPromoteResponses[keyof EnvironmentControllerPromoteResponses];
-
-export type EventControllerCreateEventData = {
-    body: CreateEventDto;
-    headers?: {
-        /**
-         * Stripe-style client-supplied idempotency key (1–255 ASCII-printable chars). Cached response replay for retried requests.
-         */
-        'Idempotency-Key'?: string;
-    };
-    path?: never;
-    query?: never;
-    url: '/event';
-};
-
-export type EventControllerCreateEventResponses = {
-    201: EventIngestResponseDto;
-};
-
-export type EventControllerCreateEventResponse = EventControllerCreateEventResponses[keyof EventControllerCreateEventResponses];
-
-export type EventControllerListEventsData = {
-    body?: never;
-    path: {
-        channelId: string;
-    };
-    query?: {
-        payloadFilter?: string;
-        /**
-         * Page size, 1-1000. Defaults to 100.
-         */
-        limit?: number;
-        cursor?: string;
-        /**
-         * ISO 8601 datetime (exclusive upper bound).
-         */
-        until?: string;
-        /**
-         * ISO 8601 datetime (inclusive lower bound).
-         */
-        since?: string;
-        traceId?: string;
-        agentId?: string;
-        eventType?: Array<string>;
-        /**
-         * Environment slug. Resolved server-side to environmentId.
-         */
-        environment?: string;
-    };
-    url: '/event/{channelId}/list';
-};
-
-export type EventControllerListEventsResponses = {
-    200: EventListResponseDto;
-};
-
-export type EventControllerListEventsResponse = EventControllerListEventsResponses[keyof EventControllerListEventsResponses];
-
-export type EventsSearchControllerSearchData = {
-    body?: never;
-    path?: never;
-    query?: {
-        /**
-         * Case-insensitive free-text match over event fields and retained payload.
-         */
-        query?: string;
-        /**
-         * Filter by ingest source (sdk, otlp, sentry, webhook, mcp or custom).
-         */
-        source?: string;
-        /**
-         * JSON-path / dotted filter applied to the event payload.
-         */
-        payloadFilter?: string;
-        /**
-         * Page size, 1-1000. Defaults to 100.
-         */
-        limit?: number;
-        /**
-         * Opaque pagination cursor returned by a previous call.
-         */
-        cursor?: string;
-        /**
-         * ISO 8601 datetime (exclusive upper bound).
-         */
-        until?: string;
-        /**
-         * ISO 8601 datetime (inclusive lower bound).
-         */
-        since?: string;
-        traceId?: string;
-        agentId?: string;
-        /**
-         * Repeat or comma-separate to filter by multiple event types.
-         */
-        eventType?: Array<string>;
-        channelId?: string;
-        appId?: string;
-        /**
-         * Environment slug. Resolved server-side to environmentId.
-         */
-        environment?: string;
-    };
-    url: '/events/search';
-};
-
-export type EventsSearchControllerSearchResponses = {
-    200: EventListResponseDto;
-};
-
-export type EventsSearchControllerSearchResponse = EventsSearchControllerSearchResponses[keyof EventsSearchControllerSearchResponses];
+export type CapabilitiesControllerGetCapabilitiesResponse = CapabilitiesControllerGetCapabilitiesResponses[keyof CapabilitiesControllerGetCapabilitiesResponses];
 
 export type ChannelControllerListChannelsData = {
     body?: never;
@@ -1748,421 +1810,186 @@ export type ChannelControllerUpdateChannelResponses = {
 
 export type ChannelControllerUpdateChannelResponse = ChannelControllerUpdateChannelResponses[keyof ChannelControllerUpdateChannelResponses];
 
-export type AppsControllerGetAllAppsData = {
+export type EnvironmentControllerListData = {
     body?: never;
     path?: never;
     query?: never;
-    url: '/apps';
+    url: '/environments';
 };
 
-export type AppsControllerGetAllAppsResponses = {
-    200: Array<AppResponseDto>;
+export type EnvironmentControllerListResponses = {
+    200: Array<EnvironmentResponseDto>;
 };
 
-export type AppsControllerGetAllAppsResponse = AppsControllerGetAllAppsResponses[keyof AppsControllerGetAllAppsResponses];
+export type EnvironmentControllerListResponse = EnvironmentControllerListResponses[keyof EnvironmentControllerListResponses];
 
-export type AppsControllerCreateAppData = {
-    body: CreateAppDto;
+export type EnvironmentControllerCreateData = {
+    body: CreateEnvironmentDto;
     path?: never;
     query?: never;
-    url: '/apps';
+    url: '/environments';
 };
 
-export type AppsControllerCreateAppResponses = {
-    201: AppResponseDto;
+export type EnvironmentControllerCreateResponses = {
+    201: EnvironmentResponseDto;
 };
 
-export type AppsControllerCreateAppResponse = AppsControllerCreateAppResponses[keyof AppsControllerCreateAppResponses];
+export type EnvironmentControllerCreateResponse = EnvironmentControllerCreateResponses[keyof EnvironmentControllerCreateResponses];
 
-export type AppsControllerDeleteAppData = {
+export type EnvironmentControllerRemoveData = {
     body?: never;
     path: {
         id: string;
     };
     query?: never;
-    url: '/apps/{id}';
+    url: '/environments/{id}';
 };
 
-export type AppsControllerDeleteAppResponses = {
+export type EnvironmentControllerRemoveResponses = {
     200: OkResponseDto;
 };
 
-export type AppsControllerDeleteAppResponse = AppsControllerDeleteAppResponses[keyof AppsControllerDeleteAppResponses];
+export type EnvironmentControllerRemoveResponse = EnvironmentControllerRemoveResponses[keyof EnvironmentControllerRemoveResponses];
 
-export type AppsControllerGetAppData = {
+export type EnvironmentControllerUpdateData = {
+    body: UpdateEnvironmentDto;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/environments/{id}';
+};
+
+export type EnvironmentControllerUpdateResponses = {
+    200: EnvironmentResponseDto;
+};
+
+export type EnvironmentControllerUpdateResponse = EnvironmentControllerUpdateResponses[keyof EnvironmentControllerUpdateResponses];
+
+export type EnvironmentControllerPromoteData = {
     body?: never;
     path: {
         id: string;
     };
     query?: never;
-    url: '/apps/{id}';
+    url: '/environments/{id}/promote-to-default';
 };
 
-export type AppsControllerGetAppResponses = {
-    200: AppResponseDto;
+export type EnvironmentControllerPromoteResponses = {
+    200: EnvironmentResponseDto;
 };
 
-export type AppsControllerGetAppResponse = AppsControllerGetAppResponses[keyof AppsControllerGetAppResponses];
+export type EnvironmentControllerPromoteResponse = EnvironmentControllerPromoteResponses[keyof EnvironmentControllerPromoteResponses];
 
-export type AppsControllerEditAppData = {
-    body: CreateAppDto;
-    path: {
-        id: string;
-    };
-    query?: never;
-    url: '/apps/{id}';
-};
-
-export type AppsControllerEditAppResponses = {
-    200: OkResponseDto;
-};
-
-export type AppsControllerEditAppResponse = AppsControllerEditAppResponses[keyof AppsControllerEditAppResponses];
-
-export type ApiKeyControllerListApiKeysData = {
-    body?: never;
-    path?: never;
-    query?: never;
-    url: '/api-keys';
-};
-
-export type ApiKeyControllerListApiKeysResponses = {
-    200: Array<ApiKeyResponseDto>;
-};
-
-export type ApiKeyControllerListApiKeysResponse = ApiKeyControllerListApiKeysResponses[keyof ApiKeyControllerListApiKeysResponses];
-
-export type ApiKeyControllerCreateApiKeyData = {
-    body: CreateApiKeyDto;
-    path?: never;
-    query?: never;
-    url: '/api-keys';
-};
-
-export type ApiKeyControllerCreateApiKeyResponses = {
-    201: ApiKeyCreateResponseDto;
-};
-
-export type ApiKeyControllerCreateApiKeyResponse = ApiKeyControllerCreateApiKeyResponses[keyof ApiKeyControllerCreateApiKeyResponses];
-
-export type ApiKeyControllerRevokeApiKeyData = {
-    body?: never;
-    path: {
-        id: string;
-    };
-    query?: never;
-    url: '/api-keys/{id}';
-};
-
-export type ApiKeyControllerRevokeApiKeyResponses = {
-    200: MessageResponseDto;
-};
-
-export type ApiKeyControllerRevokeApiKeyResponse = ApiKeyControllerRevokeApiKeyResponses[keyof ApiKeyControllerRevokeApiKeyResponses];
-
-export type PublicIngestTokenControllerListData = {
-    body?: never;
-    path?: never;
-    query?: never;
-    url: '/public-tokens';
-};
-
-export type PublicIngestTokenControllerListResponses = {
-    200: Array<PublicIngestTokenResponseDto>;
-};
-
-export type PublicIngestTokenControllerListResponse = PublicIngestTokenControllerListResponses[keyof PublicIngestTokenControllerListResponses];
-
-export type PublicIngestTokenControllerCreateData = {
-    body: CreatePublicTokenDto;
-    path?: never;
-    query?: never;
-    url: '/public-tokens';
-};
-
-export type PublicIngestTokenControllerCreateResponses = {
-    201: PublicIngestTokenCreateResponseDto;
-};
-
-export type PublicIngestTokenControllerCreateResponse = PublicIngestTokenControllerCreateResponses[keyof PublicIngestTokenControllerCreateResponses];
-
-export type PublicIngestTokenControllerRevokeData = {
-    body?: never;
-    path: {
-        id: string;
-    };
-    query?: never;
-    url: '/public-tokens/{id}';
-};
-
-export type PublicIngestTokenControllerRevokeResponses = {
-    200: OkResponseDto;
-};
-
-export type PublicIngestTokenControllerRevokeResponse = PublicIngestTokenControllerRevokeResponses[keyof PublicIngestTokenControllerRevokeResponses];
-
-export type McpControllerHandleData = {
-    body?: never;
-    path?: never;
-    query?: never;
-    url: '/mcp';
-};
-
-export type McpControllerHandleResponses = {
-    200: unknown;
-};
-
-export type McpTokenControllerListData = {
-    body?: never;
-    path?: never;
-    query?: never;
-    url: '/users/me/mcp-tokens';
-};
-
-export type McpTokenControllerListResponses = {
-    200: Array<McpTokenResponseDto>;
-};
-
-export type McpTokenControllerListResponse = McpTokenControllerListResponses[keyof McpTokenControllerListResponses];
-
-export type McpTokenControllerCreateData = {
-    body: CreateMcpTokenDto;
-    path?: never;
-    query?: never;
-    url: '/users/me/mcp-tokens';
-};
-
-export type McpTokenControllerCreateResponses = {
-    201: McpTokenCreateResponseDto;
-};
-
-export type McpTokenControllerCreateResponse = McpTokenControllerCreateResponses[keyof McpTokenControllerCreateResponses];
-
-export type McpTokenControllerRevokeData = {
-    body?: never;
-    path: {
-        id: string;
-    };
-    query?: never;
-    url: '/users/me/mcp-tokens/{id}';
-};
-
-export type McpTokenControllerRevokeResponses = {
-    200: MessageResponseDto;
-};
-
-export type McpTokenControllerRevokeResponse = McpTokenControllerRevokeResponses[keyof McpTokenControllerRevokeResponses];
-
-export type TraceControllerListTracesData = {
-    body?: never;
-    path?: never;
-    query?: {
-        page?: number;
-        limit?: number;
-        appId?: string;
-        environment?: string;
-    };
-    url: '/traces';
-};
-
-export type TraceControllerListTracesResponses = {
-    /**
-     * Paginated list of trace summaries
-     */
-    200: {
-        data: Array<{
-            traceId: string;
-            eventCount: number;
-            agents: Array<string>;
-            eventTypes: Array<string>;
-            startTime: string;
-            endTime: string;
-            duration: number;
-            errorCount: number;
-            toolCallCount: number;
-            handoffCount: number;
-            totalTokens?: number;
-            /**
-             * Known reported/estimated cost. Omitted when pricing is unknown.
-             */
-            costUsd?: number | null;
-            status?: string;
-        }>;
-        meta: {
-            page: number;
-            limit: number;
-            hasMore: boolean;
-        };
-    };
-};
-
-export type TraceControllerListTracesResponse = TraceControllerListTracesResponses[keyof TraceControllerListTracesResponses];
-
-export type TraceControllerGetDashboardStatsData = {
-    body?: never;
-    path?: never;
-    query?: {
-        appId?: string;
-        environment?: string;
-    };
-    url: '/traces/stats';
-};
-
-export type TraceControllerGetDashboardStatsResponses = {
-    /**
-     * Aggregated dashboard stats for the caller organization
-     */
-    200: {
-        totalEvents: number;
-        eventsToday: number;
-        totalTraces: number;
-        tracesToday: number;
-        errorCount: number;
-        errorRate: number;
-        avgTraceDuration: number;
-        eventsByHour: Array<{
-            hour?: string;
-            count?: number;
-        }>;
-    };
-};
-
-export type TraceControllerGetDashboardStatsResponse = TraceControllerGetDashboardStatsResponses[keyof TraceControllerGetDashboardStatsResponses];
-
-export type TraceControllerGetTraceEventsData = {
-    body?: never;
-    path: {
-        traceId: string;
-    };
-    query?: {
-        appId?: string;
-        environment?: string;
-    };
-    url: '/traces/{traceId}/events';
-};
-
-export type TraceControllerGetTraceEventsResponses = {
-    /**
-     * All events belonging to a trace, ordered by authoritative occurrence time
-     */
-    200: Array<EventResponseDto>;
-};
-
-export type TraceControllerGetTraceEventsResponse = TraceControllerGetTraceEventsResponses[keyof TraceControllerGetTraceEventsResponses];
-
-export type TraceControllerGetTraceSummaryData = {
-    body?: never;
-    path: {
-        traceId: string;
-    };
-    query?: {
-        appId?: string;
-        environment?: string;
-    };
-    url: '/traces/{traceId}/summary';
-};
-
-export type TraceControllerGetTraceSummaryResponses = {
-    /**
-     * Aggregated summary for a single trace
-     */
-    200: {
-        traceId: string;
-        eventCount: number;
-        agents: Array<string>;
-        eventTypes: Array<string>;
-        startTime: string;
-        endTime: string;
-        duration: number;
-        errorCount: number;
-        toolCallCount: number;
-        handoffCount: number;
-        totalTokens?: number;
+export type EventControllerCreateEventData = {
+    body: CreateEventDto;
+    headers?: {
         /**
-         * Known reported/estimated cost. Omitted when pricing is unknown.
+         * Stripe-style client-supplied idempotency key (1–255 ASCII-printable chars). Cached response replay for retried requests.
          */
-        costUsd?: number | null;
-        status?: string;
+        'Idempotency-Key'?: string;
     };
-};
-
-export type TraceControllerGetTraceSummaryResponse = TraceControllerGetTraceSummaryResponses[keyof TraceControllerGetTraceSummaryResponses];
-
-export type WebhookControllerCreateEndpointData = {
-    body: CreateWebhookEndpointDto;
     path?: never;
     query?: never;
-    url: '/webhooks/endpoints';
+    url: '/event';
 };
 
-export type WebhookControllerCreateEndpointResponses = {
-    201: WebhookEndpointCreateResponseDto;
+export type EventControllerCreateEventResponses = {
+    201: EventIngestResponseDto;
 };
 
-export type WebhookControllerCreateEndpointResponse = WebhookControllerCreateEndpointResponses[keyof WebhookControllerCreateEndpointResponses];
+export type EventControllerCreateEventResponse = EventControllerCreateEventResponses[keyof EventControllerCreateEventResponses];
 
-export type WebhookControllerListEndpointsData = {
+export type EventControllerListEventsData = {
     body?: never;
     path: {
         channelId: string;
     };
-    query?: never;
-    url: '/webhooks/endpoints/channel/{channelId}';
+    query?: {
+        agentId?: string;
+        cursor?: string;
+        /**
+         * Environment slug. Resolved server-side to environmentId.
+         */
+        environment?: string;
+        eventType?: Array<string>;
+        /**
+         * Page size, 1-1000. Defaults to 100.
+         */
+        limit?: number;
+        payloadFilter?: string;
+        /**
+         * ISO 8601 datetime (inclusive lower bound).
+         */
+        since?: string;
+        traceId?: string;
+        /**
+         * ISO 8601 datetime (exclusive upper bound).
+         */
+        until?: string;
+    };
+    url: '/event/{channelId}/list';
 };
 
-export type WebhookControllerListEndpointsResponses = {
-    200: Array<WebhookEndpointResponseDto>;
+export type EventControllerListEventsResponses = {
+    200: EventListResponseDto;
 };
 
-export type WebhookControllerListEndpointsResponse = WebhookControllerListEndpointsResponses[keyof WebhookControllerListEndpointsResponses];
+export type EventControllerListEventsResponse = EventControllerListEventsResponses[keyof EventControllerListEventsResponses];
 
-export type WebhookControllerDeleteEndpointData = {
+export type EventsSearchControllerSearchData = {
     body?: never;
-    path: {
-        id: string;
+    path?: never;
+    query?: {
+        agentId?: string;
+        appId?: string;
+        channelId?: string;
+        /**
+         * Opaque pagination cursor returned by a previous call.
+         */
+        cursor?: string;
+        /**
+         * Environment slug. Resolved server-side to environmentId.
+         */
+        environment?: string;
+        /**
+         * Repeat or comma-separate to filter by multiple event types.
+         */
+        eventType?: Array<string>;
+        /**
+         * Page size, 1-1000. Defaults to 100.
+         */
+        limit?: number;
+        /**
+         * JSON-path / dotted filter applied to the event payload.
+         */
+        payloadFilter?: string;
+        /**
+         * Case-insensitive free-text match over event fields and retained payload.
+         */
+        query?: string;
+        /**
+         * ISO 8601 datetime (inclusive lower bound).
+         */
+        since?: string;
+        /**
+         * Filter by ingest source (sdk, otlp, sentry, webhook, mcp or custom).
+         */
+        source?: string;
+        traceId?: string;
+        /**
+         * ISO 8601 datetime (exclusive upper bound).
+         */
+        until?: string;
     };
-    query?: never;
-    url: '/webhooks/endpoints/{id}';
+    url: '/events/search';
 };
 
-export type WebhookControllerDeleteEndpointResponses = {
-    200: MessageResponseDto;
+export type EventsSearchControllerSearchResponses = {
+    200: EventListResponseDto;
 };
 
-export type WebhookControllerDeleteEndpointResponse = WebhookControllerDeleteEndpointResponses[keyof WebhookControllerDeleteEndpointResponses];
-
-export type WebhookControllerGetDeliveriesData = {
-    body?: never;
-    path: {
-        endpointId: string;
-    };
-    query?: never;
-    url: '/webhooks/deliveries/{endpointId}';
-};
-
-export type WebhookControllerGetDeliveriesResponses = {
-    200: Array<WebhookDeliveryResponseDto>;
-};
-
-export type WebhookControllerGetDeliveriesResponse = WebhookControllerGetDeliveriesResponses[keyof WebhookControllerGetDeliveriesResponses];
-
-export type WebhookControllerIngestWebhookData = {
-    body?: never;
-    headers: {
-        'X-Webhook-Signature': string;
-    };
-    path: {
-        endpointId: string;
-    };
-    query?: never;
-    url: '/webhooks/ingest/{endpointId}';
-};
-
-export type WebhookControllerIngestWebhookResponses = {
-    201: WebhookIngestResponseDto;
-};
-
-export type WebhookControllerIngestWebhookResponse = WebhookControllerIngestWebhookResponses[keyof WebhookControllerIngestWebhookResponses];
+export type EventsSearchControllerSearchResponse = EventsSearchControllerSearchResponses[keyof EventsSearchControllerSearchResponses];
 
 export type ExportControllerListData = {
     body?: never;
@@ -2237,74 +2064,11 @@ export type ExportControllerUpdateResponses = {
 
 export type ExportControllerUpdateResponse = ExportControllerUpdateResponses[keyof ExportControllerUpdateResponses];
 
-export type AuditLogControllerListAuditLogsData = {
-    body?: never;
-    path?: never;
-    query?: {
-        page?: number;
-        limit?: number;
-        action?: string;
-        resourceType?: string;
-        actorId?: string;
-        from?: string;
-        to?: string;
-    };
-    url: '/audit-logs';
-};
-
-export type AuditLogControllerListAuditLogsResponses = {
-    /**
-     * Paginated list of audit log entries for the caller organization
-     */
-    200: AuditLogListResponseDto;
-};
-
-export type AuditLogControllerListAuditLogsResponse = AuditLogControllerListAuditLogsResponses[keyof AuditLogControllerListAuditLogsResponses];
-
-export type OtlpControllerIngestLogsData = {
-    body?: never;
-    headers: {
-        'X-Axonpush-Channel': string;
-        'Idempotency-Key'?: string;
-        'X-Axonpush-Environment'?: string;
-    };
-    path?: never;
-    query?: never;
-    url: '/v1/logs';
-};
-
-export type OtlpControllerIngestLogsResponses = {
-    200: unknown;
-    201: {
-        [key: string]: unknown;
-    };
-};
-
-export type OtlpControllerIngestLogsResponse = OtlpControllerIngestLogsResponses[keyof OtlpControllerIngestLogsResponses];
-
-export type OtlpControllerIngestTracesData = {
-    body?: never;
-    headers: {
-        'X-Axonpush-Channel': string;
-        'Idempotency-Key'?: string;
-        'X-Axonpush-Environment'?: string;
-    };
-    path?: never;
-    query?: never;
-    url: '/v1/traces';
-};
-
-export type OtlpControllerIngestTracesResponses = {
-    200: unknown;
-    201: {
-        [key: string]: unknown;
-    };
-};
-
-export type OtlpControllerIngestTracesResponse = OtlpControllerIngestTracesResponses[keyof OtlpControllerIngestTracesResponses];
-
 export type HealthControllerCheckData = {
     body?: never;
+    headers: {
+        'X-Health-Probe-Token': string;
+    };
     path?: never;
     query?: {
         deep?: boolean;
@@ -2318,457 +2082,1757 @@ export type HealthControllerCheckResponses = {
 
 export type HealthControllerCheckResponse = HealthControllerCheckResponses[keyof HealthControllerCheckResponses];
 
-export type ReleaseControllerListData = {
-    body?: never;
-    path: {
-        orgId: string;
-    };
-    query?: never;
-    url: '/organizations/{orgId}/releases';
-};
-
-export type ReleaseControllerListResponses = {
-    200: Array<ReleaseResponseDto>;
-};
-
-export type ReleaseControllerListResponse = ReleaseControllerListResponses[keyof ReleaseControllerListResponses];
-
-export type ReleaseControllerCreateData = {
-    body: CreateReleaseDto;
-    path: {
-        orgId: string;
-    };
-    query?: never;
-    url: '/organizations/{orgId}/releases';
-};
-
-export type ReleaseControllerCreateResponses = {
-    201: ReleaseResponseDto;
-};
-
-export type ReleaseControllerCreateResponse = ReleaseControllerCreateResponses[keyof ReleaseControllerCreateResponses];
-
-export type ReleaseControllerUploadArtifactData = {
-    body?: never;
-    path: {
-        version: string;
-    };
-    query?: never;
-    url: '/releases/{version}/artifacts';
-};
-
-export type ReleaseControllerUploadArtifactResponses = {
-    201: ReleaseArtifactResponseDto;
-};
-
-export type ReleaseControllerUploadArtifactResponse = ReleaseControllerUploadArtifactResponses[keyof ReleaseControllerUploadArtifactResponses];
-
-export type SentryControllerIngestEnvelopeData = {
-    body?: never;
-    path: {
-        projectId: string;
-    };
-    query?: never;
-    url: '/api/{projectId}/envelope';
-};
-
-export type SentryControllerIngestEnvelopeResponses = {
-    201: unknown;
-};
-
-export type SentryControllerIngestStoreData = {
-    body?: never;
-    path: {
-        projectId: string;
-    };
-    query?: never;
-    url: '/api/{projectId}/store';
-};
-
-export type SentryControllerIngestStoreResponses = {
-    201: unknown;
-};
-
-export type SentryControllerIngestSecurityData = {
-    body?: never;
-    path: {
-        projectId: string;
-    };
-    query?: never;
-    url: '/api/{projectId}/security';
-};
-
-export type SentryControllerIngestSecurityResponses = {
-    201: unknown;
-};
-
-export type SentryControllerIngestMinidumpData = {
-    body?: never;
-    path: {
-        projectId: string;
-    };
-    query?: never;
-    url: '/api/{projectId}/minidump';
-};
-
-export type SentryControllerIngestMinidumpResponses = {
-    201: unknown;
-};
-
-export type SsoControllerGetConnectionsData = {
+export type OrganizationControllerGetAllOrganizationsData = {
     body?: never;
     path?: never;
     query?: never;
-    url: '/sso/connections';
+    url: '/organizations';
 };
 
-export type SsoControllerGetConnectionsResponses = {
-    200: Array<SsoConnectionResponseDto>;
+export type OrganizationControllerGetAllOrganizationsResponses = {
+    200: Array<OrganizationResponseDto>;
 };
 
-export type SsoControllerGetConnectionsResponse = SsoControllerGetConnectionsResponses[keyof SsoControllerGetConnectionsResponses];
+export type OrganizationControllerGetAllOrganizationsResponse = OrganizationControllerGetAllOrganizationsResponses[keyof OrganizationControllerGetAllOrganizationsResponses];
 
-export type SsoControllerCreateConnectionData = {
-    body?: never;
+export type OrganizationControllerCreateOrganizationData = {
+    body: CreateOrganizationDto;
     path?: never;
     query?: never;
-    url: '/sso/connections';
+    url: '/organizations';
 };
 
-export type SsoControllerCreateConnectionResponses = {
-    201: SsoConnectionResponseDto;
+export type OrganizationControllerCreateOrganizationResponses = {
+    201: OrganizationCreateResponseDto;
 };
 
-export type SsoControllerCreateConnectionResponse = SsoControllerCreateConnectionResponses[keyof SsoControllerCreateConnectionResponses];
+export type OrganizationControllerCreateOrganizationResponse = OrganizationControllerCreateOrganizationResponses[keyof OrganizationControllerCreateOrganizationResponses];
 
-export type SsoControllerDeleteConnectionData = {
+export type OrganizationControllerDeleteOrganizationData = {
     body?: never;
     path: {
-        clientID: string;
+        id: string;
     };
     query?: never;
-    url: '/sso/connections/{clientID}';
+    url: '/organizations/{id}';
 };
 
-export type SsoControllerDeleteConnectionResponses = {
+export type OrganizationControllerDeleteOrganizationResponses = {
     200: OkResponseDto;
 };
 
-export type SsoControllerDeleteConnectionResponse = SsoControllerDeleteConnectionResponses[keyof SsoControllerDeleteConnectionResponses];
+export type OrganizationControllerDeleteOrganizationResponse = OrganizationControllerDeleteOrganizationResponses[keyof OrganizationControllerDeleteOrganizationResponses];
 
-export type SsoControllerToggleEnforcementData = {
-    body: ToggleEnforcementDto;
+export type OrganizationControllerGetOrganizationData = {
+    body?: never;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/organizations/{id}';
+};
+
+export type OrganizationControllerGetOrganizationResponses = {
+    200: OrganizationResponseDto;
+};
+
+export type OrganizationControllerGetOrganizationResponse = OrganizationControllerGetOrganizationResponses[keyof OrganizationControllerGetOrganizationResponses];
+
+export type OrganizationControllerEditOrganizationData = {
+    body: CreateOrganizationDto;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/organizations/{id}';
+};
+
+export type OrganizationControllerEditOrganizationResponses = {
+    200: OkResponseDto;
+};
+
+export type OrganizationControllerEditOrganizationResponse = OrganizationControllerEditOrganizationResponses[keyof OrganizationControllerEditOrganizationResponses];
+
+export type OrganizationControllerCreateInvitationData = {
+    body: CreateInvitationDto;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/organizations/{id}/invitations';
+};
+
+export type OrganizationControllerCreateInvitationResponses = {
+    201: InvitationResponseDto;
+};
+
+export type OrganizationControllerCreateInvitationResponse = OrganizationControllerCreateInvitationResponses[keyof OrganizationControllerCreateInvitationResponses];
+
+export type OrganizationControllerDeleteInvitationData = {
+    body?: never;
+    path: {
+        id: string;
+        invitationId: string;
+    };
+    query?: never;
+    url: '/organizations/{id}/invitations/{invitationId}';
+};
+
+export type OrganizationControllerDeleteInvitationResponses = {
+    200: SuccessResponseDto;
+};
+
+export type OrganizationControllerDeleteInvitationResponse = OrganizationControllerDeleteInvitationResponses[keyof OrganizationControllerDeleteInvitationResponses];
+
+export type OrganizationControllerRemoveMemberData = {
+    body?: never;
+    path: {
+        id: string;
+        userId: string;
+    };
+    query?: never;
+    url: '/organizations/{id}/members/{userId}';
+};
+
+export type OrganizationControllerRemoveMemberResponses = {
+    200: SuccessResponseDto;
+};
+
+export type OrganizationControllerRemoveMemberResponse = OrganizationControllerRemoveMemberResponses[keyof OrganizationControllerRemoveMemberResponses];
+
+export type OrganizationControllerGetTelemetryPolicyData = {
+    body?: never;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/organizations/{id}/telemetry-policy';
+};
+
+export type OrganizationControllerGetTelemetryPolicyResponses = {
+    200: TelemetryPolicyResponseDto;
+};
+
+export type OrganizationControllerGetTelemetryPolicyResponse = OrganizationControllerGetTelemetryPolicyResponses[keyof OrganizationControllerGetTelemetryPolicyResponses];
+
+export type OrganizationControllerUpdateTelemetryPolicyData = {
+    body?: never;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/organizations/{id}/telemetry-policy';
+};
+
+export type OrganizationControllerUpdateTelemetryPolicyResponses = {
+    200: TelemetryPolicyResponseDto;
+};
+
+export type OrganizationControllerUpdateTelemetryPolicyResponse = OrganizationControllerUpdateTelemetryPolicyResponses[keyof OrganizationControllerUpdateTelemetryPolicyResponses];
+
+export type OrganizationControllerTransferOwnershipData = {
+    body: TransferOwnershipDto;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/organizations/{id}/transfer-ownership';
+};
+
+export type OrganizationControllerTransferOwnershipResponses = {
+    200: SuccessResponseDto;
+};
+
+export type OrganizationControllerTransferOwnershipResponse = OrganizationControllerTransferOwnershipResponses[keyof OrganizationControllerTransferOwnershipResponses];
+
+export type PublicIngestTokenControllerListData = {
+    body?: never;
     path?: never;
     query?: never;
-    url: '/sso/enforcement';
+    url: '/public-tokens';
 };
 
-export type SsoControllerToggleEnforcementResponses = {
-    200: SsoEnforcementResponseDto;
+export type PublicIngestTokenControllerListResponses = {
+    200: Array<PublicIngestTokenResponseDto>;
 };
 
-export type SsoControllerToggleEnforcementResponse = SsoControllerToggleEnforcementResponses[keyof SsoControllerToggleEnforcementResponses];
+export type PublicIngestTokenControllerListResponse = PublicIngestTokenControllerListResponses[keyof PublicIngestTokenControllerListResponses];
 
-export type SsoControllerAuthorizeData = {
+export type PublicIngestTokenControllerCreateData = {
+    body: CreatePublicTokenDto;
+    path?: never;
+    query?: never;
+    url: '/public-tokens';
+};
+
+export type PublicIngestTokenControllerCreateResponses = {
+    201: PublicIngestTokenCreateResponseDto;
+};
+
+export type PublicIngestTokenControllerCreateResponse = PublicIngestTokenControllerCreateResponses[keyof PublicIngestTokenControllerCreateResponses];
+
+export type PublicIngestTokenControllerRevokeData = {
+    body?: never;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/public-tokens/{id}';
+};
+
+export type PublicIngestTokenControllerRevokeResponses = {
+    200: OkResponseDto;
+};
+
+export type PublicIngestTokenControllerRevokeResponse = PublicIngestTokenControllerRevokeResponses[keyof PublicIngestTokenControllerRevokeResponses];
+
+export type TraceControllerListTracesData = {
     body?: never;
     path?: never;
     query?: {
-        email?: string;
-        org_slug?: string;
+        appId?: string;
+        environment?: string;
+        limit?: number;
+        page?: number;
     };
-    url: '/auth/sso/authorize';
+    url: '/traces';
 };
 
-export type SsoControllerAuthorizeResponses = {
-    200: SsoAuthorizeResponseDto;
+export type TraceControllerListTracesResponses = {
+    /**
+     * Paginated list of trace summaries
+     */
+    200: {
+        data: Array<{
+            agents: Array<string>;
+            /**
+             * Known reported/estimated cost. Omitted when pricing is unknown.
+             */
+            costUsd?: number | null;
+            duration: number;
+            endTime: string;
+            errorCount: number;
+            eventCount: number;
+            eventTypes: Array<string>;
+            handoffCount: number;
+            startTime: string;
+            status?: string;
+            toolCallCount: number;
+            totalTokens?: number;
+            traceId: string;
+        }>;
+        meta: {
+            hasMore: boolean;
+            limit: number;
+            page: number;
+        };
+    };
 };
 
-export type SsoControllerAuthorizeResponse = SsoControllerAuthorizeResponses[keyof SsoControllerAuthorizeResponses];
+export type TraceControllerListTracesResponse = TraceControllerListTracesResponses[keyof TraceControllerListTracesResponses];
 
-export type SsoControllerCallbackData = {
-    body: SsoCallbackDto;
+export type TraceControllerGetDashboardStatsData = {
+    body?: never;
+    path?: never;
+    query?: {
+        appId?: string;
+        environment?: string;
+    };
+    url: '/traces/stats';
+};
+
+export type TraceControllerGetDashboardStatsResponses = {
+    /**
+     * Aggregated dashboard stats for the caller organization
+     */
+    200: {
+        avgTraceDuration: number;
+        errorCount: number;
+        errorRate: number;
+        eventsByHour: Array<{
+            count?: number;
+            hour?: string;
+        }>;
+        eventsToday: number;
+        totalEvents: number;
+        totalTraces: number;
+        tracesToday: number;
+    };
+};
+
+export type TraceControllerGetDashboardStatsResponse = TraceControllerGetDashboardStatsResponses[keyof TraceControllerGetDashboardStatsResponses];
+
+export type TraceControllerGetTraceEventsData = {
+    body?: never;
+    path: {
+        traceId: string;
+    };
+    query?: {
+        appId?: string;
+        environment?: string;
+    };
+    url: '/traces/{traceId}/events';
+};
+
+export type TraceControllerGetTraceEventsResponses = {
+    /**
+     * All events belonging to a trace, ordered by authoritative occurrence time
+     */
+    200: Array<EventResponseDto>;
+};
+
+export type TraceControllerGetTraceEventsResponse = TraceControllerGetTraceEventsResponses[keyof TraceControllerGetTraceEventsResponses];
+
+export type TraceControllerGetTraceSummaryData = {
+    body?: never;
+    path: {
+        traceId: string;
+    };
+    query?: {
+        appId?: string;
+        environment?: string;
+    };
+    url: '/traces/{traceId}/summary';
+};
+
+export type TraceControllerGetTraceSummaryResponses = {
+    /**
+     * Aggregated summary for a single trace
+     */
+    200: {
+        agents: Array<string>;
+        /**
+         * Known reported/estimated cost. Omitted when pricing is unknown.
+         */
+        costUsd?: number | null;
+        duration: number;
+        endTime: string;
+        errorCount: number;
+        eventCount: number;
+        eventTypes: Array<string>;
+        handoffCount: number;
+        startTime: string;
+        status?: string;
+        toolCallCount: number;
+        totalTokens?: number;
+        traceId: string;
+    };
+};
+
+export type TraceControllerGetTraceSummaryResponse = TraceControllerGetTraceSummaryResponses[keyof TraceControllerGetTraceSummaryResponses];
+
+export type OtlpControllerIngestLogsData = {
+    body?: never;
+    headers: {
+        'Idempotency-Key'?: string;
+        'X-Axonpush-Channel': string;
+        'X-Axonpush-Environment'?: string;
+    };
     path?: never;
     query?: never;
-    url: '/auth/sso/callback';
+    url: '/v1/logs';
 };
 
-export type SsoControllerCallbackResponses = {
-    201: AuthTokensResponseDto;
+export type OtlpControllerIngestLogsResponses = {
+    200: unknown;
 };
 
-export type SsoControllerCallbackResponse = SsoControllerCallbackResponses[keyof SsoControllerCallbackResponses];
+export type OtlpControllerIngestTracesData = {
+    body?: never;
+    headers: {
+        'Idempotency-Key'?: string;
+        'X-Axonpush-Channel': string;
+        'X-Axonpush-Environment'?: string;
+    };
+    path?: never;
+    query?: never;
+    url: '/v1/traces';
+};
 
-export type SsoControllerSamlAcsData = {
+export type OtlpControllerIngestTracesResponses = {
+    200: unknown;
+};
+
+export type AlertControllerListData = {
     body?: never;
     path?: never;
     query?: never;
-    url: '/auth/sso/acs';
+    url: '/v2/alerts';
 };
 
-export type SsoControllerSamlAcsResponses = {
-    201: unknown;
+export type AlertControllerListResponses = {
+    200: AlertRuleListDto;
 };
 
-export type AdminControllerGetOverviewData = {
+export type AlertControllerListResponse = AlertControllerListResponses[keyof AlertControllerListResponses];
+
+export type AlertControllerCreateData = {
     body?: never;
     path?: never;
     query?: never;
-    url: '/admin/overview';
+    url: '/v2/alerts';
 };
 
-export type AdminControllerGetOverviewResponses = {
-    200: AdminOverviewDto;
+export type AlertControllerCreateResponses = {
+    200: AlertRuleDto;
 };
 
-export type AdminControllerGetOverviewResponse = AdminControllerGetOverviewResponses[keyof AdminControllerGetOverviewResponses];
+export type AlertControllerCreateResponse = AlertControllerCreateResponses[keyof AlertControllerCreateResponses];
 
-export type AdminControllerGetSignupsData = {
+export type AlertControllerRemoveData = {
+    body?: never;
+    path: {
+        alertRuleId: string;
+    };
+    query?: never;
+    url: '/v2/alerts/{alertRuleId}';
+};
+
+export type AlertControllerRemoveResponses = {
+    200: AlertDeleteDto;
+};
+
+export type AlertControllerRemoveResponse = AlertControllerRemoveResponses[keyof AlertControllerRemoveResponses];
+
+export type AlertControllerUpdateData = {
+    body?: never;
+    path: {
+        alertRuleId: string;
+    };
+    query?: never;
+    url: '/v2/alerts/{alertRuleId}';
+};
+
+export type AlertControllerUpdateResponses = {
+    200: AlertRuleDto;
+};
+
+export type AlertControllerUpdateResponse = AlertControllerUpdateResponses[keyof AlertControllerUpdateResponses];
+
+export type AnalyticsControllerBreakdownData = {
     body?: never;
     path?: never;
     query: {
-        days: string;
+        dimension: 'status' | 'service' | 'agent' | 'tool' | 'model' | 'provider' | 'release' | 'prompt' | 'prompt_version' | 'semantic_kind' | 'environment';
+        environment?: string;
+        from?: string;
+        measure?: 'traces' | 'errors' | 'success_rate' | 'latency_avg' | 'latency_p50' | 'latency_p95' | 'latency_p99' | 'tokens' | 'cost' | 'score';
+        to?: string;
     };
-    url: '/admin/signups';
+    url: '/v2/analytics/breakdown';
 };
 
-export type AdminControllerGetSignupsResponses = {
-    200: AdminSignupsDto;
+export type AnalyticsControllerBreakdownResponses = {
+    200: AnalyticsBreakdownResponseDto;
 };
 
-export type AdminControllerGetSignupsResponse = AdminControllerGetSignupsResponses[keyof AdminControllerGetSignupsResponses];
+export type AnalyticsControllerBreakdownResponse = AnalyticsControllerBreakdownResponses[keyof AnalyticsControllerBreakdownResponses];
 
-export type AdminControllerGetOrgsData = {
+export type AnalyticsControllerCompareData = {
     body?: never;
     path?: never;
     query: {
-        search: string;
+        baseline: string;
+        candidate: string;
+        dimension: 'release' | 'prompt_version' | 'model' | 'provider' | 'service' | 'environment';
+        environment?: string;
+        from: string;
+        measure: string;
+        to: string;
     };
-    url: '/admin/orgs';
+    url: '/v2/analytics/compare';
 };
 
-export type AdminControllerGetOrgsResponses = {
-    200: AdminOrgListDto;
+export type AnalyticsControllerCompareResponses = {
+    200: AnalyticsCompareResponseDto;
 };
 
-export type AdminControllerGetOrgsResponse = AdminControllerGetOrgsResponses[keyof AdminControllerGetOrgsResponses];
+export type AnalyticsControllerCompareResponse = AnalyticsControllerCompareResponses[keyof AnalyticsControllerCompareResponses];
 
-export type AdminControllerCreateCustomerData = {
-    body: AdminCreateCustomerDto;
+export type AnalyticsControllerTimeseriesData = {
+    body?: never;
+    path?: never;
+    query?: {
+        environment?: string;
+        from?: string;
+        interval?: 'hour' | 'day';
+        measure?: 'traces' | 'errors' | 'success_rate' | 'latency_avg' | 'latency_p50' | 'latency_p95' | 'latency_p99' | 'tokens' | 'cost' | 'score';
+        to?: string;
+    };
+    url: '/v2/analytics/timeseries';
+};
+
+export type AnalyticsControllerTimeseriesResponses = {
+    200: AnalyticsTimeseriesResponseDto;
+};
+
+export type AnalyticsControllerTimeseriesResponse = AnalyticsControllerTimeseriesResponses[keyof AnalyticsControllerTimeseriesResponses];
+
+export type DatasetControllerListData = {
+    body?: never;
     path?: never;
     query?: never;
-    url: '/admin/customers';
+    url: '/v2/datasets';
 };
 
-export type AdminControllerCreateCustomerResponses = {
-    201: AdminCreateCustomerResponseDto;
+export type DatasetControllerListResponses = {
+    200: DatasetListDto;
 };
 
-export type AdminControllerCreateCustomerResponse = AdminControllerCreateCustomerResponses[keyof AdminControllerCreateCustomerResponses];
+export type DatasetControllerListResponse = DatasetControllerListResponses[keyof DatasetControllerListResponses];
 
-export type AdminControllerGetOrgData = {
+export type DatasetControllerCreateData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/v2/datasets';
+};
+
+export type DatasetControllerCreateResponses = {
+    200: DatasetDto;
+};
+
+export type DatasetControllerCreateResponse = DatasetControllerCreateResponses[keyof DatasetControllerCreateResponses];
+
+export type DatasetControllerRemoveData = {
+    body?: never;
+    path: {
+        datasetId: string;
+    };
+    query?: never;
+    url: '/v2/datasets/{datasetId}';
+};
+
+export type DatasetControllerRemoveResponses = {
+    200: DatasetDeleteDto;
+};
+
+export type DatasetControllerRemoveResponse = DatasetControllerRemoveResponses[keyof DatasetControllerRemoveResponses];
+
+export type DatasetControllerGetData = {
+    body?: never;
+    path: {
+        datasetId: string;
+    };
+    query?: never;
+    url: '/v2/datasets/{datasetId}';
+};
+
+export type DatasetControllerGetResponses = {
+    200: DatasetDto;
+};
+
+export type DatasetControllerGetResponse = DatasetControllerGetResponses[keyof DatasetControllerGetResponses];
+
+export type DatasetControllerRevisionsData = {
+    body?: never;
+    path: {
+        datasetId: string;
+    };
+    query?: never;
+    url: '/v2/datasets/{datasetId}/revisions';
+};
+
+export type DatasetControllerRevisionsResponses = {
+    200: DatasetRevisionListDto;
+};
+
+export type DatasetControllerRevisionsResponse = DatasetControllerRevisionsResponses[keyof DatasetControllerRevisionsResponses];
+
+export type DatasetControllerCreateRevisionData = {
+    body?: never;
+    path: {
+        datasetId: string;
+    };
+    query?: never;
+    url: '/v2/datasets/{datasetId}/revisions';
+};
+
+export type DatasetControllerCreateRevisionResponses = {
+    200: DatasetRevisionDto;
+};
+
+export type DatasetControllerCreateRevisionResponse = DatasetControllerCreateRevisionResponses[keyof DatasetControllerCreateRevisionResponses];
+
+export type DatasetControllerFromTracesData = {
+    body?: never;
+    path: {
+        datasetId: string;
+    };
+    query?: never;
+    url: '/v2/datasets/{datasetId}/revisions/from-traces';
+};
+
+export type DatasetControllerFromTracesResponses = {
+    200: DatasetRevisionDto;
+};
+
+export type DatasetControllerFromTracesResponse = DatasetControllerFromTracesResponses[keyof DatasetControllerFromTracesResponses];
+
+export type DatasetControllerImportRevisionData = {
+    body?: never;
+    path: {
+        datasetId: string;
+    };
+    query?: never;
+    url: '/v2/datasets/{datasetId}/revisions/import';
+};
+
+export type DatasetControllerImportRevisionResponses = {
+    200: DatasetRevisionDto;
+};
+
+export type DatasetControllerImportRevisionResponse = DatasetControllerImportRevisionResponses[keyof DatasetControllerImportRevisionResponses];
+
+export type DatasetControllerExportRevisionData = {
+    body?: never;
+    path: {
+        datasetId: string;
+        format: string;
+        revision: number;
+    };
+    query?: never;
+    url: '/v2/datasets/{datasetId}/revisions/{revision}/export/{format}';
+};
+
+export type DatasetControllerExportRevisionResponses = {
+    200: DatasetExportDto;
+};
+
+export type DatasetControllerExportRevisionResponse = DatasetControllerExportRevisionResponses[keyof DatasetControllerExportRevisionResponses];
+
+export type DatasetControllerItemsData = {
+    body?: never;
+    path: {
+        datasetId: string;
+        revision: number;
+    };
+    query?: never;
+    url: '/v2/datasets/{datasetId}/revisions/{revision}/items';
+};
+
+export type DatasetControllerItemsResponses = {
+    200: DatasetRevisionItemsDto;
+};
+
+export type DatasetControllerItemsResponse = DatasetControllerItemsResponses[keyof DatasetControllerItemsResponses];
+
+export type EvaluationTargetControllerListData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/v2/evaluation-targets';
+};
+
+export type EvaluationTargetControllerListResponses = {
+    200: EvaluationTargetListDto;
+};
+
+export type EvaluationTargetControllerListResponse = EvaluationTargetControllerListResponses[keyof EvaluationTargetControllerListResponses];
+
+export type EvaluationTargetControllerCreateData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/v2/evaluation-targets';
+};
+
+export type EvaluationTargetControllerCreateResponses = {
+    200: EvaluationTargetDto;
+};
+
+export type EvaluationTargetControllerCreateResponse = EvaluationTargetControllerCreateResponses[keyof EvaluationTargetControllerCreateResponses];
+
+export type EvaluationTargetControllerRemoveData = {
+    body?: never;
+    path: {
+        targetId: string;
+    };
+    query?: never;
+    url: '/v2/evaluation-targets/{targetId}';
+};
+
+export type EvaluationTargetControllerRemoveResponses = {
+    200: EvaluationTargetDeleteDto;
+};
+
+export type EvaluationTargetControllerRemoveResponse = EvaluationTargetControllerRemoveResponses[keyof EvaluationTargetControllerRemoveResponses];
+
+export type EvaluationTargetControllerGetData = {
+    body?: never;
+    path: {
+        targetId: string;
+    };
+    query?: never;
+    url: '/v2/evaluation-targets/{targetId}';
+};
+
+export type EvaluationTargetControllerGetResponses = {
+    200: EvaluationTargetDto;
+};
+
+export type EvaluationTargetControllerGetResponse = EvaluationTargetControllerGetResponses[keyof EvaluationTargetControllerGetResponses];
+
+export type EvaluationTargetControllerUpdateData = {
+    body?: never;
+    path: {
+        targetId: string;
+    };
+    query?: never;
+    url: '/v2/evaluation-targets/{targetId}';
+};
+
+export type EvaluationTargetControllerUpdateResponses = {
+    200: EvaluationTargetDto;
+};
+
+export type EvaluationTargetControllerUpdateResponse = EvaluationTargetControllerUpdateResponses[keyof EvaluationTargetControllerUpdateResponses];
+
+export type EvaluatorControllerListData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/v2/evaluators';
+};
+
+export type EvaluatorControllerListResponses = {
+    200: EvaluatorListDto;
+};
+
+export type EvaluatorControllerListResponse = EvaluatorControllerListResponses[keyof EvaluatorControllerListResponses];
+
+export type EvaluatorControllerCreateData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/v2/evaluators';
+};
+
+export type EvaluatorControllerCreateResponses = {
+    200: EvaluatorDto;
+};
+
+export type EvaluatorControllerCreateResponse = EvaluatorControllerCreateResponses[keyof EvaluatorControllerCreateResponses];
+
+export type EvaluatorControllerRemoveData = {
+    body?: never;
+    path: {
+        evaluatorId: string;
+    };
+    query?: never;
+    url: '/v2/evaluators/{evaluatorId}';
+};
+
+export type EvaluatorControllerRemoveResponses = {
+    200: EvaluatorDeleteDto;
+};
+
+export type EvaluatorControllerRemoveResponse = EvaluatorControllerRemoveResponses[keyof EvaluatorControllerRemoveResponses];
+
+export type EvaluatorControllerGetData = {
+    body?: never;
+    path: {
+        evaluatorId: string;
+    };
+    query?: never;
+    url: '/v2/evaluators/{evaluatorId}';
+};
+
+export type EvaluatorControllerGetResponses = {
+    200: EvaluatorDto;
+};
+
+export type EvaluatorControllerGetResponse = EvaluatorControllerGetResponses[keyof EvaluatorControllerGetResponses];
+
+export type EvaluatorControllerVersionsData = {
+    body?: never;
+    path: {
+        evaluatorId: string;
+    };
+    query?: never;
+    url: '/v2/evaluators/{evaluatorId}/versions';
+};
+
+export type EvaluatorControllerVersionsResponses = {
+    200: EvaluatorVersionListDto;
+};
+
+export type EvaluatorControllerVersionsResponse = EvaluatorControllerVersionsResponses[keyof EvaluatorControllerVersionsResponses];
+
+export type EvaluatorControllerCreateVersionData = {
+    body?: never;
+    path: {
+        evaluatorId: string;
+    };
+    query?: never;
+    url: '/v2/evaluators/{evaluatorId}/versions';
+};
+
+export type EvaluatorControllerCreateVersionResponses = {
+    200: EvaluatorVersionDto;
+};
+
+export type EvaluatorControllerCreateVersionResponse = EvaluatorControllerCreateVersionResponses[keyof EvaluatorControllerCreateVersionResponses];
+
+export type EvaluatorControllerVersionData = {
+    body?: never;
+    path: {
+        evaluatorId: string;
+        version: number;
+    };
+    query?: never;
+    url: '/v2/evaluators/{evaluatorId}/versions/{version}';
+};
+
+export type EvaluatorControllerVersionResponses = {
+    200: EvaluatorVersionDto;
+};
+
+export type EvaluatorControllerVersionResponse = EvaluatorControllerVersionResponses[keyof EvaluatorControllerVersionResponses];
+
+export type ExperimentControllerListData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/v2/experiments';
+};
+
+export type ExperimentControllerListResponses = {
+    200: ExperimentListDto;
+};
+
+export type ExperimentControllerListResponse = ExperimentControllerListResponses[keyof ExperimentControllerListResponses];
+
+export type ExperimentControllerCreateData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/v2/experiments';
+};
+
+export type ExperimentControllerCreateResponses = {
+    200: ExperimentDto;
+};
+
+export type ExperimentControllerCreateResponse = ExperimentControllerCreateResponses[keyof ExperimentControllerCreateResponses];
+
+export type ExperimentControllerRemoveData = {
+    body?: never;
+    path: {
+        experimentId: string;
+    };
+    query?: never;
+    url: '/v2/experiments/{experimentId}';
+};
+
+export type ExperimentControllerRemoveResponses = {
+    200: ExperimentDeleteDto;
+};
+
+export type ExperimentControllerRemoveResponse = ExperimentControllerRemoveResponses[keyof ExperimentControllerRemoveResponses];
+
+export type ExperimentControllerGetData = {
+    body?: never;
+    path: {
+        experimentId: string;
+    };
+    query?: never;
+    url: '/v2/experiments/{experimentId}';
+};
+
+export type ExperimentControllerGetResponses = {
+    200: ExperimentDto;
+};
+
+export type ExperimentControllerGetResponse = ExperimentControllerGetResponses[keyof ExperimentControllerGetResponses];
+
+export type ExperimentControllerCancelData = {
+    body?: never;
+    path: {
+        experimentId: string;
+    };
+    query?: never;
+    url: '/v2/experiments/{experimentId}/cancel';
+};
+
+export type ExperimentControllerCancelResponses = {
+    200: ExperimentDto;
+};
+
+export type ExperimentControllerCancelResponse = ExperimentControllerCancelResponses[keyof ExperimentControllerCancelResponses];
+
+export type ExperimentControllerCompareData = {
+    body?: never;
+    path: {
+        experimentId: string;
+    };
+    query?: {
+        baselineExperimentId?: string;
+    };
+    url: '/v2/experiments/{experimentId}/compare';
+};
+
+export type ExperimentControllerCompareResponses = {
+    200: ExperimentComparisonDto;
+};
+
+export type ExperimentControllerCompareResponse = ExperimentControllerCompareResponses[keyof ExperimentControllerCompareResponses];
+
+export type ExperimentControllerGateData = {
+    body?: never;
+    path: {
+        experimentId: string;
+    };
+    query?: never;
+    url: '/v2/experiments/{experimentId}/gate';
+};
+
+export type ExperimentControllerGateResponses = {
+    200: ExperimentGateResultDto;
+};
+
+export type ExperimentControllerGateResponse = ExperimentControllerGateResponses[keyof ExperimentControllerGateResponses];
+
+export type ExperimentControllerResultsData = {
+    body?: never;
+    path: {
+        experimentId: string;
+    };
+    query?: never;
+    url: '/v2/experiments/{experimentId}/results';
+};
+
+export type ExperimentControllerResultsResponses = {
+    200: ExperimentResultListDto;
+};
+
+export type ExperimentControllerResultsResponse = ExperimentControllerResultsResponses[keyof ExperimentControllerResultsResponses];
+
+export type ExperimentControllerSubmitResultsData = {
+    body?: never;
+    path: {
+        experimentId: string;
+    };
+    query?: never;
+    url: '/v2/experiments/{experimentId}/results';
+};
+
+export type ExperimentControllerSubmitResultsResponses = {
+    200: ExperimentDto;
+};
+
+export type ExperimentControllerSubmitResultsResponse = ExperimentControllerSubmitResultsResponses[keyof ExperimentControllerSubmitResultsResponses];
+
+export type ExperimentControllerRunData = {
+    body?: never;
+    path: {
+        experimentId: string;
+    };
+    query?: never;
+    url: '/v2/experiments/{experimentId}/run';
+};
+
+export type ExperimentControllerRunResponses = {
+    200: ExperimentDto;
+};
+
+export type ExperimentControllerRunResponse = ExperimentControllerRunResponses[keyof ExperimentControllerRunResponses];
+
+export type IntelligenceControllerListData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/v2/intelligence/jobs';
+};
+
+export type IntelligenceControllerListResponses = {
+    200: Array<IntelligenceJobResponseDto>;
+};
+
+export type IntelligenceControllerListResponse = IntelligenceControllerListResponses[keyof IntelligenceControllerListResponses];
+
+export type IntelligenceControllerRunData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/v2/intelligence/jobs';
+};
+
+export type IntelligenceControllerRunResponses = {
+    201: IntelligenceJobResponseDto;
+};
+
+export type IntelligenceControllerRunResponse = IntelligenceControllerRunResponses[keyof IntelligenceControllerRunResponses];
+
+export type IntelligenceControllerGetData = {
+    body?: never;
+    path: {
+        jobId: string;
+    };
+    query?: never;
+    url: '/v2/intelligence/jobs/{jobId}';
+};
+
+export type IntelligenceControllerGetResponses = {
+    200: IntelligenceJobResponseDto;
+};
+
+export type IntelligenceControllerGetResponse = IntelligenceControllerGetResponses[keyof IntelligenceControllerGetResponses];
+
+export type IssueControllerListData = {
+    body?: never;
+    path?: never;
+    query: {
+        severity: string;
+        status: string;
+    };
+    url: '/v2/issues';
+};
+
+export type IssueControllerListResponses = {
+    200: Array<IssueResponseDto>;
+};
+
+export type IssueControllerListResponse = IssueControllerListResponses[keyof IssueControllerListResponses];
+
+export type IssueControllerGetData = {
+    body?: never;
+    path: {
+        issueId: string;
+    };
+    query?: never;
+    url: '/v2/issues/{issueId}';
+};
+
+export type IssueControllerGetResponses = {
+    200: IssueResponseDto;
+};
+
+export type IssueControllerGetResponse = IssueControllerGetResponses[keyof IssueControllerGetResponses];
+
+export type IssueControllerUpdateData = {
+    body?: never;
+    path: {
+        issueId: string;
+    };
+    query?: never;
+    url: '/v2/issues/{issueId}';
+};
+
+export type IssueControllerUpdateResponses = {
+    200: IssueResponseDto;
+};
+
+export type IssueControllerUpdateResponse = IssueControllerUpdateResponses[keyof IssueControllerUpdateResponses];
+
+export type IssueControllerAddToDatasetData = {
+    body?: never;
+    path: {
+        issueId: string;
+    };
+    query?: never;
+    url: '/v2/issues/{issueId}/actions/add-to-dataset';
+};
+
+export type IssueControllerAddToDatasetResponses = {
+    201: IssueResponseDto;
+};
+
+export type IssueControllerAddToDatasetResponse = IssueControllerAddToDatasetResponses[keyof IssueControllerAddToDatasetResponses];
+
+export type IssueControllerMergeData = {
+    body?: never;
+    path: {
+        issueId: string;
+    };
+    query?: never;
+    url: '/v2/issues/{issueId}/merge';
+};
+
+export type IssueControllerMergeResponses = {
+    201: IssueResponseDto;
+};
+
+export type IssueControllerMergeResponse = IssueControllerMergeResponses[keyof IssueControllerMergeResponses];
+
+export type IssueControllerOccurrencesData = {
+    body?: never;
+    path: {
+        issueId: string;
+    };
+    query?: never;
+    url: '/v2/issues/{issueId}/occurrences';
+};
+
+export type IssueControllerOccurrencesResponses = {
+    200: Array<IssueOccurrenceResponseDto>;
+};
+
+export type IssueControllerOccurrencesResponse = IssueControllerOccurrencesResponses[keyof IssueControllerOccurrencesResponses];
+
+export type OnlineEvaluationControllerListData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/v2/online-evaluation-rules';
+};
+
+export type OnlineEvaluationControllerListResponses = {
+    200: Array<OnlineRuleResponseDto>;
+};
+
+export type OnlineEvaluationControllerListResponse = OnlineEvaluationControllerListResponses[keyof OnlineEvaluationControllerListResponses];
+
+export type OnlineEvaluationControllerCreateData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/v2/online-evaluation-rules';
+};
+
+export type OnlineEvaluationControllerCreateResponses = {
+    201: OnlineRuleResponseDto;
+};
+
+export type OnlineEvaluationControllerCreateResponse = OnlineEvaluationControllerCreateResponses[keyof OnlineEvaluationControllerCreateResponses];
+
+export type OnlineEvaluationControllerRemoveData = {
+    body?: never;
+    path: {
+        ruleId: string;
+    };
+    query?: never;
+    url: '/v2/online-evaluation-rules/{ruleId}';
+};
+
+export type OnlineEvaluationControllerRemoveResponses = {
+    200: DeleteResultDto;
+};
+
+export type OnlineEvaluationControllerRemoveResponse = OnlineEvaluationControllerRemoveResponses[keyof OnlineEvaluationControllerRemoveResponses];
+
+export type OnlineEvaluationControllerGetData = {
+    body?: never;
+    path: {
+        ruleId: string;
+    };
+    query?: never;
+    url: '/v2/online-evaluation-rules/{ruleId}';
+};
+
+export type OnlineEvaluationControllerGetResponses = {
+    200: OnlineRuleResponseDto;
+};
+
+export type OnlineEvaluationControllerGetResponse = OnlineEvaluationControllerGetResponses[keyof OnlineEvaluationControllerGetResponses];
+
+export type OnlineEvaluationControllerUpdateData = {
+    body?: never;
+    path: {
+        ruleId: string;
+    };
+    query?: never;
+    url: '/v2/online-evaluation-rules/{ruleId}';
+};
+
+export type OnlineEvaluationControllerUpdateResponses = {
+    200: OnlineRuleResponseDto;
+};
+
+export type OnlineEvaluationControllerUpdateResponse = OnlineEvaluationControllerUpdateResponses[keyof OnlineEvaluationControllerUpdateResponses];
+
+export type OnlineEvaluationControllerBackfillData = {
+    body?: never;
+    path: {
+        ruleId: string;
+    };
+    query?: never;
+    url: '/v2/online-evaluation-rules/{ruleId}/backfill';
+};
+
+export type OnlineEvaluationControllerBackfillResponses = {
+    201: Array<OnlineRuleRunResponseDto>;
+};
+
+export type OnlineEvaluationControllerBackfillResponse = OnlineEvaluationControllerBackfillResponses[keyof OnlineEvaluationControllerBackfillResponses];
+
+export type OnlineEvaluationControllerRunsData = {
+    body?: never;
+    path: {
+        ruleId: string;
+    };
+    query?: never;
+    url: '/v2/online-evaluation-rules/{ruleId}/runs';
+};
+
+export type OnlineEvaluationControllerRunsResponses = {
+    200: Array<OnlineRuleRunResponseDto>;
+};
+
+export type OnlineEvaluationControllerRunsResponse = OnlineEvaluationControllerRunsResponses[keyof OnlineEvaluationControllerRunsResponses];
+
+export type PromptControllerListData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/v2/prompts';
+};
+
+export type PromptControllerListResponses = {
+    200: PromptListDto;
+};
+
+export type PromptControllerListResponse = PromptControllerListResponses[keyof PromptControllerListResponses];
+
+export type PromptControllerCreateData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/v2/prompts';
+};
+
+export type PromptControllerCreateResponses = {
+    200: PromptDto;
+};
+
+export type PromptControllerCreateResponse = PromptControllerCreateResponses[keyof PromptControllerCreateResponses];
+
+export type PromptControllerRemoveData = {
+    body?: never;
+    path: {
+        promptId: string;
+    };
+    query?: never;
+    url: '/v2/prompts/{promptId}';
+};
+
+export type PromptControllerRemoveResponses = {
+    200: PromptDeleteDto;
+};
+
+export type PromptControllerRemoveResponse = PromptControllerRemoveResponses[keyof PromptControllerRemoveResponses];
+
+export type PromptControllerGetData = {
+    body?: never;
+    path: {
+        promptId: string;
+    };
+    query?: never;
+    url: '/v2/prompts/{promptId}';
+};
+
+export type PromptControllerGetResponses = {
+    200: PromptDto;
+};
+
+export type PromptControllerGetResponse = PromptControllerGetResponses[keyof PromptControllerGetResponses];
+
+export type PromptControllerUpdateData = {
+    body?: never;
+    path: {
+        promptId: string;
+    };
+    query?: never;
+    url: '/v2/prompts/{promptId}';
+};
+
+export type PromptControllerUpdateResponses = {
+    200: PromptDto;
+};
+
+export type PromptControllerUpdateResponse = PromptControllerUpdateResponses[keyof PromptControllerUpdateResponses];
+
+export type PromptControllerCompareData = {
+    body?: never;
+    path: {
+        promptId: string;
+    };
+    query: {
+        baseline: number;
+        candidate: number;
+    };
+    url: '/v2/prompts/{promptId}/compare';
+};
+
+export type PromptControllerCompareResponses = {
+    200: PromptComparisonDto;
+};
+
+export type PromptControllerCompareResponse = PromptControllerCompareResponses[keyof PromptControllerCompareResponses];
+
+export type PromptControllerDeploymentsData = {
+    body?: never;
+    path: {
+        promptId: string;
+    };
+    query?: never;
+    url: '/v2/prompts/{promptId}/deployments';
+};
+
+export type PromptControllerDeploymentsResponses = {
+    200: PromptDeploymentListDto;
+};
+
+export type PromptControllerDeploymentsResponse = PromptControllerDeploymentsResponses[keyof PromptControllerDeploymentsResponses];
+
+export type PromptControllerPromoteData = {
+    body?: never;
+    path: {
+        promptId: string;
+    };
+    query?: never;
+    url: '/v2/prompts/{promptId}/promote';
+};
+
+export type PromptControllerPromoteResponses = {
+    200: PromptDeploymentDto;
+};
+
+export type PromptControllerPromoteResponse = PromptControllerPromoteResponses[keyof PromptControllerPromoteResponses];
+
+export type PromptControllerRollbackData = {
+    body?: never;
+    path: {
+        promptId: string;
+    };
+    query?: never;
+    url: '/v2/prompts/{promptId}/rollback';
+};
+
+export type PromptControllerRollbackResponses = {
+    200: PromptDeploymentDto;
+};
+
+export type PromptControllerRollbackResponse = PromptControllerRollbackResponses[keyof PromptControllerRollbackResponses];
+
+export type PromptControllerVersionsData = {
+    body?: never;
+    path: {
+        promptId: string;
+    };
+    query?: never;
+    url: '/v2/prompts/{promptId}/versions';
+};
+
+export type PromptControllerVersionsResponses = {
+    200: PromptVersionListDto;
+};
+
+export type PromptControllerVersionsResponse = PromptControllerVersionsResponses[keyof PromptControllerVersionsResponses];
+
+export type PromptControllerCreateVersionData = {
+    body?: never;
+    path: {
+        promptId: string;
+    };
+    query?: never;
+    url: '/v2/prompts/{promptId}/versions';
+};
+
+export type PromptControllerCreateVersionResponses = {
+    200: PromptVersionDto;
+};
+
+export type PromptControllerCreateVersionResponse = PromptControllerCreateVersionResponses[keyof PromptControllerCreateVersionResponses];
+
+export type PromptControllerVersionData = {
+    body?: never;
+    path: {
+        promptId: string;
+        version: number;
+    };
+    query?: never;
+    url: '/v2/prompts/{promptId}/versions/{version}';
+};
+
+export type PromptControllerVersionResponses = {
+    200: PromptVersionDto;
+};
+
+export type PromptControllerVersionResponse = PromptControllerVersionResponses[keyof PromptControllerVersionResponses];
+
+export type TraceIntelligenceControllerListBackfillsData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/v2/trace-intelligence/backfills';
+};
+
+export type TraceIntelligenceControllerListBackfillsResponses = {
+    200: Array<TraceIntelligenceBackfillResponseDto>;
+};
+
+export type TraceIntelligenceControllerListBackfillsResponse = TraceIntelligenceControllerListBackfillsResponses[keyof TraceIntelligenceControllerListBackfillsResponses];
+
+export type TraceIntelligenceControllerCreateBackfillData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/v2/trace-intelligence/backfills';
+};
+
+export type TraceIntelligenceControllerCreateBackfillResponses = {
+    201: TraceIntelligenceBackfillResponseDto;
+};
+
+export type TraceIntelligenceControllerCreateBackfillResponse = TraceIntelligenceControllerCreateBackfillResponses[keyof TraceIntelligenceControllerCreateBackfillResponses];
+
+export type TraceIntelligenceControllerGetBackfillData = {
+    body?: never;
+    path: {
+        jobId: string;
+    };
+    query?: never;
+    url: '/v2/trace-intelligence/backfills/{jobId}';
+};
+
+export type TraceIntelligenceControllerGetBackfillResponses = {
+    200: TraceIntelligenceBackfillResponseDto;
+};
+
+export type TraceIntelligenceControllerGetBackfillResponse = TraceIntelligenceControllerGetBackfillResponses[keyof TraceIntelligenceControllerGetBackfillResponses];
+
+export type TraceIntelligenceControllerListClustersData = {
+    body?: never;
+    path?: never;
+    query: {
+        appId: string;
+        cursor?: string;
+        environmentId: string;
+        from: string;
+        limit?: number;
+        search?: string;
+        signalKind?: string;
+        to: string;
+    };
+    url: '/v2/trace-intelligence/clusters';
+};
+
+export type TraceIntelligenceControllerListClustersResponses = {
+    200: TraceIntelligenceClusterListResponseDto;
+};
+
+export type TraceIntelligenceControllerListClustersResponse = TraceIntelligenceControllerListClustersResponses[keyof TraceIntelligenceControllerListClustersResponses];
+
+export type TraceIntelligenceControllerGetClusterData = {
+    body?: never;
+    path: {
+        clusterId: string;
+    };
+    query?: never;
+    url: '/v2/trace-intelligence/clusters/{clusterId}';
+};
+
+export type TraceIntelligenceControllerGetClusterResponses = {
+    200: TraceIntelligenceClusterResponseDto;
+};
+
+export type TraceIntelligenceControllerGetClusterResponse = TraceIntelligenceControllerGetClusterResponses[keyof TraceIntelligenceControllerGetClusterResponses];
+
+export type TraceIntelligenceControllerAddToDatasetData = {
+    body?: never;
+    path: {
+        clusterId: string;
+    };
+    query?: never;
+    url: '/v2/trace-intelligence/clusters/{clusterId}/actions/add-to-dataset';
+};
+
+export type TraceIntelligenceControllerAddToDatasetResponses = {
+    201: TraceClusterDatasetActionResponseDto;
+};
+
+export type TraceIntelligenceControllerAddToDatasetResponse = TraceIntelligenceControllerAddToDatasetResponses[keyof TraceIntelligenceControllerAddToDatasetResponses];
+
+export type TraceIntelligenceControllerCoverageData = {
+    body?: never;
+    path?: never;
+    query: {
+        appId: string;
+        environmentId: string;
+        from: string;
+        to: string;
+    };
+    url: '/v2/trace-intelligence/coverage';
+};
+
+export type TraceIntelligenceControllerCoverageResponses = {
+    200: TraceIntelligenceCoverageResponseDto;
+};
+
+export type TraceIntelligenceControllerCoverageResponse = TraceIntelligenceControllerCoverageResponses[keyof TraceIntelligenceControllerCoverageResponses];
+
+export type TraceIntelligenceControllerFlowData = {
+    body?: never;
+    path?: never;
+    query: {
+        appId: string;
+        environmentId: string;
+        from: string;
+        includeUnclustered?: boolean;
+        minimumVolume?: number;
+        to: string;
+    };
+    url: '/v2/trace-intelligence/flow';
+};
+
+export type TraceIntelligenceControllerFlowResponses = {
+    200: TraceIntelligenceFlowResponseDto;
+};
+
+export type TraceIntelligenceControllerFlowResponse = TraceIntelligenceControllerFlowResponses[keyof TraceIntelligenceControllerFlowResponses];
+
+export type TraceIntelligenceControllerGetSettingsData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/v2/trace-intelligence/settings';
+};
+
+export type TraceIntelligenceControllerGetSettingsResponses = {
+    200: TraceIntelligenceSettingsResponseDto;
+};
+
+export type TraceIntelligenceControllerGetSettingsResponse = TraceIntelligenceControllerGetSettingsResponses[keyof TraceIntelligenceControllerGetSettingsResponses];
+
+export type TraceIntelligenceControllerUpdateSettingsData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/v2/trace-intelligence/settings';
+};
+
+export type TraceIntelligenceControllerUpdateSettingsResponses = {
+    200: TraceIntelligenceSettingsResponseDto;
+};
+
+export type TraceIntelligenceControllerUpdateSettingsResponse = TraceIntelligenceControllerUpdateSettingsResponses[keyof TraceIntelligenceControllerUpdateSettingsResponses];
+
+export type TraceIntelligenceControllerTestProviderData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/v2/trace-intelligence/settings/provider/test';
+};
+
+export type TraceIntelligenceControllerTestProviderResponses = {
+    201: TraceIntelligenceProviderTestResponseDto;
+};
+
+export type TraceIntelligenceControllerTestProviderResponse = TraceIntelligenceControllerTestProviderResponses[keyof TraceIntelligenceControllerTestProviderResponses];
+
+export type TraceIntelligenceControllerGetSignalsData = {
+    body?: never;
+    path: {
+        traceId: string;
+    };
+    query?: never;
+    url: '/v2/trace-intelligence/traces/{traceId}/signals';
+};
+
+export type TraceIntelligenceControllerGetSignalsResponses = {
+    200: TraceIntelligenceSignalsResponseDto;
+};
+
+export type TraceIntelligenceControllerGetSignalsResponse = TraceIntelligenceControllerGetSignalsResponses[keyof TraceIntelligenceControllerGetSignalsResponses];
+
+export type TraceV2ControllerListData = {
+    body?: never;
+    path?: never;
+    query?: {
+        agent?: string;
+        cursor?: string;
+        from?: string;
+        limit?: number;
+        model?: string;
+        promptId?: string;
+        promptVersionId?: string;
+        provider?: string;
+        query?: string;
+        release?: string;
+        semanticKind?: string;
+        service?: string;
+        sessionId?: string;
+        sort?: 'last_seen_desc' | 'last_seen_asc' | 'duration_desc' | 'cost_desc' | 'tokens_desc';
+        status?: string;
+        to?: string;
+        tool?: string;
+        userId?: string;
+    };
+    url: '/v2/traces';
+};
+
+export type TraceV2ControllerListResponses = {
+    200: TraceListV2ResponseDto;
+};
+
+export type TraceV2ControllerListResponse = TraceV2ControllerListResponses[keyof TraceV2ControllerListResponses];
+
+export type TraceV2ControllerDetailData = {
+    body?: never;
+    path: {
+        traceId: string;
+    };
+    query?: never;
+    url: '/v2/traces/{traceId}';
+};
+
+export type TraceV2ControllerDetailResponses = {
+    200: TraceDetailV2ResponseDto;
+};
+
+export type TraceV2ControllerDetailResponse = TraceV2ControllerDetailResponses[keyof TraceV2ControllerDetailResponses];
+
+export type AssessmentControllerRemoveByQueryData = {
+    body?: never;
+    path: {
+        traceId: string;
+    };
+    query: {
+        assessmentId: string;
+    };
+    url: '/v2/traces/{traceId}/assessments';
+};
+
+export type AssessmentControllerRemoveByQueryResponses = {
+    200: AssessmentDeleteResponseDto;
+};
+
+export type AssessmentControllerRemoveByQueryResponse = AssessmentControllerRemoveByQueryResponses[keyof AssessmentControllerRemoveByQueryResponses];
+
+export type AssessmentControllerListData = {
+    body?: never;
+    path: {
+        traceId: string;
+    };
+    query?: never;
+    url: '/v2/traces/{traceId}/assessments';
+};
+
+export type AssessmentControllerListResponses = {
+    200: AssessmentListResponseDto;
+};
+
+export type AssessmentControllerListResponse = AssessmentControllerListResponses[keyof AssessmentControllerListResponses];
+
+export type AssessmentControllerCreateData = {
+    body: CreateAssessmentDto;
+    path: {
+        traceId: string;
+    };
+    query?: never;
+    url: '/v2/traces/{traceId}/assessments';
+};
+
+export type AssessmentControllerCreateResponses = {
+    200: AssessmentDto;
+};
+
+export type AssessmentControllerCreateResponse = AssessmentControllerCreateResponses[keyof AssessmentControllerCreateResponses];
+
+export type AssessmentControllerRemoveData = {
+    body?: never;
+    path: {
+        assessmentId: string;
+        traceId: string;
+    };
+    query?: never;
+    url: '/v2/traces/{traceId}/assessments/{assessmentId}';
+};
+
+export type AssessmentControllerRemoveResponses = {
+    200: AssessmentDeleteResponseDto;
+};
+
+export type AssessmentControllerRemoveResponse = AssessmentControllerRemoveResponses[keyof AssessmentControllerRemoveResponses];
+
+export type TraceV2ControllerEventsData = {
+    body?: never;
+    path: {
+        traceId: string;
+    };
+    query?: never;
+    url: '/v2/traces/{traceId}/events';
+};
+
+export type TraceV2ControllerEventsResponses = {
+    200: TraceEventsV2ResponseDto;
+};
+
+export type TraceV2ControllerEventsResponse = TraceV2ControllerEventsResponses[keyof TraceV2ControllerEventsResponses];
+
+export type WebhookControllerGetDeliveriesData = {
+    body?: never;
+    path: {
+        endpointId: string;
+    };
+    query?: never;
+    url: '/webhooks/deliveries/{endpointId}';
+};
+
+export type WebhookControllerGetDeliveriesResponses = {
+    200: Array<WebhookDeliveryResponseDto>;
+};
+
+export type WebhookControllerGetDeliveriesResponse = WebhookControllerGetDeliveriesResponses[keyof WebhookControllerGetDeliveriesResponses];
+
+export type WebhookControllerCreateEndpointData = {
+    body: CreateWebhookEndpointDto;
+    path?: never;
+    query?: never;
+    url: '/webhooks/endpoints';
+};
+
+export type WebhookControllerCreateEndpointResponses = {
+    201: WebhookEndpointCreateResponseDto;
+};
+
+export type WebhookControllerCreateEndpointResponse = WebhookControllerCreateEndpointResponses[keyof WebhookControllerCreateEndpointResponses];
+
+export type WebhookControllerListEndpointsData = {
+    body?: never;
+    path: {
+        channelId: string;
+    };
+    query?: never;
+    url: '/webhooks/endpoints/channel/{channelId}';
+};
+
+export type WebhookControllerListEndpointsResponses = {
+    200: Array<WebhookEndpointResponseDto>;
+};
+
+export type WebhookControllerListEndpointsResponse = WebhookControllerListEndpointsResponses[keyof WebhookControllerListEndpointsResponses];
+
+export type WebhookControllerDeleteEndpointData = {
     body?: never;
     path: {
         id: string;
     };
     query?: never;
-    url: '/admin/orgs/{id}';
+    url: '/webhooks/endpoints/{id}';
 };
 
-export type AdminControllerGetOrgResponses = {
-    200: AdminOrgDetailDto;
+export type WebhookControllerDeleteEndpointResponses = {
+    200: MessageResponseDto;
 };
 
-export type AdminControllerGetOrgResponse = AdminControllerGetOrgResponses[keyof AdminControllerGetOrgResponses];
+export type WebhookControllerDeleteEndpointResponse = WebhookControllerDeleteEndpointResponses[keyof WebhookControllerDeleteEndpointResponses];
 
-export type AdminControllerSetOrgPlanData = {
-    body: AdminSetPlanDto;
-    path: {
-        orgId: string;
-    };
-    query?: never;
-    url: '/admin/orgs/{orgId}/plan';
-};
-
-export type AdminControllerSetOrgPlanResponses = {
-    200: AdminOrgMutationResponseDto;
-    201: AdminOrgMutationResponseDto;
-};
-
-export type AdminControllerSetOrgPlanResponse = AdminControllerSetOrgPlanResponses[keyof AdminControllerSetOrgPlanResponses];
-
-export type AdminControllerSetOrgLimitsData = {
-    body: AdminSetLimitsDto;
-    path: {
-        orgId: string;
-    };
-    query?: never;
-    url: '/admin/orgs/{orgId}/limits';
-};
-
-export type AdminControllerSetOrgLimitsResponses = {
-    200: AdminOrgMutationResponseDto;
-    201: AdminOrgMutationResponseDto;
-};
-
-export type AdminControllerSetOrgLimitsResponse = AdminControllerSetOrgLimitsResponses[keyof AdminControllerSetOrgLimitsResponses];
-
-export type AdminControllerSetOrgStatusData = {
-    body: AdminSetStatusDto;
-    path: {
-        orgId: string;
-    };
-    query?: never;
-    url: '/admin/orgs/{orgId}/status';
-};
-
-export type AdminControllerSetOrgStatusResponses = {
-    200: AdminOrgMutationResponseDto;
-    201: AdminOrgMutationResponseDto;
-};
-
-export type AdminControllerSetOrgStatusResponse = AdminControllerSetOrgStatusResponses[keyof AdminControllerSetOrgStatusResponses];
-
-export type AdminControllerSetOrgTrialData = {
-    body: AdminSetTrialDto;
-    path: {
-        orgId: string;
-    };
-    query?: never;
-    url: '/admin/orgs/{orgId}/trial';
-};
-
-export type AdminControllerSetOrgTrialResponses = {
-    200: AdminOrgMutationResponseDto;
-    201: AdminOrgMutationResponseDto;
-};
-
-export type AdminControllerSetOrgTrialResponse = AdminControllerSetOrgTrialResponses[keyof AdminControllerSetOrgTrialResponses];
-
-export type AdminControllerSetOrgBillingData = {
-    body: AdminUpdateBillingDto;
-    path: {
-        orgId: string;
-    };
-    query?: never;
-    url: '/admin/orgs/{orgId}/billing';
-};
-
-export type AdminControllerSetOrgBillingResponses = {
-    200: AdminOrgMutationResponseDto;
-    201: AdminOrgMutationResponseDto;
-};
-
-export type AdminControllerSetOrgBillingResponse = AdminControllerSetOrgBillingResponses[keyof AdminControllerSetOrgBillingResponses];
-
-export type AdminControllerDisableOrgData = {
+export type WebhookControllerIngestWebhookData = {
     body?: never;
+    headers: {
+        'X-Webhook-Signature': string;
+    };
     path: {
-        orgId: string;
+        endpointId: string;
     };
     query?: never;
-    url: '/admin/orgs/{orgId}/disable';
+    url: '/webhooks/ingest/{endpointId}';
 };
 
-export type AdminControllerDisableOrgResponses = {
-    200: AdminOrgMutationResponseDto;
-    201: AdminOrgMutationResponseDto;
+export type WebhookControllerIngestWebhookResponses = {
+    201: WebhookIngestResponseDto;
 };
 
-export type AdminControllerDisableOrgResponse = AdminControllerDisableOrgResponses[keyof AdminControllerDisableOrgResponses];
-
-export type AdminControllerEnableOrgData = {
-    body?: never;
-    path: {
-        orgId: string;
-    };
-    query?: never;
-    url: '/admin/orgs/{orgId}/enable';
-};
-
-export type AdminControllerEnableOrgResponses = {
-    200: AdminOrgMutationResponseDto;
-    201: AdminOrgMutationResponseDto;
-};
-
-export type AdminControllerEnableOrgResponse = AdminControllerEnableOrgResponses[keyof AdminControllerEnableOrgResponses];
-
-export type AdminControllerGetUsersData = {
-    body?: never;
-    path?: never;
-    query: {
-        search: string;
-        limit: string;
-    };
-    url: '/admin/users';
-};
-
-export type AdminControllerGetUsersResponses = {
-    200: AdminUserListDto;
-};
-
-export type AdminControllerGetUsersResponse = AdminControllerGetUsersResponses[keyof AdminControllerGetUsersResponses];
-
-export type AdminControllerDisableUserData = {
-    body?: never;
-    path: {
-        userId: string;
-    };
-    query?: never;
-    url: '/admin/users/{userId}/disable';
-};
-
-export type AdminControllerDisableUserResponses = {
-    200: AdminOkResponseDto;
-    201: AdminOkResponseDto;
-};
-
-export type AdminControllerDisableUserResponse = AdminControllerDisableUserResponses[keyof AdminControllerDisableUserResponses];
-
-export type AdminControllerEnableUserData = {
-    body?: never;
-    path: {
-        userId: string;
-    };
-    query?: never;
-    url: '/admin/users/{userId}/enable';
-};
-
-export type AdminControllerEnableUserResponses = {
-    200: AdminOkResponseDto;
-    201: AdminOkResponseDto;
-};
-
-export type AdminControllerEnableUserResponse = AdminControllerEnableUserResponses[keyof AdminControllerEnableUserResponses];
-
-export type AdminControllerListBillingEventsData = {
-    body?: never;
-    path?: never;
-    query: {
-        limit: string;
-        orgId: string;
-        eventName: string;
-    };
-    url: '/admin/billing-events';
-};
-
-export type AdminControllerListBillingEventsResponses = {
-    200: AdminBillingEventListDto;
-};
-
-export type AdminControllerListBillingEventsResponse = AdminControllerListBillingEventsResponses[keyof AdminControllerListBillingEventsResponses];
-
-export type AdminControllerReplayBillingEventData = {
-    body?: never;
-    path: {
-        id: string;
-    };
-    query?: never;
-    url: '/admin/billing-events/{id}/replay';
-};
-
-export type AdminControllerReplayBillingEventResponses = {
-    200: AdminBillingEventReplayResponseDto;
-    201: AdminBillingEventReplayResponseDto;
-};
-
-export type AdminControllerReplayBillingEventResponse = AdminControllerReplayBillingEventResponses[keyof AdminControllerReplayBillingEventResponses];
+export type WebhookControllerIngestWebhookResponse = WebhookControllerIngestWebhookResponses[keyof WebhookControllerIngestWebhookResponses];

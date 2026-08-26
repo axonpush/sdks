@@ -1,0 +1,159 @@
+name: CI
+
+# Every branch, not just master: the old per-repo CI only ran on master and PRs,
+# so months of work on a long-lived feature branch went unchecked.
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  changes:
+    runs-on: ubuntu-latest
+    outputs:
+      ts: ${{ steps.filter.outputs.ts }}
+      py: ${{ steps.filter.outputs.py }}
+      dotnet: ${{ steps.filter.outputs.dotnet }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            ts:
+              - 'packages/typescript/**'
+              - 'contract/**'
+              - 'biome.json'
+              - 'package.json'
+            py:
+              - 'packages/python/**'
+              - 'contract/**'
+            dotnet:
+              - 'packages/dotnet/**'
+              - 'contract/**'
+
+  versions:
+    name: Package versions agree
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+      - run: bun run tools/check-versions.ts
+
+  parity:
+    name: SDK surfaces match
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+      - run: bun run tools/surface-diff.ts
+
+  typescript:
+    needs: changes
+    if: needs.changes.outputs.ts == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+      - run: bun install --frozen-lockfile
+      - name: Lint
+        run: bunx biome check .
+      - name: Typecheck
+        working-directory: packages/typescript
+        run: bunx tsc --noEmit
+      - name: Test
+        working-directory: packages/typescript
+        run: bunx vitest run
+      - name: Build
+        working-directory: packages/typescript
+        run: bun run build
+      # package.json advertises ./integrations/* and ./evaluation subpaths;
+      # these fail if the build stops emitting the JS behind them
+      - name: Validate the published package
+        working-directory: packages/typescript
+        run: |
+          bunx publint
+          bunx @arethetypeswrong/cli --pack --ignore-rules cjs-resolves-to-esm
+
+  codegen-clean:
+    name: Generated clients match the contract
+    needs: changes
+    if: needs.changes.outputs.ts == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+      - run: bun install --frozen-lockfile
+      - name: Regenerate from contract/
+        working-directory: packages/typescript
+        run: bun run codegen
+      - name: Fail if the checked-in client is stale
+        run: |
+          if ! git diff --exit-code -- packages/typescript/src/_internal/api; then
+            echo "::error::Generated client is out of date. Run 'bun run codegen' in packages/typescript."
+            exit 1
+          fi
+
+  python:
+    needs: changes
+    if: needs.changes.outputs.py == 'true'
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python: ["3.10", "3.11", "3.12", "3.13"]
+    defaults:
+      run:
+        working-directory: packages/python
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v4
+      - run: uv sync --extra dev --extra all --python ${{ matrix.python }}
+      - name: Lint
+        run: |
+          uv run ruff check .
+          uv run ruff format --check .
+      - name: Typecheck
+        run: uv run mypy --strict src/axonpush
+      - name: Test
+        run: uv run pytest
+
+  python-minimal-install:
+    name: Wheel imports in a clean venv
+    needs: changes
+    if: needs.changes.outputs.py == 'true'
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: packages/python
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v4
+      # the generated attrs models pull in dateutil; this catches an
+      # undeclared transitive dep before it reaches PyPI
+      - run: uv build
+      - run: |
+          uv venv /tmp/clean
+          VIRTUAL_ENV=/tmp/clean uv pip install dist/*.whl
+          VIRTUAL_ENV=/tmp/clean uv run python -c "from axonpush import AxonPush; print('import ok')"
+
+  dotnet:
+    needs: changes
+    if: needs.changes.outputs.dotnet == 'true'
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: packages/dotnet
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "9.0.x"
+      - run: dotnet restore
+      - run: dotnet format --verify-no-changes
+      - run: dotnet build --no-restore -warnaserror
+      - run: dotnet test --no-build

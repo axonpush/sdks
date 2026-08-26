@@ -59,10 +59,10 @@ dependencies = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/axonpush/python-sdk"
-Repository = "https://github.com/axonpush/python-sdk"
-Issues = "https://github.com/axonpush/python-sdk/issues"
-Changelog = "https://github.com/axonpush/python-sdk/releases"
+Homepage = "https://github.com/axonpush/sdks/tree/master/packages/python"
+Repository = "https://github.com/axonpush/sdks"
+Issues = "https://github.com/axonpush/sdks/issues"
+Changelog = "https://github.com/axonpush/sdks/releases"
 
 [project.optional-dependencies]
 langchain = ["langchain-core>=0.1.0"]

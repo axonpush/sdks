@@ -100,7 +100,6 @@ __all__ = [
     "TraceStats",
     "TraceSummary",
     "Traces",
-    "User",
     "ValidationError",
     "WebhookDelivery",
     "WebhookEndpoint",

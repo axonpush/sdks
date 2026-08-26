@@ -24,11 +24,15 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/axonpush/ts-sdk"
+    "url": "git+https://github.com/axonpush/sdks.git",
+    "directory": "packages/typescript"
   },
-  "files": ["dist"],
+  "files": [
+    "dist",
+    "LICENSE"
+  ],
   "scripts": {
-    "codegen": "curl -fsS http://localhost:3000/swagger/json | python3 -m json.tool > spec/openapi.json && bun run tools/patch-spec.ts spec/openapi.json && rm -rf src/_internal/api && bunx @hey-api/openapi-ts -f openapi-ts.config.ts && perl -pi -e \"s|from '../transport\\\\.ts'|from '../transport.js'|\" src/_internal/api/client.gen.ts",
+    "codegen": "rm -rf src/_internal/api && bunx @hey-api/openapi-ts -f openapi-ts.config.ts && perl -pi -e \"s|from '../transport\\.ts'|from '../transport.js'|\" src/_internal/api/client.gen.ts",
     "build": "bun build ./src/index.ts ./src/cli.ts --outdir ./dist --target node --format esm && tsc -p tsconfig.build.json",
     "typecheck": "tsc --noEmit",
     "lint": "biome check src/ index.ts",
@@ -88,5 +92,9 @@
     "winston-transport": {
       "optional": true
     }
+  },
+  "homepage": "https://github.com/axonpush/sdks/tree/master/packages/typescript#readme",
+  "bugs": {
+    "url": "https://github.com/axonpush/sdks/issues"
   }
 }

@@ -24,7 +24,6 @@ export type {
   EventListResponseDto,
   EventResponseDto as EventDetails,
   OrganizationResponseDto as Organization,
-  UserResponseDto as User,
   WebhookDeliveryResponseDto as WebhookDelivery,
   WebhookEndpointCreateResponseDto,
   WebhookEndpointResponseDto as WebhookEndpoint,

@@ -41,7 +41,9 @@ async function main() {
     await badAuthClient.apps.list();
   } catch (err) {
     if (err instanceof AuthenticationError) {
-      console.log(`[auth] caught AuthenticationError code=${err.code} hint=${err.hint ?? "<none>"}`);
+      console.log(
+        `[auth] caught AuthenticationError code=${err.code} hint=${err.hint ?? "<none>"}`,
+      );
     } else {
       console.log("[auth] unexpected:", err);
     }
@@ -56,7 +58,9 @@ async function main() {
     await client.apps.get(bogusId);
   } catch (err) {
     if (err instanceof NotFoundError) {
-      console.log(`[404] caught NotFoundError for app ${bogusId}; requestId=${err.requestId ?? "<none>"}`);
+      console.log(
+        `[404] caught NotFoundError for app ${bogusId}; requestId=${err.requestId ?? "<none>"}`,
+      );
     } else if (err instanceof ValidationError) {
       console.log("[404] backend rejected the id format:", err.message);
     } else {

@@ -1,6 +1,7 @@
 import {
   organizationControllerCreateInvitation,
   organizationControllerCreateOrganization,
+  organizationControllerDeleteInvitation,
   organizationControllerDeleteOrganization,
   organizationControllerEditOrganization,
   organizationControllerGetAllOrganizations,
@@ -117,6 +118,19 @@ export class OrganizationsResource {
     return this.client.invoke(organizationControllerCreateInvitation, {
       path: { id: orgId },
       body: { invitedEmail: email, desired_role: role },
+    });
+  }
+
+  /**
+   * Cancel a pending invitation.
+   *
+   * @param orgId - Organization UUID.
+   * @param invitationId - Invitation UUID to cancel.
+   * @returns Success ack, or `null` on fail-open error.
+   */
+  async cancelInvitation(orgId: string, invitationId: string): Promise<SuccessResponseDto | null> {
+    return this.client.invoke(organizationControllerDeleteInvitation, {
+      path: { id: orgId, invitationId },
     });
   }
 

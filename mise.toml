@@ -1,0 +1,88 @@
+[tools]
+bun = "1.3"
+node = "22"
+python = "3.12"
+uv = "latest"
+dotnet = "9"
+
+# Codegen needs no running backend: contract/ is mirrored in from the server and
+# committed, so a fresh clone can regenerate offline.
+
+[tasks."codegen:ts"]
+dir = "packages/typescript"
+sources = ["../../contract/openapi.sdk.json", "openapi-ts.config.ts"]
+outputs = ["src/_internal/api/**"]
+run = [
+  "rm -rf src/_internal/api",
+  "bunx @hey-api/openapi-ts -f openapi-ts.config.ts",
+]
+
+[tasks."codegen:py"]
+dir = "packages/python"
+sources = ["../../contract/openapi.sdk.json", "tools/openapi-config.yaml"]
+outputs = ["src/axonpush/_internal/api/**"]
+run = [
+  "rm -rf _internal_api src/axonpush/_internal/api",
+  "uv run openapi-python-client generate --path ../../contract/openapi.sdk.json --config tools/openapi-config.yaml --overwrite --meta none",
+  "mkdir -p src/axonpush/_internal",
+  "mv _internal_api src/axonpush/_internal/api",
+]
+
+[tasks.codegen]
+depends = ["codegen:ts", "codegen:py"]
+
+[tasks."install:ts"]
+run = "bun install --frozen-lockfile"
+
+[tasks."install:py"]
+dir = "packages/python"
+run = "uv sync --extra dev --extra all"
+
+[tasks.install]
+depends = ["install:ts", "install:py"]
+
+[tasks."lint:ts"]
+run = "bunx biome check ."
+
+[tasks."lint:py"]
+dir = "packages/python"
+run = ["uv run ruff check .", "uv run ruff format --check ."]
+
+[tasks."lint:dotnet"]
+dir = "packages/dotnet"
+run = "dotnet format --verify-no-changes"
+
+[tasks.lint]
+depends = ["lint:ts", "lint:py", "lint:dotnet"]
+
+[tasks."typecheck:ts"]
+dir = "packages/typescript"
+run = "bunx tsc --noEmit"
+
+[tasks."typecheck:py"]
+dir = "packages/python"
+run = "uv run mypy --strict src/axonpush"
+
+[tasks.typecheck]
+depends = ["typecheck:ts", "typecheck:py"]
+
+[tasks."test:ts"]
+dir = "packages/typescript"
+run = "bunx vitest run"
+
+[tasks."test:py"]
+dir = "packages/python"
+run = "uv run pytest"
+
+[tasks."test:dotnet"]
+dir = "packages/dotnet"
+run = "dotnet test"
+
+[tasks.test]
+depends = ["test:ts", "test:py", "test:dotnet"]
+
+[tasks.parity]
+run = "bun run tools/surface-diff.ts"
+
+[tasks.check]
+depends = ["lint", "typecheck", "test", "parity"]

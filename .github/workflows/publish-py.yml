@@ -1,0 +1,39 @@
+name: Publish axonpush
+
+on:
+  push:
+    tags: ["sdk-py-v*"]
+
+permissions:
+  contents: write
+  id-token: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: packages/python
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v4
+      - uses: oven-sh/setup-bun@v2
+      - name: Tag matches pyproject.toml
+        run: |
+          tag="${GITHUB_REF_NAME#sdk-py-v}"
+          pkg="$(grep -m1 '^version' pyproject.toml | sed 's/.*"\(.*\)"/\1/')"
+          [ "$tag" = "$pkg" ] || { echo "::error::tag $tag != pyproject $pkg"; exit 1; }
+      - name: Version files agree
+        working-directory: .
+        run: bun run tools/check-versions.ts
+      - run: uv sync --extra dev --extra all
+      - run: uv run ruff check .
+      - run: uv run mypy --strict src/axonpush
+      - run: uv run pytest
+      - run: uv build
+      # trusted publishing: no long-lived token
+      - run: uv publish
+      - uses: softprops/action-gh-release@v2
+        with:
+          files: packages/python/dist/*
+          generate_release_notes: true

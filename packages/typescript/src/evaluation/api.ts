@@ -231,7 +231,7 @@ export class HttpEvaluationApi implements EvaluationApi {
         },
       });
       const text = await response.text();
-      let body: unknown = undefined;
+      let body: unknown;
       if (text) {
         try {
           body = JSON.parse(text);

@@ -114,7 +114,6 @@ export type {
   Organization,
   TraceListItem,
   TraceSummary,
-  User,
   WebhookDelivery,
   WebhookDeliveryStatus,
   WebhookEndpoint,

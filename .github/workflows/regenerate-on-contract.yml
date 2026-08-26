@@ -1,0 +1,47 @@
+name: Regenerate clients
+
+# contract/ arrives by PR from axonpush/server. Regenerating on that PR keeps
+# the contract diff and the generated code in one review, rather than leaving
+# the clients to be refreshed by hand later, which is how they fell 90
+# operations behind in the first place.
+on:
+  pull_request:
+    paths: ["contract/**"]
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  regenerate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+      - uses: oven-sh/setup-bun@v2
+      - uses: astral-sh/setup-uv@v4
+      - run: bun install --frozen-lockfile
+      - name: Regenerate the TypeScript client
+        working-directory: packages/typescript
+        run: bun run codegen
+      - name: Regenerate the Python client
+        working-directory: packages/python
+        run: |
+          uv sync --extra dev
+          rm -rf _internal_api src/axonpush/_internal/api
+          uv run openapi-python-client generate --path ../../contract/openapi.sdk.json --config tools/openapi-config.yaml --overwrite --meta none
+          mkdir -p src/axonpush/_internal
+          mv _internal_api src/axonpush/_internal/api
+      - name: Commit if anything moved
+        run: |
+          if [ -n "$(git status --porcelain)" ]; then
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add -A
+            git commit -m "chore: regenerate clients from the updated contract"
+            git push
+          else
+            echo "clients already match the contract"
+          fi

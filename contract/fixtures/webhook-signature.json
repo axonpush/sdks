@@ -1,0 +1,26 @@
+{
+  "description": "HMAC scheme for webhooks in both directions. Outbound deliveries carry the signature in X-AxonPush-Signature; inbound ingest expects x-webhook-signature. Both sign the exact request body bytes, with no timestamp or version prefix.",
+  "algorithm": "hmac-sha256",
+  "encoding": "hex",
+  "signedPayload": "raw request body, verbatim",
+  "outboundHeader": "X-AxonPush-Signature",
+  "inboundHeader": "x-webhook-signature",
+  "comparison": "constant-time",
+  "vectors": [
+    {
+      "secret": "whsec_test_1",
+      "body": "{\"hello\":\"world\"}",
+      "signature": "a8760ee84868116729e475b6c56cd67b0c4f82b86755678f19a62a4d49795238"
+    },
+    {
+      "secret": "whsec_test_1",
+      "body": "{}",
+      "signature": "cb158c1ffcccade3491bbf58dbdb774fdad137563ecf1be25fcddc5c7f27cd59"
+    },
+    {
+      "secret": "whsec_test_2",
+      "body": "{\"nested\":{\"a\":[1,2,3]},\"unicode\":\"ünïcode\"}",
+      "signature": "794c548dd1968747019dca43bd444d65dcb54593d2bfec40622852243c0af6b6"
+    }
+  ]
+}

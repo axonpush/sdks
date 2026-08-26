@@ -24,12 +24,20 @@ interface OtelApiMod {
 }
 
 interface OtelSdkMod {
-  BasicTracerProvider?: new (opts?: Record<string, unknown>) => {
+  BasicTracerProvider?: new (
+    opts?: Record<string, unknown>,
+  ) => {
     addSpanProcessor: (p: unknown) => void;
     register: () => void;
     shutdown: () => Promise<void>;
-    getTracer: (name: string, version?: string) => {
-      startSpan: (name: string) => { setAttribute: (k: string, v: unknown) => void; end: () => void };
+    getTracer: (
+      name: string,
+      version?: string,
+    ) => {
+      startSpan: (name: string) => {
+        setAttribute: (k: string, v: unknown) => void;
+        end: () => void;
+      };
     };
   };
   SimpleSpanProcessor?: new (exp: unknown) => unknown;
@@ -46,9 +54,7 @@ async function main() {
     console.log(
       "@opentelemetry/api or @opentelemetry/sdk-trace-base is not installed — skipping live setup.",
     );
-    console.log(
-      "Install with: bun add @opentelemetry/api @opentelemetry/sdk-trace-base",
-    );
+    console.log("Install with: bun add @opentelemetry/api @opentelemetry/sdk-trace-base");
     return;
   }
 

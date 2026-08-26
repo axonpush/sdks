@@ -1,0 +1,7 @@
+* text=auto eol=lf
+*.png binary
+*.ico binary
+*.lock -diff
+bun.lock -diff
+uv.lock -diff
+contract/openapi.sdk.json linguist-generated=true

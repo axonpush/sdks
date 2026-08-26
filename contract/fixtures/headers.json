@@ -1,0 +1,24 @@
+{
+  "description": "Canonical request headers. Casing is as the server documents it.",
+  "auth": {
+    "apiKey": "X-API-Key",
+    "publicToken": "X-Public-Token",
+    "bearer": "Authorization"
+  },
+  "tenancy": {
+    "orgId": "x-tenant-id"
+  },
+  "scoping": {
+    "environment": "X-Axonpush-Environment"
+  },
+  "tracing": {
+    "traceId": "X-Axonpush-Trace-Id",
+    "spanId": "X-Axonpush-Span-Id",
+    "traceparent": "traceparent",
+    "baggage": "baggage"
+  },
+  "webhooks": {
+    "outbound": "X-AxonPush-Signature",
+    "inbound": "x-webhook-signature"
+  }
+}

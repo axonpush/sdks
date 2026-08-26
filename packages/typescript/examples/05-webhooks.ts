@@ -52,7 +52,9 @@ async function main() {
   const deliveries = await client.webhooks.deliveries(created.endpointId);
   console.log(`found ${deliveries?.length ?? 0} delivery attempts`);
   for (const d of deliveries ?? []) {
-    console.log(`  - status=${(d as { status?: string }).status} eventId=${(d as { eventId?: string }).eventId}`);
+    console.log(
+      `  - status=${(d as { status?: string }).status} eventId=${(d as { eventId?: string }).eventId}`,
+    );
   }
 
   client.close();

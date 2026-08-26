@@ -46,12 +46,13 @@ async function main() {
   );
 
   const llmRunId = crypto.randomUUID();
-  handler.handleLLMStart({ name: "fake-openai" }, ["what's the capital of France?"], llmRunId, runId);
-  handler.handleLLMEnd(
-    { generations: [[{ text: "Paris" }]] },
+  handler.handleLLMStart(
+    { name: "fake-openai" },
+    ["what's the capital of France?"],
     llmRunId,
     runId,
   );
+  handler.handleLLMEnd({ generations: [[{ text: "Paris" }]] }, llmRunId, runId);
 
   handler.handleChainEnd({ answer: "Paris" }, runId);
 

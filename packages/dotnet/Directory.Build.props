@@ -18,8 +18,8 @@
     <Product>AxonPush for .NET</Product>
     <Copyright>Copyright (c) AxonPush</Copyright>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <PackageProjectUrl>https://github.com/AxonPush/axonpush-dotnet</PackageProjectUrl>
-    <RepositoryUrl>https://github.com/AxonPush/axonpush-dotnet</RepositoryUrl>
+    <PackageProjectUrl>https://github.com/axonpush/sdks</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/axonpush/sdks</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageTags>axonpush;opentelemetry;observability;tracing;llm;agents;semantic-kernel</PackageTags>

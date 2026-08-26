@@ -2,12 +2,13 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, List
 
 from axonpush._internal.api.api.channels import (
     channel_controller_create_channel as _create_op,
     channel_controller_delete_channel as _delete_op,
     channel_controller_get_channel as _get_op,
+    channel_controller_list_channels as _list_op,
     channel_controller_update_channel as _update_op,
 )
 from axonpush._internal.api.models import CreateChannelDto, OkResponseDto
@@ -26,6 +27,17 @@ class Channels:
 
     def __init__(self, client: SyncClientProtocol) -> None:
         self._client = client
+
+    def list(self, app_id: str) -> List[Channel] | None:
+        """List the channels inside an app.
+
+        Args:
+            app_id: UUID of the app.
+
+        Returns:
+            A list of :class:`Channel`, or ``None`` on fail-open.
+        """
+        return self._client._invoke(_list_op, app_id=app_id)
 
     def get(self, channel_id: str) -> Channel | None:
         """Fetch a single channel by UUID.
@@ -68,6 +80,10 @@ class AsyncChannels:
 
     def __init__(self, client: AsyncClientProtocol) -> None:
         self._client = client
+
+    async def list(self, app_id: str) -> List[Channel] | None:
+        """See :meth:`Channels.list`."""
+        return await self._client._invoke(_list_op, app_id=app_id)
 
     async def get(self, channel_id: str) -> Channel | None:
         """See :meth:`Channels.get`."""
