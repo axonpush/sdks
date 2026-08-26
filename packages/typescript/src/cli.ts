@@ -136,7 +136,7 @@ async function main(argv: string[]): Promise<number> {
   const datasetRevision = required(parsed.args, "revision");
   const command = required(parsed.args, "command");
   const client = new AxonPush();
-  const api = new HttpEvaluationApi(client.settings);
+  const api = new HttpEvaluationApi();
   const configuration = jsonObject(parsed.args, "configuration");
   let experimentId =
     typeof parsed.args.experiment === "string" ? parsed.args.experiment : undefined;

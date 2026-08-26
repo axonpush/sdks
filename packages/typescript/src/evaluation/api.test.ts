@@ -1,100 +1,130 @@
-import { afterEach, describe, expect, it, vi } from "vitest";
-import { HttpEvaluationApi } from "./api.js";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 
-const settings = {
-  apiKey: "key",
-  tenantId: "org_1",
-  orgId: "org_1",
-  appId: undefined,
-  baseUrl: "https://api.example.test",
-  environment: "staging",
-  iotEndpoint: undefined,
-  wsUrl: undefined,
-  timeout: 1_000,
-  maxRetries: 0,
-  failOpen: false,
-  contentCaptureMode: "metadata_only" as const,
-  redactKeys: [],
-  maxContentLength: 4_096,
-};
+const invokeSync = vi.fn();
 
-afterEach(() => vi.unstubAllGlobals());
+vi.mock("../_internal/transport.js", async () => {
+  const actual = await vi.importActual<typeof import("../_internal/transport.js")>(
+    "../_internal/transport.js",
+  );
+  return { ...actual, invokeSync };
+});
 
+const {
+  datasetControllerItems,
+  experimentControllerCancel,
+  experimentControllerCreate,
+  experimentControllerGate,
+  experimentControllerGet,
+  experimentControllerRun,
+  experimentControllerSubmitResults,
+} = await import("../_internal/api/sdk.gen.js");
+const { EvaluationApiError, HttpEvaluationApi } = await import("./api.js");
+
+/**
+ * These calls used to bypass the transport entirely. The point of each
+ * assertion is that they no longer do: every one goes through `invokeSync`,
+ * which is what supplies retries, the shared error tree and a single auth path.
+ */
 describe("HttpEvaluationApi", () => {
-  it("fetches a precise dataset revision with scoped credentials", async () => {
-    const fetchMock = vi.fn().mockResolvedValue(
-      new Response(JSON.stringify({ data: [{ id: "item_1", input: { q: "hello" } }] }), {
-        status: 200,
-      }),
-    );
-    vi.stubGlobal("fetch", fetchMock);
-    const api = new HttpEvaluationApi(settings);
-
-    await expect(api.fetchDatasetRevisionItems("dataset/id", 3)).resolves.toEqual([
-      {
-        id: "item_1",
-        input: { q: "hello" },
-        expectedOutput: undefined,
-        metadata: undefined,
-        attachments: undefined,
-        toolTrajectory: undefined,
-      },
-    ]);
-    const request = fetchMock.mock.calls[0]?.[0] as URL;
-    const init = fetchMock.mock.calls[0]?.[1] as RequestInit;
-    expect(request.toString()).toBe(
-      "https://api.example.test/v2/datasets/dataset%2Fid/revisions/3/items?environment=staging",
-    );
-    expect(init.headers).toMatchObject({
-      "x-api-key": "key",
-      authorization: "Bearer key",
-      "x-tenant-id": "org_1",
-    });
+  beforeEach(() => {
+    invokeSync.mockReset();
   });
 
-  it("submits each result and returns a stable gate response", async () => {
-    const fetchMock = vi
-      .fn()
-      .mockResolvedValueOnce(new Response("{}", { status: 201 }))
-      .mockResolvedValueOnce(
-        new Response(
-          JSON.stringify({
-            data: { passed: false, experimentId: "exp_1", reasons: ["quality regression"] },
-          }),
-          { status: 200 },
-        ),
-      );
-    vi.stubGlobal("fetch", fetchMock);
-    const api = new HttpEvaluationApi(settings);
-    await api.submitResults("exp_1", [
-      { itemId: "item_1", output: "answer", latencyMs: 12, status: "passed" },
+  const lastCall = () => invokeSync.mock.calls[0] as [unknown, unknown, unknown];
+
+  it("reads a precise dataset revision through the generated operation", async () => {
+    invokeSync.mockResolvedValue([{ id: "item_1", input: { name: "Ada" } }]);
+
+    const items = await new HttpEvaluationApi().fetchDatasetRevisionItems("ds_1", 3);
+
+    const [op, args] = lastCall();
+    expect(op).toBe(datasetControllerItems);
+    expect(args).toMatchObject({ path: { datasetId: "ds_1", revision: "3" } });
+    expect(items).toEqual([
+      { id: "item_1", input: { name: "Ada" }, expected: undefined, metadata: {} },
     ]);
-    await expect(api.gateExperiment("exp_1", { minimumScore: 0.9 })).resolves.toEqual({
-      passed: false,
-      experimentId: "exp_1",
-      reasons: ["quality regression"],
-    });
-    const submission = JSON.parse((fetchMock.mock.calls[0]?.[1] as RequestInit).body as string);
-    expect(submission.results[0]).toMatchObject({
-      itemId: "item_1",
-      output: "answer",
-      latencyMs: 12,
-    });
   });
 
-  it("starts a local experiment and reads its asynchronous status", async () => {
-    const fetchMock = vi
-      .fn()
-      .mockResolvedValueOnce(new Response("{}", { status: 202 }))
-      .mockResolvedValueOnce(
-        new Response(JSON.stringify({ data: { id: "exp_1", status: "running" } }), {
-          status: 200,
-        }),
-      );
-    vi.stubGlobal("fetch", fetchMock);
-    const api = new HttpEvaluationApi(settings);
-    await api.startExperiment("exp_1");
-    await expect(api.getExperimentStatus("exp_1")).resolves.toBe("running");
-    expect((fetchMock.mock.calls[0]?.[0] as URL).pathname).toBe("/v2/experiments/exp_1/run");
+  it("accepts both a bare list and a data envelope", async () => {
+    invokeSync.mockResolvedValue({ data: [{ itemId: "item_2" }] });
+
+    const items = await new HttpEvaluationApi().fetchDatasetRevisionItems("ds_1", "latest");
+
+    expect(items).toEqual([{ id: "item_2", input: undefined, expected: undefined, metadata: {} }]);
+  });
+
+  it("never fails open, so a dropped submission cannot read as a green run", async () => {
+    invokeSync.mockResolvedValue(undefined);
+
+    await new HttpEvaluationApi().submitResults("exp_1", [
+      { itemId: "item_1", output: "ADA", latencyMs: 12, status: "passed" },
+    ]);
+
+    const [op, args, options] = lastCall();
+    expect(op).toBe(experimentControllerSubmitResults);
+    expect(args).toMatchObject({ path: { experimentId: "exp_1" } });
+    expect(options).toMatchObject({ failOpen: false });
+  });
+
+  it("omits optional result fields rather than sending undefined", async () => {
+    invokeSync.mockResolvedValue(undefined);
+
+    await new HttpEvaluationApi().submitResults("exp_1", [
+      { itemId: "item_1", output: "ADA", latencyMs: 12, status: "passed" },
+    ]);
+
+    const [, args] = lastCall();
+    const { results } = (args as { body: { results: Record<string, unknown>[] } }).body;
+    expect(Object.keys(results[0] ?? {}).sort()).toEqual(["itemId", "latencyMs", "output"]);
+  });
+
+  it("starts a run and reads the status back", async () => {
+    invokeSync.mockResolvedValue(undefined);
+    await new HttpEvaluationApi().startExperiment("exp_1");
+    expect(lastCall()[0]).toBe(experimentControllerRun);
+
+    invokeSync.mockReset();
+    invokeSync.mockResolvedValue({ status: "running" });
+    await expect(new HttpEvaluationApi().getExperimentStatus("exp_1")).resolves.toBe("running");
+    expect(lastCall()[0]).toBe(experimentControllerGet);
+  });
+
+  it("cancels through the generated operation", async () => {
+    invokeSync.mockResolvedValue(undefined);
+    await new HttpEvaluationApi().cancelExperiment("exp_1");
+    expect(lastCall()[0]).toBe(experimentControllerCancel);
+  });
+
+  it("returns the gate verdict", async () => {
+    invokeSync.mockResolvedValue({ passed: true, failures: [] });
+
+    const gate = await new HttpEvaluationApi().gateExperiment("exp_1", { minimumScore: 0.8 });
+
+    const [op, args] = lastCall();
+    expect(op).toBe(experimentControllerGate);
+    expect(args).toMatchObject({ path: { experimentId: "exp_1" }, body: { minimumScore: 0.8 } });
+    expect(gate.passed).toBe(true);
+  });
+
+  it("creates an experiment and validates the returned id", async () => {
+    invokeSync.mockResolvedValue({ id: "exp_9" });
+    const api = new HttpEvaluationApi();
+    await expect(
+      api.createExperiment({ name: "n", datasetId: "d", datasetRevision: 1, targetId: "t" }),
+    ).resolves.toEqual({ id: "exp_9" });
+    expect(lastCall()[0]).toBe(experimentControllerCreate);
+
+    invokeSync.mockReset();
+    invokeSync.mockResolvedValue({});
+    await expect(
+      api.createExperiment({ name: "n", datasetId: "d", datasetRevision: 1, targetId: "t" }),
+    ).rejects.toBeInstanceOf(EvaluationApiError);
+  });
+
+  it("rejects a malformed dataset item rather than yielding a broken one", async () => {
+    invokeSync.mockResolvedValue([{ input: {} }]);
+    await expect(
+      new HttpEvaluationApi().fetchDatasetRevisionItems("ds_1", 1),
+    ).rejects.toBeInstanceOf(EvaluationApiError);
   });
 });
