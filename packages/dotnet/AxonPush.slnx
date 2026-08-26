@@ -1,0 +1,15 @@
+<Solution>
+  <Folder Name="/samples/">
+    <Project Path="samples/SemanticKernelChat/SemanticKernelChat.csproj" />
+  </Folder>
+  <Folder Name="/src/">
+    <Project Path="src/AxonPush.Otel/AxonPush.Otel.csproj" />
+    <Project Path="src/AxonPush.SemanticKernel/AxonPush.SemanticKernel.csproj" />
+    <Project Path="src/AxonPush/AxonPush.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/AxonPush.Otel.Tests/AxonPush.Otel.Tests.csproj" />
+    <Project Path="tests/AxonPush.SemanticKernel.Tests/AxonPush.SemanticKernel.Tests.csproj" />
+    <Project Path="tests/AxonPush.Tests/AxonPush.Tests.csproj" />
+  </Folder>
+</Solution>

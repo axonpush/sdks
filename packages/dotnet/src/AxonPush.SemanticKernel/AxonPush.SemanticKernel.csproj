@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <RootNamespace>AxonPush.SemanticKernel</RootNamespace>
+    <AssemblyName>AxonPush.SemanticKernel</AssemblyName>
+    <Description>AxonPush telemetry integration for Microsoft Semantic Kernel.</Description>
+    <NoWarn>$(NoWarn);SKEXP0001;SKEXP0010;SKEXP0050</NoWarn>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\AxonPush\AxonPush.csproj" />
+    <ProjectReference Include="..\AxonPush.Otel\AxonPush.Otel.csproj" />
+    <PackageReference Include="Microsoft.SemanticKernel.Abstractions" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\..\README.md" Pack="true" PackagePath="\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="AxonPush.SemanticKernel.Tests" />
+  </ItemGroup>
+
+</Project>

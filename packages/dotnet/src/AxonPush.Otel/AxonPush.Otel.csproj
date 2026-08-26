@@ -1,0 +1,26 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <RootNamespace>AxonPush.Otel</RootNamespace>
+    <AssemblyName>AxonPush.Otel</AssemblyName>
+    <Description>OpenTelemetry span exporter for AxonPush.</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\AxonPush\AxonPush.csproj" />
+    <PackageReference Include="OpenTelemetry" />
+    <PackageReference Include="OpenTelemetry.Api" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\..\README.md" Pack="true" PackagePath="\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="AxonPush.SemanticKernel" />
+    <InternalsVisibleTo Include="AxonPush.Otel.Tests" />
+    <InternalsVisibleTo Include="AxonPush.SemanticKernel.Tests" />
+  </ItemGroup>
+
+</Project>
