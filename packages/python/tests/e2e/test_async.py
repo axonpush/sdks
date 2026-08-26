@@ -3,9 +3,7 @@ import uuid
 import pytest
 
 from axonpush import EventType
-from axonpush.models.apps import App
-from axonpush.models.channels import Channel
-from axonpush.models.events import Event
+from axonpush.models import App, Channel, Event
 
 pytestmark = pytest.mark.e2e
 
