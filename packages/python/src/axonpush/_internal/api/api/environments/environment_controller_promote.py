@@ -6,9 +6,6 @@ import httpx
 
 from ... import errors
 from ...client import AuthenticatedClient, Client
-from ...models.environment_controller_promote_response_201 import (
-    EnvironmentControllerPromoteResponse201,
-)
 from ...models.environment_response_dto import EnvironmentResponseDto
 from ...types import UNSET, Response
 
@@ -29,16 +26,11 @@ def _get_kwargs(
 
 def _parse_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> EnvironmentControllerPromoteResponse201 | EnvironmentResponseDto | None:
+) -> EnvironmentResponseDto | None:
     if response.status_code == 200:
         response_200 = EnvironmentResponseDto.from_dict(response.json())
 
         return response_200
-
-    if response.status_code == 201:
-        response_201 = EnvironmentControllerPromoteResponse201.from_dict(response.json())
-
-        return response_201
 
     if client.raise_on_unexpected_status:
         raise errors.UnexpectedStatus(response.status_code, response.content)
@@ -48,7 +40,7 @@ def _parse_response(
 
 def _build_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> Response[EnvironmentControllerPromoteResponse201 | EnvironmentResponseDto]:
+) -> Response[EnvironmentResponseDto]:
     return Response(
         status_code=HTTPStatus(response.status_code),
         content=response.content,
@@ -61,7 +53,7 @@ def sync_detailed(
     id: str,
     *,
     client: AuthenticatedClient | Client,
-) -> Response[EnvironmentControllerPromoteResponse201 | EnvironmentResponseDto]:
+) -> Response[EnvironmentResponseDto]:
     """
     Args:
         id (str):
@@ -71,7 +63,7 @@ def sync_detailed(
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[EnvironmentControllerPromoteResponse201 | EnvironmentResponseDto]
+        Response[EnvironmentResponseDto]
     """
 
     kwargs = _get_kwargs(
@@ -89,7 +81,7 @@ def sync(
     id: str,
     *,
     client: AuthenticatedClient | Client,
-) -> EnvironmentControllerPromoteResponse201 | EnvironmentResponseDto | None:
+) -> EnvironmentResponseDto | None:
     """
     Args:
         id (str):
@@ -99,7 +91,7 @@ def sync(
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        EnvironmentControllerPromoteResponse201 | EnvironmentResponseDto
+        EnvironmentResponseDto
     """
 
     return sync_detailed(
@@ -112,7 +104,7 @@ async def asyncio_detailed(
     id: str,
     *,
     client: AuthenticatedClient | Client,
-) -> Response[EnvironmentControllerPromoteResponse201 | EnvironmentResponseDto]:
+) -> Response[EnvironmentResponseDto]:
     """
     Args:
         id (str):
@@ -122,7 +114,7 @@ async def asyncio_detailed(
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[EnvironmentControllerPromoteResponse201 | EnvironmentResponseDto]
+        Response[EnvironmentResponseDto]
     """
 
     kwargs = _get_kwargs(
@@ -138,7 +130,7 @@ async def asyncio(
     id: str,
     *,
     client: AuthenticatedClient | Client,
-) -> EnvironmentControllerPromoteResponse201 | EnvironmentResponseDto | None:
+) -> EnvironmentResponseDto | None:
     """
     Args:
         id (str):
@@ -148,7 +140,7 @@ async def asyncio(
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        EnvironmentControllerPromoteResponse201 | EnvironmentResponseDto
+        EnvironmentResponseDto
     """
 
     return (

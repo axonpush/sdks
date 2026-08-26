@@ -1,12 +1,20 @@
 from __future__ import annotations
 
+import datetime
 from collections.abc import Mapping
 from typing import TYPE_CHECKING, Any, BinaryIO, Generator, TextIO, TypeVar, cast
 
 from attrs import define as _attrs_define
 from attrs import field as _attrs_field
+from dateutil.parser import isoparse
 
 from ..types import UNSET, Unset
+
+if TYPE_CHECKING:
+    from ..models.webhook_endpoint_create_response_dto_secret_prefix import (
+        WebhookEndpointCreateResponseDtoSecretPrefix,
+    )
+
 
 T = TypeVar("T", bound="WebhookEndpointCreateResponseDto")
 
@@ -15,166 +23,184 @@ T = TypeVar("T", bound="WebhookEndpointCreateResponseDto")
 class WebhookEndpointCreateResponseDto:
     """
     Attributes:
-        id (str):
-        endpoint_id (str):
-        channel_id (str):
-        url (str):
         active (bool):
-        created_at (str):
-        org_id (str | Unset):
-        event_types (list[str] | Unset):
-        signing_secret_prefix (str | Unset):
-        has_secret (bool | Unset):
+        channel_id (str):
+        created_at (datetime.datetime):
+        endpoint_id (str):
+        id (str):
+        url (str):
+        deleted_at (datetime.datetime | Unset):
         description (str | Unset):
-        updated_at (str | Unset):
-        deleted_at (str | Unset):
+        event_types (list[str] | Unset):
+        has_secret (bool | Unset):
+        org_id (str | Unset):
         raw_secret (str | Unset): Raw signing secret, only returned at creation time
-        secret_prefix (None | str | Unset): Prefix of the signing secret
+        secret_prefix (WebhookEndpointCreateResponseDtoSecretPrefix | Unset): Prefix of the signing secret
+        signing_secret_prefix (str | Unset):
+        updated_at (datetime.datetime | Unset):
     """
 
-    id: str
-    endpoint_id: str
-    channel_id: str
-    url: str
     active: bool
-    created_at: str
-    org_id: str | Unset = UNSET
-    event_types: list[str] | Unset = UNSET
-    signing_secret_prefix: str | Unset = UNSET
-    has_secret: bool | Unset = UNSET
+    channel_id: str
+    created_at: datetime.datetime
+    endpoint_id: str
+    id: str
+    url: str
+    deleted_at: datetime.datetime | Unset = UNSET
     description: str | Unset = UNSET
-    updated_at: str | Unset = UNSET
-    deleted_at: str | Unset = UNSET
+    event_types: list[str] | Unset = UNSET
+    has_secret: bool | Unset = UNSET
+    org_id: str | Unset = UNSET
     raw_secret: str | Unset = UNSET
-    secret_prefix: None | str | Unset = UNSET
+    secret_prefix: WebhookEndpointCreateResponseDtoSecretPrefix | Unset = UNSET
+    signing_secret_prefix: str | Unset = UNSET
+    updated_at: datetime.datetime | Unset = UNSET
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
-        id = self.id
-
-        endpoint_id = self.endpoint_id
-
-        channel_id = self.channel_id
-
-        url = self.url
+        from ..models.webhook_endpoint_create_response_dto_secret_prefix import (
+            WebhookEndpointCreateResponseDtoSecretPrefix,
+        )
 
         active = self.active
 
-        created_at = self.created_at
+        channel_id = self.channel_id
 
-        org_id = self.org_id
+        created_at = self.created_at.isoformat()
+
+        endpoint_id = self.endpoint_id
+
+        id = self.id
+
+        url = self.url
+
+        deleted_at: str | Unset = UNSET
+        if not isinstance(self.deleted_at, Unset):
+            deleted_at = self.deleted_at.isoformat()
+
+        description = self.description
 
         event_types: list[str] | Unset = UNSET
         if not isinstance(self.event_types, Unset):
             event_types = self.event_types
 
-        signing_secret_prefix = self.signing_secret_prefix
-
         has_secret = self.has_secret
 
-        description = self.description
-
-        updated_at = self.updated_at
-
-        deleted_at = self.deleted_at
+        org_id = self.org_id
 
         raw_secret = self.raw_secret
 
-        secret_prefix: None | str | Unset
-        if isinstance(self.secret_prefix, Unset):
-            secret_prefix = UNSET
-        else:
-            secret_prefix = self.secret_prefix
+        secret_prefix: dict[str, Any] | Unset = UNSET
+        if not isinstance(self.secret_prefix, Unset):
+            secret_prefix = self.secret_prefix.to_dict()
+
+        signing_secret_prefix = self.signing_secret_prefix
+
+        updated_at: str | Unset = UNSET
+        if not isinstance(self.updated_at, Unset):
+            updated_at = self.updated_at.isoformat()
 
         field_dict: dict[str, Any] = {}
         field_dict.update(self.additional_properties)
         field_dict.update(
             {
-                "id": id,
-                "endpointId": endpoint_id,
-                "channelId": channel_id,
-                "url": url,
                 "active": active,
+                "channelId": channel_id,
                 "createdAt": created_at,
+                "endpointId": endpoint_id,
+                "id": id,
+                "url": url,
             }
         )
-        if org_id is not UNSET:
-            field_dict["orgId"] = org_id
-        if event_types is not UNSET:
-            field_dict["eventTypes"] = event_types
-        if signing_secret_prefix is not UNSET:
-            field_dict["signingSecretPrefix"] = signing_secret_prefix
-        if has_secret is not UNSET:
-            field_dict["hasSecret"] = has_secret
-        if description is not UNSET:
-            field_dict["description"] = description
-        if updated_at is not UNSET:
-            field_dict["updatedAt"] = updated_at
         if deleted_at is not UNSET:
             field_dict["deletedAt"] = deleted_at
+        if description is not UNSET:
+            field_dict["description"] = description
+        if event_types is not UNSET:
+            field_dict["eventTypes"] = event_types
+        if has_secret is not UNSET:
+            field_dict["hasSecret"] = has_secret
+        if org_id is not UNSET:
+            field_dict["orgId"] = org_id
         if raw_secret is not UNSET:
             field_dict["rawSecret"] = raw_secret
         if secret_prefix is not UNSET:
             field_dict["secretPrefix"] = secret_prefix
+        if signing_secret_prefix is not UNSET:
+            field_dict["signingSecretPrefix"] = signing_secret_prefix
+        if updated_at is not UNSET:
+            field_dict["updatedAt"] = updated_at
 
         return field_dict
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        d = dict(src_dict)
-        id = d.pop("id")
+        from ..models.webhook_endpoint_create_response_dto_secret_prefix import (
+            WebhookEndpointCreateResponseDtoSecretPrefix,
+        )
 
-        endpoint_id = d.pop("endpointId")
+        d = dict(src_dict)
+        active = d.pop("active")
 
         channel_id = d.pop("channelId")
 
+        created_at = isoparse(d.pop("createdAt"))
+
+        endpoint_id = d.pop("endpointId")
+
+        id = d.pop("id")
+
         url = d.pop("url")
 
-        active = d.pop("active")
-
-        created_at = d.pop("createdAt")
-
-        org_id = d.pop("orgId", UNSET)
-
-        event_types = cast(list[str], d.pop("eventTypes", UNSET))
-
-        signing_secret_prefix = d.pop("signingSecretPrefix", UNSET)
-
-        has_secret = d.pop("hasSecret", UNSET)
+        _deleted_at = d.pop("deletedAt", UNSET)
+        deleted_at: datetime.datetime | Unset
+        if isinstance(_deleted_at, Unset):
+            deleted_at = UNSET
+        else:
+            deleted_at = isoparse(_deleted_at)
 
         description = d.pop("description", UNSET)
 
-        updated_at = d.pop("updatedAt", UNSET)
+        event_types = cast(list[str], d.pop("eventTypes", UNSET))
 
-        deleted_at = d.pop("deletedAt", UNSET)
+        has_secret = d.pop("hasSecret", UNSET)
+
+        org_id = d.pop("orgId", UNSET)
 
         raw_secret = d.pop("rawSecret", UNSET)
 
-        def _parse_secret_prefix(data: object) -> None | str | Unset:
-            if data is None:
-                return data
-            if isinstance(data, Unset):
-                return data
-            return cast(None | str | Unset, data)
+        _secret_prefix = d.pop("secretPrefix", UNSET)
+        secret_prefix: WebhookEndpointCreateResponseDtoSecretPrefix | Unset
+        if isinstance(_secret_prefix, Unset):
+            secret_prefix = UNSET
+        else:
+            secret_prefix = WebhookEndpointCreateResponseDtoSecretPrefix.from_dict(_secret_prefix)
 
-        secret_prefix = _parse_secret_prefix(d.pop("secretPrefix", UNSET))
+        signing_secret_prefix = d.pop("signingSecretPrefix", UNSET)
+
+        _updated_at = d.pop("updatedAt", UNSET)
+        updated_at: datetime.datetime | Unset
+        if isinstance(_updated_at, Unset):
+            updated_at = UNSET
+        else:
+            updated_at = isoparse(_updated_at)
 
         webhook_endpoint_create_response_dto = cls(
-            id=id,
-            endpoint_id=endpoint_id,
-            channel_id=channel_id,
-            url=url,
             active=active,
+            channel_id=channel_id,
             created_at=created_at,
-            org_id=org_id,
-            event_types=event_types,
-            signing_secret_prefix=signing_secret_prefix,
-            has_secret=has_secret,
-            description=description,
-            updated_at=updated_at,
+            endpoint_id=endpoint_id,
+            id=id,
+            url=url,
             deleted_at=deleted_at,
+            description=description,
+            event_types=event_types,
+            has_secret=has_secret,
+            org_id=org_id,
             raw_secret=raw_secret,
             secret_prefix=secret_prefix,
+            signing_secret_prefix=signing_secret_prefix,
+            updated_at=updated_at,
         )
 
         webhook_endpoint_create_response_dto.additional_properties = d

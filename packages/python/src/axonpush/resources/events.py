@@ -14,7 +14,6 @@ from axonpush._internal.api.api.events import (
 )
 from axonpush._internal.api.models import (
     CreateEventDto,
-    CreateEventDtoEventType,
     CreateEventDtoMetadata,
     CreateEventDtoPayload,
 )
@@ -28,12 +27,12 @@ if TYPE_CHECKING:
 
 def _coerce_event_type(
     value: EventType | str | None,
-) -> CreateEventDtoEventType | Unset:
+) -> EventType | Unset:
     if value is None:
         return UNSET
-    if isinstance(value, CreateEventDtoEventType):
+    if isinstance(value, EventType):
         return value
-    return CreateEventDtoEventType(value)
+    return EventType(value)
 
 
 def _filter_kwargs(values: dict[str, Any]) -> dict[str, Any]:

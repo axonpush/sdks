@@ -15,30 +15,30 @@ T = TypeVar("T", bound="CreatePublicTokenDto")
 class CreatePublicTokenDto:
     """
     Attributes:
-        name (str):
         channel_id (str):
         environment_id (str):
+        name (str):
     """
 
-    name: str
     channel_id: str
     environment_id: str
+    name: str
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
-        name = self.name
-
         channel_id = self.channel_id
 
         environment_id = self.environment_id
+
+        name = self.name
 
         field_dict: dict[str, Any] = {}
         field_dict.update(self.additional_properties)
         field_dict.update(
             {
-                "name": name,
                 "channelId": channel_id,
                 "environmentId": environment_id,
+                "name": name,
             }
         )
 
@@ -47,16 +47,16 @@ class CreatePublicTokenDto:
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         d = dict(src_dict)
-        name = d.pop("name")
-
         channel_id = d.pop("channelId")
 
         environment_id = d.pop("environmentId")
 
+        name = d.pop("name")
+
         create_public_token_dto = cls(
-            name=name,
             channel_id=channel_id,
             environment_id=environment_id,
+            name=name,
         )
 
         create_public_token_dto.additional_properties = d

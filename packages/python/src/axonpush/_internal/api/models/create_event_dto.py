@@ -6,7 +6,7 @@ from typing import TYPE_CHECKING, Any, BinaryIO, Generator, TextIO, TypeVar, cas
 from attrs import define as _attrs_define
 from attrs import field as _attrs_field
 
-from ..models.create_event_dto_event_type import CreateEventDtoEventType
+from ..models.event_type import EventType
 from ..types import UNSET, Unset
 
 if TYPE_CHECKING:
@@ -21,55 +21,49 @@ T = TypeVar("T", bound="CreateEventDto")
 class CreateEventDto:
     """
     Attributes:
+        channel_id (str):
         identifier (str):
         payload (CreateEventDtoPayload):
-        channel_id (str):
         agent_id (str | Unset):
-        trace_id (str | Unset):
-        span_id (str | Unset):
-        parent_span_id (str | Unset):
-        parent_event_id (str | Unset):
-        event_type (CreateEventDtoEventType | Unset):  Default: CreateEventDtoEventType.CUSTOM.
-        metadata (CreateEventDtoMetadata | Unset):
         environment (str | Unset): Environment slug override. Only honored when the API key has
             allowEnvironmentOverride=true.
+        event_type (EventType | Unset):  Default: EventType.CUSTOM.
+        metadata (CreateEventDtoMetadata | Unset):
+        parent_event_id (str | Unset):
+        parent_span_id (str | Unset):
+        span_id (str | Unset):
         sync (bool | Unset): When true, wait for the event to be persisted to the DB before returning. Use only for
             audit-critical calls — the default async path returns in under a millisecond. Default: False.
+        trace_id (str | Unset):
     """
 
+    channel_id: str
     identifier: str
     payload: CreateEventDtoPayload
-    channel_id: str
     agent_id: str | Unset = UNSET
-    trace_id: str | Unset = UNSET
-    span_id: str | Unset = UNSET
-    parent_span_id: str | Unset = UNSET
-    parent_event_id: str | Unset = UNSET
-    event_type: CreateEventDtoEventType | Unset = CreateEventDtoEventType.CUSTOM
-    metadata: CreateEventDtoMetadata | Unset = UNSET
     environment: str | Unset = UNSET
+    event_type: EventType | Unset = EventType.CUSTOM
+    metadata: CreateEventDtoMetadata | Unset = UNSET
+    parent_event_id: str | Unset = UNSET
+    parent_span_id: str | Unset = UNSET
+    span_id: str | Unset = UNSET
     sync: bool | Unset = False
+    trace_id: str | Unset = UNSET
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
         from ..models.create_event_dto_metadata import CreateEventDtoMetadata
         from ..models.create_event_dto_payload import CreateEventDtoPayload
 
+        channel_id = self.channel_id
+
         identifier = self.identifier
 
         payload = self.payload.to_dict()
 
-        channel_id = self.channel_id
-
         agent_id = self.agent_id
 
-        trace_id = self.trace_id
-
-        span_id = self.span_id
-
-        parent_span_id = self.parent_span_id
-
-        parent_event_id = self.parent_event_id
+        environment = self.environment
 
         event_type: str | Unset = UNSET
         if not isinstance(self.event_type, Unset):
@@ -79,37 +73,43 @@ class CreateEventDto:
         if not isinstance(self.metadata, Unset):
             metadata = self.metadata.to_dict()
 
-        environment = self.environment
+        parent_event_id = self.parent_event_id
+
+        parent_span_id = self.parent_span_id
+
+        span_id = self.span_id
 
         sync = self.sync
+
+        trace_id = self.trace_id
 
         field_dict: dict[str, Any] = {}
         field_dict.update(self.additional_properties)
         field_dict.update(
             {
+                "channel_id": channel_id,
                 "identifier": identifier,
                 "payload": payload,
-                "channel_id": channel_id,
             }
         )
         if agent_id is not UNSET:
             field_dict["agentId"] = agent_id
-        if trace_id is not UNSET:
-            field_dict["traceId"] = trace_id
-        if span_id is not UNSET:
-            field_dict["spanId"] = span_id
-        if parent_span_id is not UNSET:
-            field_dict["parentSpanId"] = parent_span_id
-        if parent_event_id is not UNSET:
-            field_dict["parentEventId"] = parent_event_id
+        if environment is not UNSET:
+            field_dict["environment"] = environment
         if event_type is not UNSET:
             field_dict["eventType"] = event_type
         if metadata is not UNSET:
             field_dict["metadata"] = metadata
-        if environment is not UNSET:
-            field_dict["environment"] = environment
+        if parent_event_id is not UNSET:
+            field_dict["parentEventId"] = parent_event_id
+        if parent_span_id is not UNSET:
+            field_dict["parentSpanId"] = parent_span_id
+        if span_id is not UNSET:
+            field_dict["spanId"] = span_id
         if sync is not UNSET:
             field_dict["sync"] = sync
+        if trace_id is not UNSET:
+            field_dict["traceId"] = trace_id
 
         return field_dict
 
@@ -119,28 +119,22 @@ class CreateEventDto:
         from ..models.create_event_dto_payload import CreateEventDtoPayload
 
         d = dict(src_dict)
+        channel_id = d.pop("channel_id")
+
         identifier = d.pop("identifier")
 
         payload = CreateEventDtoPayload.from_dict(d.pop("payload"))
 
-        channel_id = d.pop("channel_id")
-
         agent_id = d.pop("agentId", UNSET)
 
-        trace_id = d.pop("traceId", UNSET)
-
-        span_id = d.pop("spanId", UNSET)
-
-        parent_span_id = d.pop("parentSpanId", UNSET)
-
-        parent_event_id = d.pop("parentEventId", UNSET)
+        environment = d.pop("environment", UNSET)
 
         _event_type = d.pop("eventType", UNSET)
-        event_type: CreateEventDtoEventType | Unset
+        event_type: EventType | Unset
         if isinstance(_event_type, Unset):
             event_type = UNSET
         else:
-            event_type = CreateEventDtoEventType(_event_type)
+            event_type = EventType(_event_type)
 
         _metadata = d.pop("metadata", UNSET)
         metadata: CreateEventDtoMetadata | Unset
@@ -149,23 +143,29 @@ class CreateEventDto:
         else:
             metadata = CreateEventDtoMetadata.from_dict(_metadata)
 
-        environment = d.pop("environment", UNSET)
+        parent_event_id = d.pop("parentEventId", UNSET)
+
+        parent_span_id = d.pop("parentSpanId", UNSET)
+
+        span_id = d.pop("spanId", UNSET)
 
         sync = d.pop("sync", UNSET)
 
+        trace_id = d.pop("traceId", UNSET)
+
         create_event_dto = cls(
+            channel_id=channel_id,
             identifier=identifier,
             payload=payload,
-            channel_id=channel_id,
             agent_id=agent_id,
-            trace_id=trace_id,
-            span_id=span_id,
-            parent_span_id=parent_span_id,
-            parent_event_id=parent_event_id,
+            environment=environment,
             event_type=event_type,
             metadata=metadata,
-            environment=environment,
+            parent_event_id=parent_event_id,
+            parent_span_id=parent_span_id,
+            span_id=span_id,
             sync=sync,
+            trace_id=trace_id,
         )
 
         create_event_dto.additional_properties = d

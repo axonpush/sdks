@@ -17,58 +17,56 @@ T = TypeVar("T", bound="TraceControllerGetTraceSummaryResponse200")
 class TraceControllerGetTraceSummaryResponse200:
     """
     Attributes:
-        trace_id (str):
-        event_count (float):
         agents (list[str]):
-        event_types (list[str]):
-        start_time (datetime.datetime):
-        end_time (datetime.datetime):
         duration (float):
+        end_time (datetime.datetime):
         error_count (float):
-        tool_call_count (float):
+        event_count (float):
+        event_types (list[str]):
         handoff_count (float):
-        total_tokens (float | Unset):
+        start_time (datetime.datetime):
+        tool_call_count (float):
+        trace_id (str):
         cost_usd (float | None | Unset): Known reported/estimated cost. Omitted when pricing is unknown.
         status (str | Unset):
+        total_tokens (float | Unset):
     """
 
-    trace_id: str
-    event_count: float
     agents: list[str]
-    event_types: list[str]
-    start_time: datetime.datetime
-    end_time: datetime.datetime
     duration: float
+    end_time: datetime.datetime
     error_count: float
-    tool_call_count: float
+    event_count: float
+    event_types: list[str]
     handoff_count: float
-    total_tokens: float | Unset = UNSET
+    start_time: datetime.datetime
+    tool_call_count: float
+    trace_id: str
     cost_usd: float | None | Unset = UNSET
     status: str | Unset = UNSET
+    total_tokens: float | Unset = UNSET
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
-        trace_id = self.trace_id
-
-        event_count = self.event_count
-
         agents = self.agents
-
-        event_types = self.event_types
-
-        start_time = self.start_time.isoformat()
-
-        end_time = self.end_time.isoformat()
 
         duration = self.duration
 
+        end_time = self.end_time.isoformat()
+
         error_count = self.error_count
 
-        tool_call_count = self.tool_call_count
+        event_count = self.event_count
+
+        event_types = self.event_types
 
         handoff_count = self.handoff_count
 
-        total_tokens = self.total_tokens
+        start_time = self.start_time.isoformat()
+
+        tool_call_count = self.tool_call_count
+
+        trace_id = self.trace_id
 
         cost_usd: float | None | Unset
         if isinstance(self.cost_usd, Unset):
@@ -78,55 +76,55 @@ class TraceControllerGetTraceSummaryResponse200:
 
         status = self.status
 
+        total_tokens = self.total_tokens
+
         field_dict: dict[str, Any] = {}
         field_dict.update(self.additional_properties)
         field_dict.update(
             {
-                "traceId": trace_id,
-                "eventCount": event_count,
                 "agents": agents,
-                "eventTypes": event_types,
-                "startTime": start_time,
-                "endTime": end_time,
                 "duration": duration,
+                "endTime": end_time,
                 "errorCount": error_count,
-                "toolCallCount": tool_call_count,
+                "eventCount": event_count,
+                "eventTypes": event_types,
                 "handoffCount": handoff_count,
+                "startTime": start_time,
+                "toolCallCount": tool_call_count,
+                "traceId": trace_id,
             }
         )
-        if total_tokens is not UNSET:
-            field_dict["totalTokens"] = total_tokens
         if cost_usd is not UNSET:
             field_dict["costUsd"] = cost_usd
         if status is not UNSET:
             field_dict["status"] = status
+        if total_tokens is not UNSET:
+            field_dict["totalTokens"] = total_tokens
 
         return field_dict
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         d = dict(src_dict)
-        trace_id = d.pop("traceId")
-
-        event_count = d.pop("eventCount")
-
         agents = cast(list[str], d.pop("agents"))
-
-        event_types = cast(list[str], d.pop("eventTypes"))
-
-        start_time = isoparse(d.pop("startTime"))
-
-        end_time = isoparse(d.pop("endTime"))
 
         duration = d.pop("duration")
 
+        end_time = isoparse(d.pop("endTime"))
+
         error_count = d.pop("errorCount")
 
-        tool_call_count = d.pop("toolCallCount")
+        event_count = d.pop("eventCount")
+
+        event_types = cast(list[str], d.pop("eventTypes"))
 
         handoff_count = d.pop("handoffCount")
 
-        total_tokens = d.pop("totalTokens", UNSET)
+        start_time = isoparse(d.pop("startTime"))
+
+        tool_call_count = d.pop("toolCallCount")
+
+        trace_id = d.pop("traceId")
 
         def _parse_cost_usd(data: object) -> float | None | Unset:
             if data is None:
@@ -139,20 +137,22 @@ class TraceControllerGetTraceSummaryResponse200:
 
         status = d.pop("status", UNSET)
 
+        total_tokens = d.pop("totalTokens", UNSET)
+
         trace_controller_get_trace_summary_response_200 = cls(
-            trace_id=trace_id,
-            event_count=event_count,
             agents=agents,
-            event_types=event_types,
-            start_time=start_time,
-            end_time=end_time,
             duration=duration,
+            end_time=end_time,
             error_count=error_count,
-            tool_call_count=tool_call_count,
+            event_count=event_count,
+            event_types=event_types,
             handoff_count=handoff_count,
-            total_tokens=total_tokens,
+            start_time=start_time,
+            tool_call_count=tool_call_count,
+            trace_id=trace_id,
             cost_usd=cost_usd,
             status=status,
+            total_tokens=total_tokens,
         )
 
         trace_controller_get_trace_summary_response_200.additional_properties = d

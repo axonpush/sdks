@@ -15,30 +15,30 @@ T = TypeVar("T", bound="UpdateEnvironmentDto")
 class UpdateEnvironmentDto:
     """
     Attributes:
-        name (str | Unset):
         color (str | Unset):
+        name (str | Unset):
         require_confirmation_for_destructive (bool | Unset):
     """
 
-    name: str | Unset = UNSET
     color: str | Unset = UNSET
+    name: str | Unset = UNSET
     require_confirmation_for_destructive: bool | Unset = UNSET
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
-        name = self.name
-
         color = self.color
+
+        name = self.name
 
         require_confirmation_for_destructive = self.require_confirmation_for_destructive
 
         field_dict: dict[str, Any] = {}
         field_dict.update(self.additional_properties)
         field_dict.update({})
-        if name is not UNSET:
-            field_dict["name"] = name
         if color is not UNSET:
             field_dict["color"] = color
+        if name is not UNSET:
+            field_dict["name"] = name
         if require_confirmation_for_destructive is not UNSET:
             field_dict["requireConfirmationForDestructive"] = require_confirmation_for_destructive
 
@@ -47,15 +47,15 @@ class UpdateEnvironmentDto:
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         d = dict(src_dict)
-        name = d.pop("name", UNSET)
-
         color = d.pop("color", UNSET)
+
+        name = d.pop("name", UNSET)
 
         require_confirmation_for_destructive = d.pop("requireConfirmationForDestructive", UNSET)
 
         update_environment_dto = cls(
-            name=name,
             color=color,
+            name=name,
             require_confirmation_for_destructive=require_confirmation_for_destructive,
         )
 

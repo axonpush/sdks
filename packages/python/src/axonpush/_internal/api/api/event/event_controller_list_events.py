@@ -13,32 +13,24 @@ from ...types import UNSET, Response, Unset
 def _get_kwargs(
     channel_id: str,
     *,
-    payload_filter: str | Unset = UNSET,
-    limit: float | Unset = UNSET,
+    agent_id: str | Unset = UNSET,
     cursor: str | Unset = UNSET,
-    until: str | Unset = UNSET,
+    environment: str | Unset = UNSET,
+    event_type: list[str] | Unset = UNSET,
+    limit: float | Unset = UNSET,
+    payload_filter: str | Unset = UNSET,
     since: str | Unset = UNSET,
     trace_id: str | Unset = UNSET,
-    agent_id: str | Unset = UNSET,
-    event_type: list[str] | Unset = UNSET,
-    environment: str | Unset = UNSET,
+    until: str | Unset = UNSET,
 ) -> dict[str, Any]:
 
     params: dict[str, Any] = {}
 
-    params["payloadFilter"] = payload_filter
-
-    params["limit"] = limit
+    params["agentId"] = agent_id
 
     params["cursor"] = cursor
 
-    params["until"] = until
-
-    params["since"] = since
-
-    params["traceId"] = trace_id
-
-    params["agentId"] = agent_id
+    params["environment"] = environment
 
     json_event_type: list[str] | Unset = UNSET
     if not isinstance(event_type, Unset):
@@ -46,7 +38,15 @@ def _get_kwargs(
 
     params["eventType"] = json_event_type
 
-    params["environment"] = environment
+    params["limit"] = limit
+
+    params["payloadFilter"] = payload_filter
+
+    params["since"] = since
+
+    params["traceId"] = trace_id
+
+    params["until"] = until
 
     params = {k: v for k, v in params.items() if v is not UNSET and v is not None}
 
@@ -90,28 +90,28 @@ def sync_detailed(
     channel_id: str,
     *,
     client: AuthenticatedClient | Client,
-    payload_filter: str | Unset = UNSET,
-    limit: float | Unset = UNSET,
+    agent_id: str | Unset = UNSET,
     cursor: str | Unset = UNSET,
-    until: str | Unset = UNSET,
+    environment: str | Unset = UNSET,
+    event_type: list[str] | Unset = UNSET,
+    limit: float | Unset = UNSET,
+    payload_filter: str | Unset = UNSET,
     since: str | Unset = UNSET,
     trace_id: str | Unset = UNSET,
-    agent_id: str | Unset = UNSET,
-    event_type: list[str] | Unset = UNSET,
-    environment: str | Unset = UNSET,
+    until: str | Unset = UNSET,
 ) -> Response[EventListResponseDto]:
     """
     Args:
         channel_id (str):
-        payload_filter (str | Unset):
-        limit (float | Unset):
+        agent_id (str | Unset):
         cursor (str | Unset):
-        until (str | Unset):
+        environment (str | Unset):
+        event_type (list[str] | Unset):
+        limit (float | Unset):
+        payload_filter (str | Unset):
         since (str | Unset):
         trace_id (str | Unset):
-        agent_id (str | Unset):
-        event_type (list[str] | Unset):
-        environment (str | Unset):
+        until (str | Unset):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -123,15 +123,15 @@ def sync_detailed(
 
     kwargs = _get_kwargs(
         channel_id=channel_id,
-        payload_filter=payload_filter,
-        limit=limit,
+        agent_id=agent_id,
         cursor=cursor,
-        until=until,
+        environment=environment,
+        event_type=event_type,
+        limit=limit,
+        payload_filter=payload_filter,
         since=since,
         trace_id=trace_id,
-        agent_id=agent_id,
-        event_type=event_type,
-        environment=environment,
+        until=until,
     )
 
     response = client.get_httpx_client().request(
@@ -145,28 +145,28 @@ def sync(
     channel_id: str,
     *,
     client: AuthenticatedClient | Client,
-    payload_filter: str | Unset = UNSET,
-    limit: float | Unset = UNSET,
+    agent_id: str | Unset = UNSET,
     cursor: str | Unset = UNSET,
-    until: str | Unset = UNSET,
+    environment: str | Unset = UNSET,
+    event_type: list[str] | Unset = UNSET,
+    limit: float | Unset = UNSET,
+    payload_filter: str | Unset = UNSET,
     since: str | Unset = UNSET,
     trace_id: str | Unset = UNSET,
-    agent_id: str | Unset = UNSET,
-    event_type: list[str] | Unset = UNSET,
-    environment: str | Unset = UNSET,
+    until: str | Unset = UNSET,
 ) -> EventListResponseDto | None:
     """
     Args:
         channel_id (str):
-        payload_filter (str | Unset):
-        limit (float | Unset):
+        agent_id (str | Unset):
         cursor (str | Unset):
-        until (str | Unset):
+        environment (str | Unset):
+        event_type (list[str] | Unset):
+        limit (float | Unset):
+        payload_filter (str | Unset):
         since (str | Unset):
         trace_id (str | Unset):
-        agent_id (str | Unset):
-        event_type (list[str] | Unset):
-        environment (str | Unset):
+        until (str | Unset):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -179,15 +179,15 @@ def sync(
     return sync_detailed(
         channel_id=channel_id,
         client=client,
-        payload_filter=payload_filter,
-        limit=limit,
+        agent_id=agent_id,
         cursor=cursor,
-        until=until,
+        environment=environment,
+        event_type=event_type,
+        limit=limit,
+        payload_filter=payload_filter,
         since=since,
         trace_id=trace_id,
-        agent_id=agent_id,
-        event_type=event_type,
-        environment=environment,
+        until=until,
     ).parsed
 
 
@@ -195,28 +195,28 @@ async def asyncio_detailed(
     channel_id: str,
     *,
     client: AuthenticatedClient | Client,
-    payload_filter: str | Unset = UNSET,
-    limit: float | Unset = UNSET,
+    agent_id: str | Unset = UNSET,
     cursor: str | Unset = UNSET,
-    until: str | Unset = UNSET,
+    environment: str | Unset = UNSET,
+    event_type: list[str] | Unset = UNSET,
+    limit: float | Unset = UNSET,
+    payload_filter: str | Unset = UNSET,
     since: str | Unset = UNSET,
     trace_id: str | Unset = UNSET,
-    agent_id: str | Unset = UNSET,
-    event_type: list[str] | Unset = UNSET,
-    environment: str | Unset = UNSET,
+    until: str | Unset = UNSET,
 ) -> Response[EventListResponseDto]:
     """
     Args:
         channel_id (str):
-        payload_filter (str | Unset):
-        limit (float | Unset):
+        agent_id (str | Unset):
         cursor (str | Unset):
-        until (str | Unset):
+        environment (str | Unset):
+        event_type (list[str] | Unset):
+        limit (float | Unset):
+        payload_filter (str | Unset):
         since (str | Unset):
         trace_id (str | Unset):
-        agent_id (str | Unset):
-        event_type (list[str] | Unset):
-        environment (str | Unset):
+        until (str | Unset):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -228,15 +228,15 @@ async def asyncio_detailed(
 
     kwargs = _get_kwargs(
         channel_id=channel_id,
-        payload_filter=payload_filter,
-        limit=limit,
+        agent_id=agent_id,
         cursor=cursor,
-        until=until,
+        environment=environment,
+        event_type=event_type,
+        limit=limit,
+        payload_filter=payload_filter,
         since=since,
         trace_id=trace_id,
-        agent_id=agent_id,
-        event_type=event_type,
-        environment=environment,
+        until=until,
     )
 
     response = await client.get_async_httpx_client().request(**kwargs)
@@ -248,28 +248,28 @@ async def asyncio(
     channel_id: str,
     *,
     client: AuthenticatedClient | Client,
-    payload_filter: str | Unset = UNSET,
-    limit: float | Unset = UNSET,
+    agent_id: str | Unset = UNSET,
     cursor: str | Unset = UNSET,
-    until: str | Unset = UNSET,
+    environment: str | Unset = UNSET,
+    event_type: list[str] | Unset = UNSET,
+    limit: float | Unset = UNSET,
+    payload_filter: str | Unset = UNSET,
     since: str | Unset = UNSET,
     trace_id: str | Unset = UNSET,
-    agent_id: str | Unset = UNSET,
-    event_type: list[str] | Unset = UNSET,
-    environment: str | Unset = UNSET,
+    until: str | Unset = UNSET,
 ) -> EventListResponseDto | None:
     """
     Args:
         channel_id (str):
-        payload_filter (str | Unset):
-        limit (float | Unset):
+        agent_id (str | Unset):
         cursor (str | Unset):
-        until (str | Unset):
+        environment (str | Unset):
+        event_type (list[str] | Unset):
+        limit (float | Unset):
+        payload_filter (str | Unset):
         since (str | Unset):
         trace_id (str | Unset):
-        agent_id (str | Unset):
-        event_type (list[str] | Unset):
-        environment (str | Unset):
+        until (str | Unset):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -283,14 +283,14 @@ async def asyncio(
         await asyncio_detailed(
             channel_id=channel_id,
             client=client,
-            payload_filter=payload_filter,
-            limit=limit,
+            agent_id=agent_id,
             cursor=cursor,
-            until=until,
+            environment=environment,
+            event_type=event_type,
+            limit=limit,
+            payload_filter=payload_filter,
             since=since,
             trace_id=trace_id,
-            agent_id=agent_id,
-            event_type=event_type,
-            environment=environment,
+            until=until,
         )
     ).parsed

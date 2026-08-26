@@ -12,21 +12,21 @@ from ...types import UNSET, Response, Unset
 
 def _get_kwargs(
     *,
-    page: float | Unset = UNSET,
-    limit: float | Unset = UNSET,
     app_id: str | Unset = UNSET,
     environment: str | Unset = UNSET,
+    limit: float | Unset = UNSET,
+    page: float | Unset = UNSET,
 ) -> dict[str, Any]:
 
     params: dict[str, Any] = {}
 
-    params["page"] = page
-
-    params["limit"] = limit
-
     params["appId"] = app_id
 
     params["environment"] = environment
+
+    params["limit"] = limit
+
+    params["page"] = page
 
     params = {k: v for k, v in params.items() if v is not UNSET and v is not None}
 
@@ -67,17 +67,17 @@ def _build_response(
 def sync_detailed(
     *,
     client: AuthenticatedClient | Client,
-    page: float | Unset = UNSET,
-    limit: float | Unset = UNSET,
     app_id: str | Unset = UNSET,
     environment: str | Unset = UNSET,
+    limit: float | Unset = UNSET,
+    page: float | Unset = UNSET,
 ) -> Response[TraceControllerListTracesResponse200]:
     """
     Args:
-        page (float | Unset):
-        limit (float | Unset):
         app_id (str | Unset):
         environment (str | Unset):
+        limit (float | Unset):
+        page (float | Unset):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -88,10 +88,10 @@ def sync_detailed(
     """
 
     kwargs = _get_kwargs(
-        page=page,
-        limit=limit,
         app_id=app_id,
         environment=environment,
+        limit=limit,
+        page=page,
     )
 
     response = client.get_httpx_client().request(
@@ -104,17 +104,17 @@ def sync_detailed(
 def sync(
     *,
     client: AuthenticatedClient | Client,
-    page: float | Unset = UNSET,
-    limit: float | Unset = UNSET,
     app_id: str | Unset = UNSET,
     environment: str | Unset = UNSET,
+    limit: float | Unset = UNSET,
+    page: float | Unset = UNSET,
 ) -> TraceControllerListTracesResponse200 | None:
     """
     Args:
-        page (float | Unset):
-        limit (float | Unset):
         app_id (str | Unset):
         environment (str | Unset):
+        limit (float | Unset):
+        page (float | Unset):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -126,27 +126,27 @@ def sync(
 
     return sync_detailed(
         client=client,
-        page=page,
-        limit=limit,
         app_id=app_id,
         environment=environment,
+        limit=limit,
+        page=page,
     ).parsed
 
 
 async def asyncio_detailed(
     *,
     client: AuthenticatedClient | Client,
-    page: float | Unset = UNSET,
-    limit: float | Unset = UNSET,
     app_id: str | Unset = UNSET,
     environment: str | Unset = UNSET,
+    limit: float | Unset = UNSET,
+    page: float | Unset = UNSET,
 ) -> Response[TraceControllerListTracesResponse200]:
     """
     Args:
-        page (float | Unset):
-        limit (float | Unset):
         app_id (str | Unset):
         environment (str | Unset):
+        limit (float | Unset):
+        page (float | Unset):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -157,10 +157,10 @@ async def asyncio_detailed(
     """
 
     kwargs = _get_kwargs(
-        page=page,
-        limit=limit,
         app_id=app_id,
         environment=environment,
+        limit=limit,
+        page=page,
     )
 
     response = await client.get_async_httpx_client().request(**kwargs)
@@ -171,17 +171,17 @@ async def asyncio_detailed(
 async def asyncio(
     *,
     client: AuthenticatedClient | Client,
-    page: float | Unset = UNSET,
-    limit: float | Unset = UNSET,
     app_id: str | Unset = UNSET,
     environment: str | Unset = UNSET,
+    limit: float | Unset = UNSET,
+    page: float | Unset = UNSET,
 ) -> TraceControllerListTracesResponse200 | None:
     """
     Args:
-        page (float | Unset):
-        limit (float | Unset):
         app_id (str | Unset):
         environment (str | Unset):
+        limit (float | Unset):
+        page (float | Unset):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -194,9 +194,9 @@ async def asyncio(
     return (
         await asyncio_detailed(
             client=client,
-            page=page,
-            limit=limit,
             app_id=app_id,
             environment=environment,
+            limit=limit,
+            page=page,
         )
     ).parsed

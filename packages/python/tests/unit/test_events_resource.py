@@ -21,7 +21,7 @@ from axonpush._internal.api.api.events import (
 )
 from axonpush._internal.api.models import (
     CreateEventDto,
-    CreateEventDtoEventType,
+    EventType,
     EventIngestResponseDto,
 )
 from axonpush._internal.api.types import UNSET
@@ -105,15 +105,15 @@ class TestPublishBody:
         events.publish("x", {}, channel_id=CHANNEL_ID, event_type="agent.handoff")
 
         body = fake.calls[0][1]["body"]
-        assert body.event_type is CreateEventDtoEventType.AGENT_HANDOFF
+        assert body.event_type is EventType.AGENT_HANDOFF
 
     def test_enum_event_type_is_passed_through(self) -> None:
         fake = FakeSyncClient(return_value=_ingest_response())
         events = Events(fake)
-        events.publish("x", {}, channel_id=CHANNEL_ID, event_type=CreateEventDtoEventType.AGENT_END)
+        events.publish("x", {}, channel_id=CHANNEL_ID, event_type=EventType.AGENT_END)
 
         body = fake.calls[0][1]["body"]
-        assert body.event_type is CreateEventDtoEventType.AGENT_END
+        assert body.event_type is EventType.AGENT_END
 
     def test_metadata_wrapped_into_dto(self) -> None:
         fake = FakeSyncClient(return_value=_ingest_response())

@@ -11,7 +11,7 @@ from axonpush._internal.api.api.api_keys import (
 )
 from axonpush._internal.api.models import (
     CreateApiKeyDto,
-    CreateApiKeyDtoScopesItem,
+    ApiKeyScope,
     MessageResponseDto,
 )
 from axonpush._internal.api.types import UNSET
@@ -22,21 +22,18 @@ if TYPE_CHECKING:
 
 
 def _coerce_scopes(
-    scopes: List[CreateApiKeyDtoScopesItem | str] | None,
-) -> List[CreateApiKeyDtoScopesItem] | object:
+    scopes: List[ApiKeyScope | str] | None,
+) -> List[ApiKeyScope] | object:
     if scopes is None:
         return UNSET
-    return [
-        s if isinstance(s, CreateApiKeyDtoScopesItem) else CreateApiKeyDtoScopesItem(s)
-        for s in scopes
-    ]
+    return [s if isinstance(s, ApiKeyScope) else ApiKeyScope(s) for s in scopes]
 
 
 def _build_create_dto(
     *,
     name: str,
     organization_id: str,
-    scopes: List[CreateApiKeyDtoScopesItem | str] | None,
+    scopes: List[ApiKeyScope | str] | None,
     app_id: str | None,
     environment_id: str | None,
     allow_environment_override: bool | None,
@@ -68,7 +65,7 @@ class ApiKeys:
         name: str,
         *,
         organization_id: str,
-        scopes: List[CreateApiKeyDtoScopesItem | str] | None = None,
+        scopes: List[ApiKeyScope | str] | None = None,
         app_id: str | None = None,
         environment_id: str | None = None,
         allow_environment_override: bool | None = None,
@@ -116,7 +113,7 @@ class AsyncApiKeys:
         name: str,
         *,
         organization_id: str,
-        scopes: List[CreateApiKeyDtoScopesItem | str] | None = None,
+        scopes: List[ApiKeyScope | str] | None = None,
         app_id: str | None = None,
         environment_id: str | None = None,
         allow_environment_override: bool | None = None,

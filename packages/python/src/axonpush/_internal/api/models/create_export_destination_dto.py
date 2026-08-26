@@ -6,7 +6,7 @@ from typing import TYPE_CHECKING, Any, BinaryIO, Generator, TextIO, TypeVar, cas
 from attrs import define as _attrs_define
 from attrs import field as _attrs_field
 
-from ..models.create_export_destination_dto_signals import CreateExportDestinationDtoSignals
+from ..models.export_signal import ExportSignal
 from ..types import UNSET, Unset
 
 if TYPE_CHECKING:
@@ -20,68 +20,71 @@ T = TypeVar("T", bound="CreateExportDestinationDto")
 class CreateExportDestinationDto:
     """
     Attributes:
-        name (str):
-        env_slug (str): Environment slug this destination is scoped to (e.g. "prod")
         endpoint_url (str): OTLP/HTTP base URL (v1/logs and v1/traces are appended)
-        signals (CreateExportDestinationDtoSignals):
+        env_slug (str): Environment slug this destination is scoped to (e.g. "prod")
+        name (str):
+        signals (list[ExportSignal]):
+        active (bool | Unset):  Default: True.
+        event_type_filter (list[str] | Unset): Allow-list of event types to export (empty = all types)
         headers (CreateExportDestinationDtoHeaders | Unset): Header name -> value map (e.g. DD-API-KEY). Stored server-
             side, never returned.
-        event_type_filter (list[str] | Unset): Allow-list of event types to export (empty = all types)
         service_name (str | Unset): service.name attribute stamped on exported resources
-        active (bool | Unset):  Default: True.
     """
 
-    name: str
-    env_slug: str
     endpoint_url: str
-    signals: CreateExportDestinationDtoSignals
-    headers: CreateExportDestinationDtoHeaders | Unset = UNSET
-    event_type_filter: list[str] | Unset = UNSET
-    service_name: str | Unset = UNSET
+    env_slug: str
+    name: str
+    signals: list[ExportSignal]
     active: bool | Unset = True
+    event_type_filter: list[str] | Unset = UNSET
+    headers: CreateExportDestinationDtoHeaders | Unset = UNSET
+    service_name: str | Unset = UNSET
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
         from ..models.create_export_destination_dto_headers import CreateExportDestinationDtoHeaders
 
-        name = self.name
+        endpoint_url = self.endpoint_url
 
         env_slug = self.env_slug
 
-        endpoint_url = self.endpoint_url
+        name = self.name
 
-        signals = self.signals.value
+        signals = []
+        for signals_item_data in self.signals:
+            signals_item = signals_item_data.value
+            signals.append(signals_item)
 
-        headers: dict[str, Any] | Unset = UNSET
-        if not isinstance(self.headers, Unset):
-            headers = self.headers.to_dict()
+        active = self.active
 
         event_type_filter: list[str] | Unset = UNSET
         if not isinstance(self.event_type_filter, Unset):
             event_type_filter = self.event_type_filter
 
-        service_name = self.service_name
+        headers: dict[str, Any] | Unset = UNSET
+        if not isinstance(self.headers, Unset):
+            headers = self.headers.to_dict()
 
-        active = self.active
+        service_name = self.service_name
 
         field_dict: dict[str, Any] = {}
         field_dict.update(self.additional_properties)
         field_dict.update(
             {
-                "name": name,
-                "envSlug": env_slug,
                 "endpointUrl": endpoint_url,
+                "envSlug": env_slug,
+                "name": name,
                 "signals": signals,
             }
         )
-        if headers is not UNSET:
-            field_dict["headers"] = headers
-        if event_type_filter is not UNSET:
-            field_dict["eventTypeFilter"] = event_type_filter
-        if service_name is not UNSET:
-            field_dict["serviceName"] = service_name
         if active is not UNSET:
             field_dict["active"] = active
+        if event_type_filter is not UNSET:
+            field_dict["eventTypeFilter"] = event_type_filter
+        if headers is not UNSET:
+            field_dict["headers"] = headers
+        if service_name is not UNSET:
+            field_dict["serviceName"] = service_name
 
         return field_dict
 
@@ -90,13 +93,22 @@ class CreateExportDestinationDto:
         from ..models.create_export_destination_dto_headers import CreateExportDestinationDtoHeaders
 
         d = dict(src_dict)
-        name = d.pop("name")
+        endpoint_url = d.pop("endpointUrl")
 
         env_slug = d.pop("envSlug")
 
-        endpoint_url = d.pop("endpointUrl")
+        name = d.pop("name")
 
-        signals = CreateExportDestinationDtoSignals(d.pop("signals"))
+        signals = []
+        _signals = d.pop("signals")
+        for signals_item_data in _signals:
+            signals_item = ExportSignal(signals_item_data)
+
+            signals.append(signals_item)
+
+        active = d.pop("active", UNSET)
+
+        event_type_filter = cast(list[str], d.pop("eventTypeFilter", UNSET))
 
         _headers = d.pop("headers", UNSET)
         headers: CreateExportDestinationDtoHeaders | Unset
@@ -105,21 +117,17 @@ class CreateExportDestinationDto:
         else:
             headers = CreateExportDestinationDtoHeaders.from_dict(_headers)
 
-        event_type_filter = cast(list[str], d.pop("eventTypeFilter", UNSET))
-
         service_name = d.pop("serviceName", UNSET)
 
-        active = d.pop("active", UNSET)
-
         create_export_destination_dto = cls(
-            name=name,
-            env_slug=env_slug,
             endpoint_url=endpoint_url,
+            env_slug=env_slug,
+            name=name,
             signals=signals,
-            headers=headers,
-            event_type_filter=event_type_filter,
-            service_name=service_name,
             active=active,
+            event_type_filter=event_type_filter,
+            headers=headers,
+            service_name=service_name,
         )
 
         create_export_destination_dto.additional_properties = d

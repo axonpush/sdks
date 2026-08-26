@@ -15,25 +15,25 @@ T = TypeVar("T", bound="CreateChannelDto")
 class CreateChannelDto:
     """
     Attributes:
-        name (str):
         app_id (str):
+        name (str):
     """
 
-    name: str
     app_id: str
+    name: str
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
-        name = self.name
-
         app_id = self.app_id
+
+        name = self.name
 
         field_dict: dict[str, Any] = {}
         field_dict.update(self.additional_properties)
         field_dict.update(
             {
-                "name": name,
                 "appId": app_id,
+                "name": name,
             }
         )
 
@@ -42,13 +42,13 @@ class CreateChannelDto:
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         d = dict(src_dict)
-        name = d.pop("name")
-
         app_id = d.pop("appId")
 
+        name = d.pop("name")
+
         create_channel_dto = cls(
-            name=name,
             app_id=app_id,
+            name=name,
         )
 
         create_channel_dto.additional_properties = d

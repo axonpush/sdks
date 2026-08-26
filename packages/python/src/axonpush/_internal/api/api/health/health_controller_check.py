@@ -13,7 +13,10 @@ from ...types import UNSET, Response, Unset
 def _get_kwargs(
     *,
     deep: bool | Unset = UNSET,
+    x_health_probe_token: str,
 ) -> dict[str, Any]:
+    headers: dict[str, Any] = {}
+    headers["X-Health-Probe-Token"] = x_health_probe_token
 
     params: dict[str, Any] = {}
 
@@ -27,6 +30,7 @@ def _get_kwargs(
         "params": params,
     }
 
+    _kwargs["headers"] = headers
     return _kwargs
 
 
@@ -59,10 +63,12 @@ def sync_detailed(
     *,
     client: AuthenticatedClient | Client,
     deep: bool | Unset = UNSET,
+    x_health_probe_token: str,
 ) -> Response[HealthResponseDto]:
     """
     Args:
         deep (bool | Unset):
+        x_health_probe_token (str):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -74,6 +80,7 @@ def sync_detailed(
 
     kwargs = _get_kwargs(
         deep=deep,
+        x_health_probe_token=x_health_probe_token,
     )
 
     response = client.get_httpx_client().request(
@@ -87,10 +94,12 @@ def sync(
     *,
     client: AuthenticatedClient | Client,
     deep: bool | Unset = UNSET,
+    x_health_probe_token: str,
 ) -> HealthResponseDto | None:
     """
     Args:
         deep (bool | Unset):
+        x_health_probe_token (str):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -103,6 +112,7 @@ def sync(
     return sync_detailed(
         client=client,
         deep=deep,
+        x_health_probe_token=x_health_probe_token,
     ).parsed
 
 
@@ -110,10 +120,12 @@ async def asyncio_detailed(
     *,
     client: AuthenticatedClient | Client,
     deep: bool | Unset = UNSET,
+    x_health_probe_token: str,
 ) -> Response[HealthResponseDto]:
     """
     Args:
         deep (bool | Unset):
+        x_health_probe_token (str):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -125,6 +137,7 @@ async def asyncio_detailed(
 
     kwargs = _get_kwargs(
         deep=deep,
+        x_health_probe_token=x_health_probe_token,
     )
 
     response = await client.get_async_httpx_client().request(**kwargs)
@@ -136,10 +149,12 @@ async def asyncio(
     *,
     client: AuthenticatedClient | Client,
     deep: bool | Unset = UNSET,
+    x_health_probe_token: str,
 ) -> HealthResponseDto | None:
     """
     Args:
         deep (bool | Unset):
+        x_health_probe_token (str):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -153,5 +168,6 @@ async def asyncio(
         await asyncio_detailed(
             client=client,
             deep=deep,
+            x_health_probe_token=x_health_probe_token,
         )
     ).parsed

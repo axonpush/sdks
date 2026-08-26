@@ -16,33 +16,33 @@ class CreateEnvironmentDto:
     """
     Attributes:
         name (str):
-        slug (str | Unset):
-        color (str | Unset):
-        is_production (bool | Unset):
-        is_default (bool | Unset):
         clone_from_env_id (str | Unset):
+        color (str | Unset):
+        is_default (bool | Unset):
+        is_production (bool | Unset):
+        slug (str | Unset):
     """
 
     name: str
-    slug: str | Unset = UNSET
-    color: str | Unset = UNSET
-    is_production: bool | Unset = UNSET
-    is_default: bool | Unset = UNSET
     clone_from_env_id: str | Unset = UNSET
+    color: str | Unset = UNSET
+    is_default: bool | Unset = UNSET
+    is_production: bool | Unset = UNSET
+    slug: str | Unset = UNSET
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
         name = self.name
 
-        slug = self.slug
+        clone_from_env_id = self.clone_from_env_id
 
         color = self.color
 
-        is_production = self.is_production
-
         is_default = self.is_default
 
-        clone_from_env_id = self.clone_from_env_id
+        is_production = self.is_production
+
+        slug = self.slug
 
         field_dict: dict[str, Any] = {}
         field_dict.update(self.additional_properties)
@@ -51,16 +51,16 @@ class CreateEnvironmentDto:
                 "name": name,
             }
         )
-        if slug is not UNSET:
-            field_dict["slug"] = slug
-        if color is not UNSET:
-            field_dict["color"] = color
-        if is_production is not UNSET:
-            field_dict["isProduction"] = is_production
-        if is_default is not UNSET:
-            field_dict["isDefault"] = is_default
         if clone_from_env_id is not UNSET:
             field_dict["cloneFromEnvId"] = clone_from_env_id
+        if color is not UNSET:
+            field_dict["color"] = color
+        if is_default is not UNSET:
+            field_dict["isDefault"] = is_default
+        if is_production is not UNSET:
+            field_dict["isProduction"] = is_production
+        if slug is not UNSET:
+            field_dict["slug"] = slug
 
         return field_dict
 
@@ -69,23 +69,23 @@ class CreateEnvironmentDto:
         d = dict(src_dict)
         name = d.pop("name")
 
-        slug = d.pop("slug", UNSET)
+        clone_from_env_id = d.pop("cloneFromEnvId", UNSET)
 
         color = d.pop("color", UNSET)
 
-        is_production = d.pop("isProduction", UNSET)
-
         is_default = d.pop("isDefault", UNSET)
 
-        clone_from_env_id = d.pop("cloneFromEnvId", UNSET)
+        is_production = d.pop("isProduction", UNSET)
+
+        slug = d.pop("slug", UNSET)
 
         create_environment_dto = cls(
             name=name,
-            slug=slug,
-            color=color,
-            is_production=is_production,
-            is_default=is_default,
             clone_from_env_id=clone_from_env_id,
+            color=color,
+            is_default=is_default,
+            is_production=is_production,
+            slug=slug,
         )
 
         create_environment_dto.additional_properties = d

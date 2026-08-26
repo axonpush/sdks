@@ -17,7 +17,7 @@ from axonpush._internal.api.api.organizations import (
 )
 from axonpush._internal.api.models import (
     CreateInvitationDto,
-    CreateInvitationDtoDesiredRole,
+    OrganizationRole,
     CreateOrganizationDto,
     OkResponseDto,
     SuccessResponseDto,
@@ -39,14 +39,8 @@ def _build_create_dto(*, name: str, slug: str, description: str | None) -> Creat
     )
 
 
-def _build_invite_dto(
-    *, email: str, role: CreateInvitationDtoDesiredRole | str
-) -> CreateInvitationDto:
-    desired_role = (
-        role
-        if isinstance(role, CreateInvitationDtoDesiredRole)
-        else CreateInvitationDtoDesiredRole(role)
-    )
+def _build_invite_dto(*, email: str, role: OrganizationRole | str) -> CreateInvitationDto:
+    desired_role = role if isinstance(role, OrganizationRole) else OrganizationRole(role)
     return CreateInvitationDto(invited_email=email, desired_role=desired_role)
 
 
@@ -97,7 +91,7 @@ class Organizations:
         org_id: str,
         email: str,
         *,
-        role: CreateInvitationDtoDesiredRole | str = CreateInvitationDtoDesiredRole.USER,
+        role: OrganizationRole | str = OrganizationRole.USER,
     ) -> InvitationResponseDto | None:
         """Invite a user to an organization."""
         return self._client._invoke(
@@ -168,7 +162,7 @@ class AsyncOrganizations:
         org_id: str,
         email: str,
         *,
-        role: CreateInvitationDtoDesiredRole | str = CreateInvitationDtoDesiredRole.USER,
+        role: OrganizationRole | str = OrganizationRole.USER,
     ) -> InvitationResponseDto | None:
         """See :meth:`Organizations.invite`."""
         return await self._client._invoke(

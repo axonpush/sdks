@@ -15,30 +15,30 @@ T = TypeVar("T", bound="TraceControllerListTracesResponse200Meta")
 class TraceControllerListTracesResponse200Meta:
     """
     Attributes:
-        page (float):
-        limit (float):
         has_more (bool):
+        limit (float):
+        page (float):
     """
 
-    page: float
-    limit: float
     has_more: bool
+    limit: float
+    page: float
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
-        page = self.page
+        has_more = self.has_more
 
         limit = self.limit
 
-        has_more = self.has_more
+        page = self.page
 
         field_dict: dict[str, Any] = {}
         field_dict.update(self.additional_properties)
         field_dict.update(
             {
-                "page": page,
-                "limit": limit,
                 "hasMore": has_more,
+                "limit": limit,
+                "page": page,
             }
         )
 
@@ -47,16 +47,16 @@ class TraceControllerListTracesResponse200Meta:
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         d = dict(src_dict)
-        page = d.pop("page")
+        has_more = d.pop("hasMore")
 
         limit = d.pop("limit")
 
-        has_more = d.pop("hasMore")
+        page = d.pop("page")
 
         trace_controller_list_traces_response_200_meta = cls(
-            page=page,
-            limit=limit,
             has_more=has_more,
+            limit=limit,
+            page=page,
         )
 
         trace_controller_list_traces_response_200_meta.additional_properties = d

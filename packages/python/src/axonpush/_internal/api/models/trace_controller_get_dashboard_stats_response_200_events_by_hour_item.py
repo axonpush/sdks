@@ -17,34 +17,36 @@ T = TypeVar("T", bound="TraceControllerGetDashboardStatsResponse200EventsByHourI
 class TraceControllerGetDashboardStatsResponse200EventsByHourItem:
     """
     Attributes:
-        hour (datetime.datetime | Unset):
         count (float | Unset):
+        hour (datetime.datetime | Unset):
     """
 
-    hour: datetime.datetime | Unset = UNSET
     count: float | Unset = UNSET
+    hour: datetime.datetime | Unset = UNSET
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
+        count = self.count
+
         hour: str | Unset = UNSET
         if not isinstance(self.hour, Unset):
             hour = self.hour.isoformat()
 
-        count = self.count
-
         field_dict: dict[str, Any] = {}
         field_dict.update(self.additional_properties)
         field_dict.update({})
-        if hour is not UNSET:
-            field_dict["hour"] = hour
         if count is not UNSET:
             field_dict["count"] = count
+        if hour is not UNSET:
+            field_dict["hour"] = hour
 
         return field_dict
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         d = dict(src_dict)
+        count = d.pop("count", UNSET)
+
         _hour = d.pop("hour", UNSET)
         hour: datetime.datetime | Unset
         if isinstance(_hour, Unset):
@@ -52,11 +54,9 @@ class TraceControllerGetDashboardStatsResponse200EventsByHourItem:
         else:
             hour = isoparse(_hour)
 
-        count = d.pop("count", UNSET)
-
         trace_controller_get_dashboard_stats_response_200_events_by_hour_item = cls(
-            hour=hour,
             count=count,
+            hour=hour,
         )
 
         trace_controller_get_dashboard_stats_response_200_events_by_hour_item.additional_properties = d

@@ -15,69 +15,69 @@ T = TypeVar("T", bound="CreateWebhookEndpointDto")
 class CreateWebhookEndpointDto:
     """
     Attributes:
-        url (str):
         channel_id (str):
-        secret (str | Unset):
-        event_types (list[str] | Unset): Event types to filter (null = all)
+        url (str):
         description (str | Unset):
+        event_types (list[str] | Unset): Event types to filter (null = all)
+        secret (str | Unset):
     """
 
-    url: str
     channel_id: str
-    secret: str | Unset = UNSET
-    event_types: list[str] | Unset = UNSET
+    url: str
     description: str | Unset = UNSET
+    event_types: list[str] | Unset = UNSET
+    secret: str | Unset = UNSET
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
-        url = self.url
-
         channel_id = self.channel_id
 
-        secret = self.secret
+        url = self.url
+
+        description = self.description
 
         event_types: list[str] | Unset = UNSET
         if not isinstance(self.event_types, Unset):
             event_types = self.event_types
 
-        description = self.description
+        secret = self.secret
 
         field_dict: dict[str, Any] = {}
         field_dict.update(self.additional_properties)
         field_dict.update(
             {
-                "url": url,
                 "channelId": channel_id,
+                "url": url,
             }
         )
-        if secret is not UNSET:
-            field_dict["secret"] = secret
-        if event_types is not UNSET:
-            field_dict["eventTypes"] = event_types
         if description is not UNSET:
             field_dict["description"] = description
+        if event_types is not UNSET:
+            field_dict["eventTypes"] = event_types
+        if secret is not UNSET:
+            field_dict["secret"] = secret
 
         return field_dict
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         d = dict(src_dict)
-        url = d.pop("url")
-
         channel_id = d.pop("channelId")
 
-        secret = d.pop("secret", UNSET)
-
-        event_types = cast(list[str], d.pop("eventTypes", UNSET))
+        url = d.pop("url")
 
         description = d.pop("description", UNSET)
 
+        event_types = cast(list[str], d.pop("eventTypes", UNSET))
+
+        secret = d.pop("secret", UNSET)
+
         create_webhook_endpoint_dto = cls(
-            url=url,
             channel_id=channel_id,
-            secret=secret,
-            event_types=event_types,
+            url=url,
             description=description,
+            event_types=event_types,
+            secret=secret,
         )
 
         create_webhook_endpoint_dto.additional_properties = d

@@ -1,0 +1,172 @@
+from http import HTTPStatus
+from typing import Any, cast
+from urllib.parse import quote
+
+import httpx
+
+from ... import errors
+from ...client import AuthenticatedClient, Client
+from ...models.assessment_delete_response_dto import AssessmentDeleteResponseDto
+from ...types import UNSET, Response
+
+
+def _get_kwargs(
+    trace_id: str,
+    *,
+    assessment_id: str,
+) -> dict[str, Any]:
+
+    params: dict[str, Any] = {}
+
+    params["assessmentId"] = assessment_id
+
+    params = {k: v for k, v in params.items() if v is not UNSET and v is not None}
+
+    _kwargs: dict[str, Any] = {
+        "method": "delete",
+        "url": "/v2/traces/{trace_id}/assessments".format(
+            trace_id=quote(str(trace_id), safe=""),
+        ),
+        "params": params,
+    }
+
+    return _kwargs
+
+
+def _parse_response(
+    *, client: AuthenticatedClient | Client, response: httpx.Response
+) -> AssessmentDeleteResponseDto | None:
+    if response.status_code == 200:
+        response_200 = AssessmentDeleteResponseDto.from_dict(response.json())
+
+        return response_200
+
+    if client.raise_on_unexpected_status:
+        raise errors.UnexpectedStatus(response.status_code, response.content)
+    else:
+        return None
+
+
+def _build_response(
+    *, client: AuthenticatedClient | Client, response: httpx.Response
+) -> Response[AssessmentDeleteResponseDto]:
+    return Response(
+        status_code=HTTPStatus(response.status_code),
+        content=response.content,
+        headers=response.headers,
+        parsed=_parse_response(client=client, response=response),
+    )
+
+
+def sync_detailed(
+    trace_id: str,
+    *,
+    client: AuthenticatedClient | Client,
+    assessment_id: str,
+) -> Response[AssessmentDeleteResponseDto]:
+    """
+    Args:
+        trace_id (str):
+        assessment_id (str):
+
+    Raises:
+        errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+        httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+    Returns:
+        Response[AssessmentDeleteResponseDto]
+    """
+
+    kwargs = _get_kwargs(
+        trace_id=trace_id,
+        assessment_id=assessment_id,
+    )
+
+    response = client.get_httpx_client().request(
+        **kwargs,
+    )
+
+    return _build_response(client=client, response=response)
+
+
+def sync(
+    trace_id: str,
+    *,
+    client: AuthenticatedClient | Client,
+    assessment_id: str,
+) -> AssessmentDeleteResponseDto | None:
+    """
+    Args:
+        trace_id (str):
+        assessment_id (str):
+
+    Raises:
+        errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+        httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+    Returns:
+        AssessmentDeleteResponseDto
+    """
+
+    return sync_detailed(
+        trace_id=trace_id,
+        client=client,
+        assessment_id=assessment_id,
+    ).parsed
+
+
+async def asyncio_detailed(
+    trace_id: str,
+    *,
+    client: AuthenticatedClient | Client,
+    assessment_id: str,
+) -> Response[AssessmentDeleteResponseDto]:
+    """
+    Args:
+        trace_id (str):
+        assessment_id (str):
+
+    Raises:
+        errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+        httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+    Returns:
+        Response[AssessmentDeleteResponseDto]
+    """
+
+    kwargs = _get_kwargs(
+        trace_id=trace_id,
+        assessment_id=assessment_id,
+    )
+
+    response = await client.get_async_httpx_client().request(**kwargs)
+
+    return _build_response(client=client, response=response)
+
+
+async def asyncio(
+    trace_id: str,
+    *,
+    client: AuthenticatedClient | Client,
+    assessment_id: str,
+) -> AssessmentDeleteResponseDto | None:
+    """
+    Args:
+        trace_id (str):
+        assessment_id (str):
+
+    Raises:
+        errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+        httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+    Returns:
+        AssessmentDeleteResponseDto
+    """
+
+    return (
+        await asyncio_detailed(
+            trace_id=trace_id,
+            client=client,
+            assessment_id=assessment_id,
+        )
+    ).parsed

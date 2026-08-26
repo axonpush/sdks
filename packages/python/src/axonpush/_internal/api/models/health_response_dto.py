@@ -19,32 +19,32 @@ T = TypeVar("T", bound="HealthResponseDto")
 class HealthResponseDto:
     """
     Attributes:
+        flags (HealthResponseDtoFlags):
         status (str):
         timestamp (str):
-        flags (HealthResponseDtoFlags):
     """
 
+    flags: HealthResponseDtoFlags
     status: str
     timestamp: str
-    flags: HealthResponseDtoFlags
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
         from ..models.health_response_dto_flags import HealthResponseDtoFlags
 
+        flags = self.flags.to_dict()
+
         status = self.status
 
         timestamp = self.timestamp
-
-        flags = self.flags.to_dict()
 
         field_dict: dict[str, Any] = {}
         field_dict.update(self.additional_properties)
         field_dict.update(
             {
+                "flags": flags,
                 "status": status,
                 "timestamp": timestamp,
-                "flags": flags,
             }
         )
 
@@ -55,16 +55,16 @@ class HealthResponseDto:
         from ..models.health_response_dto_flags import HealthResponseDtoFlags
 
         d = dict(src_dict)
+        flags = HealthResponseDtoFlags.from_dict(d.pop("flags"))
+
         status = d.pop("status")
 
         timestamp = d.pop("timestamp")
 
-        flags = HealthResponseDtoFlags.from_dict(d.pop("flags"))
-
         health_response_dto = cls(
+            flags=flags,
             status=status,
             timestamp=timestamp,
-            flags=flags,
         )
 
         health_response_dto.additional_properties = d

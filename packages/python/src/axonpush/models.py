@@ -13,7 +13,7 @@ from axonpush._internal.api.models import (
     AppResponseDto as App,
     ChannelResponseDto as Channel,
     CreateEventDto,
-    CreateEventDtoEventType as EventType,
+    EventType,
     EnvironmentResponseDto as Environment,
     EventIngestResponseDto as Event,
     EventListResponseDto,
@@ -24,7 +24,7 @@ from axonpush._internal.api.models import (
     TraceControllerGetTraceSummaryResponse200 as TraceSummary,
     TraceControllerListTracesResponse200DataItem as TraceListItem,
     WebhookDeliveryResponseDto as WebhookDelivery,
-    WebhookDeliveryResponseDtoStatus as DeliveryStatus,
+    WebhookDeliveryStatus as DeliveryStatus,
     WebhookEndpointCreateResponseDto,
     WebhookEndpointResponseDto as WebhookEndpoint,
 )

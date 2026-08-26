@@ -6,7 +6,7 @@ from typing import TYPE_CHECKING, Any, BinaryIO, Generator, TextIO, TypeVar
 from attrs import define as _attrs_define
 from attrs import field as _attrs_field
 
-from ..models.create_invitation_dto_desired_role import CreateInvitationDtoDesiredRole
+from ..models.organization_role import OrganizationRole
 from ..types import UNSET, Unset
 
 T = TypeVar("T", bound="CreateInvitationDto")
@@ -16,25 +16,25 @@ T = TypeVar("T", bound="CreateInvitationDto")
 class CreateInvitationDto:
     """
     Attributes:
+        desired_role (OrganizationRole):
         invited_email (str):
-        desired_role (CreateInvitationDtoDesiredRole):
     """
 
+    desired_role: OrganizationRole
     invited_email: str
-    desired_role: CreateInvitationDtoDesiredRole
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
-        invited_email = self.invited_email
-
         desired_role = self.desired_role.value
+
+        invited_email = self.invited_email
 
         field_dict: dict[str, Any] = {}
         field_dict.update(self.additional_properties)
         field_dict.update(
             {
-                "invitedEmail": invited_email,
                 "desired_role": desired_role,
+                "invitedEmail": invited_email,
             }
         )
 
@@ -43,13 +43,13 @@ class CreateInvitationDto:
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         d = dict(src_dict)
+        desired_role = OrganizationRole(d.pop("desired_role"))
+
         invited_email = d.pop("invitedEmail")
 
-        desired_role = CreateInvitationDtoDesiredRole(d.pop("desired_role"))
-
         create_invitation_dto = cls(
-            invited_email=invited_email,
             desired_role=desired_role,
+            invited_email=invited_email,
         )
 
         create_invitation_dto.additional_properties = d

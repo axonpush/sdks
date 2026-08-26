@@ -8,6 +8,10 @@ from attrs import field as _attrs_field
 
 from ..types import UNSET, Unset
 
+if TYPE_CHECKING:
+    from ..models.event_list_meta_dto_cursor_type_0 import EventListMetaDtoCursorType0
+
+
 T = TypeVar("T", bound="EventListMetaDto")
 
 
@@ -16,19 +20,23 @@ class EventListMetaDto:
     """
     Attributes:
         has_more (bool):
-        cursor (None | str | Unset):
+        cursor (EventListMetaDtoCursorType0 | None | Unset):
     """
 
     has_more: bool
-    cursor: None | str | Unset = UNSET
+    cursor: EventListMetaDtoCursorType0 | None | Unset = UNSET
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
+        from ..models.event_list_meta_dto_cursor_type_0 import EventListMetaDtoCursorType0
+
         has_more = self.has_more
 
-        cursor: None | str | Unset
+        cursor: dict[str, Any] | None | Unset
         if isinstance(self.cursor, Unset):
             cursor = UNSET
+        elif isinstance(self.cursor, EventListMetaDtoCursorType0):
+            cursor = self.cursor.to_dict()
         else:
             cursor = self.cursor
 
@@ -46,15 +54,25 @@ class EventListMetaDto:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
+        from ..models.event_list_meta_dto_cursor_type_0 import EventListMetaDtoCursorType0
+
         d = dict(src_dict)
         has_more = d.pop("hasMore")
 
-        def _parse_cursor(data: object) -> None | str | Unset:
+        def _parse_cursor(data: object) -> EventListMetaDtoCursorType0 | None | Unset:
             if data is None:
                 return data
             if isinstance(data, Unset):
                 return data
-            return cast(None | str | Unset, data)
+            try:
+                if not isinstance(data, dict):
+                    raise TypeError()
+                cursor_type_0 = EventListMetaDtoCursorType0.from_dict(data)
+
+                return cursor_type_0
+            except (TypeError, ValueError, AttributeError, KeyError):
+                pass
+            return cast(EventListMetaDtoCursorType0 | None | Unset, data)
 
         cursor = _parse_cursor(d.pop("cursor", UNSET))
 

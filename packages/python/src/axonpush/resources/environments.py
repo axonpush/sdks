@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, List, cast
+from typing import TYPE_CHECKING, List
 
 from axonpush._internal.api.api.environments import (
     environment_controller_create as _create_op,
@@ -13,7 +13,6 @@ from axonpush._internal.api.api.environments import (
 )
 from axonpush._internal.api.models import (
     CreateEnvironmentDto,
-    EnvironmentControllerPromoteResponse201,
     OkResponseDto,
     UpdateEnvironmentDto,
 )
@@ -120,15 +119,9 @@ class Environments:
         """Soft-delete an environment."""
         return self._client._invoke(_remove_op, id=env_id)
 
-    def promote_to_default(
-        self, env_id: str
-    ) -> EnvironmentControllerPromoteResponse201 | Environment | None:
+    def promote_to_default(self, env_id: str) -> Environment | None:
         """Promote an environment to be the org-wide default."""
-        # Generated op has a union return type that confuses TypeVar inference.
-        return cast(
-            "EnvironmentControllerPromoteResponse201 | Environment | None",
-            self._client._invoke(_promote_op, id=env_id),
-        )
+        return self._client._invoke(_promote_op, id=env_id)
 
 
 class AsyncEnvironments:
@@ -182,11 +175,6 @@ class AsyncEnvironments:
         """See :meth:`Environments.delete`."""
         return await self._client._invoke(_remove_op, id=env_id)
 
-    async def promote_to_default(
-        self, env_id: str
-    ) -> EnvironmentControllerPromoteResponse201 | Environment | None:
+    async def promote_to_default(self, env_id: str) -> Environment | None:
         """See :meth:`Environments.promote_to_default`."""
-        return cast(
-            "EnvironmentControllerPromoteResponse201 | Environment | None",
-            await self._client._invoke(_promote_op, id=env_id),
-        )
+        return await self._client._invoke(_promote_op, id=env_id)

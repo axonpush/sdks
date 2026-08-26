@@ -15,25 +15,25 @@ T = TypeVar("T", bound="WebhookIngestResponseDto")
 class WebhookIngestResponseDto:
     """
     Attributes:
-        status (str):
         event_id (str):
+        status (str):
     """
 
-    status: str
     event_id: str
+    status: str
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
-        status = self.status
-
         event_id = self.event_id
+
+        status = self.status
 
         field_dict: dict[str, Any] = {}
         field_dict.update(self.additional_properties)
         field_dict.update(
             {
-                "status": status,
                 "eventId": event_id,
+                "status": status,
             }
         )
 
@@ -42,13 +42,13 @@ class WebhookIngestResponseDto:
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         d = dict(src_dict)
-        status = d.pop("status")
-
         event_id = d.pop("eventId")
 
+        status = d.pop("status")
+
         webhook_ingest_response_dto = cls(
-            status=status,
             event_id=event_id,
+            status=status,
         )
 
         webhook_ingest_response_dto.additional_properties = d

@@ -6,7 +6,7 @@ from typing import TYPE_CHECKING, Any, BinaryIO, Generator, TextIO, TypeVar, cas
 from attrs import define as _attrs_define
 from attrs import field as _attrs_field
 
-from ..models.update_export_destination_dto_signals import UpdateExportDestinationDtoSignals
+from ..models.export_signal import ExportSignal
 from ..types import UNSET, Unset
 
 if TYPE_CHECKING:
@@ -20,64 +20,67 @@ T = TypeVar("T", bound="UpdateExportDestinationDto")
 class UpdateExportDestinationDto:
     """
     Attributes:
-        name (str | Unset):
-        endpoint_url (str | Unset):
-        headers (UpdateExportDestinationDtoHeaders | Unset): Replaces the stored header map. Never returned by the API.
-        signals (UpdateExportDestinationDtoSignals | Unset):
-        event_type_filter (list[str] | Unset):
-        service_name (str | Unset):
         active (bool | Unset):
+        endpoint_url (str | Unset):
+        event_type_filter (list[str] | Unset):
+        headers (UpdateExportDestinationDtoHeaders | Unset): Replaces the stored header map. Never returned by the API.
+        name (str | Unset):
+        service_name (str | Unset):
+        signals (list[ExportSignal] | Unset):
     """
 
-    name: str | Unset = UNSET
-    endpoint_url: str | Unset = UNSET
-    headers: UpdateExportDestinationDtoHeaders | Unset = UNSET
-    signals: UpdateExportDestinationDtoSignals | Unset = UNSET
-    event_type_filter: list[str] | Unset = UNSET
-    service_name: str | Unset = UNSET
     active: bool | Unset = UNSET
+    endpoint_url: str | Unset = UNSET
+    event_type_filter: list[str] | Unset = UNSET
+    headers: UpdateExportDestinationDtoHeaders | Unset = UNSET
+    name: str | Unset = UNSET
+    service_name: str | Unset = UNSET
+    signals: list[ExportSignal] | Unset = UNSET
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
         from ..models.update_export_destination_dto_headers import UpdateExportDestinationDtoHeaders
 
-        name = self.name
+        active = self.active
 
         endpoint_url = self.endpoint_url
-
-        headers: dict[str, Any] | Unset = UNSET
-        if not isinstance(self.headers, Unset):
-            headers = self.headers.to_dict()
-
-        signals: str | Unset = UNSET
-        if not isinstance(self.signals, Unset):
-            signals = self.signals.value
 
         event_type_filter: list[str] | Unset = UNSET
         if not isinstance(self.event_type_filter, Unset):
             event_type_filter = self.event_type_filter
 
+        headers: dict[str, Any] | Unset = UNSET
+        if not isinstance(self.headers, Unset):
+            headers = self.headers.to_dict()
+
+        name = self.name
+
         service_name = self.service_name
 
-        active = self.active
+        signals: list[str] | Unset = UNSET
+        if not isinstance(self.signals, Unset):
+            signals = []
+            for signals_item_data in self.signals:
+                signals_item = signals_item_data.value
+                signals.append(signals_item)
 
         field_dict: dict[str, Any] = {}
         field_dict.update(self.additional_properties)
         field_dict.update({})
-        if name is not UNSET:
-            field_dict["name"] = name
-        if endpoint_url is not UNSET:
-            field_dict["endpointUrl"] = endpoint_url
-        if headers is not UNSET:
-            field_dict["headers"] = headers
-        if signals is not UNSET:
-            field_dict["signals"] = signals
-        if event_type_filter is not UNSET:
-            field_dict["eventTypeFilter"] = event_type_filter
-        if service_name is not UNSET:
-            field_dict["serviceName"] = service_name
         if active is not UNSET:
             field_dict["active"] = active
+        if endpoint_url is not UNSET:
+            field_dict["endpointUrl"] = endpoint_url
+        if event_type_filter is not UNSET:
+            field_dict["eventTypeFilter"] = event_type_filter
+        if headers is not UNSET:
+            field_dict["headers"] = headers
+        if name is not UNSET:
+            field_dict["name"] = name
+        if service_name is not UNSET:
+            field_dict["serviceName"] = service_name
+        if signals is not UNSET:
+            field_dict["signals"] = signals
 
         return field_dict
 
@@ -86,9 +89,11 @@ class UpdateExportDestinationDto:
         from ..models.update_export_destination_dto_headers import UpdateExportDestinationDtoHeaders
 
         d = dict(src_dict)
-        name = d.pop("name", UNSET)
+        active = d.pop("active", UNSET)
 
         endpoint_url = d.pop("endpointUrl", UNSET)
+
+        event_type_filter = cast(list[str], d.pop("eventTypeFilter", UNSET))
 
         _headers = d.pop("headers", UNSET)
         headers: UpdateExportDestinationDtoHeaders | Unset
@@ -97,27 +102,27 @@ class UpdateExportDestinationDto:
         else:
             headers = UpdateExportDestinationDtoHeaders.from_dict(_headers)
 
-        _signals = d.pop("signals", UNSET)
-        signals: UpdateExportDestinationDtoSignals | Unset
-        if isinstance(_signals, Unset):
-            signals = UNSET
-        else:
-            signals = UpdateExportDestinationDtoSignals(_signals)
-
-        event_type_filter = cast(list[str], d.pop("eventTypeFilter", UNSET))
+        name = d.pop("name", UNSET)
 
         service_name = d.pop("serviceName", UNSET)
 
-        active = d.pop("active", UNSET)
+        _signals = d.pop("signals", UNSET)
+        signals: list[ExportSignal] | Unset = UNSET
+        if _signals is not UNSET:
+            signals = []
+            for signals_item_data in _signals:
+                signals_item = ExportSignal(signals_item_data)
+
+                signals.append(signals_item)
 
         update_export_destination_dto = cls(
-            name=name,
-            endpoint_url=endpoint_url,
-            headers=headers,
-            signals=signals,
-            event_type_filter=event_type_filter,
-            service_name=service_name,
             active=active,
+            endpoint_url=endpoint_url,
+            event_type_filter=event_type_filter,
+            headers=headers,
+            name=name,
+            service_name=service_name,
+            signals=signals,
         )
 
         update_export_destination_dto.additional_properties = d

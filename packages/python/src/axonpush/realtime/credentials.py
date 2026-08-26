@@ -57,8 +57,16 @@ class IotCredentials:
         return (self.expires_at - current).total_seconds()
 
 
-def _parse_expires_at(raw: str) -> datetime:
-    parsed = datetime.fromisoformat(raw.replace("Z", "+00:00"))
+def _parse_expires_at(raw: str | datetime) -> datetime:
+    """Normalise to an aware UTC datetime.
+
+    The contract marks ``expiresAt`` as ``format: date-time``, so the generated
+    model already parses it; strings are still accepted for callers that build
+    the DTO by hand.
+    """
+    parsed = (
+        raw if isinstance(raw, datetime) else datetime.fromisoformat(raw.replace("Z", "+00:00"))
+    )
     if parsed.tzinfo is None:
         parsed = parsed.replace(tzinfo=timezone.utc)
     return parsed

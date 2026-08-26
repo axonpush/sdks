@@ -1,10 +1,12 @@
 from __future__ import annotations
 
+import datetime
 from collections.abc import Mapping
 from typing import TYPE_CHECKING, Any, BinaryIO, Generator, TextIO, TypeVar, cast
 
 from attrs import define as _attrs_define
 from attrs import field as _attrs_field
+from dateutil.parser import isoparse
 
 from ..types import UNSET, Unset
 
@@ -15,56 +17,56 @@ T = TypeVar("T", bound="ExportDestinationResponseDto")
 class ExportDestinationResponseDto:
     """
     Attributes:
-        id (str):
-        destination_id (str):
-        org_id (str):
-        env_slug (str):
-        name (str):
-        endpoint_url (str):
-        signals (list[str]): OTLP signals: logs and/or traces
-        header_keys (list[str]): Configured header names (values are masked)
         active (bool):
-        created_at (str):
+        created_at (datetime.datetime):
+        destination_id (str):
+        endpoint_url (str):
+        env_slug (str):
+        header_keys (list[str]): Configured header names (values are masked)
+        id (str):
+        name (str):
+        org_id (str):
+        signals (list[str]): OTLP signals: logs and/or traces
         event_type_filter (list[str] | Unset):
         service_name (str | Unset):
-        updated_at (str | Unset):
+        updated_at (datetime.datetime | Unset):
     """
 
-    id: str
-    destination_id: str
-    org_id: str
-    env_slug: str
-    name: str
-    endpoint_url: str
-    signals: list[str]
-    header_keys: list[str]
     active: bool
-    created_at: str
+    created_at: datetime.datetime
+    destination_id: str
+    endpoint_url: str
+    env_slug: str
+    header_keys: list[str]
+    id: str
+    name: str
+    org_id: str
+    signals: list[str]
     event_type_filter: list[str] | Unset = UNSET
     service_name: str | Unset = UNSET
-    updated_at: str | Unset = UNSET
+    updated_at: datetime.datetime | Unset = UNSET
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
-        id = self.id
+        active = self.active
+
+        created_at = self.created_at.isoformat()
 
         destination_id = self.destination_id
 
-        org_id = self.org_id
+        endpoint_url = self.endpoint_url
 
         env_slug = self.env_slug
 
-        name = self.name
-
-        endpoint_url = self.endpoint_url
-
-        signals = self.signals
-
         header_keys = self.header_keys
 
-        active = self.active
+        id = self.id
 
-        created_at = self.created_at
+        name = self.name
+
+        org_id = self.org_id
+
+        signals = self.signals
 
         event_type_filter: list[str] | Unset = UNSET
         if not isinstance(self.event_type_filter, Unset):
@@ -72,22 +74,24 @@ class ExportDestinationResponseDto:
 
         service_name = self.service_name
 
-        updated_at = self.updated_at
+        updated_at: str | Unset = UNSET
+        if not isinstance(self.updated_at, Unset):
+            updated_at = self.updated_at.isoformat()
 
         field_dict: dict[str, Any] = {}
         field_dict.update(self.additional_properties)
         field_dict.update(
             {
-                "id": id,
-                "destinationId": destination_id,
-                "orgId": org_id,
-                "envSlug": env_slug,
-                "name": name,
-                "endpointUrl": endpoint_url,
-                "signals": signals,
-                "headerKeys": header_keys,
                 "active": active,
                 "createdAt": created_at,
+                "destinationId": destination_id,
+                "endpointUrl": endpoint_url,
+                "envSlug": env_slug,
+                "headerKeys": header_keys,
+                "id": id,
+                "name": name,
+                "orgId": org_id,
+                "signals": signals,
             }
         )
         if event_type_filter is not UNSET:
@@ -102,43 +106,48 @@ class ExportDestinationResponseDto:
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         d = dict(src_dict)
-        id = d.pop("id")
+        active = d.pop("active")
+
+        created_at = isoparse(d.pop("createdAt"))
 
         destination_id = d.pop("destinationId")
 
-        org_id = d.pop("orgId")
+        endpoint_url = d.pop("endpointUrl")
 
         env_slug = d.pop("envSlug")
 
-        name = d.pop("name")
-
-        endpoint_url = d.pop("endpointUrl")
-
-        signals = cast(list[str], d.pop("signals"))
-
         header_keys = cast(list[str], d.pop("headerKeys"))
 
-        active = d.pop("active")
+        id = d.pop("id")
 
-        created_at = d.pop("createdAt")
+        name = d.pop("name")
+
+        org_id = d.pop("orgId")
+
+        signals = cast(list[str], d.pop("signals"))
 
         event_type_filter = cast(list[str], d.pop("eventTypeFilter", UNSET))
 
         service_name = d.pop("serviceName", UNSET)
 
-        updated_at = d.pop("updatedAt", UNSET)
+        _updated_at = d.pop("updatedAt", UNSET)
+        updated_at: datetime.datetime | Unset
+        if isinstance(_updated_at, Unset):
+            updated_at = UNSET
+        else:
+            updated_at = isoparse(_updated_at)
 
         export_destination_response_dto = cls(
-            id=id,
-            destination_id=destination_id,
-            org_id=org_id,
-            env_slug=env_slug,
-            name=name,
-            endpoint_url=endpoint_url,
-            signals=signals,
-            header_keys=header_keys,
             active=active,
             created_at=created_at,
+            destination_id=destination_id,
+            endpoint_url=endpoint_url,
+            env_slug=env_slug,
+            header_keys=header_keys,
+            id=id,
+            name=name,
+            org_id=org_id,
+            signals=signals,
             event_type_filter=event_type_filter,
             service_name=service_name,
             updated_at=updated_at,
