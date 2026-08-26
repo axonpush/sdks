@@ -5,6 +5,12 @@ namespace AxonPush.Internal;
 
 internal sealed class RetryPolicy
 {
+    /// <summary>
+    /// Fixed backoff ladder, clamped to the last entry. Shared with the other
+    /// SDKs and pinned by contract/fixtures/env.json.
+    /// </summary>
+    internal static IReadOnlyList<TimeSpan> BackoffSchedule => DefaultDelays;
+
     private static readonly TimeSpan[] DefaultDelays =
     [
         TimeSpan.FromMilliseconds(250),

@@ -8,7 +8,7 @@ namespace AxonPush.Tests;
 public class PublishRequestSerializationTests
 {
     [Fact]
-    public void Serializes_With_CamelCase_Keys_MatchingPython()
+    public void Serializes_With_The_Field_Names_The_Contract_Declares()
     {
         var request = new PublishRequest
         {
@@ -32,7 +32,7 @@ public class PublishRequestSerializationTests
         var root = doc.RootElement;
 
         Assert.Equal("0123456789abcdef", root.GetProperty("identifier").GetString());
-        Assert.Equal("ch_1", root.GetProperty("channelId").GetString());
+        Assert.Equal("ch_1", root.GetProperty("channel_id").GetString());
         Assert.Equal(EventType.AppSpan, root.GetProperty("eventType").GetString());
         Assert.Equal("0123456789abcdef0123456789abcdef", root.GetProperty("traceId").GetString());
         Assert.Equal("fedcba9876543210", root.GetProperty("spanId").GetString());

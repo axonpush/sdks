@@ -14,6 +14,13 @@ namespace AxonPush.Internal;
 /// </summary>
 internal sealed class AxonPushTransport : IDisposable
 {
+    /// <summary>
+    /// Publish route, singular. This read "events" and 404ed against
+    /// <c>GET /events/search</c>, the only route on that plural path.
+    /// ContractTests asserts it against contract/openapi.sdk.json.
+    /// </summary>
+    internal const string EventsPath = "event";
+
     private static readonly string UserAgent =
         $"axonpush-dotnet/{typeof(AxonPushTransport).Assembly.GetName().Version?.ToString(3) ?? "0.0.0"}";
 
@@ -63,7 +70,7 @@ internal sealed class AxonPushTransport : IDisposable
             attempt++;
             try
             {
-                using var message = new HttpRequestMessage(HttpMethod.Post, "events")
+                using var message = new HttpRequestMessage(HttpMethod.Post, EventsPath)
                 {
                     Content = JsonContent.Create(request, options: AxonPushJsonOptions.Default),
                 };

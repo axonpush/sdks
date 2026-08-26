@@ -14,4 +14,7 @@
     <PackageReference Include="xunit.runner.visualstudio" />
   </ItemGroup>
 
+  <!-- the contract lives at the repo root; the tests walk up to find it -->
+  <ItemGroup Label="ContractFixtures" />
+
 </Project>

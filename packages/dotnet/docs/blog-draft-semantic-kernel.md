@@ -91,6 +91,6 @@ A few things on the immediate list:
 - An Azure AI Foundry quickstart that wires the exporter into a deployed Foundry agent.
 - A small companion blog post measuring per-agent token cost using the spans the kernel already emits.
 
-If you are building on Semantic Kernel and want to try it, the repo is at [github.com/AxonPush/axonpush-dotnet](https://github.com/AxonPush/axonpush-dotnet), the packages are on NuGet under `AxonPush`, `AxonPush.Otel`, and `AxonPush.SemanticKernel`, and the AxonPush dashboard is at [axonpush.xyz](https://axonpush.xyz).
+If you are building on Semantic Kernel and want to try it, the repo is at [github.com/axonpush/sdks](https://github.com/axonpush/sdks) under `packages/dotnet`, and the AxonPush dashboard is at [axonpush.xyz](https://axonpush.xyz).
 
 I am Sayan Biswas. I work on AxonPush, an observability platform for LLM and agent runs. Find me on [LinkedIn](https://www.linkedin.com/in/sayanbiswas64).

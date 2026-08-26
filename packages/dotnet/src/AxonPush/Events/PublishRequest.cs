@@ -1,3 +1,5 @@
+using System.Text.Json.Serialization;
+
 namespace AxonPush.Events;
 
 /// <summary>
@@ -12,8 +14,19 @@ public sealed record PublishRequest
     /// <summary>Event payload. Serialised verbatim as JSON.</summary>
     public required object Payload { get; init; }
 
-    /// <summary>Channel the event belongs to.</summary>
+    /// <summary>
+    /// Channel the event belongs to.
+    /// </summary>
+    /// <remarks>
+    /// Serialised as <c>channel_id</c>. The camelCase policy produced
+    /// <c>channelId</c>, which the global ValidationPipe rejected because it
+    /// runs with <c>forbidNonWhitelisted</c>, so every publish failed.
+    /// </remarks>
+    [JsonPropertyName("channel_id")]
     public required string ChannelId { get; init; }
+
+    /// <summary>Agent that emitted the event. Every other SDK sends this.</summary>
+    public string? AgentId { get; init; }
 
     /// <summary>Event-type discriminator. Defaults to <see cref="EventType.AppSpan"/>.</summary>
     public string EventType { get; init; } = AxonPush.EventType.AppSpan;
@@ -29,6 +42,9 @@ public sealed record PublishRequest
 
     /// <summary>Environment tag (e.g. "production").</summary>
     public string? Environment { get; init; }
+
+    /// <summary>Parent span identifier, when this event continues a span.</summary>
+    public string? ParentSpanId { get; init; }
 
     /// <summary>Free-form metadata keyed by string.</summary>
     public IReadOnlyDictionary<string, object?>? Metadata { get; init; }

@@ -11,6 +11,13 @@ public sealed class AxonPushOptions
     /// <summary>API key. Maps to env var <c>AXONPUSH_API_KEY</c>.</summary>
     public string? ApiKey { get; set; }
 
+    /// <summary>
+    /// Default channel for published events. Maps to env var
+    /// <c>AXONPUSH_CHANNEL_ID</c>, which every other SDK reads and this one did
+    /// not, so a channel had to be supplied in code.
+    /// </summary>
+    public string? ChannelId { get; set; }
+
     /// <summary>Tenant identifier. Maps to env var <c>AXONPUSH_TENANT_ID</c>.</summary>
     public string? TenantId { get; set; }
 
@@ -48,6 +55,7 @@ public sealed class AxonPushOptions
     {
         ApiKey ??= configuration["AXONPUSH_API_KEY"];
         TenantId ??= configuration["AXONPUSH_TENANT_ID"];
+        ChannelId ??= configuration["AXONPUSH_CHANNEL_ID"];
 
         var baseUrl = configuration["AXONPUSH_BASE_URL"];
         if (!string.IsNullOrWhiteSpace(baseUrl))
