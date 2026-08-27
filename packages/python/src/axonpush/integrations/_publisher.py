@@ -468,10 +468,25 @@ class RqPublisher:
                 "RQ publisher requires the 'rq' extra. Install it with: pip install axonpush[rq]"
             ) from None
 
-        auth = client._auth  # type: ignore[union-attr]
-        self._api_key: str = auth.api_key
-        self._tenant_id: str = auth.tenant_id
-        self._base_url: str = auth.base_url
+        # The RQ worker is a separate process, so credentials are captured as
+        # plain strings here and travel with the job. Settings values are
+        # unwrapped now rather than in the job: a missing key should fail at
+        # construction, where the traceback points at the caller, not hours
+        # later inside a worker.
+        settings = client.settings
+        if settings.api_key is None:
+            raise ValueError(
+                "RQ publisher requires an API key. Pass api_key= to the client "
+                "or set AXONPUSH_API_KEY."
+            )
+        if settings.tenant_id is None:
+            raise ValueError(
+                "RQ publisher requires a tenant id. Pass tenant_id= to the client "
+                "or set AXONPUSH_TENANT_ID."
+            )
+        self._api_key: str = settings.api_key.get_secret_value()
+        self._tenant_id: str = settings.tenant_id
+        self._base_url: str = str(settings.base_url).rstrip("/")
         self._conn = redis_conn or Redis()
         self._queue: "Queue" = Queue(name=queue_name, connection=self._conn)
         self._job_timeout = job_timeout

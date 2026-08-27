@@ -6,6 +6,7 @@ import logging
 import os
 import sys
 import time
+import types
 from typing import Any, Dict
 
 import pytest
@@ -403,3 +404,83 @@ class TestPublishFailureLogging:
         # Smoke check that the symbol is reachable. The wider behaviour
         # is covered by the e2e suite.
         assert callable(_log_publish_failure)
+
+
+class _StubQueue:
+    def __init__(self, name: str | None = None, connection: Any = None) -> None:
+        self.name = name
+        self.connection = connection
+
+
+class _StubRetry:
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        pass
+
+
+class _StubRedis:
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        pass
+
+
+@pytest.fixture
+def rq_stubs(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Stand in for the optional ``rq`` extra.
+
+    ``RqPublisher`` imports ``rq``/``redis`` inside ``__init__``, so the
+    constructor is unreachable in a bare test environment. The rest of the
+    suite uses duck-typed fakes that carry no credentials, which is why the
+    credential-reading path went untested — and why it read a ``_auth``
+    attribute no client has ever defined.
+    """
+    rq = types.ModuleType("rq")
+    rq.Queue = _StubQueue  # type: ignore[attr-defined]
+    rq.Retry = _StubRetry  # type: ignore[attr-defined]
+    redis = types.ModuleType("redis")
+    redis.Redis = _StubRedis  # type: ignore[attr-defined]
+    monkeypatch.setitem(sys.modules, "rq", rq)
+    monkeypatch.setitem(sys.modules, "redis", redis)
+
+
+class TestRqPublisherCredentials:
+    def test_reads_credentials_from_client_settings(self, rq_stubs: None) -> None:
+        from axonpush import AxonPush
+        from axonpush.integrations._publisher import RqPublisher
+
+        client = AxonPush(
+            api_key="ak_test123",
+            tenant_id="org_abc",
+            base_url="https://api.example.com/",
+        )
+        publisher = RqPublisher(client, redis_conn=_StubRedis())
+
+        # The job runs in a separate worker process, so these must be plain
+        # strings — a SecretStr or HttpUrl would not survive the hand-off.
+        assert publisher._api_key == "ak_test123"
+        assert publisher._tenant_id == "org_abc"
+        assert publisher._base_url == "https://api.example.com"
+        assert type(publisher._api_key) is str
+        assert type(publisher._base_url) is str
+
+    def test_missing_api_key_raises_at_construction(
+        self, rq_stubs: None, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        from axonpush import AxonPush
+        from axonpush.integrations._publisher import RqPublisher
+
+        monkeypatch.delenv("AXONPUSH_API_KEY", raising=False)
+        client = AxonPush(tenant_id="org_abc")
+
+        with pytest.raises(ValueError, match="API key"):
+            RqPublisher(client, redis_conn=_StubRedis())
+
+    def test_missing_tenant_id_raises_at_construction(
+        self, rq_stubs: None, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        from axonpush import AxonPush
+        from axonpush.integrations._publisher import RqPublisher
+
+        monkeypatch.delenv("AXONPUSH_TENANT_ID", raising=False)
+        client = AxonPush(api_key="ak_test123")
+
+        with pytest.raises(ValueError, match="tenant id"):
+            RqPublisher(client, redis_conn=_StubRedis())
