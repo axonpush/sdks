@@ -225,6 +225,46 @@ class TestSettingsModel:
         finally:
             client.close()
 
+    def test_redacted_mode_previews_content_rather_than_dropping_it(
+        self, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        monkeypatch.setenv("AXONPUSH_CONTENT_CAPTURE_MODE", "redacted")
+        monkeypatch.delenv("AXONPUSH_MAX_CONTENT_LENGTH", raising=False)
+        monkeypatch.delenv("AXONPUSH_REDACT_KEYS", raising=False)
+        client = AxonPush()
+        try:
+            result = client._redact_telemetry(
+                {"messages": [{"role": "user", "content": "p" * 400}], "model": "gpt-4o"}
+            )
+            # The role and the surrounding metadata stay readable.
+            assert result["messages"][0]["role"] == "user"
+            assert result["messages"][0]["content"] == "p" * 256 + "…[REDACTED_PREVIEW]"
+            assert result["model"] == "gpt-4o"
+        finally:
+            client.close()
+
+    @pytest.mark.parametrize(
+        ("mode", "expected"),
+        [
+            ("metadata_only", "[REDACTED]"),
+            ("redacted", "q" * 256 + "…[REDACTED_PREVIEW]"),
+            ("full", "q" * 400),
+        ],
+    )
+    def test_capture_modes_are_all_distinguishable(
+        self, monkeypatch: pytest.MonkeyPatch, mode: str, expected: str
+    ) -> None:
+        """The bug this covers: "redacted" behaved identically to "full", so a
+        customer selecting it got no redaction at all and no sign of that."""
+        monkeypatch.setenv("AXONPUSH_CONTENT_CAPTURE_MODE", mode)
+        monkeypatch.delenv("AXONPUSH_MAX_CONTENT_LENGTH", raising=False)
+        monkeypatch.delenv("AXONPUSH_REDACT_KEYS", raising=False)
+        client = AxonPush()
+        try:
+            assert client._redact_telemetry({"prompt": "q" * 400})["prompt"] == expected
+        finally:
+            client.close()
+
 
 class TestAsyncFacade:
     async def test_construction(self) -> None:
