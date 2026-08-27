@@ -225,7 +225,6 @@ class TestSettingsModel:
         finally:
             client.close()
 
-
     def test_redacted_mode_previews_content_rather_than_dropping_it(
         self, monkeypatch: pytest.MonkeyPatch
     ) -> None:
