@@ -58,6 +58,9 @@ dependencies = [
     "python-dateutil>=2.8.2",
 ]
 
+[project.scripts]
+axonpush-eval = "axonpush.eval.cli:main"
+
 [project.urls]
 Homepage = "https://github.com/axonpush/sdks/tree/master/packages/python"
 Repository = "https://github.com/axonpush/sdks"

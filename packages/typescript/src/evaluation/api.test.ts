@@ -18,7 +18,7 @@ const {
   experimentControllerRun,
   experimentControllerSubmitResults,
 } = await import("../_internal/api/sdk.gen.js");
-const { EvaluationApiError, HttpEvaluationApi } = await import("./api.js");
+const { EvaluationApiError, HttpEvaluationApi, toWireThresholds } = await import("./api.js");
 
 /**
  * These calls used to bypass the transport entirely. The point of each
@@ -102,8 +102,49 @@ describe("HttpEvaluationApi", () => {
 
     const [op, args] = lastCall();
     expect(op).toBe(experimentControllerGate);
-    expect(args).toMatchObject({ path: { experimentId: "exp_1" }, body: { minimumScore: 0.8 } });
+    expect(args).toMatchObject({ path: { experimentId: "exp_1" }, body: { minScore: 0.8 } });
     expect(gate.passed).toBe(true);
+  });
+
+  it("sends threshold names the gate endpoint actually accepts", () => {
+    // The server validates with forbidNonWhitelisted, so an unknown key is a
+    // 400 rather than an ignored field. These are the seven it accepts.
+    const accepted = new Set([
+      "minScore",
+      "maxFailureRate",
+      "maxLatencyMs",
+      "maxCostUsd",
+      "minScoreDelta",
+      "maxLatencyIncreasePercent",
+      "maxCostIncreasePercent",
+    ]);
+    const body = toWireThresholds({
+      minimumScore: 0.8,
+      maximumFailureRate: 0.05,
+      maximumLatencyMs: 2000,
+      maximumCostUsd: 5,
+      maxScoreRegression: 0.02,
+      maxLatencyIncreaseRatio: 0.1,
+      maxCostIncreaseRatio: 0.25,
+    });
+    for (const key of Object.keys(body)) expect(accepted.has(key)).toBe(true);
+    expect(Object.keys(body).length).toBe(7);
+  });
+
+  it("converts a tolerated regression into a minimum delta, and ratios into percentages", () => {
+    expect(toWireThresholds({ maxScoreRegression: 0.02 })).toEqual({ minScoreDelta: -0.02 });
+    expect(toWireThresholds({ maxScoreRegression: -0.02 })).toEqual({ minScoreDelta: -0.02 });
+    expect(toWireThresholds({ maxCostIncreaseRatio: 0.1 })).toEqual({
+      maxCostIncreasePercent: 10,
+    });
+    expect(toWireThresholds({ maxLatencyIncreaseRatio: 0.25 })).toEqual({
+      maxLatencyIncreasePercent: 25,
+    });
+  });
+
+  it("sends nothing when no threshold was configured", () => {
+    expect(toWireThresholds(undefined)).toEqual({});
+    expect(toWireThresholds({})).toEqual({});
   });
 
   it("creates an experiment and validates the returned id", async () => {

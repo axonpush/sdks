@@ -59,6 +59,8 @@ export interface GateThresholds {
   maximumCostUsd?: number;
   /** Absolute maximum latency in milliseconds as interpreted by the server. */
   maximumLatencyMs?: number;
+  /** Maximum share of dataset items allowed to fail outright, 0-1. */
+  maximumFailureRate?: number;
 }
 
 export interface GateResult {

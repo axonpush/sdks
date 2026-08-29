@@ -195,7 +195,7 @@ export class HttpEvaluationApi implements EvaluationApi {
   ): Promise<GateResult> {
     const data = await this.call<unknown>(experimentControllerGate, {
       path: { experimentId },
-      body: thresholds ?? {},
+      body: toWireThresholds(thresholds),
       signal,
     });
     const record = asRecord(data);
@@ -204,4 +204,49 @@ export class HttpEvaluationApi implements EvaluationApi {
     }
     return record as unknown as GateResult;
   }
+}
+
+/**
+ * Translate the SDK's threshold names into the ones the gate endpoint accepts.
+ *
+ * These two vocabularies had drifted apart completely: the SDK sent
+ * `minimumScore`/`maxCostIncreaseRatio`, the API accepts
+ * `minScore`/`maxCostIncreasePercent`, and the server validates with
+ * `forbidNonWhitelisted`, so every threshold the CLI was asked to enforce came
+ * back as a 400 instead of a gate decision.
+ *
+ * Two of the conversions are more than a rename:
+ * - `maxScoreRegression` is how far the score may fall (positive), while
+ *   `minScoreDelta` is the lowest acceptable delta (negative).
+ * - the ratio options are fractions; the API takes percentages.
+ */
+export function toWireThresholds(thresholds?: GateThresholds): Record<string, number> {
+  if (!thresholds) return {};
+  const body: Record<string, number> = {};
+  const set = (key: string, value: number | undefined) => {
+    if (value !== undefined && Number.isFinite(value)) body[key] = value;
+  };
+  set("minScore", thresholds.minimumScore);
+  set("maxFailureRate", thresholds.maximumFailureRate);
+  set("maxLatencyMs", thresholds.maximumLatencyMs);
+  set("maxCostUsd", thresholds.maximumCostUsd);
+  set(
+    "minScoreDelta",
+    thresholds.maxScoreRegression === undefined
+      ? undefined
+      : -Math.abs(thresholds.maxScoreRegression),
+  );
+  set(
+    "maxLatencyIncreasePercent",
+    thresholds.maxLatencyIncreaseRatio === undefined
+      ? undefined
+      : thresholds.maxLatencyIncreaseRatio * 100,
+  );
+  set(
+    "maxCostIncreasePercent",
+    thresholds.maxCostIncreaseRatio === undefined
+      ? undefined
+      : thresholds.maxCostIncreaseRatio * 100,
+  );
+  return body;
 }
