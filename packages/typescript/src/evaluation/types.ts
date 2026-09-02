@@ -69,6 +69,19 @@ export interface GateResult {
   experimentId: string;
   baselineExperimentId?: string;
   metrics?: Record<string, unknown>;
+  gateRunId?: string;
+}
+
+/**
+ * What the recorded decision is attributed to. Without it every CI run is
+ * filed against the commit the experiment was created on, which is the wrong
+ * one whenever a pipeline reuses an experiment.
+ */
+export interface GateProvenance {
+  source?: "cli" | "api" | "ui";
+  gitCommit?: string;
+  gitBranch?: string;
+  release?: string;
 }
 
 export interface EvaluationRunResult {

@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from importlib.util import find_spec
 from typing import Any
 
 import httpx
@@ -124,6 +125,23 @@ class TestBuildSyncClient:
             )
             with pytest.raises(NotFoundError):
                 client.get_httpx_client().get("/health")
+        client.get_httpx_client().close()
+
+    def test_400_maps_to_validation_error(self) -> None:
+        # The API's global ValidationPipe answers a rejected body with 400, so
+        # mapping only 422 left the most common validation failure as a bare
+        # AxonPushError. TypeScript maps both.
+        settings = _settings()
+        client = build_sync_client(settings)
+        with respx.mock(base_url="http://api.example.test") as router:
+            router.get("/health").mock(
+                return_value=httpx.Response(
+                    400, json={"message": ["property source should not exist"]}
+                )
+            )
+            with pytest.raises(ValidationError) as exc:
+                client.get_httpx_client().get("/health")
+        assert exc.value.status_code == 400
         client.get_httpx_client().close()
 
     def test_422_maps_to_validation_error(self) -> None:
@@ -312,9 +330,18 @@ class TestCallWithRetriesAsync:
         assert op.calls == 2
 
 
-_otel = pytest.importorskip("opentelemetry.context")
+# Guarded on the class, not the module: an `importorskip` at module scope
+# aborts the import, so every transport test above it was silently skipped
+# wherever the otel extra is not installed.
+def _otel() -> Any:
+    import opentelemetry.context
+
+    return opentelemetry.context
 
 
+# `find_spec` on a submodule raises when the parent package is absent, so the
+# check is on the distribution root.
+@pytest.mark.skipif(find_spec("opentelemetry") is None, reason="needs the otel extra")
 class TestOtelSuppression:
     """Each SDK request runs under an OTel context that flags
     ``suppress_instrumentation`` and ``suppress_http_instrumentation`` so an
@@ -328,8 +355,8 @@ class TestOtelSuppression:
 
         class _Probe:
             def sync_detailed(self, **kwargs: Any) -> Any:
-                observed["suppress_instrumentation"] = _otel.get_value("suppress_instrumentation")
-                observed["suppress_http_instrumentation"] = _otel.get_value(
+                observed["suppress_instrumentation"] = _otel().get_value("suppress_instrumentation")
+                observed["suppress_http_instrumentation"] = _otel().get_value(
                     "suppress_http_instrumentation"
                 )
                 return "ok"
@@ -341,16 +368,16 @@ class TestOtelSuppression:
             "suppress_http_instrumentation": True,
         }
         # Restored after the call.
-        assert _otel.get_value("suppress_instrumentation") is None
-        assert _otel.get_value("suppress_http_instrumentation") is None
+        assert _otel().get_value("suppress_instrumentation") is None
+        assert _otel().get_value("suppress_http_instrumentation") is None
 
     async def test_async_call_sees_suppression_keys_set(self) -> None:
         observed: dict[str, Any] = {}
 
         class _Probe:
             async def asyncio_detailed(self, **kwargs: Any) -> Any:
-                observed["suppress_instrumentation"] = _otel.get_value("suppress_instrumentation")
-                observed["suppress_http_instrumentation"] = _otel.get_value(
+                observed["suppress_instrumentation"] = _otel().get_value("suppress_instrumentation")
+                observed["suppress_http_instrumentation"] = _otel().get_value(
                     "suppress_http_instrumentation"
                 )
                 return "ok"
@@ -364,5 +391,5 @@ class TestOtelSuppression:
             "suppress_instrumentation": True,
             "suppress_http_instrumentation": True,
         }
-        assert _otel.get_value("suppress_instrumentation") is None
-        assert _otel.get_value("suppress_http_instrumentation") is None
+        assert _otel().get_value("suppress_instrumentation") is None
+        assert _otel().get_value("suppress_http_instrumentation") is None

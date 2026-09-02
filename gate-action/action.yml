@@ -83,7 +83,9 @@ inputs:
     required: false
     default: "true"
   version:
-    description: Version of @axonpush/sdk to run.
+    description: >-
+      Version of @axonpush/sdk to run. Accepts anything npx does, including a
+      path to a packed tarball, which is how the smoke test pins it.
     required: false
     default: latest
 
@@ -97,6 +99,15 @@ outputs:
   report:
     description: Path to the JSON report artifact.
     value: ${{ steps.gate.outputs.report }}
+  junit:
+    description: Path to the JUnit XML artifact.
+    value: ${{ steps.gate.outputs.junit }}
+  summary:
+    description: Path to the markdown summary written to the job summary.
+    value: ${{ steps.gate.outputs.summary }}
+  exit-code:
+    description: The CLI's exit code, for a workflow that wants the distinction.
+    value: ${{ steps.gate.outputs.exit-code }}
 
 runs:
   using: composite
@@ -104,65 +115,87 @@ runs:
     - name: Run the evaluation and gate it
       id: gate
       shell: bash
+      # Every input arrives as an environment variable rather than being
+      # interpolated into the script. `command` is by design arbitrary user
+      # code, so interpolating it would let a quote break out of the script.
       env:
         AXONPUSH_API_KEY: ${{ inputs.api-key }}
         AXONPUSH_TENANT_ID: ${{ inputs.tenant-id }}
         AXONPUSH_BASE_URL: ${{ inputs.base-url }}
         AXONPUSH_ENVIRONMENT: ${{ inputs.environment }}
+        INPUT_DATASET: ${{ inputs.dataset }}
+        INPUT_REVISION: ${{ inputs.revision }}
+        INPUT_COMMAND: ${{ inputs.command }}
+        INPUT_EXPERIMENT: ${{ inputs.experiment }}
+        INPUT_TARGET: ${{ inputs.target }}
+        INPUT_NAME: ${{ inputs.name }}
+        INPUT_EVALUATOR: ${{ inputs.evaluator }}
+        INPUT_BASELINE: ${{ inputs.baseline }}
+        INPUT_MINIMUM_SCORE: ${{ inputs.minimum-score }}
+        INPUT_MAX_FAILURE_RATE: ${{ inputs.max-failure-rate }}
+        INPUT_MAXIMUM_LATENCY_MS: ${{ inputs.maximum-latency-ms }}
+        INPUT_MAXIMUM_COST_USD: ${{ inputs.maximum-cost-usd }}
+        INPUT_MAX_SCORE_REGRESSION: ${{ inputs.max-score-regression }}
+        INPUT_MAX_LATENCY_INCREASE_RATIO: ${{ inputs.max-latency-increase-ratio }}
+        INPUT_MAX_COST_INCREASE_RATIO: ${{ inputs.max-cost-increase-ratio }}
+        INPUT_VERSION: ${{ inputs.version }}
       run: |
         set -o pipefail
 
         report="${RUNNER_TEMP}/axonpush-gate.json"
+        junit="${RUNNER_TEMP}/axonpush-gate.xml"
         summary="${RUNNER_TEMP}/axonpush-gate.md"
 
         args=(run
-          --dataset "${{ inputs.dataset }}"
-          --revision "${{ inputs.revision }}"
-          --command "${{ inputs.command }}"
+          --dataset "$INPUT_DATASET"
+          --revision "$INPUT_REVISION"
+          --command "$INPUT_COMMAND"
           --json "$report"
-          --junit "${RUNNER_TEMP}/axonpush-gate.xml"
+          --junit "$junit"
           --github-summary "$summary")
 
         add() { if [ -n "$2" ]; then args+=("$1" "$2"); fi; }
-        add --experiment "${{ inputs.experiment }}"
-        add --target "${{ inputs.target }}"
-        add --name "${{ inputs.name }}"
-        add --baseline "${{ inputs.baseline }}"
-        add --minimum-score "${{ inputs.minimum-score }}"
-        add --max-failure-rate "${{ inputs.max-failure-rate }}"
-        add --maximum-latency-ms "${{ inputs.maximum-latency-ms }}"
-        add --maximum-cost-usd "${{ inputs.maximum-cost-usd }}"
-        add --max-score-regression "${{ inputs.max-score-regression }}"
-        add --max-latency-increase-ratio "${{ inputs.max-latency-increase-ratio }}"
-        add --max-cost-increase-ratio "${{ inputs.max-cost-increase-ratio }}"
+        add --experiment "$INPUT_EXPERIMENT"
+        add --target "$INPUT_TARGET"
+        add --name "$INPUT_NAME"
+        add --baseline "$INPUT_BASELINE"
+        add --minimum-score "$INPUT_MINIMUM_SCORE"
+        add --max-failure-rate "$INPUT_MAX_FAILURE_RATE"
+        add --maximum-latency-ms "$INPUT_MAXIMUM_LATENCY_MS"
+        add --maximum-cost-usd "$INPUT_MAXIMUM_COST_USD"
+        add --max-score-regression "$INPUT_MAX_SCORE_REGRESSION"
+        add --max-latency-increase-ratio "$INPUT_MAX_LATENCY_INCREASE_RATIO"
+        add --max-cost-increase-ratio "$INPUT_MAX_COST_INCREASE_RATIO"
 
         while IFS= read -r line; do
           [ -n "$line" ] && args+=(--evaluator "$line")
-        done <<< "${{ inputs.evaluator }}"
+        done <<< "$INPUT_EVALUATOR"
 
         set +e
-        npx --yes --package "@axonpush/sdk@${{ inputs.version }}" axonpush-eval "${args[@]}"
+        npx --yes --package "@axonpush/sdk@${INPUT_VERSION}" axonpush-eval "${args[@]}"
         code=$?
         set -e
 
-        # 0 passed, 1 the gate blocked, 4 an example failed to evaluate.
-        # Anything else is the CLI itself failing and should stop the job.
+        # 0 passed, 1 the gate blocked, 4 an example failed to evaluate,
+        # 130 the run was cancelled. Anything else is the CLI itself failing
+        # and should stop the job.
         case "$code" in
           0) passed=true ;;
           1|4) passed=false ;;
+          130) echo "::notice::axonpush-eval was cancelled"; exit 0 ;;
           *) echo "::error::axonpush-eval exited with $code"; exit "$code" ;;
         esac
 
         {
           echo "passed=$passed"
           echo "report=$report"
+          echo "junit=$junit"
           echo "summary=$summary"
           echo "exit-code=$code"
         } >> "$GITHUB_OUTPUT"
 
         if [ -f "$report" ]; then
-          experiment=$(node -e "process.stdout.write(require('$report').experimentId ?? '')" || true)
-          echo "experiment-id=$experiment" >> "$GITHUB_OUTPUT"
+          echo "experiment-id=$(jq -r '.experimentId // empty' "$report")" >> "$GITHUB_OUTPUT"
         fi
 
         if [ -f "$summary" ] && [ -n "${GITHUB_STEP_SUMMARY:-}" ]; then
@@ -177,10 +210,11 @@ runs:
       shell: bash
       env:
         GH_TOKEN: ${{ github.token }}
+        SUMMARY: ${{ steps.gate.outputs.summary }}
+        PR_NUMBER: ${{ github.event.pull_request.number }}
       run: |
-        summary="${{ steps.gate.outputs.summary }}"
-        [ -f "$summary" ] || exit 0
-        gh pr comment "${{ github.event.pull_request.number }}" --body-file "$summary" || \
+        [ -f "$SUMMARY" ] || exit 0
+        gh pr comment "$PR_NUMBER" --body-file "$SUMMARY" || \
           echo "::warning::Could not post the gate comment. Grant pull-requests: write to this job."
 
     - name: Fail the build when the gate blocked

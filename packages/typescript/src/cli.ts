@@ -137,7 +137,9 @@ async function main(argv: string[]): Promise<number> {
   const datasetId = required(parsed.args, "dataset");
   const datasetRevision = required(parsed.args, "revision");
   const command = required(parsed.args, "command");
-  const client = new AxonPush();
+  // HttpEvaluationApi reads credentials from the active client, so constructing
+  // one is the configuration step rather than a spare handle to hold on to.
+  new AxonPush();
   const api = new HttpEvaluationApi();
   const configuration = jsonObject(parsed.args, "configuration");
   let experimentId =
@@ -178,8 +180,13 @@ async function main(argv: string[]): Promise<number> {
       startupTimeoutMs: optionalNumber(parsed.args, "startup-timeout"),
       signal: cancellation.signal,
     });
-    if (!parsed.args["no-gate"] && !result.cancelled)
-      result.gate = await api.gateExperiment(experimentId, thresholds(parsed.args));
+    if (!parsed.args["no-gate"] && !result.cancelled) {
+      result.gate = await api.gateExperiment(experimentId, thresholds(parsed.args), {
+        source: "cli",
+        ...(result.lineage.gitCommit ? { gitCommit: result.lineage.gitCommit } : {}),
+        ...(result.lineage.gitBranch ? { gitBranch: result.lineage.gitBranch } : {}),
+      });
+    }
     await Promise.all([
       artifact(
         typeof parsed.args.json === "string" ? parsed.args.json : undefined,

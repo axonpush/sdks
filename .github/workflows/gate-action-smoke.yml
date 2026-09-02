@@ -1,0 +1,125 @@
+name: Release gate action
+
+# The action shipped without ever having been run. It resolved `axonpush-eval`
+# from a published package that had no such binary, so it would have failed at
+# step one for every repository that adopted it. This runs it for real against
+# a stub server, on both the packed tarball and whatever is on npm, so that
+# class of failure cannot ship again.
+on:
+  push:
+    branches: ["**"]
+    paths:
+      - "gate-action/**"
+      - "packages/typescript/**"
+      - ".github/workflows/gate-action-smoke.yml"
+  pull_request:
+    paths:
+      - "gate-action/**"
+      - "packages/typescript/**"
+      - ".github/workflows/gate-action-smoke.yml"
+  workflow_dispatch:
+
+jobs:
+  lint:
+    name: action.yml is valid
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: actionlint
+        run: |
+          bash <(curl -sSfL https://raw.githubusercontent.com/rhysd/actionlint/main/scripts/download-actionlint.bash)
+          ./actionlint -color
+
+  smoke:
+    name: ${{ matrix.case.name }} (${{ matrix.source }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        # `packed` proves this commit works. `published` proves the release on
+        # npm still carries the binary the action invokes.
+        source: [packed, published]
+        case:
+          - name: passing gate
+            gate: pass
+            fail-on-gate: "true"
+            expect: success
+          - name: blocking gate
+            gate: block
+            fail-on-gate: "true"
+            expect: failure
+          - name: blocking gate, reporting only
+            gate: block
+            fail-on-gate: "false"
+            expect: success
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - uses: oven-sh/setup-bun@v2
+
+      - name: Pack this commit
+        if: matrix.source == 'packed'
+        id: pack
+        working-directory: packages/typescript
+        run: |
+          bun install --frozen-lockfile
+          bun run build
+          echo "spec=$(pwd)/$(npm pack --silent)" >> "$GITHUB_OUTPUT"
+
+      - name: Start the stub API
+        env:
+          GATE: ${{ matrix.case.gate }}
+        run: |
+          node gate-action/test/stub-server.mjs &
+          for _ in $(seq 1 30); do
+            curl -sf http://127.0.0.1:8787/__state >/dev/null && exit 0
+            sleep 1
+          done
+          echo "::error::stub server did not start"
+          exit 1
+
+      - name: Run the gate
+        id: gate
+        continue-on-error: true
+        uses: ./gate-action
+        with:
+          dataset: ds_stub
+          revision: "1"
+          target: tgt_stub
+          command: >-
+            node -e "let s='';process.stdin.on('data',c=>s+=c).on('end',()=>{const
+            i=JSON.parse(s);process.stdout.write(JSON.stringify({output:i.item.input.name.toUpperCase()})+'\n')})"
+          minimum-score: "0.95"
+          api-key: ak_stub
+          tenant-id: org_stub
+          base-url: http://127.0.0.1:8787
+          fail-on-gate: ${{ matrix.case.fail-on-gate }}
+          comment-on-pr: "false"
+          version: ${{ matrix.source == 'packed' && steps.pack.outputs.spec || 'latest' }}
+
+      - name: The outcome is the one the case expects
+        env:
+          OUTCOME: ${{ steps.gate.outcome }}
+          EXPECTED: ${{ matrix.case.expect }}
+          PASSED: ${{ steps.gate.outputs.passed }}
+          REPORT: ${{ steps.gate.outputs.report }}
+        run: |
+          if [ "$OUTCOME" != "$EXPECTED" ]; then
+            echo "::error::gate step was $OUTCOME, expected $EXPECTED"
+            exit 1
+          fi
+          test -f "$REPORT" || { echo "::error::no JSON report at $REPORT"; exit 1; }
+          jq -e '.experimentId == "exp_stub"' "$REPORT" >/dev/null
+          echo "passed=$PASSED outcome=$OUTCOME"
+
+      - name: The CLI sent the provenance the gate records
+        run: |
+          curl -sf http://127.0.0.1:8787/__state > state.json
+          jq -e '.submitted | length == 2' state.json >/dev/null \
+            || { echo "::error::results were not submitted per item"; exit 1; }
+          jq -e '.gated.source == "cli"' state.json >/dev/null \
+            || { echo "::error::gate call did not identify itself as the CLI"; exit 1; }
+          jq -e '.gated.minScore == 0.95' state.json >/dev/null \
+            || { echo "::error::threshold did not reach the gate endpoint"; exit 1; }

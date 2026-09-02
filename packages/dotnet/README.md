@@ -1,12 +1,13 @@
 # AxonPush for .NET
 
-[AxonPush](https://axonpush.xyz) ships three NuGet packages for .NET:
+[AxonPush](https://axonpush.xyz) ships four NuGet packages for .NET:
 
 | Package | What it does |
 | --- | --- |
 | `AxonPush` | HTTP client for the AxonPush events API. |
 | `AxonPush.Otel` | OpenTelemetry span exporter that maps `Activity` events to AxonPush. Reusable for any .NET OpenTelemetry workload. |
 | `AxonPush.SemanticKernel` | One-call telemetry layer for Microsoft Semantic Kernel. Flips the GenAI diagnostic switch and wires the exporter for you. |
+| `AxonPush.Cli` | The `axonpush-eval` release gate, packaged as a dotnet tool. |
 
 Targets `net8.0` and above.
 
@@ -29,6 +30,16 @@ For raw publish access:
 ```bash
 dotnet add package AxonPush
 ```
+
+For the release gate — a tool, not a dependency:
+
+```bash
+dotnet tool install --global AxonPush.Cli
+```
+
+It installs `axonpush-eval`, the same CLI the TypeScript and Python SDKs ship,
+with the same flags and exit codes. See
+[the CLI reference](https://docs.axonpush.xyz/cli/).
 
 ## Quickstart: Semantic Kernel
 

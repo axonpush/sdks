@@ -79,6 +79,11 @@ Caller-supplied options always win when defined.
 dataset revision, and sends only each result back to axonpush. It never uploads
 or executes your target code on axonpush infrastructure.
 
+It is a `bin` of this package, so `npx` resolves it without an install, or
+`npm install -g @axonpush/sdk` puts it on your `PATH`. The Python and .NET SDKs
+ship the same binary with the same flags and exit codes — see
+[the CLI reference](https://docs.axonpush.xyz/cli/).
+
 ```bash
 npx axonpush-eval run \
   --dataset ds_support --revision 3 --target target_local \

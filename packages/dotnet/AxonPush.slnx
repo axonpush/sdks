@@ -6,10 +6,12 @@
     <Project Path="src/AxonPush.Otel/AxonPush.Otel.csproj" />
     <Project Path="src/AxonPush.SemanticKernel/AxonPush.SemanticKernel.csproj" />
     <Project Path="src/AxonPush/AxonPush.csproj" />
+    <Project Path="src/AxonPush.Cli/AxonPush.Cli.csproj" />
   </Folder>
   <Folder Name="/tests/">
     <Project Path="tests/AxonPush.Otel.Tests/AxonPush.Otel.Tests.csproj" />
     <Project Path="tests/AxonPush.SemanticKernel.Tests/AxonPush.SemanticKernel.Tests.csproj" />
     <Project Path="tests/AxonPush.Tests/AxonPush.Tests.csproj" />
+    <Project Path="tests/AxonPush.Cli.Tests/AxonPush.Cli.Tests.csproj" />
   </Folder>
 </Solution>

@@ -107,7 +107,7 @@ def test_junit_reports_the_gate_as_its_own_case(passed: bool) -> None:
     run = RunResult(
         experiment_id="exp_1",
         dataset_id="ds_1",
-        dataset_revision=3,
+        dataset_revision="3",
         results=[ItemResult(item_id="first", status="passed")],
         gate=GateVerdict(passed=passed, reasons=[] if passed else ["score 0.9 is below 0.95"]),
     )

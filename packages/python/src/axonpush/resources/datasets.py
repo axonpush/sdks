@@ -79,11 +79,11 @@ class Datasets:
         return self._client._invoke(_import_revision_op, dataset_id=dataset_id, body=body)
 
     def export_revision(
-        self, dataset_id: str, format: str, revision: str
+        self, dataset_id: str, revision: str, format: str
     ) -> DatasetExportDto | None:
         """Export revision. `GET /v2/datasets/{datasetId}/revisions/{revision}/export/{format}`"""
         return self._client._invoke(
-            _export_revision_op, dataset_id=dataset_id, format=format, revision=revision
+            _export_revision_op, dataset_id=dataset_id, revision=revision, format=format
         )
 
     def items(self, dataset_id: str, revision: str) -> DatasetRevisionItemsDto | None:
@@ -136,11 +136,11 @@ class AsyncDatasets:
         return await self._client._invoke(_import_revision_op, dataset_id=dataset_id, body=body)
 
     async def export_revision(
-        self, dataset_id: str, format: str, revision: str
+        self, dataset_id: str, revision: str, format: str
     ) -> DatasetExportDto | None:
         """See :meth:`Datasets.export_revision`."""
         return await self._client._invoke(
-            _export_revision_op, dataset_id=dataset_id, format=format, revision=revision
+            _export_revision_op, dataset_id=dataset_id, revision=revision, format=format
         )
 
     async def items(self, dataset_id: str, revision: str) -> DatasetRevisionItemsDto | None:

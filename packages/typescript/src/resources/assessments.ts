@@ -35,7 +35,7 @@ export class AssessmentsResource {
   }
 
   /** Delete one. `DELETE /v2/traces/{traceId}/assessments/{assessmentId}` */
-  async delete(assessmentId: string, traceId: string): Promise<AssessmentDeleteResponseDto | null> {
-    return this.client.invoke(assessmentControllerRemove, { path: { assessmentId, traceId } });
+  async delete(traceId: string, assessmentId: string): Promise<AssessmentDeleteResponseDto | null> {
+    return this.client.invoke(assessmentControllerRemove, { path: { traceId, assessmentId } });
   }
 }

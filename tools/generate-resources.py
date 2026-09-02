@@ -40,10 +40,29 @@ RESOURCES = {
                                     'Semantic clustering over traces: clusters, flow and coverage.'),
     'TraceV2Controller': ('traces_v2', 'TracesV2Resource', 'TracesV2', 'traces_v2',
                           'Trace search with facets, spans and attribute keys.'),
+    'GatePolicyController': ('gates', 'GatesResource', 'Gates', 'gates',
+                             'Release-gate policies and the history of gate decisions.'),
+    'GateRunController': ('gates', 'GatesResource', 'Gates', 'gates',
+                          'Release-gate policies and the history of gate decisions.'),
 }
 
 # `remove` reads as the REST verb elsewhere in these SDKs
 METHOD_RENAMES = {'remove': 'delete'}
+
+# Two controllers back one resource, so their verbs need distinguishing.
+CONTROLLER_RENAMES = {
+    'GatePolicyController': {'list': 'listPolicies', 'get': 'getPolicy',
+                             'save': 'savePolicy', 'remove': 'deletePolicy'},
+    'GateRunController': {'list': 'listRuns'},
+}
+
+
+def method_name(ctrl, raw):
+    return CONTROLLER_RENAMES.get(ctrl, {}).get(raw) or METHOD_RENAMES.get(raw, raw)
+
+
+def controllers_for(mod):
+    return [c for c in sorted(RESOURCES) if RESOURCES[c][0] == mod]
 
 HTTP = ('get', 'post', 'put', 'patch', 'delete')
 
@@ -108,7 +127,10 @@ for path, item in sorted(spec['paths'].items()):
         if ctrl not in RESOURCES:
             continue
         params = op.get('parameters', [])
-        path_params = [p['name'] for p in params if p.get('in') == 'path']
+        path_params = sorted(
+            (p['name'] for p in params if p.get('in') == 'path'),
+            key=lambda n: path.index('{' + n + '}'),
+        )
         query = [(p['name'], bool(p.get('required'))) for p in params if p.get('in') == 'query']
         body = None
         rb = op.get('requestBody')
@@ -123,11 +145,23 @@ for path, item in sorted(spec['paths'].items()):
             if result:
                 break
         ops_by_ctrl.setdefault(ctrl, []).append({
-            'op': oid, 'name': METHOD_RENAMES.get(raw, raw), 'method': method, 'path': path,
+            'op': oid, 'ctrl': ctrl, 'raw': raw, 'name': method_name(ctrl, raw),
+            'method': method, 'path': path,
             'path_params': path_params, 'query': sorted(query), 'body': body,
             'result': result, 'is_list': is_list,
             'summary': op.get('summary') or '',
         })
+
+
+def py_alias(o):
+    """Unique per module: two controllers behind one resource both have `list`."""
+    if len(controllers_for(RESOURCES[o['ctrl']][0])) > 1:
+        return '_%s_%s_op' % (snake(o['ctrl'].replace('Controller', '')), snake(o['raw']))
+    return '_%s_op' % snake(o['raw'])
+
+
+def ops_for(mod):
+    return [o for ctrl in controllers_for(mod) for o in ops_by_ctrl.get(ctrl, [])]
 
 
 def ts_type(o):
@@ -161,9 +195,9 @@ def describe(o):
     return f"{head}. `{o['method'].upper()} {o['path']}`"
 
 
-def emit_ts(ctrl):
-    mod, cls, _, _, doc = RESOURCES[ctrl]
-    ops = ops_by_ctrl[ctrl]
+def emit_ts(mod):
+    _, cls, _, _, doc = RESOURCES[controllers_for(mod)[0]]
+    ops = ops_for(mod)
     gen_ops = sorted({o['op'] for o in ops})
     types = sorted({o['result'] for o in ops if o['result']} | {o['body'] for o in ops if o['body']})
     L = []
@@ -209,17 +243,20 @@ def emit_ts(ctrl):
     return NL.join(L) + NL
 
 
-def emit_py(ctrl):
-    mod, _, cls, _, doc = RESOURCES[ctrl]
-    ops = ops_by_ctrl[ctrl]
-    gen = sorted({(o['op'], snake(o['op'].replace('Controller_', 'Controller'))) for o in ops})
+def emit_py(mod):
+    _, _, cls, _, doc = RESOURCES[controllers_for(mod)[0]]
+    ops = ops_for(mod)
     types = sorted({o['result'] for o in ops if o['result']} | {o['body'] for o in ops if o['body']})
     L = ['"""' + doc + '"""', '', 'from __future__ import annotations', '',
          'from collections.abc import Mapping', 'from typing import TYPE_CHECKING, Any, List', '']
-    L.append('from axonpush._internal.api.api.' + PY_TAG[ctrl] + ' import (')
-    for oid, _m in gen:
-        L.append(f'    {snake(oid)} as _{snake(oid.split("_", 1)[1])}_op,')
-    L.append(')')
+    by_tag = {}
+    for o in ops:
+        by_tag.setdefault(PY_TAG[o['ctrl']], []).append(o)
+    for tag in sorted(by_tag):
+        L.append('from axonpush._internal.api.api.' + tag + ' import (')
+        for o in sorted(by_tag[tag], key=lambda x: x['op']):
+            L.append(f'    {snake(o["op"])} as {py_alias(o)},')
+        L.append(')')
     if types:
         L.append('from axonpush._internal.api.models import (')
         for t in types:
@@ -258,7 +295,7 @@ def emit_py(ctrl):
             L.append(f'    {ad}def {snake(o["name"])}({", ".join(args)}) -> {py_type(o)} | None:')
             body_doc = describe(o) if not is_async else f'See :meth:`{cls}.{snake(o["name"])}`.'
             L.append(f'        """{body_doc}"""')
-            call = f'_{snake(o["name"]) if o["name"] == o["op"].split("_", 1)[1] else snake(o["op"].split("_", 1)[1])}_op'
+            call = py_alias(o)
             joined = (', ' + ', '.join(kwargs)) if kwargs else ''
             if query_style(o) == 'mapping':
                 joined += ', **dict(params or {})'
@@ -268,33 +305,29 @@ def emit_py(ctrl):
     return NL.join(L).rstrip(NL) + NL
 
 
+# resolve each controller's generated python tag directory from the tree
+API_DIR = 'packages/python/src/axonpush/_internal/api/api'
 PY_TAG = {}
 for ctrl in RESOURCES:
-    # map controller -> generated python tag directory
-    sample = ops_by_ctrl.get(ctrl, [])
-    PY_TAG[ctrl] = None
-
-# resolve tag dirs from the generated tree
-API_DIR = 'packages/python/src/axonpush/_internal/api/api'
-for ctrl in RESOURCES:
     target = snake(ops_by_ctrl[ctrl][0]['op'])
-    for tag in os.listdir(API_DIR):
-        if os.path.isfile(os.path.join(API_DIR, tag, target + '.py')):
-            PY_TAG[ctrl] = tag
-            break
+    PY_TAG[ctrl] = next(
+        (tag for tag in os.listdir(API_DIR)
+         if os.path.isfile(os.path.join(API_DIR, tag, target + '.py'))),
+        None,
+    )
     if PY_TAG[ctrl] is None:
         print('  ! no tag dir for', ctrl, target)
 
-written = 0
-for ctrl in sorted(RESOURCES):
-    mod = RESOURCES[ctrl][0]
+modules = sorted({spec_[0] for spec_ in RESOURCES.values()})
+for mod in modules:
     ts_path = f'packages/typescript/src/resources/{mod.replace("_", "-")}.ts'
     py_path = f'packages/python/src/axonpush/resources/{mod}.py'
     if not DRY:
-        io.open(ts_path, 'w', encoding='utf-8', newline=NL).write(emit_ts(ctrl))
-        io.open(py_path, 'w', encoding='utf-8', newline=NL).write(emit_py(ctrl))
-    written += 1
-    print('  %-28s %2d ops -> %s + %s' % (ctrl, len(ops_by_ctrl[ctrl]), ts_path.split('/')[-1], py_path.split('/')[-1]))
+        io.open(ts_path, 'w', encoding='utf-8', newline=NL).write(emit_ts(mod))
+        io.open(py_path, 'w', encoding='utf-8', newline=NL).write(emit_py(mod))
+    print('  %-28s %2d ops -> %s + %s' % (
+        '+'.join(controllers_for(mod)), len(ops_for(mod)),
+        ts_path.split('/')[-1], py_path.split('/')[-1]))
 
-print(NL + '%d resources, %d operations' % (written, sum(len(v) for v in ops_by_ctrl.values())))
+print(NL + '%d resources, %d operations' % (len(modules), sum(len(v) for v in ops_by_ctrl.values())))
 print('(dry run; pass --apply to write)' if DRY else 'written')

@@ -20,7 +20,7 @@ jobs:
         with:
           node-version: 22
 
-      - uses: axonpush/sdks/gate-action@v1
+      - uses: axonpush/sdks/gate-action@gate-action-v1
         with:
           dataset: ${{ vars.AXONPUSH_DATASET }}
           revision: 4
@@ -44,14 +44,17 @@ in   {"type":"axonpush.evaluation.input","experimentId":"…","item":{"id":"…"
 out  {"output": <any JSON value>, "traceId"?: "…", "totalTokens"?: 12, "costUsd"?: 0.01, "error"?: "…"}
 ```
 
-The same protocol is understood by `axonpush-eval` in both the TypeScript and
-Python SDKs, so the script you write here also runs on your laptop.
+The same protocol is understood by `axonpush-eval` in the TypeScript, Python
+and .NET SDKs, so the script you write here also runs on your laptop, and a
+pipeline written against one runs against any of them.
 
 ## Thresholds
 
-Leave them all unset and the gate passes: a team that has not configured a gate
-is not blocked by one. Set what you care about, or store the thresholds once as
-a gate policy on the dataset and let CI inherit them.
+Leave them all unset and the gate resolves the stored policy for the
+experiment's evaluation target, then its dataset. With no enabled policy either,
+the gate passes: a team that has not configured a gate is not blocked by one.
+Set thresholds here to override the policy for one run, or manage the policy
+once with `client.gates.savePolicy(...)` and let every pipeline inherit it.
 
 | Input | Blocks when |
 |---|---|
@@ -78,6 +81,11 @@ worth trusting.
 | `passed` | `true` when the gate passed |
 | `experiment-id` | the experiment the gate ran against |
 | `report` | path to the JSON report on the runner |
+| `junit` | path to the JUnit XML, so test reporters pick the run up |
+| `summary` | path to the markdown written to the job summary |
+| `exit-code` | the CLI's exit code, when the distinction matters |
 
-A JUnit XML file is written alongside the report, so test reporters pick the
-run up without extra configuration.
+Exit codes: `0` passed, `1` the gate blocked, `2` invalid usage, `3` the API
+failed, `4` an example failed to evaluate, `130` cancelled. The action treats
+`1` and `4` as a failed gate, passes `130` through as a cancellation, and stops
+the job on anything else.

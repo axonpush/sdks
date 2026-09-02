@@ -19,6 +19,7 @@ const {
   experimentControllerSubmitResults,
 } = await import("../_internal/api/sdk.gen.js");
 const { EvaluationApiError, HttpEvaluationApi, toWireThresholds } = await import("./api.js");
+const { ValidationError } = await import("../errors.js");
 
 /**
  * These calls used to bypass the transport entirely. The point of each
@@ -104,6 +105,36 @@ describe("HttpEvaluationApi", () => {
     expect(op).toBe(experimentControllerGate);
     expect(args).toMatchObject({ path: { experimentId: "exp_1" }, body: { minScore: 0.8 } });
     expect(gate.passed).toBe(true);
+  });
+
+  it("gates without provenance when the server is too old to accept it", async () => {
+    // forbidNonWhitelisted turns an unknown field into a 400 for the whole
+    // call, so a self-hoster on an older server would fail every run.
+    invokeSync
+      .mockRejectedValueOnce(new ValidationError("property source should not exist"))
+      .mockResolvedValueOnce({ passed: true, reasons: [], experimentId: "exp_1" });
+
+    const gate = await new HttpEvaluationApi().gateExperiment(
+      "exp_1",
+      { minimumScore: 0.8 },
+      { source: "cli", gitCommit: "abc1234" },
+    );
+
+    expect(gate.passed).toBe(true);
+    expect(invokeSync).toHaveBeenCalledTimes(2);
+    const [, first] = invokeSync.mock.calls[0] as [unknown, { body: Record<string, unknown> }];
+    const [, second] = invokeSync.mock.calls[1] as [unknown, { body: Record<string, unknown> }];
+    expect(first.body).toMatchObject({ source: "cli", gitCommit: "abc1234" });
+    expect(second.body).toEqual({ minScore: 0.8 });
+  });
+
+  it("does not retry a 400 that had no provenance to blame", async () => {
+    invokeSync.mockRejectedValue(new ValidationError("minScore must be a number"));
+
+    await expect(
+      new HttpEvaluationApi().gateExperiment("exp_1", { minimumScore: 0.8 }),
+    ).rejects.toThrow(ValidationError);
+    expect(invokeSync).toHaveBeenCalledTimes(1);
   });
 
   it("sends threshold names the gate endpoint actually accepts", () => {

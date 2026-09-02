@@ -1,0 +1,28 @@
+using AxonPush.Internal;
+using AxonPush.Internal.Api;
+
+namespace AxonPush.Resources;
+
+/// <summary>Generated from the TypeScript surface. See tools/generate-dotnet-resources.py.</summary>
+public sealed class AnalyticsResource : ResourceBase
+{
+    private readonly AnalyticsControllerClient _analyticsControllerClient;
+
+    internal AnalyticsResource(AxonPushTransport transport)
+        : base(transport)
+    {
+        _analyticsControllerClient = new AnalyticsControllerClient(Http);
+    }
+
+    /// <summary>Breakdown. <c>GET /v2/analytics/breakdown</c></summary>
+    public Task<AnalyticsBreakdownResponseDto> BreakdownAsync(Dimension dimension, string? agent = null, string? appId = null, System.Collections.Generic.IDictionary<string, string>? attr = null, System.Collections.Generic.IDictionary<string, double>? attrMax = null, System.Collections.Generic.IDictionary<string, double>? attrMin = null, string? environment = null, string? environmentId = null, string? from = null, string? maxCostUsd = null, string? maxDurationMs = null, string? maxTokens = null, Measure? measure = null, string? minCostUsd = null, string? minDurationMs = null, string? minTokens = null, string? model = null, string? promptId = null, string? promptVersionId = null, string? provider = null, string? query = null, string? release = null, System.Collections.Generic.IDictionary<string, string>? res = null, string? semanticKind = null, string? service = null, string? sessionId = null, string? spanKind = null, string? spanMinDurationMs = null, string? spanModel = null, string? spanStatus = null, string? spanTool = null, string? status = null, string? to = null, string? tool = null, string? userId = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        => _analyticsControllerClient.BreakdownAsync(dimension, agent, appId, attr, attrMax, attrMin, environment, environmentId, from, maxCostUsd, maxDurationMs, maxTokens, measure, minCostUsd, minDurationMs, minTokens, model, promptId, promptVersionId, provider, query, release, res, semanticKind, service, sessionId, spanKind, spanMinDurationMs, spanModel, spanStatus, spanTool, status, to, tool, userId, cancellationToken);
+
+    /// <summary>Compare. <c>GET /v2/analytics/compare</c></summary>
+    public Task<AnalyticsCompareResponseDto> CompareAsync(string baseline, string candidate, Dimension2 dimension, string? agent = null, string? appId = null, System.Collections.Generic.IDictionary<string, string>? attr = null, System.Collections.Generic.IDictionary<string, double>? attrMax = null, System.Collections.Generic.IDictionary<string, double>? attrMin = null, string? environment = null, string? environmentId = null, string? maxCostUsd = null, string? maxDurationMs = null, string? maxTokens = null, string? minCostUsd = null, string? minDurationMs = null, string? minTokens = null, string? model = null, string? promptId = null, string? promptVersionId = null, string? provider = null, string? query = null, string? release = null, System.Collections.Generic.IDictionary<string, string>? res = null, string? semanticKind = null, string? service = null, string? sessionId = null, string? spanKind = null, string? spanMinDurationMs = null, string? spanModel = null, string? spanStatus = null, string? spanTool = null, string? status = null, string? tool = null, string? userId = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        => _analyticsControllerClient.CompareAsync(baseline, candidate, dimension, agent, appId, attr, attrMax, attrMin, environment, environmentId, maxCostUsd, maxDurationMs, maxTokens, minCostUsd, minDurationMs, minTokens, model, promptId, promptVersionId, provider, query, release, res, semanticKind, service, sessionId, spanKind, spanMinDurationMs, spanModel, spanStatus, spanTool, status, tool, userId, cancellationToken);
+
+    /// <summary>Timeseries. <c>GET /v2/analytics/timeseries</c></summary>
+    public Task<AnalyticsTimeseriesResponseDto> TimeseriesAsync(string? agent = null, string? appId = null, System.Collections.Generic.IDictionary<string, string>? attr = null, System.Collections.Generic.IDictionary<string, double>? attrMax = null, System.Collections.Generic.IDictionary<string, double>? attrMin = null, string? environment = null, string? environmentId = null, string? from = null, Interval? interval = null, string? maxCostUsd = null, string? maxDurationMs = null, string? maxTokens = null, Measure2? measure = null, string? minCostUsd = null, string? minDurationMs = null, string? minTokens = null, string? model = null, string? promptId = null, string? promptVersionId = null, string? provider = null, string? query = null, string? release = null, System.Collections.Generic.IDictionary<string, string>? res = null, string? semanticKind = null, string? service = null, string? sessionId = null, string? spanKind = null, string? spanMinDurationMs = null, string? spanModel = null, string? spanStatus = null, string? spanTool = null, string? status = null, string? to = null, string? tool = null, string? userId = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        => _analyticsControllerClient.TimeseriesAsync(agent, appId, attr, attrMax, attrMin, environment, environmentId, from, interval, maxCostUsd, maxDurationMs, maxTokens, measure, minCostUsd, minDurationMs, minTokens, model, promptId, promptVersionId, provider, query, release, res, semanticKind, service, sessionId, spanKind, spanMinDurationMs, spanModel, spanStatus, spanTool, status, to, tool, userId, cancellationToken);
+}

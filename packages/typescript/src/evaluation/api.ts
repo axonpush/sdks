@@ -12,6 +12,7 @@ import { AxonPushError } from "../errors.js";
 import type {
   DatasetItem,
   EvaluationItemResult,
+  GateProvenance,
   GateResult,
   GateThresholds,
   GitLineage,
@@ -38,6 +39,7 @@ export interface EvaluationApi {
   gateExperiment(
     experimentId: string,
     thresholds?: GateThresholds,
+    provenance?: GateProvenance,
     signal?: AbortSignal,
   ): Promise<GateResult>;
 }
@@ -161,7 +163,10 @@ export class HttpEvaluationApi implements EvaluationApi {
     signal?: AbortSignal,
   ): Promise<{ id: string }> {
     const data = await this.call<unknown>(experimentControllerCreate, { body: input, signal });
-    const id = asRecord(data).id;
+    // The API answers with `experimentId`; this read `id`, so every run that
+    // created its own experiment — the first thing a new user does — failed.
+    const record = asRecord(data);
+    const id = record.experimentId ?? record.id;
     if (typeof id !== "string") {
       throw new EvaluationApiError("Create experiment response was invalid");
     }
@@ -191,19 +196,49 @@ export class HttpEvaluationApi implements EvaluationApi {
   async gateExperiment(
     experimentId: string,
     thresholds?: GateThresholds,
+    provenance?: GateProvenance,
     signal?: AbortSignal,
   ): Promise<GateResult> {
-    const data = await this.call<unknown>(experimentControllerGate, {
-      path: { experimentId },
-      body: toWireThresholds(thresholds),
-      signal,
-    });
+    const wireThresholds = toWireThresholds(thresholds);
+    const wireProvenance = toWireProvenance(provenance);
+    const send = (body: Record<string, unknown>) =>
+      this.call<unknown>(experimentControllerGate, { path: { experimentId }, body, signal });
+
+    let data: unknown;
+    try {
+      data = await send({ ...wireThresholds, ...wireProvenance });
+    } catch (error) {
+      // The API validates with `forbidNonWhitelisted`, so a server older than
+      // the provenance fields rejects the whole call. Losing the commit
+      // attribution beats failing every run in a pipeline we cannot upgrade.
+      if (!isUnknownFieldRejection(error, wireProvenance)) throw error;
+      warnOnce(
+        `This axonpush server does not accept ${Object.keys(wireProvenance).join(", ")} on the gate. ` +
+          "The decision will be recorded without them; upgrade the server to attribute it to a commit.",
+      );
+      data = await send(wireThresholds);
+    }
+
     const record = asRecord(data);
     if (typeof record.passed !== "boolean") {
       throw new EvaluationApiError("Gate response was invalid");
     }
     return record as unknown as GateResult;
   }
+}
+
+const isUnknownFieldRejection = (
+  error: unknown,
+  provenance: Record<string, string>,
+): error is AxonPushError =>
+  Object.keys(provenance).length > 0 && error instanceof AxonPushError && error.statusCode === 400;
+
+let warned = false;
+
+function warnOnce(message: string): void {
+  if (warned) return;
+  warned = true;
+  process.stderr.write(`axonpush: ${message}\n`);
 }
 
 /**
@@ -248,5 +283,20 @@ export function toWireThresholds(thresholds?: GateThresholds): Record<string, nu
       ? undefined
       : thresholds.maxCostIncreaseRatio * 100,
   );
+  return body;
+}
+
+/**
+ * The gate endpoint validates with `forbidNonWhitelisted`, so only the fields
+ * it declares may be sent. `gitDirty` is recorded on the experiment, not on
+ * the decision, and would be rejected here.
+ */
+export function toWireProvenance(provenance?: GateProvenance): Record<string, string> {
+  if (!provenance) return {};
+  const body: Record<string, string> = {};
+  for (const key of ["source", "gitCommit", "gitBranch", "release"] as const) {
+    const value = provenance[key];
+    if (value) body[key] = value;
+  }
   return body;
 }

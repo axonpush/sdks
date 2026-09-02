@@ -18,7 +18,8 @@ rebuild lazily — see :meth:`AsyncAxonPush._get_client`.
 from __future__ import annotations
 
 import asyncio
-from typing import TYPE_CHECKING, Any, Callable, TypeVar
+from importlib import import_module
+from typing import TYPE_CHECKING, Any, Callable, Generic, TypeVar, cast, overload
 
 from pydantic import HttpUrl, SecretStr
 
@@ -34,8 +35,59 @@ from axonpush._redaction import redact_telemetry
 
 if TYPE_CHECKING:
     from axonpush._internal.api.client import AuthenticatedClient
+    from axonpush.resources.events import AsyncEvents, Events
+    from axonpush.resources.channels import AsyncChannels, Channels
+    from axonpush.resources.apps import AsyncApps, Apps
+    from axonpush.resources.environments import AsyncEnvironments, Environments
+    from axonpush.resources.webhooks import AsyncWebhooks, Webhooks
+    from axonpush.resources.traces import AsyncTraces, Traces
+    from axonpush.resources.api_keys import AsyncApiKeys, ApiKeys
+    from axonpush.resources.organizations import AsyncOrganizations, Organizations
+    from axonpush.resources.prompts import AsyncPrompts, Prompts
+    from axonpush.resources.datasets import AsyncDatasets, Datasets
+    from axonpush.resources.evaluators import AsyncEvaluators, Evaluators
+    from axonpush.resources.experiments import AsyncExperiments, Experiments
+    from axonpush.resources.evaluation_targets import AsyncEvaluationTargets, EvaluationTargets
+    from axonpush.resources.alerts import AsyncAlerts, Alerts
+    from axonpush.resources.assessments import AsyncAssessments, Assessments
+    from axonpush.resources.analytics import AsyncAnalytics, Analytics
+    from axonpush.resources.issues import AsyncIssues, Issues
+    from axonpush.resources.online_evaluations import AsyncOnlineEvaluations, OnlineEvaluations
+    from axonpush.resources.trace_intelligence import AsyncTraceIntelligence, TraceIntelligence
+    from axonpush.resources.traces_v2 import AsyncTracesV2, TracesV2
+    from axonpush.resources.gates import AsyncGates, Gates
 
 R = TypeVar("R")
+
+
+class _LazyResource(Generic[R]):
+    """One resource, imported on first access and kept for the client's life.
+
+    Twenty accessors per client, twice over, were twenty near-identical
+    properties typed ``Any`` that rebuilt the resource on every attribute
+    read. A descriptor states the type once and caches the instance.
+    """
+
+    def __init__(self, module: str, class_name: str) -> None:
+        self._module = module
+        self._class_name = class_name
+        self._slot = f"_resource_{class_name}"
+
+    @overload
+    def __get__(self, instance: None, owner: type[object]) -> _LazyResource[R]: ...
+
+    @overload
+    def __get__(self, instance: object, owner: type[object]) -> R: ...
+
+    def __get__(self, instance: object | None, owner: type[object]) -> _LazyResource[R] | R:
+        if instance is None:
+            return self
+        cached = getattr(instance, self._slot, None)
+        if cached is None:
+            module = import_module(f"axonpush.resources.{self._module}")
+            cached = getattr(module, self._class_name)(instance)
+            setattr(instance, self._slot, cached)
+        return cast(R, cached)
 
 
 def _build_settings(
@@ -212,111 +264,52 @@ class AxonPush:
     def __exit__(self, *exc: object) -> None:
         self.close()
 
-    def _resource(self, module_name: str, class_name: str) -> Any:
-        import importlib
+    events: _LazyResource[Events] = _LazyResource("events", "Events")
 
-        module = importlib.import_module(f"axonpush.resources.{module_name}")
-        return getattr(module, class_name)(self)
+    channels: _LazyResource[Channels] = _LazyResource("channels", "Channels")
 
-    @property
-    def events(self) -> Any:
-        """Events resource accessor (lazy import)."""
-        return self._resource("events", "Events")
+    apps: _LazyResource[Apps] = _LazyResource("apps", "Apps")
 
-    @property
-    def channels(self) -> Any:
-        """Channels resource accessor (lazy import)."""
-        return self._resource("channels", "Channels")
+    environments: _LazyResource[Environments] = _LazyResource("environments", "Environments")
 
-    @property
-    def apps(self) -> Any:
-        """Apps resource accessor (lazy import)."""
-        return self._resource("apps", "Apps")
+    webhooks: _LazyResource[Webhooks] = _LazyResource("webhooks", "Webhooks")
 
-    @property
-    def environments(self) -> Any:
-        """Environments resource accessor (lazy import)."""
-        return self._resource("environments", "Environments")
+    traces: _LazyResource[Traces] = _LazyResource("traces", "Traces")
 
-    @property
-    def webhooks(self) -> Any:
-        """Webhooks resource accessor (lazy import)."""
-        return self._resource("webhooks", "Webhooks")
+    api_keys: _LazyResource[ApiKeys] = _LazyResource("api_keys", "ApiKeys")
 
-    @property
-    def traces(self) -> Any:
-        """Traces resource accessor (lazy import)."""
-        return self._resource("traces", "Traces")
+    organizations: _LazyResource[Organizations] = _LazyResource("organizations", "Organizations")
 
-    @property
-    def api_keys(self) -> Any:
-        """API keys resource accessor (lazy import)."""
-        return self._resource("api_keys", "ApiKeys")
+    prompts: _LazyResource[Prompts] = _LazyResource("prompts", "Prompts")
 
-    @property
-    def organizations(self) -> Any:
-        """Organizations resource accessor (lazy import)."""
-        return self._resource("organizations", "Organizations")
+    datasets: _LazyResource[Datasets] = _LazyResource("datasets", "Datasets")
 
-    @property
-    def prompts(self) -> Any:
-        """Prompt registry. Lazy import."""
-        return self._resource("prompts", "Prompts")
+    evaluators: _LazyResource[Evaluators] = _LazyResource("evaluators", "Evaluators")
 
-    @property
-    def datasets(self) -> Any:
-        """Evaluation datasets and revisions. Lazy import."""
-        return self._resource("datasets", "Datasets")
+    experiments: _LazyResource[Experiments] = _LazyResource("experiments", "Experiments")
 
-    @property
-    def evaluators(self) -> Any:
-        """Evaluators and their versions. Lazy import."""
-        return self._resource("evaluators", "Evaluators")
+    evaluation_targets: _LazyResource[EvaluationTargets] = _LazyResource(
+        "evaluation_targets", "EvaluationTargets"
+    )
 
-    @property
-    def experiments(self) -> Any:
-        """Evaluation runs, results and the gate. Lazy import."""
-        return self._resource("experiments", "Experiments")
+    alerts: _LazyResource[Alerts] = _LazyResource("alerts", "Alerts")
 
-    @property
-    def evaluation_targets(self) -> Any:
-        """Systems an experiment runs against. Lazy import."""
-        return self._resource("evaluation_targets", "EvaluationTargets")
+    assessments: _LazyResource[Assessments] = _LazyResource("assessments", "Assessments")
 
-    @property
-    def alerts(self) -> Any:
-        """Alert rules over metric thresholds. Lazy import."""
-        return self._resource("alerts", "Alerts")
+    analytics: _LazyResource[Analytics] = _LazyResource("analytics", "Analytics")
 
-    @property
-    def assessments(self) -> Any:
-        """Judgements attached to a trace. Lazy import."""
-        return self._resource("assessments", "Assessments")
+    issues: _LazyResource[Issues] = _LazyResource("issues", "Issues")
 
-    @property
-    def analytics(self) -> Any:
-        """Timeseries, breakdowns and comparisons. Lazy import."""
-        return self._resource("analytics", "Analytics")
+    online_evaluations: _LazyResource[OnlineEvaluations] = _LazyResource(
+        "online_evaluations", "OnlineEvaluations"
+    )
 
-    @property
-    def issues(self) -> Any:
-        """Clustered failures and triage. Lazy import."""
-        return self._resource("issues", "Issues")
+    trace_intelligence: _LazyResource[TraceIntelligence] = _LazyResource(
+        "trace_intelligence", "TraceIntelligence"
+    )
 
-    @property
-    def online_evaluations(self) -> Any:
-        """Rules that evaluate live traffic. Lazy import."""
-        return self._resource("online_evaluations", "OnlineEvaluations")
-
-    @property
-    def trace_intelligence(self) -> Any:
-        """Semantic clustering over traces. Lazy import."""
-        return self._resource("trace_intelligence", "TraceIntelligence")
-
-    @property
-    def traces_v2(self) -> Any:
-        """Trace search with facets and spans. Lazy import."""
-        return self._resource("traces_v2", "TracesV2")
+    traces_v2: _LazyResource[TracesV2] = _LazyResource("traces_v2", "TracesV2")
+    gates: _LazyResource[Gates] = _LazyResource("gates", "Gates")
 
     def connect_realtime(self, **kwargs: Any) -> Any:
         """Open a realtime (MQTT) connection.
@@ -489,111 +482,56 @@ class AsyncAxonPush:
     async def __aexit__(self, *exc: object) -> None:
         await self.close()
 
-    def _resource(self, module_name: str, class_name: str) -> Any:
-        import importlib
+    events: _LazyResource[AsyncEvents] = _LazyResource("events", "AsyncEvents")
 
-        module = importlib.import_module(f"axonpush.resources.{module_name}")
-        return getattr(module, class_name)(self)
+    channels: _LazyResource[AsyncChannels] = _LazyResource("channels", "AsyncChannels")
 
-    @property
-    def events(self) -> Any:
-        """Events resource accessor (lazy import)."""
-        return self._resource("events", "AsyncEvents")
+    apps: _LazyResource[AsyncApps] = _LazyResource("apps", "AsyncApps")
 
-    @property
-    def channels(self) -> Any:
-        """Channels resource accessor (lazy import)."""
-        return self._resource("channels", "AsyncChannels")
+    environments: _LazyResource[AsyncEnvironments] = _LazyResource(
+        "environments", "AsyncEnvironments"
+    )
 
-    @property
-    def apps(self) -> Any:
-        """Apps resource accessor (lazy import)."""
-        return self._resource("apps", "AsyncApps")
+    webhooks: _LazyResource[AsyncWebhooks] = _LazyResource("webhooks", "AsyncWebhooks")
 
-    @property
-    def environments(self) -> Any:
-        """Environments resource accessor (lazy import)."""
-        return self._resource("environments", "AsyncEnvironments")
+    traces: _LazyResource[AsyncTraces] = _LazyResource("traces", "AsyncTraces")
 
-    @property
-    def webhooks(self) -> Any:
-        """Webhooks resource accessor (lazy import)."""
-        return self._resource("webhooks", "AsyncWebhooks")
+    api_keys: _LazyResource[AsyncApiKeys] = _LazyResource("api_keys", "AsyncApiKeys")
 
-    @property
-    def traces(self) -> Any:
-        """Traces resource accessor (lazy import)."""
-        return self._resource("traces", "AsyncTraces")
+    organizations: _LazyResource[AsyncOrganizations] = _LazyResource(
+        "organizations", "AsyncOrganizations"
+    )
 
-    @property
-    def api_keys(self) -> Any:
-        """API keys resource accessor (lazy import)."""
-        return self._resource("api_keys", "AsyncApiKeys")
+    prompts: _LazyResource[AsyncPrompts] = _LazyResource("prompts", "AsyncPrompts")
 
-    @property
-    def organizations(self) -> Any:
-        """Organizations resource accessor (lazy import)."""
-        return self._resource("organizations", "AsyncOrganizations")
+    datasets: _LazyResource[AsyncDatasets] = _LazyResource("datasets", "AsyncDatasets")
 
-    @property
-    def prompts(self) -> Any:
-        """Prompt registry. Lazy import."""
-        return self._resource("prompts", "AsyncPrompts")
+    evaluators: _LazyResource[AsyncEvaluators] = _LazyResource("evaluators", "AsyncEvaluators")
 
-    @property
-    def datasets(self) -> Any:
-        """Evaluation datasets and revisions. Lazy import."""
-        return self._resource("datasets", "AsyncDatasets")
+    experiments: _LazyResource[AsyncExperiments] = _LazyResource("experiments", "AsyncExperiments")
 
-    @property
-    def evaluators(self) -> Any:
-        """Evaluators and their versions. Lazy import."""
-        return self._resource("evaluators", "AsyncEvaluators")
+    evaluation_targets: _LazyResource[AsyncEvaluationTargets] = _LazyResource(
+        "evaluation_targets", "AsyncEvaluationTargets"
+    )
 
-    @property
-    def experiments(self) -> Any:
-        """Evaluation runs, results and the gate. Lazy import."""
-        return self._resource("experiments", "AsyncExperiments")
+    alerts: _LazyResource[AsyncAlerts] = _LazyResource("alerts", "AsyncAlerts")
 
-    @property
-    def evaluation_targets(self) -> Any:
-        """Systems an experiment runs against. Lazy import."""
-        return self._resource("evaluation_targets", "AsyncEvaluationTargets")
+    assessments: _LazyResource[AsyncAssessments] = _LazyResource("assessments", "AsyncAssessments")
 
-    @property
-    def alerts(self) -> Any:
-        """Alert rules over metric thresholds. Lazy import."""
-        return self._resource("alerts", "AsyncAlerts")
+    analytics: _LazyResource[AsyncAnalytics] = _LazyResource("analytics", "AsyncAnalytics")
 
-    @property
-    def assessments(self) -> Any:
-        """Judgements attached to a trace. Lazy import."""
-        return self._resource("assessments", "AsyncAssessments")
+    issues: _LazyResource[AsyncIssues] = _LazyResource("issues", "AsyncIssues")
 
-    @property
-    def analytics(self) -> Any:
-        """Timeseries, breakdowns and comparisons. Lazy import."""
-        return self._resource("analytics", "AsyncAnalytics")
+    online_evaluations: _LazyResource[AsyncOnlineEvaluations] = _LazyResource(
+        "online_evaluations", "AsyncOnlineEvaluations"
+    )
 
-    @property
-    def issues(self) -> Any:
-        """Clustered failures and triage. Lazy import."""
-        return self._resource("issues", "AsyncIssues")
+    trace_intelligence: _LazyResource[AsyncTraceIntelligence] = _LazyResource(
+        "trace_intelligence", "AsyncTraceIntelligence"
+    )
 
-    @property
-    def online_evaluations(self) -> Any:
-        """Rules that evaluate live traffic. Lazy import."""
-        return self._resource("online_evaluations", "AsyncOnlineEvaluations")
-
-    @property
-    def trace_intelligence(self) -> Any:
-        """Semantic clustering over traces. Lazy import."""
-        return self._resource("trace_intelligence", "AsyncTraceIntelligence")
-
-    @property
-    def traces_v2(self) -> Any:
-        """Trace search with facets and spans. Lazy import."""
-        return self._resource("traces_v2", "AsyncTracesV2")
+    traces_v2: _LazyResource[AsyncTracesV2] = _LazyResource("traces_v2", "AsyncTracesV2")
+    gates: _LazyResource[AsyncGates] = _LazyResource("gates", "AsyncGates")
 
     async def connect_realtime(self, **kwargs: Any) -> Any:
         """Open an asynchronous realtime (MQTT) connection.

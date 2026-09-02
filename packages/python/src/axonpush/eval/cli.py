@@ -16,27 +16,30 @@ from __future__ import annotations
 import argparse
 import json
 import os
+import signal
 import sys
+import threading
 from typing import Any
 
-from axonpush._internal.api.models import (
-    CreateExperimentDto,
-    ExperimentGateDto,
-    SubmitLocalExperimentResultsDto,
-)
 from axonpush.client import AxonPush
 from axonpush.exceptions import AxonPushError
 
+from .api import EvaluationApiError, HttpEvaluationApi
 from .git import capture_git_lineage
 from .reports import (
-    GateVerdict,
     RunResult,
     to_github_summary,
     to_json_report,
     to_junit_xml,
     write_artifact,
 )
-from .runner import DEFAULT_CONCURRENCY, DEFAULT_TIMEOUT_SECONDS, run_items
+from .runner import (
+    DEFAULT_CONCURRENCY,
+    DEFAULT_STARTUP_TIMEOUT_SECONDS,
+    DEFAULT_TIMEOUT_SECONDS,
+    LocalRunnerOptions,
+    run_local_evaluation,
+)
 from .thresholds import THRESHOLD_OPTIONS, to_wire_thresholds
 
 EXIT_SUCCESS = 0
@@ -58,7 +61,7 @@ def build_parser() -> argparse.ArgumentParser:
     sub = parser.add_subparsers(dest="command", required=True)
     run = sub.add_parser("run", help="Run a dataset revision and gate the result")
     run.add_argument("--dataset", required=True, help="Dataset id")
-    run.add_argument("--revision", required=True, type=int, help="Dataset revision")
+    run.add_argument("--revision", required=True, help="Dataset revision")
     run.add_argument("--command", required=True, help="Evaluator command; JSON in, JSON out")
     run.add_argument("--experiment", help="Existing experiment id to submit into")
     run.add_argument("--target", help="Evaluation target id, when creating an experiment")
@@ -78,6 +81,16 @@ def build_parser() -> argparse.ArgumentParser:
         default=DEFAULT_TIMEOUT_SECONDS,
         help="Per-example evaluator timeout in seconds",
     )
+    run.add_argument(
+        "--startup-timeout",
+        type=float,
+        default=DEFAULT_STARTUP_TIMEOUT_SECONDS,
+        help="Seconds to wait for the experiment to enter running",
+    )
+    run.add_argument(
+        "--configuration",
+        help="Target configuration as JSON; sent to the evaluator and a new experiment",
+    )
     run.add_argument("--no-gate", action="store_true", help="Do not invoke the release gate")
     run.add_argument("--json", dest="json_path", help="Write a JSON artifact")
     run.add_argument("--junit", dest="junit_path", help="Write a JUnit XML artifact")
@@ -93,8 +106,7 @@ def build_parser() -> argparse.ArgumentParser:
 
 def _threshold_values(args: argparse.Namespace) -> dict[str, float | None]:
     return {
-        option.flag: getattr(args, option.flag.replace("-", "_"))
-        for option in THRESHOLD_OPTIONS
+        option.flag: getattr(args, option.flag.replace("-", "_")) for option in THRESHOLD_OPTIONS
     }
 
 
@@ -104,98 +116,54 @@ def _evaluator_versions(entries: list[str]) -> list[dict[str, Any]]:
         head, separator, tail = entry.rpartition("@")
         if not separator or not head or not tail:
             raise ValueError("--evaluator must have the form <id>@<version>")
-        versions.append({"evaluatorId": head, "version": int(tail)})
+        versions.append({"evaluatorId": head, "version": tail})
     return versions
 
 
-def _unwrap(value: Any, field: str) -> Any:
-    """Read a field off a generated model or a plain dict, whichever came back."""
-    if value is None:
+def _configuration(raw: str | None) -> dict[str, Any] | None:
+    if not raw:
         return None
-    if isinstance(value, dict):
-        return value.get(field)
-    return getattr(value, field, None)
+    try:
+        parsed = json.loads(raw)
+    except ValueError as error:
+        raise ValueError(f"--configuration must be JSON: {error}") from error
+    if not isinstance(parsed, dict):
+        raise ValueError("--configuration must be a JSON object")
+    return parsed
 
 
-def run_command(args: argparse.Namespace) -> int:
-    # fail_open is the right default for tracing inside an application — an
-    # observability call must never take the app down. It is the wrong default
-    # here: a gate that silently passes because the API was unreachable is
-    # worse than no gate.
-    client = AxonPush(fail_open=False)
+def _install_cancellation() -> threading.Event:
+    cancel = threading.Event()
 
-    with client:
-        experiment_id = args.experiment
-        if not experiment_id:
-            if not args.target:
-                raise ValueError("--target is required when --experiment is not given")
-            created = client.experiments.create(
-                CreateExperimentDto.from_dict({
-                    "name": args.name or f"local-{args.dataset}-r{args.revision}",
-                    "datasetId": args.dataset,
-                    "datasetRevision": args.revision,
-                    "targetId": args.target,
-                    "evaluatorVersions": _evaluator_versions(args.evaluator),
-                    **({"baselineExperimentId": args.baseline} if args.baseline else {}),
-                    **capture_git_lineage(),
-                })
-            )
-            experiment_id = _unwrap(created, "experiment_id") or _unwrap(created, "experimentId")
-            if not experiment_id:
-                raise AxonPushError("The API did not return an experiment id")
+    def handle(_signal: int, _frame: object) -> None:
+        cancel.set()
 
-        items_response = client.datasets.items(args.dataset, str(args.revision))
-        items = _unwrap(items_response, "data") or []
-        normalised = [item if isinstance(item, dict) else item.to_dict() for item in items]
+    for name in ("SIGINT", "SIGTERM"):
+        handler = getattr(signal, name, None)
+        if handler is not None:
+            signal.signal(handler, handle)
+    return cancel
 
-        results = run_items(
-            args.command,
-            experiment_id,
-            normalised,
-            concurrency=args.concurrency,
-            timeout_seconds=args.timeout,
-        )
 
-        client.experiments.submit_results(
-            experiment_id,
-            SubmitLocalExperimentResultsDto.from_dict({
-                "results": [
-                    {
-                        "itemId": item.item_id,
-                        "output": item.output,
-                        **({"error": item.error} if item.error else {}),
-                        **({"latencyMs": item.latency_ms} if item.latency_ms is not None else {}),
-                        **(
-                            {"totalTokens": item.total_tokens}
-                            if item.total_tokens is not None
-                            else {}
-                        ),
-                        **({"costUsd": item.cost_usd} if item.cost_usd is not None else {}),
-                        **({"traceId": item.trace_id} if item.trace_id else {}),
-                    }
-                    for item in results
-                ]
-            }),
-        )
+def _create_experiment(api: HttpEvaluationApi, args: argparse.Namespace) -> str:
+    if not args.target:
+        raise ValueError("--target is required when --experiment is not given")
+    configuration = _configuration(args.configuration)
+    return api.create_experiment(
+        {
+            "name": args.name or f"local-{args.dataset}-r{args.revision}",
+            "datasetId": args.dataset,
+            "datasetRevision": args.revision,
+            "targetId": args.target,
+            "evaluatorVersions": _evaluator_versions(args.evaluator),
+            **({"baselineExperimentId": args.baseline} if args.baseline else {}),
+            **({"configuration": configuration} if configuration else {}),
+            **capture_git_lineage(),
+        }
+    )
 
-        run = RunResult(
-            experiment_id=experiment_id,
-            dataset_id=args.dataset,
-            dataset_revision=args.revision,
-            results=results,
-        )
 
-        if not args.no_gate:
-            verdict = client.experiments.gate(
-                experiment_id,
-                ExperimentGateDto.from_dict(to_wire_thresholds(_threshold_values(args))),
-            )
-            run.gate = GateVerdict(
-                passed=bool(_unwrap(verdict, "passed")),
-                reasons=list(_unwrap(verdict, "reasons") or []),
-                metrics=dict(_unwrap(verdict, "metrics") or {}),
-            )
-
+def _write_artifacts(args: argparse.Namespace, run: RunResult) -> None:
     write_artifact(args.json_path, to_json_report(run))
     write_artifact(args.junit_path, to_junit_xml(run))
     write_artifact(
@@ -204,6 +172,48 @@ def run_command(args: argparse.Namespace) -> int:
     )
     sys.stdout.write(to_json_report(run))
 
+
+def run_command(args: argparse.Namespace) -> int:
+    # fail_open is the right default for tracing inside an application — an
+    # observability call must never take the app down. It is the wrong default
+    # here: a gate that silently passes because the API was unreachable is
+    # worse than no gate.
+    cancel = _install_cancellation()
+
+    with AxonPush(fail_open=False) as client:
+        api = HttpEvaluationApi(client)
+        experiment_id = args.experiment or _create_experiment(api, args)
+
+        run = run_local_evaluation(
+            api,
+            LocalRunnerOptions(
+                dataset_id=args.dataset,
+                dataset_revision=str(args.revision),
+                experiment_id=experiment_id,
+                command=args.command,
+                concurrency=args.concurrency,
+                timeout_seconds=args.timeout,
+                startup_timeout_seconds=args.startup_timeout,
+                configuration=_configuration(args.configuration),
+            ),
+            cancel,
+        )
+
+        if not args.no_gate and not run.cancelled:
+            run.gate = api.gate_experiment(
+                experiment_id,
+                to_wire_thresholds(_threshold_values(args)),
+                {
+                    "source": "cli",
+                    "gitCommit": run.lineage.git_commit,
+                    "gitBranch": run.lineage.git_branch,
+                },
+            )
+
+    _write_artifacts(args, run)
+
+    if run.cancelled:
+        return EXIT_CANCELLED
     if run.gate and not run.gate.passed:
         return EXIT_GATE_FAILED
     if any(item.status != "passed" for item in run.results):
@@ -223,13 +233,14 @@ def main(argv: list[str] | None = None) -> int:
     except KeyboardInterrupt:
         sys.stderr.write("axonpush-eval: cancelled\n")
         return EXIT_CANCELLED
-    except AxonPushError as error:
+    except (EvaluationApiError, AxonPushError) as error:
         sys.stderr.write(f"axonpush-eval: {error}\n")
         return EXIT_REMOTE_FAILURE
-    except (ValueError, TypeError, json.JSONDecodeError) as error:
+    except ValueError as error:
         sys.stderr.write(f"axonpush-eval: {error}\n")
+        parser.print_usage(sys.stderr)
         return EXIT_USAGE
 
 
-if __name__ == "__main__":  # pragma: no cover - module entry point
+if __name__ == "__main__":  # pragma: no cover
     raise SystemExit(main())

@@ -26,6 +26,11 @@ pip install axonpush[all]             # everything above
 
 `paho-mqtt` (sync) and `aiomqtt` (async) are core dependencies — realtime works out of the box.
 
+Installing the package also puts **`axonpush-eval`** on your `PATH`: the release
+gate that replays a dataset revision against a candidate in CI and exits
+non-zero when it regresses. Same flags and exit codes as the TypeScript and
+.NET builds. See [the CLI reference](https://docs.axonpush.xyz/cli/).
+
 ## Quick start
 
 ```python
@@ -116,6 +121,12 @@ The client exposes Stripe-style resource accessors:
 | `client.traces` | `list`, `summary`, `events`, `stats` |
 | `client.api_keys` | `list`, `create`, `delete` |
 | `client.organizations` | `list`, `get`, `create`, `update`, `delete`, `invite`, `remove_member`, `transfer_ownership` |
+| `client.datasets` | `list`, `get`, `create`, `delete`, `revisions`, `create_revision`, `items`, … |
+| `client.experiments` | `list`, `get`, `create`, `run`, `cancel`, `results`, `compare`, `gate`, … |
+| `client.gates` | `list_policies`, `get_policy`, `save_policy`, `delete_policy`, `list_runs` |
+
+Every resource has an `Async` sibling on `AsyncAxonPush`, and is importable
+from `axonpush.resources`.
 
 `events.list()` and `events.search()` return an `EventListResponseDto` with `.data` (list) and `.meta` (cursor + count).
 
