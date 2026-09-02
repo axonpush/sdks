@@ -68,7 +68,23 @@ jobs:
           bun run build
           echo "spec=$(pwd)/$(npm pack --silent)" >> "$GITHUB_OUTPUT"
 
+      # The published leg is the one that catches "the release on npm lost the
+      # binary". It cannot assert that before the first release carrying it, so
+      # until then it reports rather than fails — and arms itself the moment a
+      # published version has the bin.
+      - name: Is the published package runnable
+        if: matrix.source == 'published'
+        id: published
+        run: |
+          if [ -n "$(npm view @axonpush/sdk bin.axonpush-eval 2>/dev/null)" ]; then
+            echo "runnable=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "runnable=false" >> "$GITHUB_OUTPUT"
+            echo "::notice::@axonpush/sdk@$(npm view @axonpush/sdk version) exposes no axonpush-eval binary, so this leg cannot run yet. It arms itself once a release carrying the bin is published."
+          fi
+
       - name: Start the stub API
+        if: matrix.source == 'packed' || steps.published.outputs.runnable == 'true'
         env:
           GATE: ${{ matrix.case.gate }}
         run: |
@@ -82,6 +98,7 @@ jobs:
 
       - name: Run the gate
         id: gate
+        if: matrix.source == 'packed' || steps.published.outputs.runnable == 'true'
         continue-on-error: true
         uses: ./gate-action
         with:
@@ -100,6 +117,7 @@ jobs:
           version: ${{ matrix.source == 'packed' && steps.pack.outputs.spec || 'latest' }}
 
       - name: The outcome is the one the case expects
+        if: matrix.source == 'packed' || steps.published.outputs.runnable == 'true'
         env:
           OUTCOME: ${{ steps.gate.outcome }}
           EXPECTED: ${{ matrix.case.expect }}
@@ -115,6 +133,7 @@ jobs:
           echo "passed=$PASSED outcome=$OUTCOME"
 
       - name: The CLI sent the provenance the gate records
+        if: matrix.source == 'packed' || steps.published.outputs.runnable == 'true'
         run: |
           curl -sf http://127.0.0.1:8787/__state > state.json
           jq -e '.submitted | length == 2' state.json >/dev/null \

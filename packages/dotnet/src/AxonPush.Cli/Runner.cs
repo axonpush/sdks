@@ -282,11 +282,15 @@ internal static class Runner
     /// <summary>The last JSON line carrying an `output` field wins; diagnostics may precede it.</summary>
     private static JsonElement ReadOutput(string stdout)
     {
-        var lines = stdout
-            .Split('\n', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
-            .Reverse();
-        foreach (var line in lines)
+        // Indexed rather than `.Reverse()`: on an array that can bind to the
+        // span-based MemoryExtensions.Reverse, which returns void, and which
+        // SDK version decides the winner.
+        var lines = stdout.Split(
+            '\n',
+            StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+        for (var index = lines.Length - 1; index >= 0; index--)
         {
+            var line = lines[index];
             try
             {
                 var parsed = JsonDocument.Parse(line).RootElement;
