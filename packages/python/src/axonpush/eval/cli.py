@@ -174,10 +174,7 @@ def _write_artifacts(args: argparse.Namespace, run: RunResult) -> None:
 
 
 def run_command(args: argparse.Namespace) -> int:
-    # fail_open is the right default for tracing inside an application — an
-    # observability call must never take the app down. It is the wrong default
-    # here: a gate that silently passes because the API was unreachable is
-    # worse than no gate.
+    # fail_open off: a gate that passes because the API was down is worse than no gate.
     cancel = _install_cancellation()
 
     with AxonPush(fail_open=False) as client:

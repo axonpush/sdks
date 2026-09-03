@@ -108,8 +108,7 @@ describe("HttpEvaluationApi", () => {
   });
 
   it("gates without provenance when the server is too old to accept it", async () => {
-    // forbidNonWhitelisted turns an unknown field into a 400 for the whole
-    // call, so a self-hoster on an older server would fail every run.
+    // forbidNonWhitelisted turns an unknown field into a 400 for the whole call.
     invokeSync
       .mockRejectedValueOnce(new ValidationError("property source should not exist"))
       .mockResolvedValueOnce({ passed: true, reasons: [], experimentId: "exp_1" });
@@ -138,8 +137,7 @@ describe("HttpEvaluationApi", () => {
   });
 
   it("sends threshold names the gate endpoint actually accepts", () => {
-    // The server validates with forbidNonWhitelisted, so an unknown key is a
-    // 400 rather than an ignored field. These are the seven it accepts.
+    // forbidNonWhitelisted: these are the seven names the gate accepts.
     const accepted = new Set([
       "minScore",
       "maxFailureRate",

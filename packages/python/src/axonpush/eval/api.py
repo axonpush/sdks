@@ -168,10 +168,7 @@ class HttpEvaluationApi:
         try:
             verdict = send({**wire_thresholds, **wire_provenance})
         except AxonPushError as error:
-            # The API validates with forbidNonWhitelisted, so a server older
-            # than the provenance fields rejects the whole call. Losing the
-            # commit attribution beats failing every run in a pipeline we
-            # cannot upgrade.
+            # forbidNonWhitelisted: a server older than these fields rejects the whole call.
             if error.status_code != 400 or not wire_provenance:
                 raise
             _warn_once(

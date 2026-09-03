@@ -128,9 +128,7 @@ class TestBuildSyncClient:
         client.get_httpx_client().close()
 
     def test_400_maps_to_validation_error(self) -> None:
-        # The API's global ValidationPipe answers a rejected body with 400, so
-        # mapping only 422 left the most common validation failure as a bare
-        # AxonPushError. TypeScript maps both.
+        # The API's ValidationPipe answers a rejected body with 400, not 422.
         settings = _settings()
         client = build_sync_client(settings)
         with respx.mock(base_url="http://api.example.test") as router:
@@ -330,17 +328,15 @@ class TestCallWithRetriesAsync:
         assert op.calls == 2
 
 
-# Guarded on the class, not the module: an `importorskip` at module scope
-# aborts the import, so every transport test above it was silently skipped
-# wherever the otel extra is not installed.
+# Guarded on the class, not the module: an `importorskip` at module scope aborts
+# the import, silently skipping every transport test above it.
 def _otel() -> Any:
     import opentelemetry.context
 
     return opentelemetry.context
 
 
-# `find_spec` on a submodule raises when the parent package is absent, so the
-# check is on the distribution root.
+# `find_spec` on a submodule raises when the parent is absent, so check the root.
 @pytest.mark.skipif(find_spec("opentelemetry") is None, reason="needs the otel extra")
 class TestOtelSuppression:
     """Each SDK request runs under an OTel context that flags
@@ -367,7 +363,6 @@ class TestOtelSuppression:
             "suppress_instrumentation": True,
             "suppress_http_instrumentation": True,
         }
-        # Restored after the call.
         assert _otel().get_value("suppress_instrumentation") is None
         assert _otel().get_value("suppress_http_instrumentation") is None
 

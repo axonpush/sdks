@@ -15,14 +15,15 @@ import io, json, os, pathlib, re, sys
 NL = chr(10)
 DRY = '--apply' not in sys.argv
 
-SPEC = 'contract/openapi.sdk.json'
-TS_DIR = 'packages/typescript/src/resources'
-GENERATED = 'packages/dotnet/src/AxonPush/Internal/Api/AxonPushApi.g.cs'
-OUT_DIR = 'packages/dotnet/src/AxonPush/Resources'
-CLIENT = 'packages/dotnet/src/AxonPush/AxonPushClient.cs'
+ROOT = pathlib.Path(__file__).resolve().parent.parent
+SPEC = ROOT / 'contract/openapi.sdk.json'
+TS_DIR = ROOT / 'packages/typescript/src/resources'
+GENERATED = ROOT / 'packages/dotnet/src/AxonPush/Internal/Api/AxonPushApi.g.cs'
+OUT_DIR = ROOT / 'packages/dotnet/src/AxonPush/Resources'
+CLIENT = ROOT / 'packages/dotnet/src/AxonPush/AxonPushClient.cs'
 
-# events keeps its hand-written resource: publishing is telemetry and stays
-# fail-open, which a generated passthrough would silently drop.
+# events stays hand-written: publishing honours fail-open, which a generated
+# passthrough would drop.
 SKIP = {'_client.ts', 'index.ts', 'events.ts'}
 
 
@@ -216,10 +217,10 @@ for module, (class_name, methods) in sorted(resources.items()):
     if not methods:
         print('  ! no methods parsed for', module)
         continue
-    path = os.path.join(OUT_DIR, class_name + '.cs')
+    path = OUT_DIR / (class_name + '.cs')
     source = emit(class_name, methods)
     if not DRY:
-        os.makedirs(OUT_DIR, exist_ok=True)
+        OUT_DIR.mkdir(parents=True, exist_ok=True)
         io.open(path, 'w', encoding='utf-8', newline=NL).write(source)
     written.append((class_name, len(methods)))
     print('  %-32s %2d methods -> %s.cs' % (module, len(methods), class_name))
@@ -247,7 +248,7 @@ for prop, cls in accessors:
 partial.append('    }')
 partial.append('}')
 if not DRY:
-    io.open(CLIENT.replace('.cs', '.Resources.g.cs'), 'w', encoding='utf-8', newline=NL).write(
+    io.open(CLIENT.with_name('AxonPushClient.Resources.g.cs'), 'w', encoding='utf-8', newline=NL).write(
         NL.join(partial) + NL
     )
 print(NL + '%d resources, %d methods' % (len(written), sum(count for _, count in written)))

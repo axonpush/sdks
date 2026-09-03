@@ -56,10 +56,8 @@ export interface CreateExperimentOptions extends GitLineage {
 
 /**
  * Raised when the evaluation API answers with a shape the runner cannot use.
- *
- * Transport failures now surface as the ordinary {@link AxonPushError} tree,
- * because these calls go through the same chokepoint as every other request.
- * The class stays for the CLI's exit-code mapping and for callers catching it.
+ * Transport failures surface as the ordinary {@link AxonPushError} tree; this
+ * class drives the CLI's exit-code mapping.
  */
 export class EvaluationApiError extends AxonPushError {
   constructor(message: string) {
@@ -96,13 +94,8 @@ function normalizeItems(payload: unknown): DatasetItem[] {
 }
 
 /**
- * Evaluation API backed by the generated client.
- *
- * This used to be a hand-written `fetch` layer with its own timeout, error
- * class and header assembly, written before the v2 routes reached the
- * contract. It sent `x-api-key` and `authorization: Bearer` together, and an
- * `?environment=` query no v2 evaluation route reads. Going through
- * {@link invokeSync} means retries, the shared error tree, one auth path and
+ * Evaluation API backed by the generated client. Going through
+ * {@link invokeSync} gives it retries, the shared error tree, one auth path and
  * the `X-Axonpush-Environment` header the rest of the SDK sends.
  */
 export class HttpEvaluationApi implements EvaluationApi {
@@ -113,8 +106,7 @@ export class HttpEvaluationApi implements EvaluationApi {
   constructor(private readonly options: { maxRetries?: number } = {}) {}
 
   private async call<T>(op: GeneratedOp<T>, args: unknown): Promise<T> {
-    // failOpen is off: a runner that silently skips a submission would report a
-    // green evaluation it never actually ran
+    // failOpen is off: a skipped submission would report an evaluation never run.
     const result = await invokeSync<T>(op, args, {
       failOpen: false,
       maxRetries: this.options.maxRetries,
@@ -163,8 +155,6 @@ export class HttpEvaluationApi implements EvaluationApi {
     signal?: AbortSignal,
   ): Promise<{ id: string }> {
     const data = await this.call<unknown>(experimentControllerCreate, { body: input, signal });
-    // The API answers with `experimentId`; this read `id`, so every run that
-    // created its own experiment — the first thing a new user does — failed.
     const record = asRecord(data);
     const id = record.experimentId ?? record.id;
     if (typeof id !== "string") {
@@ -208,9 +198,7 @@ export class HttpEvaluationApi implements EvaluationApi {
     try {
       data = await send({ ...wireThresholds, ...wireProvenance });
     } catch (error) {
-      // The API validates with `forbidNonWhitelisted`, so a server older than
-      // the provenance fields rejects the whole call. Losing the commit
-      // attribution beats failing every run in a pipeline we cannot upgrade.
+      // forbidNonWhitelisted: a server older than these fields rejects the whole call.
       if (!isUnknownFieldRejection(error, wireProvenance)) throw error;
       warnOnce(
         `This axonpush server does not accept ${Object.keys(wireProvenance).join(", ")} on the gate. ` +
@@ -244,13 +232,7 @@ function warnOnce(message: string): void {
 /**
  * Translate the SDK's threshold names into the ones the gate endpoint accepts.
  *
- * These two vocabularies had drifted apart completely: the SDK sent
- * `minimumScore`/`maxCostIncreaseRatio`, the API accepts
- * `minScore`/`maxCostIncreasePercent`, and the server validates with
- * `forbidNonWhitelisted`, so every threshold the CLI was asked to enforce came
- * back as a 400 instead of a gate decision.
- *
- * Two of the conversions are more than a rename:
+ * Two conversions are more than a rename:
  * - `maxScoreRegression` is how far the score may fall (positive), while
  *   `minScoreDelta` is the lowest acceptable delta (negative).
  * - the ratio options are fractions; the API takes percentages.
@@ -287,9 +269,8 @@ export function toWireThresholds(thresholds?: GateThresholds): Record<string, nu
 }
 
 /**
- * The gate endpoint validates with `forbidNonWhitelisted`, so only the fields
- * it declares may be sent. `gitDirty` is recorded on the experiment, not on
- * the decision, and would be rejected here.
+ * `forbidNonWhitelisted`: only the four fields the gate declares may be sent.
+ * `gitDirty` belongs to the experiment, not the decision, and is rejected here.
  */
 export function toWireProvenance(provenance?: GateProvenance): Record<string, string> {
   if (!provenance) return {};

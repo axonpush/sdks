@@ -25,8 +25,6 @@ export function toJUnitXml(result: EvaluationRunResult): string {
     const kind = entry.status === "cancelled" ? "skipped" : "failure";
     return `  <testcase ${attrs}><${kind} message="${xml(entry.error ?? entry.status)}"/></testcase>`;
   });
-  // The gate is the point of the run, so CI should show it as a failing test
-  // rather than only as a non-zero exit code.
   if (result.gate && !result.gate.passed) {
     cases.push(
       `  <testcase classname="axonpush.evaluation" name="release gate" time="0.000"><failure message="gate failed">${xml(result.gate.reasons.join("; "))}</failure></testcase>`,

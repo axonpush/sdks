@@ -35,9 +35,8 @@ internal sealed class AxonPushTransport : IDisposable
         _options = options;
         _logger = (loggerFactory ?? NullLoggerFactory.Instance).CreateLogger<AxonPushTransport>();
 
-        // An injected client is a test seam or a caller-managed pool. Either way
-        // it becomes the terminal hop of our pipeline rather than replacing it,
-        // so headers and retries apply in both cases.
+        // An injected client terminates the pipeline rather than replacing it,
+        // so headers and retries apply to it too.
         HttpMessageHandler terminal = injectedClient is null
             ? new HttpClientHandler()
             : new ForwardingHandler(injectedClient);
@@ -152,8 +151,7 @@ internal sealed class ForwardingHandler : HttpMessageHandler
         HttpRequestMessage request,
         CancellationToken cancellationToken)
     {
-        // Our pipeline has already sent this message, and a message may only be
-        // sent once. The caller's client needs its own copy.
+        // A message may only be sent once, and ours already has.
         var body = await HttpRequestCloning.BufferAsync(request, cancellationToken)
             .ConfigureAwait(false);
         var forwarded = HttpRequestCloning.Clone(request, body);

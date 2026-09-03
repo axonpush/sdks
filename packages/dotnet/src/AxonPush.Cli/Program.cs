@@ -5,8 +5,7 @@ using AxonPush;
 using AxonPush.Cli;
 using AxonPush.Internal.Api;
 
-// Exit codes match the TypeScript and Python CLIs, because CI configuration is
-// written against the number, not the language.
+// CI is written against the number, so these match the other two CLIs exactly.
 const int ExitSuccess = 0;
 const int ExitGateFailed = 1;
 const int ExitUsage = 2;
@@ -63,10 +62,7 @@ try
         eventArgs.Cancel = true;
         cancellation.Cancel();
     };
-    // SIGTERM as well as Ctrl-C: a cancelled CI job sends the former, and a
-    // run that ignores it leaves an experiment running forever. Registered
-    // with a `using` rather than on ProcessExit, which fires after the token
-    // source is disposed and would throw on the way out.
+    // Not ProcessExit: it fires after the token source is disposed.
     using var sigterm = PosixSignalRegistration.Create(PosixSignal.SIGTERM, context =>
     {
         context.Cancel = true;

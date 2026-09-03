@@ -102,7 +102,7 @@ internal static class Runner
             }
             catch (Exception exception) when (exception is not OutOfMemoryException)
             {
-                // The local cancellation is authoritative; the exit code stands.
+                // The local cancellation stands whether or not the server agrees.
             }
         }
 
@@ -233,8 +233,6 @@ internal static class Runner
         string payload,
         CancellationToken cancellationToken)
     {
-        // The command is a shell string by design: it runs only on the caller's
-        // machine and makes ordinary CI commands ergonomic.
         var startInfo = new ProcessStartInfo(OperatingSystem.IsWindows() ? "cmd.exe" : "/bin/sh")
         {
             RedirectStandardInput = true,
@@ -245,9 +243,7 @@ internal static class Runner
         };
         if (OperatingSystem.IsWindows())
         {
-            // `/d /s /c "..."` is cmd's "strip the outer quotes, take the rest
-            // verbatim" form. Passing the command through ArgumentList instead
-            // re-quotes it and cmd then treats the quotes as part of the path.
+            // ArgumentList re-quotes, and cmd then reads the quotes as part of the path.
             startInfo.Arguments = $"/d /s /c \"{command}\"";
         }
         else
@@ -282,9 +278,7 @@ internal static class Runner
     /// <summary>The last JSON line carrying an `output` field wins; diagnostics may precede it.</summary>
     private static JsonElement ReadOutput(string stdout)
     {
-        // Indexed rather than `.Reverse()`: on an array that can bind to the
-        // span-based MemoryExtensions.Reverse, which returns void, and which
-        // SDK version decides the winner.
+        // Not `.Reverse()`: on an array that can bind to the span overload, which returns void.
         var lines = stdout.Split(
             '\n',
             StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
@@ -301,7 +295,6 @@ internal static class Runner
             }
             catch (JsonException)
             {
-                // Keep looking for the single protocol result line.
             }
         }
 

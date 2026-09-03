@@ -6,8 +6,7 @@ namespace AxonPush.Cli.Tests;
 /// <summary>The gate is the product claim; these hold it to the contract.</summary>
 public class ThresholdTests
 {
-    // The seven names the gate endpoint accepts. The server validates with
-    // forbidNonWhitelisted, so anything else is a 400 rather than an ignored field.
+    // forbidNonWhitelisted: these are the seven names the gate accepts.
     private static readonly HashSet<string> AcceptedWireNames =
     [
         "minScore",

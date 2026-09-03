@@ -1,10 +1,6 @@
 /**
- * The smallest server the release gate can run against.
- *
- * The smoke test needs to prove the action wiring — that the published package
- * exposes `axonpush-eval`, that the flags reach it, that a blocking gate ends
- * the job — without a live backend or a real API key. This implements only the
- * six routes the CLI touches, and lets the test choose the verdict.
+ * The smallest server the release gate can run against: the six routes the CLI
+ * touches, with the verdict chosen by the environment.
  *
  *   node stub-server.mjs                    # gate passes
  *   GATE=block node stub-server.mjs         # gate blocks
@@ -14,9 +10,7 @@ import { createServer } from "node:http";
 
 const port = Number(process.env.PORT ?? 8787);
 const blocking = process.env.GATE === "block";
-// Stands in for a self-hosted server predating the provenance fields. Its
-// global pipe runs with forbidNonWhitelisted, so an unknown key is a 400 for
-// the whole call rather than an ignored field.
+// forbidNonWhitelisted: an unknown key is a 400 for the whole call.
 const rejectsProvenance = process.env.PROVENANCE === "reject";
 const PROVENANCE_FIELDS = ["source", "gitCommit", "gitBranch", "release"];
 const item = (itemId, name) => ({
@@ -33,10 +27,7 @@ const items = process.env.ITEMS
 const submitted = [];
 let gated = null;
 
-/**
- * A complete ExperimentDto. The Python client parses responses strictly, so a
- * stub that answers with a convenient subset only proves the TypeScript path.
- */
+/** A complete ExperimentDto: the Python and .NET clients parse strictly. */
 const experiment = (status) => ({
   orgId: "org_stub",
   experimentId: "exp_stub",
@@ -90,7 +81,6 @@ const routes = [
     },
   ],
   [/^POST \/v2\/experiments\/[^/]+\/cancel$/, () => experiment("cancelled")],
-  // The test reads this back to assert what the CLI actually sent.
   [/^GET \/__state$/, () => ({ submitted, gated })],
 ];
 
@@ -109,7 +99,6 @@ createServer((request, response) => {
 
     const raw = Buffer.concat(chunks).toString("utf-8");
     const answer = route[1](raw ? JSON.parse(raw) : undefined);
-    // A handler returns a body, or `{ status, body }` when it needs to fail.
     const failed = answer && typeof answer.status === "number";
     response.writeHead(failed ? answer.status : 200, { "content-type": "application/json" });
     response.end(JSON.stringify(failed ? answer.body : answer));

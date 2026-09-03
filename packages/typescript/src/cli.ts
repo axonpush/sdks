@@ -137,8 +137,7 @@ async function main(argv: string[]): Promise<number> {
   const datasetId = required(parsed.args, "dataset");
   const datasetRevision = required(parsed.args, "revision");
   const command = required(parsed.args, "command");
-  // HttpEvaluationApi reads credentials from the active client, so constructing
-  // one is the configuration step rather than a spare handle to hold on to.
+  // Constructing the client is the configuration step; HttpEvaluationApi reads it.
   new AxonPush();
   const api = new HttpEvaluationApi();
   const configuration = jsonObject(parsed.args, "configuration");

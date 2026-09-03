@@ -1,9 +1,6 @@
 """Artifacts a CI run leaves behind: JSON, JUnit XML and a GitHub summary.
 
-Byte-comparable with the TypeScript CLI's artifacts. They had drifted — no
-timestamps, no lineage, a JUnit file without `classname` or `time`, a summary
-without the commit — which meant a pipeline could not be moved between the two
-without rewriting whatever consumed the report.
+Byte-comparable with the TypeScript and .NET CLIs' artifacts.
 """
 
 from __future__ import annotations
@@ -114,8 +111,6 @@ def to_junit_xml(run: RunResult) -> str:
             f'  <testcase {attrs}><{kind} message="{_xml(item.error or item.status)}"/></testcase>'
         )
     if run.gate and not run.gate.passed:
-        # The gate is the point of the run, so CI should show it as a failing
-        # test rather than only as a non-zero exit code.
         lines.append(
             f'  <testcase classname="{TESTSUITE_NAME}" name="release gate" time="0.000">'
             f'<failure message="gate failed">{_xml("; ".join(run.gate.reasons))}</failure>'

@@ -46,7 +46,6 @@ RESOURCES = {
                           'Release-gate policies and the history of gate decisions.'),
 }
 
-# `remove` reads as the REST verb elsewhere in these SDKs
 METHOD_RENAMES = {'remove': 'delete'}
 
 # Two controllers back one resource, so their verbs need distinguishing.
@@ -66,8 +65,8 @@ def controllers_for(mod):
 
 HTTP = ('get', 'post', 'put', 'patch', 'delete')
 
-# `from` is a Python keyword, and a filter surface of 30+ parameters is
-# unusable as keyword arguments, so those operations take one mapping instead.
+# `from` is a Python keyword, and 30+ filter parameters are unusable as keyword
+# arguments, so these operations take one mapping instead.
 PY_KEYWORDS = {'from', 'import', 'class', 'in', 'is', 'and', 'or', 'not', 'None',
                'lambda', 'global', 'pass', 'return', 'def', 'del', 'for', 'if'}
 MAX_EXPLICIT_QUERY = 3
@@ -173,8 +172,7 @@ def ts_type(o):
 def py_type(o):
     if not o['result']:
         return 'Any'
-    # `List`, not `list`: a method named `list` shadows the builtin in the
-    # class body, so `-> list[X]` would resolve to the method
+    # `List`, not `list`: a method named `list` shadows the builtin in the class body.
     return f"List[{o['result']}]" if o['is_list'] else o['result']
 
 
@@ -305,7 +303,6 @@ def emit_py(mod):
     return NL.join(L).rstrip(NL) + NL
 
 
-# resolve each controller's generated python tag directory from the tree
 API_DIR = 'packages/python/src/axonpush/_internal/api/api'
 PY_TAG = {}
 for ctrl in RESOURCES:

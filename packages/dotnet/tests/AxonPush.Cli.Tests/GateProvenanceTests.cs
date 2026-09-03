@@ -7,9 +7,8 @@ using Xunit;
 namespace AxonPush.Cli.Tests;
 
 /// <summary>
-/// The gate call against a server older than the provenance fields. It
-/// validates with forbidNonWhitelisted, so an unknown field is a 400 for the
-/// whole call rather than an ignored key.
+/// The gate call against a server older than the provenance fields, whose
+/// forbidNonWhitelisted pipe answers an unknown field with a 400.
 /// </summary>
 public class GateProvenanceTests
 {
