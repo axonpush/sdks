@@ -1,0 +1,41 @@
+{
+  "runtime": "Default",
+  "documentGenerator": {
+    "fromDocument": {
+      "json": "../../contract/openapi.sdk.json"
+    }
+  },
+  "codeGenerators": {
+    "openApiToCSharpClient": {
+      "className": "{controller}Client",
+      "operationGenerationMode": "MultipleClientsFromOperationId",
+      "namespace": "AxonPush.Internal.Api",
+      "generateClientClasses": true,
+      "generateClientInterfaces": false,
+      "injectHttpClient": true,
+      "disposeHttpClient": false,
+      "useBaseUrl": false,
+      "generateBaseUrlProperty": false,
+      "generateOptionalParameters": true,
+      "generateExceptionClasses": true,
+      "exceptionClass": "AxonPushApiException",
+      "wrapDtoExceptions": true,
+      "generateDtoTypes": true,
+      "generateResponseClasses": true,
+      "requiredPropertiesMustBeDefined": false,
+      "generateNullableReferenceTypes": true,
+      "generateOptionalPropertiesAsNullable": true,
+      "dateTimeType": "System.DateTimeOffset",
+      "arrayType": "System.Collections.Generic.ICollection",
+      "arrayInstanceType": "System.Collections.ObjectModel.Collection",
+      "dictionaryType": "System.Collections.Generic.IDictionary",
+      "dictionaryInstanceType": "System.Collections.Generic.Dictionary",
+      "jsonLibrary": "SystemTextJson",
+      "generateJsonMethods": false,
+      "generateUpdateJsonSerializerSettingsMethod": true,
+      "useRequestAndResponseSerializationSettings": false,
+      "classStyle": "Poco",
+      "output": "src/AxonPush/Internal/Api/AxonPushApi.g.cs"
+    }
+  }
+}

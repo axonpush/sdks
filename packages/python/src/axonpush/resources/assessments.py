@@ -43,9 +43,9 @@ class Assessments:
         """Create one. `POST /v2/traces/{traceId}/assessments`"""
         return self._client._invoke(_create_op, trace_id=trace_id, body=body)
 
-    def delete(self, assessment_id: str, trace_id: str) -> AssessmentDeleteResponseDto | None:
+    def delete(self, trace_id: str, assessment_id: str) -> AssessmentDeleteResponseDto | None:
         """Delete one. `DELETE /v2/traces/{traceId}/assessments/{assessmentId}`"""
-        return self._client._invoke(_remove_op, assessment_id=assessment_id, trace_id=trace_id)
+        return self._client._invoke(_remove_op, trace_id=trace_id, assessment_id=assessment_id)
 
 
 class AsyncAssessments:
@@ -70,8 +70,8 @@ class AsyncAssessments:
         """See :meth:`Assessments.create`."""
         return await self._client._invoke(_create_op, trace_id=trace_id, body=body)
 
-    async def delete(self, assessment_id: str, trace_id: str) -> AssessmentDeleteResponseDto | None:
+    async def delete(self, trace_id: str, assessment_id: str) -> AssessmentDeleteResponseDto | None:
         """See :meth:`Assessments.delete`."""
         return await self._client._invoke(
-            _remove_op, assessment_id=assessment_id, trace_id=trace_id
+            _remove_op, trace_id=trace_id, assessment_id=assessment_id
         )

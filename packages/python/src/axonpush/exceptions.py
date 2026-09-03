@@ -210,7 +210,8 @@ def from_response(
         return ForbiddenError(message, **common)
     if status_code == 404:
         return NotFoundError(message, **common)
-    if status_code == 422 or code == "validation_error":
+    # 400 as well as 422: the ValidationPipe answers a rejected body with 400.
+    if status_code in (400, 422) or code == "validation_error":
         return ValidationError(message, **common)
     if status_code == 429:
         retry_after = _parse_retry_after(headers.get("retry-after"))

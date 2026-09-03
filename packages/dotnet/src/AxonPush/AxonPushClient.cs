@@ -8,7 +8,7 @@ namespace AxonPush;
 /// Entry point for the AxonPush HTTP API. Construct one client per application, treat it as a
 /// singleton, and dispose at shutdown.
 /// </summary>
-public sealed class AxonPushClient : IDisposable, IAsyncDisposable
+public sealed partial class AxonPushClient : IDisposable, IAsyncDisposable
 {
     private readonly AxonPushTransport _transport;
 
@@ -22,9 +22,10 @@ public sealed class AxonPushClient : IDisposable, IAsyncDisposable
         ArgumentNullException.ThrowIfNull(options);
         _transport = new AxonPushTransport(options, httpClient, loggerFactory);
         Events = new EventsResource(_transport);
+        CreateResources(_transport);
     }
 
-    /// <summary>The events resource (POST /events).</summary>
+    /// <summary>The events resource (POST /event). Publishing honours fail-open.</summary>
     public EventsResource Events { get; }
 
     public void Dispose()

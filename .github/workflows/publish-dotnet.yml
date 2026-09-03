@@ -17,9 +17,12 @@ jobs:
         working-directory: packages/dotnet
     steps:
       - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
       - uses: actions/setup-dotnet@v4
         with:
           dotnet-version: "9.0.x"
+      - run: bun run tools/check-versions.ts
+        working-directory: ${{ github.workspace }}
       - name: Tag matches Directory.Build.props
         run: |
           tag="${GITHUB_REF_NAME#sdk-dotnet-v}"

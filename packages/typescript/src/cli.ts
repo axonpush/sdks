@@ -29,12 +29,13 @@ Options:
   --evaluator <id>@<version>  Repeatable evaluator version for a new experiment
   --baseline <id>             Baseline experiment for a new experiment
   --no-gate                   Do not invoke the release gate
-  --minimum-score <n>         Gate threshold
-  --max-score-regression <n>  Gate threshold
-  --maximum-cost-usd <n>      Gate threshold
-  --max-cost-increase-ratio <n> Gate threshold
-  --maximum-latency-ms <n>    Gate threshold
-  --max-latency-increase-ratio <n> Gate threshold
+  --minimum-score <n>         Fail below this absolute score
+  --max-failure-rate <n>      Fail above this share of errored items (0-1)
+  --maximum-latency-ms <n>    Fail above this mean latency
+  --maximum-cost-usd <n>      Fail above this total run cost
+  --max-score-regression <n>  Fail if the score drops more than this against the baseline
+  --max-latency-increase-ratio <n> Fail above this latency increase vs baseline (0.1 = 10%)
+  --max-cost-increase-ratio <n>    Fail above this cost increase vs baseline (0.1 = 10%)
   --json <path>               Write a JSON artifact
   --junit <path>              Write a JUnit XML artifact
   --github-summary <path>     Write GitHub Actions markdown (defaults to GITHUB_STEP_SUMMARY)
@@ -97,6 +98,7 @@ function jsonObject(args: Arguments, name: string): Record<string, unknown> | un
 function thresholds(args: Arguments): GateThresholds {
   const map: Array<[keyof GateThresholds, string]> = [
     ["minimumScore", "minimum-score"],
+    ["maximumFailureRate", "max-failure-rate"],
     ["maxScoreRegression", "max-score-regression"],
     ["maximumCostUsd", "maximum-cost-usd"],
     ["maxCostIncreaseRatio", "max-cost-increase-ratio"],
@@ -135,7 +137,8 @@ async function main(argv: string[]): Promise<number> {
   const datasetId = required(parsed.args, "dataset");
   const datasetRevision = required(parsed.args, "revision");
   const command = required(parsed.args, "command");
-  const client = new AxonPush();
+  // Constructing the client is the configuration step; HttpEvaluationApi reads it.
+  new AxonPush();
   const api = new HttpEvaluationApi();
   const configuration = jsonObject(parsed.args, "configuration");
   let experimentId =
@@ -176,8 +179,13 @@ async function main(argv: string[]): Promise<number> {
       startupTimeoutMs: optionalNumber(parsed.args, "startup-timeout"),
       signal: cancellation.signal,
     });
-    if (!parsed.args["no-gate"] && !result.cancelled)
-      result.gate = await api.gateExperiment(experimentId, thresholds(parsed.args));
+    if (!parsed.args["no-gate"] && !result.cancelled) {
+      result.gate = await api.gateExperiment(experimentId, thresholds(parsed.args), {
+        source: "cli",
+        ...(result.lineage.gitCommit ? { gitCommit: result.lineage.gitCommit } : {}),
+        ...(result.lineage.gitBranch ? { gitBranch: result.lineage.gitBranch } : {}),
+      });
+    }
     await Promise.all([
       artifact(
         typeof parsed.args.json === "string" ? parsed.args.json : undefined,

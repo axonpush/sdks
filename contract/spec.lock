@@ -1,5 +1,6 @@
 {
   "source": "axonpush/server",
-  "sha": "8b76386",
-  "note": "mirrored in by hand for the initial import; publish-contract.yml owns it from here"
+  "sha": null,
+  "ref": "feat/ship-release-gate",
+  "workflow": "local"
 }

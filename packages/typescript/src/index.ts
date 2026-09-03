@@ -128,13 +128,26 @@ export type {
 } from "./realtime/index.js";
 // Realtime (Stream C)
 export { RealtimeClient } from "./realtime/index.js";
+export { AlertsResource } from "./resources/alerts.js";
+export { AnalyticsResource } from "./resources/analytics.js";
 export { ApiKeysResource } from "./resources/api-keys.js";
 export { AppsResource } from "./resources/apps.js";
+export { AssessmentsResource } from "./resources/assessments.js";
 export { ChannelsResource } from "./resources/channels.js";
+export { DatasetsResource } from "./resources/datasets.js";
 export { EnvironmentsResource } from "./resources/environments.js";
+export { EvaluationTargetsResource } from "./resources/evaluation-targets.js";
+export { EvaluatorsResource } from "./resources/evaluators.js";
 export { EventsResource } from "./resources/events.js";
+export { ExperimentsResource } from "./resources/experiments.js";
+export { GatesResource } from "./resources/gates.js";
+export { IssuesResource } from "./resources/issues.js";
+export { OnlineEvaluationsResource } from "./resources/online-evaluations.js";
 export { OrganizationsResource } from "./resources/organizations.js";
+export { PromptsResource } from "./resources/prompts.js";
+export { TraceIntelligenceResource } from "./resources/trace-intelligence.js";
 export { TracesResource } from "./resources/traces.js";
+export { TracesV2Resource } from "./resources/traces-v2.js";
 export { WebhooksResource } from "./resources/webhooks.js";
 export { currentTrace, getOrCreateTrace, TraceContext } from "./tracing.js";
 export { __version__ } from "./version.js";

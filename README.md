@@ -6,7 +6,11 @@ Every public axonpush client, generated from one contract.
 |---|---|---|
 | [`@axonpush/sdk`](https://www.npmjs.com/package/@axonpush/sdk) | npm | [`packages/typescript`](packages/typescript) |
 | [`axonpush`](https://pypi.org/project/axonpush/) | PyPI | [`packages/python`](packages/python) |
-| `AxonPush`, `AxonPush.Otel`, `AxonPush.SemanticKernel` | NuGet | [`packages/dotnet`](packages/dotnet) |
+| `AxonPush`, `AxonPush.Otel`, `AxonPush.SemanticKernel`, `AxonPush.Cli` | NuGet | [`packages/dotnet`](packages/dotnet) |
+
+All three ship the same `axonpush-eval` release gate. Installing any one of
+them gets you the CLI; [the reference](https://docs.axonpush.xyz/cli/) covers
+the routes.
 
 ## How this fits together
 
@@ -50,6 +54,13 @@ nothing compared them. Now:
   Python and `cancelInvitation` missing from TypeScript on its first run.
 - **`tools/check-versions.ts`** asserts each package states one version. It
   found `@axonpush/sdk` shipping 0.0.7 with `src/version.ts` saying 0.0.6.
+- **`tools/check-contract.ts`** asserts that `operations.txt` and `spec.lock`
+  still describe the spec, and that every published operation is reachable from
+  a resource method or listed in `contract/unwrapped.txt` with a reason. A new
+  server endpoint now forces a decision instead of arriving unusable.
+- **`tools/cli-diff.ts`** compares the three `axonpush-eval` CLIs: their flags,
+  their exit codes and the keys of the JSON report. CI configuration is written
+  against those, so they are a contract.
 - **`contract/fixtures/`** pins the parts of the contract OpenAPI cannot carry:
   the MQTT topic grammar, the webhook HMAC scheme, header names, and the
   `AXONPUSH_*` surface with units. Each SDK replays them as conformance tests.

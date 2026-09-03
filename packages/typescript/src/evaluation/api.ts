@@ -12,6 +12,7 @@ import { AxonPushError } from "../errors.js";
 import type {
   DatasetItem,
   EvaluationItemResult,
+  GateProvenance,
   GateResult,
   GateThresholds,
   GitLineage,
@@ -38,6 +39,7 @@ export interface EvaluationApi {
   gateExperiment(
     experimentId: string,
     thresholds?: GateThresholds,
+    provenance?: GateProvenance,
     signal?: AbortSignal,
   ): Promise<GateResult>;
 }
@@ -54,10 +56,8 @@ export interface CreateExperimentOptions extends GitLineage {
 
 /**
  * Raised when the evaluation API answers with a shape the runner cannot use.
- *
- * Transport failures now surface as the ordinary {@link AxonPushError} tree,
- * because these calls go through the same chokepoint as every other request.
- * The class stays for the CLI's exit-code mapping and for callers catching it.
+ * Transport failures surface as the ordinary {@link AxonPushError} tree; this
+ * class drives the CLI's exit-code mapping.
  */
 export class EvaluationApiError extends AxonPushError {
   constructor(message: string) {
@@ -94,13 +94,8 @@ function normalizeItems(payload: unknown): DatasetItem[] {
 }
 
 /**
- * Evaluation API backed by the generated client.
- *
- * This used to be a hand-written `fetch` layer with its own timeout, error
- * class and header assembly, written before the v2 routes reached the
- * contract. It sent `x-api-key` and `authorization: Bearer` together, and an
- * `?environment=` query no v2 evaluation route reads. Going through
- * {@link invokeSync} means retries, the shared error tree, one auth path and
+ * Evaluation API backed by the generated client. Going through
+ * {@link invokeSync} gives it retries, the shared error tree, one auth path and
  * the `X-Axonpush-Environment` header the rest of the SDK sends.
  */
 export class HttpEvaluationApi implements EvaluationApi {
@@ -111,8 +106,7 @@ export class HttpEvaluationApi implements EvaluationApi {
   constructor(private readonly options: { maxRetries?: number } = {}) {}
 
   private async call<T>(op: GeneratedOp<T>, args: unknown): Promise<T> {
-    // failOpen is off: a runner that silently skips a submission would report a
-    // green evaluation it never actually ran
+    // failOpen is off: a skipped submission would report an evaluation never run.
     const result = await invokeSync<T>(op, args, {
       failOpen: false,
       maxRetries: this.options.maxRetries,
@@ -161,7 +155,8 @@ export class HttpEvaluationApi implements EvaluationApi {
     signal?: AbortSignal,
   ): Promise<{ id: string }> {
     const data = await this.call<unknown>(experimentControllerCreate, { body: input, signal });
-    const id = asRecord(data).id;
+    const record = asRecord(data);
+    const id = record.experimentId ?? record.id;
     if (typeof id !== "string") {
       throw new EvaluationApiError("Create experiment response was invalid");
     }
@@ -191,17 +186,98 @@ export class HttpEvaluationApi implements EvaluationApi {
   async gateExperiment(
     experimentId: string,
     thresholds?: GateThresholds,
+    provenance?: GateProvenance,
     signal?: AbortSignal,
   ): Promise<GateResult> {
-    const data = await this.call<unknown>(experimentControllerGate, {
-      path: { experimentId },
-      body: thresholds ?? {},
-      signal,
-    });
+    const wireThresholds = toWireThresholds(thresholds);
+    const wireProvenance = toWireProvenance(provenance);
+    const send = (body: Record<string, unknown>) =>
+      this.call<unknown>(experimentControllerGate, { path: { experimentId }, body, signal });
+
+    let data: unknown;
+    try {
+      data = await send({ ...wireThresholds, ...wireProvenance });
+    } catch (error) {
+      // forbidNonWhitelisted: a server older than these fields rejects the whole call.
+      if (!isUnknownFieldRejection(error, wireProvenance)) throw error;
+      warnOnce(
+        `This axonpush server does not accept ${Object.keys(wireProvenance).join(", ")} on the gate. ` +
+          "The decision will be recorded without them; upgrade the server to attribute it to a commit.",
+      );
+      data = await send(wireThresholds);
+    }
+
     const record = asRecord(data);
     if (typeof record.passed !== "boolean") {
       throw new EvaluationApiError("Gate response was invalid");
     }
     return record as unknown as GateResult;
   }
+}
+
+const isUnknownFieldRejection = (
+  error: unknown,
+  provenance: Record<string, string>,
+): error is AxonPushError =>
+  Object.keys(provenance).length > 0 && error instanceof AxonPushError && error.statusCode === 400;
+
+let warned = false;
+
+function warnOnce(message: string): void {
+  if (warned) return;
+  warned = true;
+  process.stderr.write(`axonpush: ${message}\n`);
+}
+
+/**
+ * Translate the SDK's threshold names into the ones the gate endpoint accepts.
+ *
+ * Two conversions are more than a rename:
+ * - `maxScoreRegression` is how far the score may fall (positive), while
+ *   `minScoreDelta` is the lowest acceptable delta (negative).
+ * - the ratio options are fractions; the API takes percentages.
+ */
+export function toWireThresholds(thresholds?: GateThresholds): Record<string, number> {
+  if (!thresholds) return {};
+  const body: Record<string, number> = {};
+  const set = (key: string, value: number | undefined) => {
+    if (value !== undefined && Number.isFinite(value)) body[key] = value;
+  };
+  set("minScore", thresholds.minimumScore);
+  set("maxFailureRate", thresholds.maximumFailureRate);
+  set("maxLatencyMs", thresholds.maximumLatencyMs);
+  set("maxCostUsd", thresholds.maximumCostUsd);
+  set(
+    "minScoreDelta",
+    thresholds.maxScoreRegression === undefined
+      ? undefined
+      : -Math.abs(thresholds.maxScoreRegression),
+  );
+  set(
+    "maxLatencyIncreasePercent",
+    thresholds.maxLatencyIncreaseRatio === undefined
+      ? undefined
+      : thresholds.maxLatencyIncreaseRatio * 100,
+  );
+  set(
+    "maxCostIncreasePercent",
+    thresholds.maxCostIncreaseRatio === undefined
+      ? undefined
+      : thresholds.maxCostIncreaseRatio * 100,
+  );
+  return body;
+}
+
+/**
+ * `forbidNonWhitelisted`: only the four fields the gate declares may be sent.
+ * `gitDirty` belongs to the experiment, not the decision, and is rejected here.
+ */
+export function toWireProvenance(provenance?: GateProvenance): Record<string, string> {
+  if (!provenance) return {};
+  const body: Record<string, string> = {};
+  for (const key of ["source", "gitCommit", "gitBranch", "release"] as const) {
+    const value = provenance[key];
+    if (value) body[key] = value;
+  }
+  return body;
 }

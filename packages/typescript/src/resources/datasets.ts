@@ -81,11 +81,11 @@ export class DatasetsResource {
   /** Export revision. `GET /v2/datasets/{datasetId}/revisions/{revision}/export/{format}` */
   async exportRevision(
     datasetId: string,
-    format: string,
     revision: string,
+    format: string,
   ): Promise<DatasetExportDto | null> {
     return this.client.invoke(datasetControllerExportRevision, {
-      path: { datasetId, format, revision },
+      path: { datasetId, revision, format },
     });
   }
 

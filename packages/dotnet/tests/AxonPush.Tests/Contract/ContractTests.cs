@@ -53,6 +53,39 @@ public sealed class ContractTests
     }
 
     [Fact]
+    public void TheGateEndpointIsPublishedAndCarriesItsProvenanceFields()
+    {
+        var body = Spec["paths"]!["/v2/experiments/{experimentId}/gate"]!["post"]!
+            ["requestBody"]!["content"]!["application/json"]!["schema"]!["$ref"]!.GetValue<string>();
+        var properties = Spec["components"]!["schemas"]![body.Split('/')[^1]]!["properties"]!.AsObject();
+
+        // The gate is the product. Without provenance every CI run is filed
+        // against the commit the experiment was created on, not the one gated.
+        foreach (var field in new[] { "source", "gitCommit", "gitBranch", "release" })
+        {
+            Assert.True(properties.ContainsKey(field), $"gate request is missing {field}");
+        }
+
+        var result = Spec["paths"]!["/v2/experiments/{experimentId}/gate"]!["post"]!
+            ["responses"]!["200"]!["content"]!["application/json"]!["schema"]!["$ref"]!
+            .GetValue<string>();
+        Assert.True(
+            Spec["components"]!["schemas"]![result.Split('/')[^1]]!["properties"]!
+                .AsObject().ContainsKey("gateRunId"),
+            "gate response cannot be linked back to the recorded run");
+    }
+
+    [Fact]
+    public void GateRunHistoryIsPublishedWithCursorPagination()
+    {
+        var query = Spec["paths"]!["/v2/gate-runs"]!["get"]!["parameters"]!.AsArray()
+            .Select(parameter => parameter!["name"]!.GetValue<string>())
+            .ToHashSet(StringComparer.Ordinal);
+
+        Assert.Superset(new HashSet<string>(["limit", "cursor", "experimentId"]), query);
+    }
+
+    [Fact]
     public void PublishRouteMatchesTheContract()
     {
         // the bug: "events" resolved to the search path, which has no POST

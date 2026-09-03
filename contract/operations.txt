@@ -51,6 +51,7 @@ EvaluatorController_remove
 EvaluatorController_version
 EvaluatorController_versions
 EventController_createEvent
+EventController_createEventBatch
 EventController_listEvents
 EventsSearchController_search
 ExperimentController_cancel
@@ -68,6 +69,11 @@ ExportController_get
 ExportController_list
 ExportController_remove
 ExportController_update
+GatePolicyController_get
+GatePolicyController_list
+GatePolicyController_remove
+GatePolicyController_save
+GateRunController_list
 HealthController_check
 IntelligenceController_get
 IntelligenceController_list

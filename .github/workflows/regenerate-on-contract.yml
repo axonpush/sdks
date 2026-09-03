@@ -22,6 +22,9 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
       - uses: oven-sh/setup-bun@v2
       - uses: astral-sh/setup-uv@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 9.0.x
       - run: bun install --frozen-lockfile
       - name: Regenerate the TypeScript client
         working-directory: packages/typescript
@@ -34,6 +37,12 @@ jobs:
           uv run openapi-python-client generate --path ../../contract/openapi.sdk.json --config tools/openapi-config.yaml --overwrite --meta none
           mkdir -p src/axonpush/_internal
           mv _internal_api src/axonpush/_internal/api
+      - name: Regenerate the .NET client and resource layer
+        working-directory: packages/dotnet
+        run: |
+          dotnet tool restore
+          dotnet nswag run nswag.json
+          python ../../tools/generate-dotnet-resources.py --apply
       - name: Commit if anything moved
         run: |
           if [ -n "$(git status --porcelain)" ]; then

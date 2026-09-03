@@ -11,17 +11,7 @@ from dateutil.parser import isoparse
 from ..types import UNSET, Unset
 
 if TYPE_CHECKING:
-    from ..models.dataset_revision_data_item_dto_attachments import (
-        DatasetRevisionDataItemDtoAttachments,
-    )
-    from ..models.dataset_revision_data_item_dto_expected_output import (
-        DatasetRevisionDataItemDtoExpectedOutput,
-    )
-    from ..models.dataset_revision_data_item_dto_input import DatasetRevisionDataItemDtoInput
     from ..models.dataset_revision_data_item_dto_metadata import DatasetRevisionDataItemDtoMetadata
-    from ..models.dataset_revision_data_item_dto_tool_trajectory import (
-        DatasetRevisionDataItemDtoToolTrajectory,
-    )
 
 
 T = TypeVar("T", bound="DatasetRevisionDataItemDto")
@@ -33,56 +23,42 @@ class DatasetRevisionDataItemDto:
     Attributes:
         content_hash (str):
         created_at (datetime.datetime):
-        input_ (DatasetRevisionDataItemDtoInput): Redacted before persistence according to the organization policy.
-        attachments (DatasetRevisionDataItemDtoAttachments | Unset):
-        expected_output (DatasetRevisionDataItemDtoExpectedOutput | Unset):
+        input_ (Any): Redacted before persistence according to the organization policy.
+        attachments (Any | Unset):
+        expected_output (Any | Unset):
         item_id (str | Unset):
         metadata (DatasetRevisionDataItemDtoMetadata | Unset):
         source_span_id (str | Unset):
         source_trace_id (str | Unset):
-        tool_trajectory (DatasetRevisionDataItemDtoToolTrajectory | Unset):
+        tool_trajectory (Any | Unset):
     """
 
     content_hash: str
     created_at: datetime.datetime
-    input_: DatasetRevisionDataItemDtoInput
-    attachments: DatasetRevisionDataItemDtoAttachments | Unset = UNSET
-    expected_output: DatasetRevisionDataItemDtoExpectedOutput | Unset = UNSET
+    input_: Any
+    attachments: Any | Unset = UNSET
+    expected_output: Any | Unset = UNSET
     item_id: str | Unset = UNSET
     metadata: DatasetRevisionDataItemDtoMetadata | Unset = UNSET
     source_span_id: str | Unset = UNSET
     source_trace_id: str | Unset = UNSET
-    tool_trajectory: DatasetRevisionDataItemDtoToolTrajectory | Unset = UNSET
+    tool_trajectory: Any | Unset = UNSET
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
-        from ..models.dataset_revision_data_item_dto_attachments import (
-            DatasetRevisionDataItemDtoAttachments,
-        )
-        from ..models.dataset_revision_data_item_dto_expected_output import (
-            DatasetRevisionDataItemDtoExpectedOutput,
-        )
-        from ..models.dataset_revision_data_item_dto_input import DatasetRevisionDataItemDtoInput
         from ..models.dataset_revision_data_item_dto_metadata import (
             DatasetRevisionDataItemDtoMetadata,
-        )
-        from ..models.dataset_revision_data_item_dto_tool_trajectory import (
-            DatasetRevisionDataItemDtoToolTrajectory,
         )
 
         content_hash = self.content_hash
 
         created_at = self.created_at.isoformat()
 
-        input_ = self.input_.to_dict()
+        input_ = self.input_
 
-        attachments: dict[str, Any] | Unset = UNSET
-        if not isinstance(self.attachments, Unset):
-            attachments = self.attachments.to_dict()
+        attachments = self.attachments
 
-        expected_output: dict[str, Any] | Unset = UNSET
-        if not isinstance(self.expected_output, Unset):
-            expected_output = self.expected_output.to_dict()
+        expected_output = self.expected_output
 
         item_id = self.item_id
 
@@ -94,9 +70,7 @@ class DatasetRevisionDataItemDto:
 
         source_trace_id = self.source_trace_id
 
-        tool_trajectory: dict[str, Any] | Unset = UNSET
-        if not isinstance(self.tool_trajectory, Unset):
-            tool_trajectory = self.tool_trajectory.to_dict()
+        tool_trajectory = self.tool_trajectory
 
         field_dict: dict[str, Any] = {}
         field_dict.update(self.additional_properties)
@@ -126,18 +100,8 @@ class DatasetRevisionDataItemDto:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        from ..models.dataset_revision_data_item_dto_attachments import (
-            DatasetRevisionDataItemDtoAttachments,
-        )
-        from ..models.dataset_revision_data_item_dto_expected_output import (
-            DatasetRevisionDataItemDtoExpectedOutput,
-        )
-        from ..models.dataset_revision_data_item_dto_input import DatasetRevisionDataItemDtoInput
         from ..models.dataset_revision_data_item_dto_metadata import (
             DatasetRevisionDataItemDtoMetadata,
-        )
-        from ..models.dataset_revision_data_item_dto_tool_trajectory import (
-            DatasetRevisionDataItemDtoToolTrajectory,
         )
 
         d = dict(src_dict)
@@ -145,21 +109,11 @@ class DatasetRevisionDataItemDto:
 
         created_at = isoparse(d.pop("createdAt"))
 
-        input_ = DatasetRevisionDataItemDtoInput.from_dict(d.pop("input"))
+        input_ = d.pop("input")
 
-        _attachments = d.pop("attachments", UNSET)
-        attachments: DatasetRevisionDataItemDtoAttachments | Unset
-        if isinstance(_attachments, Unset):
-            attachments = UNSET
-        else:
-            attachments = DatasetRevisionDataItemDtoAttachments.from_dict(_attachments)
+        attachments = d.pop("attachments", UNSET)
 
-        _expected_output = d.pop("expectedOutput", UNSET)
-        expected_output: DatasetRevisionDataItemDtoExpectedOutput | Unset
-        if isinstance(_expected_output, Unset):
-            expected_output = UNSET
-        else:
-            expected_output = DatasetRevisionDataItemDtoExpectedOutput.from_dict(_expected_output)
+        expected_output = d.pop("expectedOutput", UNSET)
 
         item_id = d.pop("itemId", UNSET)
 
@@ -174,12 +128,7 @@ class DatasetRevisionDataItemDto:
 
         source_trace_id = d.pop("sourceTraceId", UNSET)
 
-        _tool_trajectory = d.pop("toolTrajectory", UNSET)
-        tool_trajectory: DatasetRevisionDataItemDtoToolTrajectory | Unset
-        if isinstance(_tool_trajectory, Unset):
-            tool_trajectory = UNSET
-        else:
-            tool_trajectory = DatasetRevisionDataItemDtoToolTrajectory.from_dict(_tool_trajectory)
+        tool_trajectory = d.pop("toolTrajectory", UNSET)
 
         dataset_revision_data_item_dto = cls(
             content_hash=content_hash,

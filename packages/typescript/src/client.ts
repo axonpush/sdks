@@ -14,6 +14,7 @@ import { EvaluationTargetsResource } from "./resources/evaluation-targets.js";
 import { EvaluatorsResource } from "./resources/evaluators.js";
 import { EventsResource } from "./resources/events.js";
 import { ExperimentsResource } from "./resources/experiments.js";
+import { GatesResource } from "./resources/gates.js";
 import { IssuesResource } from "./resources/issues.js";
 import { OnlineEvaluationsResource } from "./resources/online-evaluations.js";
 import { OrganizationsResource } from "./resources/organizations.js";
@@ -75,6 +76,7 @@ export class AxonPush {
   readonly traceIntelligence: TraceIntelligenceResource;
   /** Trace search with facets and spans. */
   readonly tracesV2: TracesV2Resource;
+  readonly gates: GatesResource;
 
   /**
    * @param options Optional caller overrides; falsy fields fall through to
@@ -103,6 +105,7 @@ export class AxonPush {
     this.onlineEvaluations = new OnlineEvaluationsResource(this);
     this.traceIntelligence = new TraceIntelligenceResource(this);
     this.tracesV2 = new TracesV2Resource(this);
+    this.gates = new GatesResource(this);
   }
 
   /** The configured environment label (or `undefined` if none). */

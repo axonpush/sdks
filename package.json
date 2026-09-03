@@ -3,13 +3,16 @@
   "private": true,
   "type": "module",
   "packageManager": "bun@1.3.10",
-  "workspaces": ["packages/typescript"],
+  "workspaces": [
+    "packages/typescript"
+  ],
   "scripts": {
     "lint": "biome check .",
     "lint:fix": "biome check --write .",
     "check:versions": "bun run tools/check-versions.ts",
     "check:contract": "bun run tools/check-contract.ts",
-    "parity": "bun run tools/surface-diff.ts"
+    "parity": "bun run tools/surface-diff.ts",
+    "check:cli": "bun run tools/cli-diff.ts"
   },
   "devDependencies": {
     "@arethetypeswrong/cli": "^0.18.2",

@@ -50,7 +50,12 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: oven-sh/setup-bun@v2
-      - run: bun run tools/surface-diff.ts
+      - name: Resource surfaces
+        run: bun run parity
+      - name: CLI flags, exit codes and report shape
+        run: bun run check:cli
+      - name: Contract snapshot, lock and resource coverage
+        run: bun run check:contract
 
   typescript:
     needs: changes
@@ -82,21 +87,43 @@ jobs:
   codegen-clean:
     name: Generated clients match the contract
     needs: changes
-    if: needs.changes.outputs.ts == 'true'
+    if: needs.changes.outputs.ts == 'true' || needs.changes.outputs.py == 'true' || needs.changes.outputs.dotnet == 'true'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: oven-sh/setup-bun@v2
+      - uses: astral-sh/setup-uv@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 9.0.x
       - run: bun install --frozen-lockfile
-      - name: Regenerate from contract/
+      - name: Regenerate the TypeScript client
         working-directory: packages/typescript
         run: bun run codegen
-      - name: Fail if the checked-in client is stale
+      - name: Regenerate the Python client
+        working-directory: packages/python
         run: |
-          if ! git diff --exit-code -- packages/typescript/src/_internal/api; then
-            echo "::error::Generated client is out of date. Run 'bun run codegen' in packages/typescript."
-            exit 1
-          fi
+          uv sync --extra dev --extra all
+          rm -rf _internal_api src/axonpush/_internal/api
+          uv run openapi-python-client generate             --path ../../contract/openapi.sdk.json             --config tools/openapi-config.yaml --overwrite --meta none
+          mkdir -p src/axonpush/_internal
+          mv _internal_api src/axonpush/_internal/api
+      - name: Regenerate the .NET client and resource layer
+        working-directory: packages/dotnet
+        run: |
+          dotnet tool restore
+          dotnet nswag run nswag.json
+          python ../../tools/generate-dotnet-resources.py --apply
+      - name: Fail if a checked-in client is stale
+        run: |
+          stale=0
+          for path in packages/typescript/src/_internal/api packages/python/src/axonpush/_internal/api packages/dotnet/src/AxonPush/Internal/Api packages/dotnet/src/AxonPush/Resources; do
+            if ! git diff --exit-code -- "$path"; then
+              echo "::error::$path is out of date. Run 'mise run codegen'."
+              stale=1
+            fi
+          done
+          exit "$stale"
 
   python:
     needs: changes
@@ -123,7 +150,7 @@ jobs:
           uv run ruff check .
           uv run ruff format --check .
       - name: Typecheck
-        run: uv run mypy src/axonpush
+        run: uv run mypy --strict src/axonpush
       - name: Test
         run: uv run pytest
 

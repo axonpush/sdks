@@ -12,10 +12,7 @@ dotnet = "9"
 dir = "packages/typescript"
 sources = ["../../contract/openapi.sdk.json", "openapi-ts.config.ts"]
 outputs = ["src/_internal/api/**"]
-run = [
-  "rm -rf src/_internal/api",
-  "bunx @hey-api/openapi-ts -f openapi-ts.config.ts",
-]
+run = ["bun run codegen"]
 
 [tasks."codegen:py"]
 dir = "packages/python"
@@ -28,8 +25,24 @@ run = [
   "mv _internal_api src/axonpush/_internal/api",
 ]
 
+[tasks."codegen:dotnet"]
+dir = "packages/dotnet"
+sources = ["../../contract/openapi.sdk.json", "nswag.json"]
+outputs = ["src/AxonPush/Internal/Api/**"]
+run = [
+  "dotnet tool restore",
+  "dotnet nswag run nswag.json",
+  "python ../../tools/generate-dotnet-resources.py --apply",
+]
+
 [tasks.codegen]
-depends = ["codegen:ts", "codegen:py"]
+depends = ["codegen:ts", "codegen:py", "codegen:dotnet"]
+
+[tasks."check:contract"]
+run = "bun run check:contract"
+
+[tasks."cli-diff"]
+run = "bun run check:cli"
 
 [tasks."install:ts"]
 run = "bun install --frozen-lockfile"
@@ -82,7 +95,7 @@ run = "dotnet test"
 depends = ["test:ts", "test:py", "test:dotnet"]
 
 [tasks.parity]
-run = "bun run tools/surface-diff.ts"
+run = "bun run parity"
 
 [tasks.check]
-depends = ["lint", "typecheck", "test", "parity"]
+depends = ["lint", "typecheck", "test", "parity", "check:contract", "cli-diff"]
