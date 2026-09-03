@@ -11,7 +11,6 @@ from ..types import UNSET, Unset
 
 if TYPE_CHECKING:
     from ..models.create_evaluator_dto_config import CreateEvaluatorDtoConfig
-    from ..models.create_evaluator_dto_output_schema import CreateEvaluatorDtoOutputSchema
 
 
 T = TypeVar("T", bound="CreateEvaluatorDto")
@@ -26,7 +25,7 @@ class CreateEvaluatorDto:
         name (str):
         description (str | Unset):
         model (str | Unset):
-        output_schema (CreateEvaluatorDtoOutputSchema | Unset):
+        output_schema (Any | Unset):
         provider (str | Unset):
         rubric (str | Unset):
     """
@@ -36,14 +35,13 @@ class CreateEvaluatorDto:
     name: str
     description: str | Unset = UNSET
     model: str | Unset = UNSET
-    output_schema: CreateEvaluatorDtoOutputSchema | Unset = UNSET
+    output_schema: Any | Unset = UNSET
     provider: str | Unset = UNSET
     rubric: str | Unset = UNSET
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
         from ..models.create_evaluator_dto_config import CreateEvaluatorDtoConfig
-        from ..models.create_evaluator_dto_output_schema import CreateEvaluatorDtoOutputSchema
 
         config = self.config.to_dict()
 
@@ -55,9 +53,7 @@ class CreateEvaluatorDto:
 
         model = self.model
 
-        output_schema: dict[str, Any] | Unset = UNSET
-        if not isinstance(self.output_schema, Unset):
-            output_schema = self.output_schema.to_dict()
+        output_schema = self.output_schema
 
         provider = self.provider
 
@@ -88,7 +84,6 @@ class CreateEvaluatorDto:
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         from ..models.create_evaluator_dto_config import CreateEvaluatorDtoConfig
-        from ..models.create_evaluator_dto_output_schema import CreateEvaluatorDtoOutputSchema
 
         d = dict(src_dict)
         config = CreateEvaluatorDtoConfig.from_dict(d.pop("config"))
@@ -101,12 +96,7 @@ class CreateEvaluatorDto:
 
         model = d.pop("model", UNSET)
 
-        _output_schema = d.pop("outputSchema", UNSET)
-        output_schema: CreateEvaluatorDtoOutputSchema | Unset
-        if isinstance(_output_schema, Unset):
-            output_schema = UNSET
-        else:
-            output_schema = CreateEvaluatorDtoOutputSchema.from_dict(_output_schema)
+        output_schema = d.pop("outputSchema", UNSET)
 
         provider = d.pop("provider", UNSET)
 

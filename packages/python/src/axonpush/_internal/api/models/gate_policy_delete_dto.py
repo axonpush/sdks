@@ -8,29 +8,43 @@ from attrs import field as _attrs_field
 
 from ..types import UNSET, Unset
 
-T = TypeVar("T", bound="CreateEvaluatorVersionDtoOutputSchema")
+T = TypeVar("T", bound="GatePolicyDeleteDto")
 
 
 @_attrs_define
-class CreateEvaluatorVersionDtoOutputSchema:
-    """ """
+class GatePolicyDeleteDto:
+    """
+    Attributes:
+        deleted (bool):
+    """
 
+    deleted: bool
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
+        deleted = self.deleted
 
         field_dict: dict[str, Any] = {}
         field_dict.update(self.additional_properties)
+        field_dict.update(
+            {
+                "deleted": deleted,
+            }
+        )
 
         return field_dict
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         d = dict(src_dict)
-        create_evaluator_version_dto_output_schema = cls()
+        deleted = d.pop("deleted")
 
-        create_evaluator_version_dto_output_schema.additional_properties = d
-        return create_evaluator_version_dto_output_schema
+        gate_policy_delete_dto = cls(
+            deleted=deleted,
+        )
+
+        gate_policy_delete_dto.additional_properties = d
+        return gate_policy_delete_dto
 
     @property
     def additional_keys(self) -> list[str]:

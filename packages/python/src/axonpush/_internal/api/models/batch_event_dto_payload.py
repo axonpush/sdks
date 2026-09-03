@@ -8,11 +8,11 @@ from attrs import field as _attrs_field
 
 from ..types import UNSET, Unset
 
-T = TypeVar("T", bound="ExperimentResultDtoOutput")
+T = TypeVar("T", bound="BatchEventDtoPayload")
 
 
 @_attrs_define
-class ExperimentResultDtoOutput:
+class BatchEventDtoPayload:
     """ """
 
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
@@ -27,10 +27,10 @@ class ExperimentResultDtoOutput:
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         d = dict(src_dict)
-        experiment_result_dto_output = cls()
+        batch_event_dto_payload = cls()
 
-        experiment_result_dto_output.additional_properties = d
-        return experiment_result_dto_output
+        batch_event_dto_payload.additional_properties = d
+        return batch_event_dto_payload
 
     @property
     def additional_keys(self) -> list[str]:
