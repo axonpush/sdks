@@ -8,11 +8,11 @@ from attrs import field as _attrs_field
 
 from ..types import UNSET, Unset
 
-T = TypeVar("T", bound="DatasetRevisionDataItemDtoToolTrajectory")
+T = TypeVar("T", bound="BatchEventDtoMetadata")
 
 
 @_attrs_define
-class DatasetRevisionDataItemDtoToolTrajectory:
+class BatchEventDtoMetadata:
     """ """
 
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
@@ -27,10 +27,10 @@ class DatasetRevisionDataItemDtoToolTrajectory:
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         d = dict(src_dict)
-        dataset_revision_data_item_dto_tool_trajectory = cls()
+        batch_event_dto_metadata = cls()
 
-        dataset_revision_data_item_dto_tool_trajectory.additional_properties = d
-        return dataset_revision_data_item_dto_tool_trajectory
+        batch_event_dto_metadata.additional_properties = d
+        return batch_event_dto_metadata
 
     @property
     def additional_keys(self) -> list[str]:

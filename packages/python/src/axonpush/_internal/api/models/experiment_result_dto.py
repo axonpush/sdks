@@ -11,11 +11,6 @@ from dateutil.parser import isoparse
 from ..models.experiment_result_status import ExperimentResultStatus
 from ..types import UNSET, Unset
 
-if TYPE_CHECKING:
-    from ..models.experiment_result_dto_evaluator_results import ExperimentResultDtoEvaluatorResults
-    from ..models.experiment_result_dto_output import ExperimentResultDtoOutput
-
-
 T = TypeVar("T", bound="ExperimentResultDto")
 
 
@@ -26,12 +21,12 @@ class ExperimentResultDto:
         attempts (float):
         created_at (datetime.datetime):
         item_id (str):
-        output (ExperimentResultDtoOutput):
+        output (Any): Whatever the target produced. The evaluators decide what it means.
         status (ExperimentResultStatus):
         updated_at (datetime.datetime):
         cost_usd (float | Unset):
         error (str | Unset):
-        evaluator_results (ExperimentResultDtoEvaluatorResults | Unset):
+        evaluator_results (Any | Unset):
         explanation (str | Unset):
         latency_ms (float | Unset):
         score (float | Unset):
@@ -42,12 +37,12 @@ class ExperimentResultDto:
     attempts: float
     created_at: datetime.datetime
     item_id: str
-    output: ExperimentResultDtoOutput
+    output: Any
     status: ExperimentResultStatus
     updated_at: datetime.datetime
     cost_usd: float | Unset = UNSET
     error: str | Unset = UNSET
-    evaluator_results: ExperimentResultDtoEvaluatorResults | Unset = UNSET
+    evaluator_results: Any | Unset = UNSET
     explanation: str | Unset = UNSET
     latency_ms: float | Unset = UNSET
     score: float | Unset = UNSET
@@ -56,18 +51,13 @@ class ExperimentResultDto:
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
-        from ..models.experiment_result_dto_evaluator_results import (
-            ExperimentResultDtoEvaluatorResults,
-        )
-        from ..models.experiment_result_dto_output import ExperimentResultDtoOutput
-
         attempts = self.attempts
 
         created_at = self.created_at.isoformat()
 
         item_id = self.item_id
 
-        output = self.output.to_dict()
+        output = self.output
 
         status = self.status.value
 
@@ -77,9 +67,7 @@ class ExperimentResultDto:
 
         error = self.error
 
-        evaluator_results: dict[str, Any] | Unset = UNSET
-        if not isinstance(self.evaluator_results, Unset):
-            evaluator_results = self.evaluator_results.to_dict()
+        evaluator_results = self.evaluator_results
 
         explanation = self.explanation
 
@@ -124,11 +112,6 @@ class ExperimentResultDto:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        from ..models.experiment_result_dto_evaluator_results import (
-            ExperimentResultDtoEvaluatorResults,
-        )
-        from ..models.experiment_result_dto_output import ExperimentResultDtoOutput
-
         d = dict(src_dict)
         attempts = d.pop("attempts")
 
@@ -136,7 +119,7 @@ class ExperimentResultDto:
 
         item_id = d.pop("itemId")
 
-        output = ExperimentResultDtoOutput.from_dict(d.pop("output"))
+        output = d.pop("output")
 
         status = ExperimentResultStatus(d.pop("status"))
 
@@ -146,12 +129,7 @@ class ExperimentResultDto:
 
         error = d.pop("error", UNSET)
 
-        _evaluator_results = d.pop("evaluatorResults", UNSET)
-        evaluator_results: ExperimentResultDtoEvaluatorResults | Unset
-        if isinstance(_evaluator_results, Unset):
-            evaluator_results = UNSET
-        else:
-            evaluator_results = ExperimentResultDtoEvaluatorResults.from_dict(_evaluator_results)
+        evaluator_results = d.pop("evaluatorResults", UNSET)
 
         explanation = d.pop("explanation", UNSET)
 

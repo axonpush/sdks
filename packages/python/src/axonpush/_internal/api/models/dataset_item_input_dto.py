@@ -9,11 +9,7 @@ from attrs import field as _attrs_field
 from ..types import UNSET, Unset
 
 if TYPE_CHECKING:
-    from ..models.dataset_item_input_dto_attachments import DatasetItemInputDtoAttachments
-    from ..models.dataset_item_input_dto_expected_output import DatasetItemInputDtoExpectedOutput
-    from ..models.dataset_item_input_dto_input import DatasetItemInputDtoInput
     from ..models.dataset_item_input_dto_metadata import DatasetItemInputDtoMetadata
-    from ..models.dataset_item_input_dto_tool_trajectory import DatasetItemInputDtoToolTrajectory
 
 
 T = TypeVar("T", bound="DatasetItemInputDto")
@@ -23,46 +19,34 @@ T = TypeVar("T", bound="DatasetItemInputDto")
 class DatasetItemInputDto:
     """
     Attributes:
-        input_ (DatasetItemInputDtoInput): Redacted before persistence according to the organization policy.
-        attachments (DatasetItemInputDtoAttachments | Unset):
-        expected_output (DatasetItemInputDtoExpectedOutput | Unset):
+        input_ (Any): Redacted before persistence according to the organization policy.
+        attachments (Any | Unset):
+        expected_output (Any | Unset):
         item_id (str | Unset):
         metadata (DatasetItemInputDtoMetadata | Unset):
         source_span_id (str | Unset):
         source_trace_id (str | Unset):
-        tool_trajectory (DatasetItemInputDtoToolTrajectory | Unset):
+        tool_trajectory (Any | Unset):
     """
 
-    input_: DatasetItemInputDtoInput
-    attachments: DatasetItemInputDtoAttachments | Unset = UNSET
-    expected_output: DatasetItemInputDtoExpectedOutput | Unset = UNSET
+    input_: Any
+    attachments: Any | Unset = UNSET
+    expected_output: Any | Unset = UNSET
     item_id: str | Unset = UNSET
     metadata: DatasetItemInputDtoMetadata | Unset = UNSET
     source_span_id: str | Unset = UNSET
     source_trace_id: str | Unset = UNSET
-    tool_trajectory: DatasetItemInputDtoToolTrajectory | Unset = UNSET
+    tool_trajectory: Any | Unset = UNSET
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
-        from ..models.dataset_item_input_dto_attachments import DatasetItemInputDtoAttachments
-        from ..models.dataset_item_input_dto_expected_output import (
-            DatasetItemInputDtoExpectedOutput,
-        )
-        from ..models.dataset_item_input_dto_input import DatasetItemInputDtoInput
         from ..models.dataset_item_input_dto_metadata import DatasetItemInputDtoMetadata
-        from ..models.dataset_item_input_dto_tool_trajectory import (
-            DatasetItemInputDtoToolTrajectory,
-        )
 
-        input_ = self.input_.to_dict()
+        input_ = self.input_
 
-        attachments: dict[str, Any] | Unset = UNSET
-        if not isinstance(self.attachments, Unset):
-            attachments = self.attachments.to_dict()
+        attachments = self.attachments
 
-        expected_output: dict[str, Any] | Unset = UNSET
-        if not isinstance(self.expected_output, Unset):
-            expected_output = self.expected_output.to_dict()
+        expected_output = self.expected_output
 
         item_id = self.item_id
 
@@ -74,9 +58,7 @@ class DatasetItemInputDto:
 
         source_trace_id = self.source_trace_id
 
-        tool_trajectory: dict[str, Any] | Unset = UNSET
-        if not isinstance(self.tool_trajectory, Unset):
-            tool_trajectory = self.tool_trajectory.to_dict()
+        tool_trajectory = self.tool_trajectory
 
         field_dict: dict[str, Any] = {}
         field_dict.update(self.additional_properties)
@@ -104,32 +86,14 @@ class DatasetItemInputDto:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        from ..models.dataset_item_input_dto_attachments import DatasetItemInputDtoAttachments
-        from ..models.dataset_item_input_dto_expected_output import (
-            DatasetItemInputDtoExpectedOutput,
-        )
-        from ..models.dataset_item_input_dto_input import DatasetItemInputDtoInput
         from ..models.dataset_item_input_dto_metadata import DatasetItemInputDtoMetadata
-        from ..models.dataset_item_input_dto_tool_trajectory import (
-            DatasetItemInputDtoToolTrajectory,
-        )
 
         d = dict(src_dict)
-        input_ = DatasetItemInputDtoInput.from_dict(d.pop("input"))
+        input_ = d.pop("input")
 
-        _attachments = d.pop("attachments", UNSET)
-        attachments: DatasetItemInputDtoAttachments | Unset
-        if isinstance(_attachments, Unset):
-            attachments = UNSET
-        else:
-            attachments = DatasetItemInputDtoAttachments.from_dict(_attachments)
+        attachments = d.pop("attachments", UNSET)
 
-        _expected_output = d.pop("expectedOutput", UNSET)
-        expected_output: DatasetItemInputDtoExpectedOutput | Unset
-        if isinstance(_expected_output, Unset):
-            expected_output = UNSET
-        else:
-            expected_output = DatasetItemInputDtoExpectedOutput.from_dict(_expected_output)
+        expected_output = d.pop("expectedOutput", UNSET)
 
         item_id = d.pop("itemId", UNSET)
 
@@ -144,12 +108,7 @@ class DatasetItemInputDto:
 
         source_trace_id = d.pop("sourceTraceId", UNSET)
 
-        _tool_trajectory = d.pop("toolTrajectory", UNSET)
-        tool_trajectory: DatasetItemInputDtoToolTrajectory | Unset
-        if isinstance(_tool_trajectory, Unset):
-            tool_trajectory = UNSET
-        else:
-            tool_trajectory = DatasetItemInputDtoToolTrajectory.from_dict(_tool_trajectory)
+        tool_trajectory = d.pop("toolTrajectory", UNSET)
 
         dataset_item_input_dto = cls(
             input_=input_,

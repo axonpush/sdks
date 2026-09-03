@@ -466,9 +466,7 @@
           "assessmentId": {
             "type": "string"
           },
-          "correction": {
-            "type": "object"
-          },
+          "correction": {},
           "createdAt": {
             "format": "date-time",
             "type": "string"
@@ -622,6 +620,47 @@
           "failed"
         ],
         "type": "string"
+      },
+      "BatchEventDto": {
+        "properties": {
+          "agentId": {
+            "type": "string"
+          },
+          "eventType": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/EventType"
+              }
+            ],
+            "default": "custom"
+          },
+          "identifier": {
+            "type": "string"
+          },
+          "metadata": {
+            "type": "object"
+          },
+          "parentEventId": {
+            "type": "string"
+          },
+          "parentSpanId": {
+            "type": "string"
+          },
+          "payload": {
+            "type": "object"
+          },
+          "spanId": {
+            "type": "string"
+          },
+          "traceId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "identifier",
+          "payload"
+        ],
+        "type": "object"
       },
       "CapabilitiesResponseDto": {
         "properties": {
@@ -875,9 +914,7 @@
       },
       "CreateAssessmentDto": {
         "properties": {
-          "correction": {
-            "type": "object"
-          },
+          "correction": {},
           "evaluatorVersionId": {
             "type": "string"
           },
@@ -1067,9 +1104,7 @@
           "name": {
             "type": "string"
           },
-          "outputSchema": {
-            "type": "object"
-          },
+          "outputSchema": {},
           "provider": {
             "type": "string"
           },
@@ -1100,9 +1135,7 @@
           "model": {
             "type": "string"
           },
-          "outputSchema": {
-            "type": "object"
-          },
+          "outputSchema": {},
           "provider": {
             "type": "string"
           },
@@ -1113,6 +1146,29 @@
         "required": [
           "kind",
           "config"
+        ],
+        "type": "object"
+      },
+      "CreateEventBatchDto": {
+        "properties": {
+          "channel_id": {
+            "type": "string"
+          },
+          "environment": {
+            "description": "Environment slug override applied to every event in the batch. Only honored when the API key has allowEnvironmentOverride=true.",
+            "type": "string"
+          },
+          "events": {
+            "items": {
+              "$ref": "#/components/schemas/BatchEventDto"
+            },
+            "maxItems": 100,
+            "type": "array"
+          }
+        },
+        "required": [
+          "channel_id",
+          "events"
         ],
         "type": "object"
       },
@@ -1625,15 +1681,10 @@
       },
       "DatasetItemInputDto": {
         "properties": {
-          "attachments": {
-            "type": "object"
-          },
-          "expectedOutput": {
-            "type": "object"
-          },
+          "attachments": {},
+          "expectedOutput": {},
           "input": {
-            "description": "Redacted before persistence according to the organization policy.",
-            "type": "object"
+            "description": "Redacted before persistence according to the organization policy."
           },
           "itemId": {
             "type": "string"
@@ -1648,9 +1699,7 @@
           "sourceTraceId": {
             "type": "string"
           },
-          "toolTrajectory": {
-            "type": "object"
-          }
+          "toolTrajectory": {}
         },
         "required": [
           "input"
@@ -1673,9 +1722,7 @@
       },
       "DatasetRevisionDataItemDto": {
         "properties": {
-          "attachments": {
-            "type": "object"
-          },
+          "attachments": {},
           "contentHash": {
             "type": "string"
           },
@@ -1683,12 +1730,9 @@
             "format": "date-time",
             "type": "string"
           },
-          "expectedOutput": {
-            "type": "object"
-          },
+          "expectedOutput": {},
           "input": {
-            "description": "Redacted before persistence according to the organization policy.",
-            "type": "object"
+            "description": "Redacted before persistence according to the organization policy."
           },
           "itemId": {
             "type": "string"
@@ -1703,9 +1747,7 @@
           "sourceTraceId": {
             "type": "string"
           },
-          "toolTrajectory": {
-            "type": "object"
-          }
+          "toolTrajectory": {}
         },
         "required": [
           "input",
@@ -2049,9 +2091,7 @@
           "orgId": {
             "type": "string"
           },
-          "outputSchema": {
-            "type": "object"
-          },
+          "outputSchema": {},
           "provider": {
             "type": "string"
           },
@@ -2098,6 +2138,30 @@
         "required": [
           "evaluatorId",
           "version"
+        ],
+        "type": "object"
+      },
+      "EventBatchIngestResponseDto": {
+        "properties": {
+          "accepted": {
+            "description": "Number of events accepted onto the ingest path.",
+            "type": "number"
+          },
+          "data": {
+            "description": "One entry per submitted event, in the order they were submitted.",
+            "items": {
+              "$ref": "#/components/schemas/EventIngestResponseDto"
+            },
+            "type": "array"
+          },
+          "environmentId": {
+            "nullable": true,
+            "type": "string"
+          }
+        },
+        "required": [
+          "accepted",
+          "data"
         ],
         "type": "object"
       },
@@ -2484,26 +2548,53 @@
       },
       "ExperimentGateDto": {
         "properties": {
+          "gitBranch": {
+            "description": "Branch to record against the decision. Falls back to the experiment.",
+            "type": "string"
+          },
+          "gitCommit": {
+            "description": "Commit to record against the decision. Falls back to the experiment.",
+            "type": "string"
+          },
           "maxCostIncreasePercent": {
+            "description": "Maximum cost increase against the baseline, in percent.",
             "type": "number"
           },
           "maxCostUsd": {
+            "description": "Maximum total run cost in USD.",
             "type": "number"
           },
           "maxFailureRate": {
+            "description": "Maximum share of dataset items allowed to error, 0-1.",
             "type": "number"
           },
           "maxLatencyIncreasePercent": {
+            "description": "Maximum latency increase against the baseline, in percent.",
             "type": "number"
           },
           "maxLatencyMs": {
+            "description": "Maximum mean latency in milliseconds.",
             "type": "number"
           },
           "minScore": {
+            "description": "Minimum absolute score the candidate must reach.",
             "type": "number"
           },
           "minScoreDelta": {
+            "description": "Smallest score change against the baseline that still passes. Usually negative.",
             "type": "number"
+          },
+          "release": {
+            "description": "Release to record against the decision. Falls back to the experiment.",
+            "type": "string"
+          },
+          "source": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/GateRunSource"
+              }
+            ],
+            "description": "Who asked for the decision. Defaults to api."
           }
         },
         "type": "object"
@@ -2514,6 +2605,10 @@
             "type": "string"
           },
           "experimentId": {
+            "type": "string"
+          },
+          "gateRunId": {
+            "description": "The recorded decision. Absent when the experiment was not gateable.",
             "type": "string"
           },
           "metrics": {
@@ -2567,9 +2662,7 @@
           "error": {
             "type": "string"
           },
-          "evaluatorResults": {
-            "type": "object"
-          },
+          "evaluatorResults": {},
           "explanation": {
             "type": "string"
           },
@@ -2580,7 +2673,7 @@
             "type": "number"
           },
           "output": {
-            "type": "object"
+            "description": "Whatever the target produced. The evaluators decide what it means."
           },
           "score": {
             "type": "number"
@@ -2727,6 +2820,208 @@
       "Function": {
         "properties": {},
         "type": "object"
+      },
+      "GatePolicyDeleteDto": {
+        "properties": {
+          "deleted": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "deleted"
+        ],
+        "type": "object"
+      },
+      "GatePolicyDto": {
+        "properties": {
+          "createdAt": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "createdBy": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "enabled": {
+            "type": "boolean"
+          },
+          "maxCostIncreasePercent": {
+            "description": "Maximum cost increase against the baseline, in percent.",
+            "type": "number"
+          },
+          "maxCostUsd": {
+            "description": "Maximum total run cost in USD.",
+            "type": "number"
+          },
+          "maxFailureRate": {
+            "description": "Maximum share of dataset items allowed to error, 0-1.",
+            "type": "number"
+          },
+          "maxLatencyIncreasePercent": {
+            "description": "Maximum latency increase against the baseline, in percent.",
+            "type": "number"
+          },
+          "maxLatencyMs": {
+            "description": "Maximum mean latency in milliseconds.",
+            "type": "number"
+          },
+          "minScore": {
+            "description": "Minimum absolute score the candidate must reach.",
+            "type": "number"
+          },
+          "minScoreDelta": {
+            "description": "Smallest score change against the baseline that still passes. Usually negative.",
+            "type": "number"
+          },
+          "name": {
+            "type": "string"
+          },
+          "orgId": {
+            "type": "string"
+          },
+          "scopeId": {
+            "type": "string"
+          },
+          "scopeType": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/GatePolicyScope"
+              }
+            ]
+          },
+          "updatedAt": {
+            "format": "date-time",
+            "type": "string"
+          }
+        },
+        "required": [
+          "orgId",
+          "scopeType",
+          "scopeId",
+          "enabled",
+          "createdAt",
+          "updatedAt"
+        ],
+        "type": "object"
+      },
+      "GatePolicyListDto": {
+        "properties": {
+          "data": {
+            "items": {
+              "$ref": "#/components/schemas/GatePolicyDto"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "data"
+        ],
+        "type": "object"
+      },
+      "GatePolicyScope": {
+        "enum": [
+          "dataset",
+          "target"
+        ],
+        "type": "string"
+      },
+      "GateRunDto": {
+        "properties": {
+          "baselineExperimentId": {
+            "type": "string"
+          },
+          "createdAt": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "datasetId": {
+            "type": "string"
+          },
+          "experimentId": {
+            "type": "string"
+          },
+          "gateRunId": {
+            "type": "string"
+          },
+          "gitBranch": {
+            "type": "string"
+          },
+          "gitCommit": {
+            "type": "string"
+          },
+          "metrics": {
+            "additionalProperties": true,
+            "type": "object"
+          },
+          "orgId": {
+            "type": "string"
+          },
+          "passed": {
+            "type": "boolean"
+          },
+          "reasons": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "release": {
+            "type": "string"
+          },
+          "source": {
+            "type": "string"
+          },
+          "targetId": {
+            "type": "string"
+          },
+          "thresholds": {
+            "additionalProperties": {
+              "type": "number"
+            },
+            "type": "object"
+          }
+        },
+        "required": [
+          "orgId",
+          "gateRunId",
+          "experimentId",
+          "passed",
+          "reasons",
+          "metrics",
+          "thresholds",
+          "source",
+          "createdAt"
+        ],
+        "type": "object"
+      },
+      "GateRunListDto": {
+        "properties": {
+          "cursor": {
+            "nullable": true,
+            "type": "string"
+          },
+          "data": {
+            "items": {
+              "$ref": "#/components/schemas/GateRunDto"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "data"
+        ],
+        "type": "object"
+      },
+      "GateRunSource": {
+        "description": "Who asked for the decision. Defaults to api.",
+        "enum": [
+          "cli",
+          "api",
+          "ui"
+        ],
+        "type": "string"
       },
       "HealthResponseDto": {
         "properties": {
@@ -3344,7 +3639,7 @@
             "type": "number"
           },
           "output": {
-            "type": "object"
+            "description": "Whatever the target produced. The evaluators decide what it means."
           },
           "totalTokens": {
             "type": "number"
@@ -4195,6 +4490,65 @@
             "type": "number"
           }
         },
+        "type": "object"
+      },
+      "SaveGatePolicyDto": {
+        "properties": {
+          "description": {
+            "type": "string"
+          },
+          "enabled": {
+            "description": "Defaults to true on create. A disabled policy is never resolved.",
+            "type": "boolean"
+          },
+          "maxCostIncreasePercent": {
+            "description": "Maximum cost increase against the baseline, in percent.",
+            "type": "number"
+          },
+          "maxCostUsd": {
+            "description": "Maximum total run cost in USD.",
+            "type": "number"
+          },
+          "maxFailureRate": {
+            "description": "Maximum share of dataset items allowed to error, 0-1.",
+            "type": "number"
+          },
+          "maxLatencyIncreasePercent": {
+            "description": "Maximum latency increase against the baseline, in percent.",
+            "type": "number"
+          },
+          "maxLatencyMs": {
+            "description": "Maximum mean latency in milliseconds.",
+            "type": "number"
+          },
+          "minScore": {
+            "description": "Minimum absolute score the candidate must reach.",
+            "type": "number"
+          },
+          "minScoreDelta": {
+            "description": "Smallest score change against the baseline that still passes. Usually negative.",
+            "type": "number"
+          },
+          "name": {
+            "type": "string"
+          },
+          "scopeId": {
+            "description": "The dataset or evaluation-target id the policy applies to.",
+            "type": "string"
+          },
+          "scopeType": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/GatePolicyScope"
+              }
+            ],
+            "description": "What the policy is attached to."
+          }
+        },
+        "required": [
+          "scopeType",
+          "scopeId"
+        ],
         "type": "object"
       },
       "SignalsStatus": {
@@ -5961,6 +6315,8 @@
             "type": "number"
           },
           "sampleRate": {
+            "maximum": 1,
+            "minimum": 0,
             "type": "number"
           },
           "timeoutMs": {
@@ -7111,6 +7467,51 @@
             "description": ""
           }
         },
+        "tags": [
+          "event"
+        ],
+        "x-axonpush-scopes": [
+          "publish"
+        ]
+      }
+    },
+    "/event/batch": {
+      "post": {
+        "operationId": "EventController_createEventBatch",
+        "parameters": [
+          {
+            "description": "Stripe-style client-supplied idempotency key (1–255 ASCII-printable chars). Cached response replay for retried requests.",
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateEventBatchDto"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "202": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EventBatchIngestResponseDto"
+                }
+              }
+            },
+            "description": ""
+          }
+        },
+        "summary": "Ingest up to 100 events in one request",
         "tags": [
           "event"
         ],
@@ -10786,6 +11187,199 @@
         ]
       }
     },
+    "/v2/gate-policies": {
+      "get": {
+        "operationId": "GatePolicyController_list",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GatePolicyListDto"
+                }
+              }
+            },
+            "description": ""
+          }
+        },
+        "tags": [
+          "gate-policies"
+        ],
+        "x-axonpush-scopes": [
+          "evaluations:manage"
+        ]
+      },
+      "post": {
+        "operationId": "GatePolicyController_save",
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SaveGatePolicyDto"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GatePolicyDto"
+                }
+              }
+            },
+            "description": ""
+          }
+        },
+        "tags": [
+          "gate-policies"
+        ],
+        "x-axonpush-scopes": [
+          "evaluations:manage"
+        ]
+      }
+    },
+    "/v2/gate-policies/{scopeType}/{scopeId}": {
+      "delete": {
+        "operationId": "GatePolicyController_remove",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "scopeId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "scopeType",
+            "required": true,
+            "schema": {
+              "enum": [
+                "dataset",
+                "target"
+              ],
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GatePolicyDeleteDto"
+                }
+              }
+            },
+            "description": ""
+          }
+        },
+        "tags": [
+          "gate-policies"
+        ],
+        "x-axonpush-scopes": [
+          "evaluations:manage"
+        ]
+      },
+      "get": {
+        "operationId": "GatePolicyController_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "scopeId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "scopeType",
+            "required": true,
+            "schema": {
+              "enum": [
+                "dataset",
+                "target"
+              ],
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GatePolicyDto"
+                }
+              }
+            },
+            "description": ""
+          }
+        },
+        "tags": [
+          "gate-policies"
+        ],
+        "x-axonpush-scopes": [
+          "evaluations:manage"
+        ]
+      }
+    },
+    "/v2/gate-runs": {
+      "get": {
+        "operationId": "GateRunController_list",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "cursor",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "experimentId",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GateRunListDto"
+                }
+              }
+            },
+            "description": ""
+          }
+        },
+        "tags": [
+          "gate-runs"
+        ],
+        "x-axonpush-scopes": [
+          "evaluations:manage"
+        ]
+      }
+    },
     "/v2/intelligence/jobs": {
       "get": {
         "operationId": "IntelligenceController_list",
@@ -13777,5 +14371,174 @@
     }
   },
   "servers": [],
-  "tags": []
+  "tags": [
+    {
+      "description": "Requests for hosted or self-host access, submitted from the marketing site.",
+      "name": "access-request"
+    },
+    {
+      "description": "Operator-only endpoints. Not part of the customer-facing surface.",
+      "name": "admin"
+    },
+    {
+      "description": "Alert rules and their delivery.",
+      "name": "alerts"
+    },
+    {
+      "description": "Aggregate queries over stored events and spans.",
+      "name": "analytics-v2"
+    },
+    {
+      "description": "Server-side keys, scoped to an organisation, app, environment and optional channel.",
+      "name": "api-keys"
+    },
+    {
+      "description": "Applications within an organisation. An app is the unit an API key is bound to.",
+      "name": "apps"
+    },
+    {
+      "description": "Scored assessments run against captured traces.",
+      "name": "assessments"
+    },
+    {
+      "description": "Immutable record of key rotations, invites, role changes and org-level actions.",
+      "name": "audit-logs"
+    },
+    {
+      "description": "Sign-in, session and IoT credential exchange.",
+      "name": "auth"
+    },
+    {
+      "description": "Plans, subscriptions and usage against them.",
+      "name": "billing"
+    },
+    {
+      "description": "What this deployment has enabled, resolved from licence and feature flags.",
+      "name": "capabilities"
+    },
+    {
+      "description": "Named streams events are published to and subscribed from.",
+      "name": "channels"
+    },
+    {
+      "description": "Collections of real traces used as evaluation inputs.",
+      "name": "datasets"
+    },
+    {
+      "description": "dev, staging and prod isolation within an app.",
+      "name": "environments"
+    },
+    {
+      "description": "The thing an experiment runs against.",
+      "name": "evaluation-targets"
+    },
+    {
+      "description": "Scoring functions applied to a dataset.",
+      "name": "evaluators"
+    },
+    {
+      "description": "Publishing single events.",
+      "name": "event"
+    },
+    {
+      "description": "Searching and reading stored events.",
+      "name": "events"
+    },
+    {
+      "description": "Runs of evaluators over a dataset.",
+      "name": "experiments"
+    },
+    {
+      "description": "Where traces are forwarded: OTLP collectors, webhooks and sinks.",
+      "name": "export-destinations"
+    },
+    {
+      "description": "Recurring failures, grouped by fingerprint.",
+      "name": "failure intelligence"
+    },
+    {
+      "description": "Per-organisation feature state.",
+      "name": "feature-flags"
+    },
+    {
+      "description": "Stored release-gate thresholds, attached to a dataset or an evaluation target.",
+      "name": "gate-policies"
+    },
+    {
+      "description": "Recorded gate decisions: what was gated, on which commit, and what regressed.",
+      "name": "gate-runs"
+    },
+    {
+      "description": "Liveness and readiness.",
+      "name": "health"
+    },
+    {
+      "description": "Short-lived credentials for MQTT-over-WSS subscribers.",
+      "name": "iot-tokens"
+    },
+    {
+      "description": "Deduplicated failures raised from traces.",
+      "name": "issues"
+    },
+    {
+      "description": "Self-host licence state and the telemetry preview.",
+      "name": "license"
+    },
+    {
+      "description": "Tokens for the hosted MCP server.",
+      "name": "mcp-tokens"
+    },
+    {
+      "description": "Evaluators applied to live traffic rather than a fixed dataset.",
+      "name": "online evaluations"
+    },
+    {
+      "description": "Organisations, membership and roles.",
+      "name": "organizations"
+    },
+    {
+      "description": "OpenTelemetry ingest over OTLP/HTTP and OTLP/JSON.",
+      "name": "otlp"
+    },
+    {
+      "description": "Versioned prompts and their promotion between environments.",
+      "name": "prompts"
+    },
+    {
+      "description": "Browser-safe publish tokens, scoped per environment.",
+      "name": "public-tokens"
+    },
+    {
+      "description": "Sentry-compatible release and source-map artifact upload. Unrelated to release gates.",
+      "name": "sentry-releases"
+    },
+    {
+      "description": "Sentry envelope ingest, accepted unmodified.",
+      "name": "sentry"
+    },
+    {
+      "description": "SAML and OIDC connections.",
+      "name": "sso"
+    },
+    {
+      "description": "Extraction over traces, run against a customer-supplied provider key.",
+      "name": "trace intelligence"
+    },
+    {
+      "description": "Traces and their spans.",
+      "name": "traces"
+    },
+    {
+      "description": "The current trace read model.",
+      "name": "traces-v2"
+    },
+    {
+      "description": "User profiles and preferences.",
+      "name": "users"
+    },
+    {
+      "description": "Outbound signed webhooks and their delivery history.",
+      "name": "webhooks"
+    }
+  ]
 }

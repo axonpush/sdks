@@ -6,18 +6,20 @@ from typing import TYPE_CHECKING, Any, BinaryIO, Generator, TextIO, TypeVar
 from attrs import define as _attrs_define
 from attrs import field as _attrs_field
 
-from ..models.gate_run_source import GateRunSource
+from ..models.gate_policy_scope import GatePolicyScope
 from ..types import UNSET, Unset
 
-T = TypeVar("T", bound="ExperimentGateDto")
+T = TypeVar("T", bound="SaveGatePolicyDto")
 
 
 @_attrs_define
-class ExperimentGateDto:
+class SaveGatePolicyDto:
     """
     Attributes:
-        git_branch (str | Unset): Branch to record against the decision. Falls back to the experiment.
-        git_commit (str | Unset): Commit to record against the decision. Falls back to the experiment.
+        scope_id (str): The dataset or evaluation-target id the policy applies to.
+        scope_type (GatePolicyScope):
+        description (str | Unset):
+        enabled (bool | Unset): Defaults to true on create. A disabled policy is never resolved.
         max_cost_increase_percent (float | Unset): Maximum cost increase against the baseline, in percent.
         max_cost_usd (float | Unset): Maximum total run cost in USD.
         max_failure_rate (float | Unset): Maximum share of dataset items allowed to error, 0-1.
@@ -25,12 +27,13 @@ class ExperimentGateDto:
         max_latency_ms (float | Unset): Maximum mean latency in milliseconds.
         min_score (float | Unset): Minimum absolute score the candidate must reach.
         min_score_delta (float | Unset): Smallest score change against the baseline that still passes. Usually negative.
-        release (str | Unset): Release to record against the decision. Falls back to the experiment.
-        source (GateRunSource | Unset): Who asked for the decision. Defaults to api.
+        name (str | Unset):
     """
 
-    git_branch: str | Unset = UNSET
-    git_commit: str | Unset = UNSET
+    scope_id: str
+    scope_type: GatePolicyScope
+    description: str | Unset = UNSET
+    enabled: bool | Unset = UNSET
     max_cost_increase_percent: float | Unset = UNSET
     max_cost_usd: float | Unset = UNSET
     max_failure_rate: float | Unset = UNSET
@@ -38,14 +41,17 @@ class ExperimentGateDto:
     max_latency_ms: float | Unset = UNSET
     min_score: float | Unset = UNSET
     min_score_delta: float | Unset = UNSET
-    release: str | Unset = UNSET
-    source: GateRunSource | Unset = UNSET
+    name: str | Unset = UNSET
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
-        git_branch = self.git_branch
+        scope_id = self.scope_id
 
-        git_commit = self.git_commit
+        scope_type = self.scope_type.value
+
+        description = self.description
+
+        enabled = self.enabled
 
         max_cost_increase_percent = self.max_cost_increase_percent
 
@@ -61,19 +67,20 @@ class ExperimentGateDto:
 
         min_score_delta = self.min_score_delta
 
-        release = self.release
-
-        source: str | Unset = UNSET
-        if not isinstance(self.source, Unset):
-            source = self.source.value
+        name = self.name
 
         field_dict: dict[str, Any] = {}
         field_dict.update(self.additional_properties)
-        field_dict.update({})
-        if git_branch is not UNSET:
-            field_dict["gitBranch"] = git_branch
-        if git_commit is not UNSET:
-            field_dict["gitCommit"] = git_commit
+        field_dict.update(
+            {
+                "scopeId": scope_id,
+                "scopeType": scope_type,
+            }
+        )
+        if description is not UNSET:
+            field_dict["description"] = description
+        if enabled is not UNSET:
+            field_dict["enabled"] = enabled
         if max_cost_increase_percent is not UNSET:
             field_dict["maxCostIncreasePercent"] = max_cost_increase_percent
         if max_cost_usd is not UNSET:
@@ -88,19 +95,21 @@ class ExperimentGateDto:
             field_dict["minScore"] = min_score
         if min_score_delta is not UNSET:
             field_dict["minScoreDelta"] = min_score_delta
-        if release is not UNSET:
-            field_dict["release"] = release
-        if source is not UNSET:
-            field_dict["source"] = source
+        if name is not UNSET:
+            field_dict["name"] = name
 
         return field_dict
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         d = dict(src_dict)
-        git_branch = d.pop("gitBranch", UNSET)
+        scope_id = d.pop("scopeId")
 
-        git_commit = d.pop("gitCommit", UNSET)
+        scope_type = GatePolicyScope(d.pop("scopeType"))
+
+        description = d.pop("description", UNSET)
+
+        enabled = d.pop("enabled", UNSET)
 
         max_cost_increase_percent = d.pop("maxCostIncreasePercent", UNSET)
 
@@ -116,18 +125,13 @@ class ExperimentGateDto:
 
         min_score_delta = d.pop("minScoreDelta", UNSET)
 
-        release = d.pop("release", UNSET)
+        name = d.pop("name", UNSET)
 
-        _source = d.pop("source", UNSET)
-        source: GateRunSource | Unset
-        if isinstance(_source, Unset):
-            source = UNSET
-        else:
-            source = GateRunSource(_source)
-
-        experiment_gate_dto = cls(
-            git_branch=git_branch,
-            git_commit=git_commit,
+        save_gate_policy_dto = cls(
+            scope_id=scope_id,
+            scope_type=scope_type,
+            description=description,
+            enabled=enabled,
             max_cost_increase_percent=max_cost_increase_percent,
             max_cost_usd=max_cost_usd,
             max_failure_rate=max_failure_rate,
@@ -135,12 +139,11 @@ class ExperimentGateDto:
             max_latency_ms=max_latency_ms,
             min_score=min_score,
             min_score_delta=min_score_delta,
-            release=release,
-            source=source,
+            name=name,
         )
 
-        experiment_gate_dto.additional_properties = d
-        return experiment_gate_dto
+        save_gate_policy_dto.additional_properties = d
+        return save_gate_policy_dto
 
     @property
     def additional_keys(self) -> list[str]:
