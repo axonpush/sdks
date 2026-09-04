@@ -136,9 +136,7 @@ export type AssessmentDeleteResponseDto = {
 export type AssessmentDto = {
     actorId?: string;
     assessmentId: string;
-    correction?: {
-        [key: string]: unknown;
-    };
+    correction?: unknown;
     createdAt: string;
     evaluatorVersionId?: string;
     explanation?: string;
@@ -174,6 +172,22 @@ export type BackfillOnlineRuleDto = {
 };
 
 export type BackfillStatus = 'queued' | 'running' | 'completed' | 'failed';
+
+export type BatchEventDto = {
+    agentId?: string;
+    eventType?: EventType;
+    identifier: string;
+    metadata?: {
+        [key: string]: unknown;
+    };
+    parentEventId?: string;
+    parentSpanId?: string;
+    payload: {
+        [key: string]: unknown;
+    };
+    spanId?: string;
+    traceId?: string;
+};
 
 export type CapabilitiesResponseDto = {
     capabilities: CapabilityFlagsDto;
@@ -256,9 +270,7 @@ export type CreateAppDto = {
 };
 
 export type CreateAssessmentDto = {
-    correction?: {
-        [key: string]: unknown;
-    };
+    correction?: unknown;
     evaluatorVersionId?: string;
     explanation?: string;
     idempotencyKey?: string;
@@ -316,9 +328,7 @@ export type CreateEvaluatorDto = {
     kind: EvaluatorKind;
     model?: string;
     name: string;
-    outputSchema?: {
-        [key: string]: unknown;
-    };
+    outputSchema?: unknown;
     provider?: string;
     rubric?: string;
 };
@@ -329,11 +339,18 @@ export type CreateEvaluatorVersionDto = {
     };
     kind: EvaluatorKind;
     model?: string;
-    outputSchema?: {
-        [key: string]: unknown;
-    };
+    outputSchema?: unknown;
     provider?: string;
     rubric?: string;
+};
+
+export type CreateEventBatchDto = {
+    channel_id: string;
+    /**
+     * Environment slug override applied to every event in the batch. Only honored when the API key has allowEnvironmentOverride=true.
+     */
+    environment?: string;
+    events: Array<BatchEventDto>;
 };
 
 export type CreateEventDto = {
@@ -518,27 +535,19 @@ export type DatasetExportDto = {
 export type DatasetExportFormat = 'jsonl' | 'csv';
 
 export type DatasetItemInputDto = {
-    attachments?: {
-        [key: string]: unknown;
-    };
-    expectedOutput?: {
-        [key: string]: unknown;
-    };
+    attachments?: unknown;
+    expectedOutput?: unknown;
     /**
      * Redacted before persistence according to the organization policy.
      */
-    input: {
-        [key: string]: unknown;
-    };
+    input: unknown;
     itemId?: string;
     metadata?: {
         [key: string]: unknown;
     };
     sourceSpanId?: string;
     sourceTraceId?: string;
-    toolTrajectory?: {
-        [key: string]: unknown;
-    };
+    toolTrajectory?: unknown;
 };
 
 export type DatasetListDto = {
@@ -546,29 +555,21 @@ export type DatasetListDto = {
 };
 
 export type DatasetRevisionDataItemDto = {
-    attachments?: {
-        [key: string]: unknown;
-    };
+    attachments?: unknown;
     contentHash: string;
     createdAt: string;
-    expectedOutput?: {
-        [key: string]: unknown;
-    };
+    expectedOutput?: unknown;
     /**
      * Redacted before persistence according to the organization policy.
      */
-    input: {
-        [key: string]: unknown;
-    };
+    input: unknown;
     itemId?: string;
     metadata?: {
         [key: string]: unknown;
     };
     sourceSpanId?: string;
     sourceTraceId?: string;
-    toolTrajectory?: {
-        [key: string]: unknown;
-    };
+    toolTrajectory?: unknown;
 };
 
 export type DatasetRevisionDto = {
@@ -670,9 +671,7 @@ export type EvaluatorVersionDto = {
     kind: EvaluatorKind;
     model?: string;
     orgId: string;
-    outputSchema?: {
-        [key: string]: unknown;
-    };
+    outputSchema?: unknown;
     provider?: string;
     rubric?: string;
     version: number;
@@ -685,6 +684,18 @@ export type EvaluatorVersionListDto = {
 export type EvaluatorVersionRefDto = {
     evaluatorId: string;
     version: number;
+};
+
+export type EventBatchIngestResponseDto = {
+    /**
+     * Number of events accepted onto the ingest path.
+     */
+    accepted: number;
+    /**
+     * One entry per submitted event, in the order they were submitted.
+     */
+    data: Array<EventIngestResponseDto>;
+    environmentId?: string | null;
 };
 
 export type EventIngestResponseDto = {
@@ -818,18 +829,59 @@ export type ExperimentDto = {
 };
 
 export type ExperimentGateDto = {
+    /**
+     * Branch to record against the decision. Falls back to the experiment.
+     */
+    gitBranch?: string;
+    /**
+     * Commit to record against the decision. Falls back to the experiment.
+     */
+    gitCommit?: string;
+    /**
+     * Maximum cost increase against the baseline, in percent.
+     */
     maxCostIncreasePercent?: number;
+    /**
+     * Maximum total run cost in USD.
+     */
     maxCostUsd?: number;
+    /**
+     * Maximum share of dataset items allowed to error, 0-1.
+     */
     maxFailureRate?: number;
+    /**
+     * Maximum latency increase against the baseline, in percent.
+     */
     maxLatencyIncreasePercent?: number;
+    /**
+     * Maximum mean latency in milliseconds.
+     */
     maxLatencyMs?: number;
+    /**
+     * Minimum absolute score the candidate must reach.
+     */
     minScore?: number;
+    /**
+     * Smallest score change against the baseline that still passes. Usually negative.
+     */
     minScoreDelta?: number;
+    /**
+     * Release to record against the decision. Falls back to the experiment.
+     */
+    release?: string;
+    /**
+     * Who asked for the decision. Defaults to api.
+     */
+    source?: GateRunSource;
 };
 
 export type ExperimentGateResultDto = {
     baselineExperimentId?: string;
     experimentId: string;
+    /**
+     * The recorded decision. Absent when the experiment was not gateable.
+     */
+    gateRunId?: string;
     metrics: {
         [key: string]: unknown;
     };
@@ -846,15 +898,14 @@ export type ExperimentResultDto = {
     costUsd?: number;
     createdAt: string;
     error?: string;
-    evaluatorResults?: {
-        [key: string]: unknown;
-    };
+    evaluatorResults?: unknown;
     explanation?: string;
     itemId: string;
     latencyMs?: number;
-    output: {
-        [key: string]: unknown;
-    };
+    /**
+     * Whatever the target produced. The evaluators decide what it means.
+     */
+    output: unknown;
     score?: number;
     status: ExperimentResultStatus;
     totalTokens?: number;
@@ -897,6 +948,88 @@ export type ExportSignal = 'logs' | 'traces';
 export type Function = {
     [key: string]: unknown;
 };
+
+export type GatePolicyDeleteDto = {
+    deleted: boolean;
+};
+
+export type GatePolicyDto = {
+    createdAt: string;
+    createdBy?: string;
+    description?: string;
+    enabled: boolean;
+    /**
+     * Maximum cost increase against the baseline, in percent.
+     */
+    maxCostIncreasePercent?: number;
+    /**
+     * Maximum total run cost in USD.
+     */
+    maxCostUsd?: number;
+    /**
+     * Maximum share of dataset items allowed to error, 0-1.
+     */
+    maxFailureRate?: number;
+    /**
+     * Maximum latency increase against the baseline, in percent.
+     */
+    maxLatencyIncreasePercent?: number;
+    /**
+     * Maximum mean latency in milliseconds.
+     */
+    maxLatencyMs?: number;
+    /**
+     * Minimum absolute score the candidate must reach.
+     */
+    minScore?: number;
+    /**
+     * Smallest score change against the baseline that still passes. Usually negative.
+     */
+    minScoreDelta?: number;
+    name?: string;
+    orgId: string;
+    scopeId: string;
+    scopeType: GatePolicyScope;
+    updatedAt: string;
+};
+
+export type GatePolicyListDto = {
+    data: Array<GatePolicyDto>;
+};
+
+export type GatePolicyScope = 'dataset' | 'target';
+
+export type GateRunDto = {
+    baselineExperimentId?: string;
+    createdAt: string;
+    datasetId?: string;
+    experimentId: string;
+    gateRunId: string;
+    gitBranch?: string;
+    gitCommit?: string;
+    metrics: {
+        [key: string]: unknown;
+    };
+    orgId: string;
+    passed: boolean;
+    reasons: Array<string>;
+    release?: string;
+    source: string;
+    targetId?: string;
+    thresholds: {
+        [key: string]: number;
+    };
+};
+
+export type GateRunListDto = {
+    cursor?: string | null;
+    data: Array<GateRunDto>;
+};
+
+/**
+ * Who asked for the decision. Defaults to api.
+ */
+export type GateRunSource = 'cli' | 'api' | 'ui';
 
 export type HealthResponseDto = {
     flags: {
@@ -1084,9 +1217,10 @@ export type LocalExperimentResultDto = {
     error?: string;
     itemId: string;
     latencyMs?: number;
-    output: {
-        [key: string]: unknown;
-    };
+    /**
+     * Whatever the target produced. The evaluators decide what it means.
+     */
+    output: unknown;
     totalTokens?: number;
     traceId?: string;
 };
@@ -1334,6 +1468,51 @@ export type RunIntelligenceDto = {
     maxCostUsd?: number;
     maxLabels?: number;
     minimumCohortSize?: number;
+};
+
+export type SaveGatePolicyDto = {
+    description?: string;
+    /**
+     * Defaults to true on create. A disabled policy is never resolved.
+     */
+    enabled?: boolean;
+    /**
+     * Maximum cost increase against the baseline, in percent.
+     */
+    maxCostIncreasePercent?: number;
+    /**
+     * Maximum total run cost in USD.
+     */
+    maxCostUsd?: number;
+    /**
+     * Maximum share of dataset items allowed to error, 0-1.
+     */
+    maxFailureRate?: number;
+    /**
+     * Maximum latency increase against the baseline, in percent.
+     */
+    maxLatencyIncreasePercent?: number;
+    /**
+     * Maximum mean latency in milliseconds.
+     */
+    maxLatencyMs?: number;
+    /**
+     * Minimum absolute score the candidate must reach.
+     */
+    minScore?: number;
+    /**
+     * Smallest score change against the baseline that still passes. Usually negative.
+     */
+    minScoreDelta?: number;
+    name?: string;
+    /**
+     * The dataset or evaluation-target id the policy applies to.
+     */
+    scopeId: string;
+    /**
+     * What the policy is attached to.
+     */
+    scopeType: GatePolicyScope;
 };
 
 export type SignalsStatus = 'pending' | 'completed' | 'failed' | 'skipped';
@@ -2369,6 +2548,25 @@ export type EventControllerCreateEventResponses = {
 
 export type EventControllerCreateEventResponse = EventControllerCreateEventResponses[keyof EventControllerCreateEventResponses];
 
+export type EventControllerCreateEventBatchData = {
+    body: CreateEventBatchDto;
+    headers?: {
+        /**
+         * Stripe-style client-supplied idempotency key (1–255 ASCII-printable chars). Cached response replay for retried requests.
+         */
+        'Idempotency-Key'?: string;
+    };
+    path?: never;
+    query?: never;
+    url: '/event/batch';
+};
+
+export type EventControllerCreateEventBatchResponses = {
+    202: EventBatchIngestResponseDto;
+};
+
+export type EventControllerCreateEventBatchResponse = EventControllerCreateEventBatchResponses[keyof EventControllerCreateEventBatchResponses];
+
 export type EventControllerListEventsData = {
     body?: never;
     path: {
@@ -2754,141 +2952,6 @@ export type PublicIngestTokenControllerRevokeResponses = {
 };
 
 export type PublicIngestTokenControllerRevokeResponse = PublicIngestTokenControllerRevokeResponses[keyof PublicIngestTokenControllerRevokeResponses];
-
-export type TraceControllerListTracesData = {
-    body?: never;
-    path?: never;
-    query?: {
-        appId?: string;
-        environment?: string;
-        limit?: number;
-        page?: number;
-    };
-    url: '/traces';
-};
-
-export type TraceControllerListTracesResponses = {
-    /**
-     * Paginated list of trace summaries
-     */
-    200: {
-        data: Array<{
-            agents: Array<string>;
-            /**
-             * Known reported/estimated cost. Omitted when pricing is unknown.
-             */
-            costUsd?: number | null;
-            duration: number;
-            endTime: string;
-            errorCount: number;
-            eventCount: number;
-            eventTypes: Array<string>;
-            handoffCount: number;
-            startTime: string;
-            status?: string;
-            toolCallCount: number;
-            totalTokens?: number;
-            traceId: string;
-        }>;
-        meta: {
-            hasMore: boolean;
-            limit: number;
-            page: number;
-        };
-    };
-};
-
-export type TraceControllerListTracesResponse = TraceControllerListTracesResponses[keyof TraceControllerListTracesResponses];
-
-export type TraceControllerGetDashboardStatsData = {
-    body?: never;
-    path?: never;
-    query?: {
-        appId?: string;
-        environment?: string;
-    };
-    url: '/traces/stats';
-};
-
-export type TraceControllerGetDashboardStatsResponses = {
-    /**
-     * Aggregated dashboard stats for the caller organization
-     */
-    200: {
-        avgTraceDuration: number;
-        errorCount: number;
-        errorRate: number;
-        eventsByHour: Array<{
-            count?: number;
-            hour?: string;
-        }>;
-        eventsToday: number;
-        totalEvents: number;
-        totalTraces: number;
-        tracesToday: number;
-    };
-};
-
-export type TraceControllerGetDashboardStatsResponse = TraceControllerGetDashboardStatsResponses[keyof TraceControllerGetDashboardStatsResponses];
-
-export type TraceControllerGetTraceEventsData = {
-    body?: never;
-    path: {
-        traceId: string;
-    };
-    query?: {
-        appId?: string;
-        environment?: string;
-    };
-    url: '/traces/{traceId}/events';
-};
-
-export type TraceControllerGetTraceEventsResponses = {
-    /**
-     * All events belonging to a trace, ordered by authoritative occurrence time
-     */
-    200: Array<EventResponseDto>;
-};
-
-export type TraceControllerGetTraceEventsResponse = TraceControllerGetTraceEventsResponses[keyof TraceControllerGetTraceEventsResponses];
-
-export type TraceControllerGetTraceSummaryData = {
-    body?: never;
-    path: {
-        traceId: string;
-    };
-    query?: {
-        appId?: string;
-        environment?: string;
-    };
-    url: '/traces/{traceId}/summary';
-};
-
-export type TraceControllerGetTraceSummaryResponses = {
-    /**
-     * Aggregated summary for a single trace
-     */
-    200: {
-        agents: Array<string>;
-        /**
-         * Known reported/estimated cost. Omitted when pricing is unknown.
-         */
-        costUsd?: number | null;
-        duration: number;
-        endTime: string;
-        errorCount: number;
-        eventCount: number;
-        eventTypes: Array<string>;
-        handoffCount: number;
-        startTime: string;
-        status?: string;
-        toolCallCount: number;
-        totalTokens?: number;
-        traceId: string;
-    };
-};
-
-export type TraceControllerGetTraceSummaryResponse = TraceControllerGetTraceSummaryResponses[keyof TraceControllerGetTraceSummaryResponses];
 
 export type OtlpControllerIngestLogsData = {
     body?: never;
@@ -3653,6 +3716,81 @@ export type ExperimentControllerRunResponses = {
 };
 
 export type ExperimentControllerRunResponse = ExperimentControllerRunResponses[keyof ExperimentControllerRunResponses];
+
+export type GatePolicyControllerListData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/v2/gate-policies';
+};
+
+export type GatePolicyControllerListResponses = {
+    200: GatePolicyListDto;
+};
+
+export type GatePolicyControllerListResponse = GatePolicyControllerListResponses[keyof GatePolicyControllerListResponses];
+
+export type GatePolicyControllerSaveData = {
+    body: SaveGatePolicyDto;
+    path?: never;
+    query?: never;
+    url: '/v2/gate-policies';
+};
+
+export type GatePolicyControllerSaveResponses = {
+    200: GatePolicyDto;
+};
+
+export type GatePolicyControllerSaveResponse = GatePolicyControllerSaveResponses[keyof GatePolicyControllerSaveResponses];
+
+export type GatePolicyControllerRemoveData = {
+    body?: never;
+    path: {
+        scopeId: string;
+        scopeType: 'dataset' | 'target';
+    };
+    query?: never;
+    url: '/v2/gate-policies/{scopeType}/{scopeId}';
+};
+
+export type GatePolicyControllerRemoveResponses = {
+    200: GatePolicyDeleteDto;
+};
+
+export type GatePolicyControllerRemoveResponse = GatePolicyControllerRemoveResponses[keyof GatePolicyControllerRemoveResponses];
+
+export type GatePolicyControllerGetData = {
+    body?: never;
+    path: {
+        scopeId: string;
+        scopeType: 'dataset' | 'target';
+    };
+    query?: never;
+    url: '/v2/gate-policies/{scopeType}/{scopeId}';
+};
+
+export type GatePolicyControllerGetResponses = {
+    200: GatePolicyDto;
+};
+
+export type GatePolicyControllerGetResponse = GatePolicyControllerGetResponses[keyof GatePolicyControllerGetResponses];
+
+export type GateRunControllerListData = {
+    body?: never;
+    path?: never;
+    query?: {
+        cursor?: string;
+        experimentId?: string;
+        limit?: number;
+    };
+    url: '/v2/gate-runs';
+};
+
+export type GateRunControllerListResponses = {
+    200: GateRunListDto;
+};
+
+export type GateRunControllerListResponse = GateRunControllerListResponses[keyof GateRunControllerListResponses];
 
 export type IntelligenceControllerListData = {
     body?: never;
@@ -4462,6 +4600,37 @@ export type TraceV2ControllerFacetsResponses = {
 };
 
 export type TraceV2ControllerFacetsResponse = TraceV2ControllerFacetsResponses[keyof TraceV2ControllerFacetsResponses];
+
+export type TraceV2ControllerStatsData = {
+    body?: never;
+    path?: never;
+    query?: {
+        appId?: string;
+        environment?: string;
+    };
+    url: '/v2/traces/stats';
+};
+
+export type TraceV2ControllerStatsResponses = {
+    /**
+     * Aggregated dashboard stats for the caller organization
+     */
+    200: {
+        avgTraceDuration: number;
+        errorCount: number;
+        errorRate: number;
+        eventsByHour: Array<{
+            count?: number;
+            hour?: string;
+        }>;
+        eventsToday: number;
+        totalEvents: number;
+        totalTraces: number;
+        tracesToday: number;
+    };
+};
+
+export type TraceV2ControllerStatsResponse = TraceV2ControllerStatsResponses[keyof TraceV2ControllerStatsResponses];
 
 export type TraceV2ControllerDetailData = {
     body?: never;

@@ -19,7 +19,6 @@ import { OnlineEvaluationsResource } from "./resources/online-evaluations.js";
 import { OrganizationsResource } from "./resources/organizations.js";
 import { PromptsResource } from "./resources/prompts.js";
 import { TraceIntelligenceResource } from "./resources/trace-intelligence.js";
-import { TracesResource } from "./resources/traces.js";
 import { TracesV2Resource } from "./resources/traces-v2.js";
 import { WebhooksResource } from "./resources/webhooks.js";
 import { getOrCreateTrace, type TraceContext } from "./tracing.js";
@@ -45,8 +44,6 @@ export class AxonPush {
   readonly environments: EnvironmentsResource;
   /** Webhooks resource — `createEndpoint`, `listEndpoints`, `deleteEndpoint`, `deliveries`. */
   readonly webhooks: WebhooksResource;
-  /** Traces resource — `list`, `stats`, `events`, `summary`. */
-  readonly traces: TracesResource;
   /** API keys resource — `create`, `list`, `delete`. */
   readonly apiKeys: ApiKeysResource;
   /** Organizations resource — `create`, `get`, `list`, `update`, `delete`, `invite`, `removeMember`, `transferOwnership`. */
@@ -88,7 +85,6 @@ export class AxonPush {
     this.apps = new AppsResource(this);
     this.environments = new EnvironmentsResource(this);
     this.webhooks = new WebhooksResource(this);
-    this.traces = new TracesResource(this);
     this.apiKeys = new ApiKeysResource(this);
     this.organizations = new OrganizationsResource(this);
     this.prompts = new PromptsResource(this);

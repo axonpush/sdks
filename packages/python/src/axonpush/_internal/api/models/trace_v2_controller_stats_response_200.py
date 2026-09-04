@@ -9,22 +9,22 @@ from attrs import field as _attrs_field
 from ..types import UNSET, Unset
 
 if TYPE_CHECKING:
-    from ..models.trace_controller_get_dashboard_stats_response_200_events_by_hour_item import (
-        TraceControllerGetDashboardStatsResponse200EventsByHourItem,
+    from ..models.trace_v2_controller_stats_response_200_events_by_hour_item import (
+        TraceV2ControllerStatsResponse200EventsByHourItem,
     )
 
 
-T = TypeVar("T", bound="TraceControllerGetDashboardStatsResponse200")
+T = TypeVar("T", bound="TraceV2ControllerStatsResponse200")
 
 
 @_attrs_define
-class TraceControllerGetDashboardStatsResponse200:
+class TraceV2ControllerStatsResponse200:
     """
     Attributes:
         avg_trace_duration (float):
         error_count (float):
         error_rate (float):
-        events_by_hour (list[TraceControllerGetDashboardStatsResponse200EventsByHourItem]):
+        events_by_hour (list[TraceV2ControllerStatsResponse200EventsByHourItem]):
         events_today (float):
         total_events (float):
         total_traces (float):
@@ -34,7 +34,7 @@ class TraceControllerGetDashboardStatsResponse200:
     avg_trace_duration: float
     error_count: float
     error_rate: float
-    events_by_hour: list[TraceControllerGetDashboardStatsResponse200EventsByHourItem]
+    events_by_hour: list[TraceV2ControllerStatsResponse200EventsByHourItem]
     events_today: float
     total_events: float
     total_traces: float
@@ -42,8 +42,8 @@ class TraceControllerGetDashboardStatsResponse200:
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
-        from ..models.trace_controller_get_dashboard_stats_response_200_events_by_hour_item import (
-            TraceControllerGetDashboardStatsResponse200EventsByHourItem,
+        from ..models.trace_v2_controller_stats_response_200_events_by_hour_item import (
+            TraceV2ControllerStatsResponse200EventsByHourItem,
         )
 
         avg_trace_duration = self.avg_trace_duration
@@ -84,8 +84,8 @@ class TraceControllerGetDashboardStatsResponse200:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        from ..models.trace_controller_get_dashboard_stats_response_200_events_by_hour_item import (
-            TraceControllerGetDashboardStatsResponse200EventsByHourItem,
+        from ..models.trace_v2_controller_stats_response_200_events_by_hour_item import (
+            TraceV2ControllerStatsResponse200EventsByHourItem,
         )
 
         d = dict(src_dict)
@@ -98,10 +98,8 @@ class TraceControllerGetDashboardStatsResponse200:
         events_by_hour = []
         _events_by_hour = d.pop("eventsByHour")
         for events_by_hour_item_data in _events_by_hour:
-            events_by_hour_item = (
-                TraceControllerGetDashboardStatsResponse200EventsByHourItem.from_dict(
-                    events_by_hour_item_data
-                )
+            events_by_hour_item = TraceV2ControllerStatsResponse200EventsByHourItem.from_dict(
+                events_by_hour_item_data
             )
 
             events_by_hour.append(events_by_hour_item)
@@ -114,7 +112,7 @@ class TraceControllerGetDashboardStatsResponse200:
 
         traces_today = d.pop("tracesToday")
 
-        trace_controller_get_dashboard_stats_response_200 = cls(
+        trace_v2_controller_stats_response_200 = cls(
             avg_trace_duration=avg_trace_duration,
             error_count=error_count,
             error_rate=error_rate,
@@ -125,8 +123,8 @@ class TraceControllerGetDashboardStatsResponse200:
             traces_today=traces_today,
         )
 
-        trace_controller_get_dashboard_stats_response_200.additional_properties = d
-        return trace_controller_get_dashboard_stats_response_200
+        trace_v2_controller_stats_response_200.additional_properties = d
+        return trace_v2_controller_stats_response_200
 
     @property
     def additional_keys(self) -> list[str]:

@@ -1,16 +1,12 @@
 from __future__ import annotations
 
 from collections.abc import Mapping
-from typing import TYPE_CHECKING, Any, BinaryIO, Generator, TextIO, TypeVar, cast
+from typing import TYPE_CHECKING, Any, BinaryIO, Generator, TextIO, TypeVar
 
 from attrs import define as _attrs_define
 from attrs import field as _attrs_field
 
 from ..types import UNSET, Unset
-
-if TYPE_CHECKING:
-    from ..models.local_experiment_result_dto_output import LocalExperimentResultDtoOutput
-
 
 T = TypeVar("T", bound="LocalExperimentResultDto")
 
@@ -20,7 +16,7 @@ class LocalExperimentResultDto:
     """
     Attributes:
         item_id (str):
-        output (LocalExperimentResultDtoOutput):
+        output (Any): Whatever the target produced. The evaluators decide what it means.
         cost_usd (float | Unset):
         error (str | Unset):
         latency_ms (float | Unset):
@@ -29,7 +25,7 @@ class LocalExperimentResultDto:
     """
 
     item_id: str
-    output: LocalExperimentResultDtoOutput
+    output: Any
     cost_usd: float | Unset = UNSET
     error: str | Unset = UNSET
     latency_ms: float | Unset = UNSET
@@ -38,11 +34,9 @@ class LocalExperimentResultDto:
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
-        from ..models.local_experiment_result_dto_output import LocalExperimentResultDtoOutput
-
         item_id = self.item_id
 
-        output = self.output.to_dict()
+        output = self.output
 
         cost_usd = self.cost_usd
 
@@ -77,12 +71,10 @@ class LocalExperimentResultDto:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        from ..models.local_experiment_result_dto_output import LocalExperimentResultDtoOutput
-
         d = dict(src_dict)
         item_id = d.pop("itemId")
 
-        output = LocalExperimentResultDtoOutput.from_dict(d.pop("output"))
+        output = d.pop("output")
 
         cost_usd = d.pop("costUsd", UNSET)
 

@@ -12,7 +12,6 @@ from ..models.assessment_value_type import AssessmentValueType
 from ..types import UNSET, Unset
 
 if TYPE_CHECKING:
-    from ..models.create_assessment_dto_correction import CreateAssessmentDtoCorrection
     from ..models.create_assessment_dto_metadata import CreateAssessmentDtoMetadata
 
 
@@ -28,7 +27,7 @@ class CreateAssessmentDto:
         target_type (AssessmentTargetType):
         value (bool | float | str):
         value_type (AssessmentValueType):
-        correction (CreateAssessmentDtoCorrection | Unset):
+        correction (Any | Unset):
         evaluator_version_id (str | Unset):
         explanation (str | Unset):
         idempotency_key (str | Unset):
@@ -41,7 +40,7 @@ class CreateAssessmentDto:
     target_type: AssessmentTargetType
     value: bool | float | str
     value_type: AssessmentValueType
-    correction: CreateAssessmentDtoCorrection | Unset = UNSET
+    correction: Any | Unset = UNSET
     evaluator_version_id: str | Unset = UNSET
     explanation: str | Unset = UNSET
     idempotency_key: str | Unset = UNSET
@@ -50,7 +49,6 @@ class CreateAssessmentDto:
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
-        from ..models.create_assessment_dto_correction import CreateAssessmentDtoCorrection
         from ..models.create_assessment_dto_metadata import CreateAssessmentDtoMetadata
 
         name = self.name
@@ -64,9 +62,7 @@ class CreateAssessmentDto:
 
         value_type = self.value_type.value
 
-        correction: dict[str, Any] | Unset = UNSET
-        if not isinstance(self.correction, Unset):
-            correction = self.correction.to_dict()
+        correction = self.correction
 
         evaluator_version_id = self.evaluator_version_id
 
@@ -108,7 +104,6 @@ class CreateAssessmentDto:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        from ..models.create_assessment_dto_correction import CreateAssessmentDtoCorrection
         from ..models.create_assessment_dto_metadata import CreateAssessmentDtoMetadata
 
         d = dict(src_dict)
@@ -125,12 +120,7 @@ class CreateAssessmentDto:
 
         value_type = AssessmentValueType(d.pop("valueType"))
 
-        _correction = d.pop("correction", UNSET)
-        correction: CreateAssessmentDtoCorrection | Unset
-        if isinstance(_correction, Unset):
-            correction = UNSET
-        else:
-            correction = CreateAssessmentDtoCorrection.from_dict(_correction)
+        correction = d.pop("correction", UNSET)
 
         evaluator_version_id = d.pop("evaluatorVersionId", UNSET)
 

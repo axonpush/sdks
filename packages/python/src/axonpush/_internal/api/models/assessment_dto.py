@@ -14,7 +14,6 @@ from ..models.assessment_value_type import AssessmentValueType
 from ..types import UNSET, Unset
 
 if TYPE_CHECKING:
-    from ..models.assessment_dto_correction import AssessmentDtoCorrection
     from ..models.assessment_dto_metadata import AssessmentDtoMetadata
 
 
@@ -36,7 +35,7 @@ class AssessmentDto:
         value (bool | float | str):
         value_type (AssessmentValueType):
         actor_id (str | Unset):
-        correction (AssessmentDtoCorrection | Unset):
+        correction (Any | Unset):
         evaluator_version_id (str | Unset):
         explanation (str | Unset):
         idempotency_key (str | Unset):
@@ -55,7 +54,7 @@ class AssessmentDto:
     value: bool | float | str
     value_type: AssessmentValueType
     actor_id: str | Unset = UNSET
-    correction: AssessmentDtoCorrection | Unset = UNSET
+    correction: Any | Unset = UNSET
     evaluator_version_id: str | Unset = UNSET
     explanation: str | Unset = UNSET
     idempotency_key: str | Unset = UNSET
@@ -64,7 +63,6 @@ class AssessmentDto:
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
-        from ..models.assessment_dto_correction import AssessmentDtoCorrection
         from ..models.assessment_dto_metadata import AssessmentDtoMetadata
 
         assessment_id = self.assessment_id
@@ -90,9 +88,7 @@ class AssessmentDto:
 
         actor_id = self.actor_id
 
-        correction: dict[str, Any] | Unset = UNSET
-        if not isinstance(self.correction, Unset):
-            correction = self.correction.to_dict()
+        correction = self.correction
 
         evaluator_version_id = self.evaluator_version_id
 
@@ -141,7 +137,6 @@ class AssessmentDto:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        from ..models.assessment_dto_correction import AssessmentDtoCorrection
         from ..models.assessment_dto_metadata import AssessmentDtoMetadata
 
         d = dict(src_dict)
@@ -170,12 +165,7 @@ class AssessmentDto:
 
         actor_id = d.pop("actorId", UNSET)
 
-        _correction = d.pop("correction", UNSET)
-        correction: AssessmentDtoCorrection | Unset
-        if isinstance(_correction, Unset):
-            correction = UNSET
-        else:
-            correction = AssessmentDtoCorrection.from_dict(_correction)
+        correction = d.pop("correction", UNSET)
 
         evaluator_version_id = d.pop("evaluatorVersionId", UNSET)
 

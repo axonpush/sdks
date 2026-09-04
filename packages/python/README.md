@@ -113,7 +113,7 @@ The client exposes Stripe-style resource accessors:
 | `client.apps` | `list`, `get`, `create`, `update`, `delete` |
 | `client.environments` | `list`, `create`, `update`, `delete`, `promote_to_default` |
 | `client.webhooks` | `create_endpoint`, `list_endpoints`, `delete_endpoint`, `deliveries` |
-| `client.traces` | `list`, `summary`, `events`, `stats` |
+| `client.traces_v2` | `list`, `stats`, `detail`, `events`, `spans`, `facets`, `attribute_keys` |
 | `client.api_keys` | `list`, `create`, `delete` |
 | `client.organizations` | `list`, `get`, `create`, `update`, `delete`, `invite`, `remove_member`, `transfer_ownership` |
 
@@ -193,8 +193,9 @@ client.events.publish(
     span_id=trace.next_span_id(),
 )
 
-summary = client.traces.summary(trace.trace_id)
-print(summary.event_count, summary.duration, summary.tool_call_count)
+detail = client.traces_v2.detail(trace.trace_id)
+summary = detail.summary
+print(summary.event_count, summary.duration_ms, summary.tool_call_count)
 ```
 
 `get_or_create_trace()` reads the active context (set via `with TraceContext(...):`) when one exists, so framework integrations propagate the trace automatically.

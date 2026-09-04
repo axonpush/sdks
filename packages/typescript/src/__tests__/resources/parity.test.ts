@@ -6,7 +6,7 @@ import { ChannelsResource } from "../../resources/channels.js";
 import { EnvironmentsResource } from "../../resources/environments.js";
 import { EventsResource } from "../../resources/events.js";
 import { OrganizationsResource } from "../../resources/organizations.js";
-import { TracesResource } from "../../resources/traces.js";
+import { TracesV2Resource } from "../../resources/traces-v2.js";
 import { WebhooksResource } from "../../resources/webhooks.js";
 
 vi.mock("../../_internal/api/sdk.gen.js", async () => {
@@ -49,9 +49,9 @@ const expectations: Array<{ name: string; instance: object; methods: string[] }>
     methods: ["createEndpoint", "listEndpoints", "deleteEndpoint", "deliveries"],
   },
   {
-    name: "TracesResource",
-    instance: new TracesResource(stubClient),
-    methods: ["list", "stats", "events", "summary"],
+    name: "TracesV2Resource",
+    instance: new TracesV2Resource(stubClient),
+    methods: ["list", "stats", "detail", "events", "spans", "facets", "attributeKeys"],
   },
   {
     name: "ApiKeysResource",

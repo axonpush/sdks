@@ -117,7 +117,7 @@ handler = AxonPushCallbackHandler(client, channel_id=1, trace_id="tr_shared_123"
 hooks = AxonPushRunHooks(client, channel_id=2, trace_id="tr_shared_123")
 ```
 
-Both services' events appear in the same trace when you call `client.traces.get_events("tr_shared_123")`.
+Both services' events appear in the same trace when you call `client.traces_v2.events("tr_shared_123")`.
 
 ### Anthropic async variant
 

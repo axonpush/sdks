@@ -34,8 +34,8 @@ with AxonPush(api_key="ak_...", tenant_id="1") as client:
     )
 
     # Get the full picture
-    summary = client.traces.get_summary(trace.trace_id)
-    print(f"Events: {summary.total_events}, Duration: {summary.duration_ms}ms")
+    summary = client.traces_v2.detail(trace.trace_id).summary
+    print(f"Events: {summary.event_count}, Duration: {summary.duration_ms}ms")
     print(f"Errors: {summary.error_count}, Tool calls: {summary.tool_call_count}")
 ```
 
@@ -54,31 +54,29 @@ with AxonPush(api_key="ak_...", tenant_id="1") as client:
 
 ```python
 # List recent traces
-traces = client.traces.list(page=1, limit=20)
-for t in traces:
+result = client.traces_v2.list({"limit": "20"})
+for t in result.data:
     print(f"{t.trace_id}: {t.event_count} events ({t.start_time} → {t.end_time})")
 
 # Get all events in a trace, ordered
-events = client.traces.get_events("tr_run_42")
-for e in events:
+events = client.traces_v2.events("tr_run_42")
+for e in events.data:
     print(f"  [{e.span_id}] {e.identifier} ({e.event_type})")
 ```
 
-### TraceSummary fields
+### Trace summary fields
 
 | Field | Type | Description |
 |-------|------|-------------|
 | `trace_id` | `str` | The trace identifier |
-| `total_events` | `int` | Number of events in the trace |
+| `event_count` | `int` | Number of events in the trace |
 | `agents` | `List[str]` | Agent IDs that participated |
-| `event_types` | `List[str]` | Event types that occurred |
 | `start_time` | `datetime` | First event timestamp |
 | `end_time` | `datetime` | Last event timestamp |
-| `duration_ms` | `int` | Total trace duration |
-| `error_count` | `int` | Number of error events |
-| `tool_call_count` | `int` | Number of tool call events |
-| `handoff_count` | `int` | Number of agent handoffs |
-| `events` | `List[Event]` | All events in the trace |
+| `duration_ms` | `float` | Total trace duration |
+| `error_count` | `float` | Number of error events |
+| `tool_call_count` | `float` | Number of tool call events |
+| `handoff_count` | `float` | Number of agent handoffs |
 
 ### Cross-service correlation
 
@@ -94,7 +92,8 @@ trace = get_or_create_trace("tr_pipeline_run_99")
 client_b.events.publish("step_b", {...}, channel_id=2, trace_id=trace.trace_id, ...)
 
 # Query the unified trace
-summary = client.traces.get_summary("tr_pipeline_run_99")
+detail = client.traces_v2.detail("tr_pipeline_run_99")
+summary = detail.summary
 # Shows events from both services
 ```
 
@@ -121,7 +120,8 @@ async with AsyncAxonPush(api_key="ak_...", tenant_id="1") as client:
         event_type=EventType.AGENT_TOOL_CALL_START,
     )
 
-    summary = await client.traces.get_summary(trace.trace_id)
+    detail = await client.traces_v2.detail(trace.trace_id)
+    summary = detail.summary
 ```
 
 </details>

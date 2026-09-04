@@ -6,33 +6,22 @@ import httpx
 
 from ... import errors
 from ...client import AuthenticatedClient, Client
-from ...models.trace_controller_get_trace_summary_response_200 import (
-    TraceControllerGetTraceSummaryResponse200,
-)
-from ...types import UNSET, Response, Unset
+from ...models.gate_policy_controller_remove_scope_type import GatePolicyControllerRemoveScopeType
+from ...models.gate_policy_delete_dto import GatePolicyDeleteDto
+from ...types import UNSET, Response
 
 
 def _get_kwargs(
-    trace_id: str,
-    *,
-    app_id: str | Unset = UNSET,
-    environment: str | Unset = UNSET,
+    scope_type: GatePolicyControllerRemoveScopeType,
+    scope_id: str,
 ) -> dict[str, Any]:
 
-    params: dict[str, Any] = {}
-
-    params["appId"] = app_id
-
-    params["environment"] = environment
-
-    params = {k: v for k, v in params.items() if v is not UNSET and v is not None}
-
     _kwargs: dict[str, Any] = {
-        "method": "get",
-        "url": "/traces/{trace_id}/summary".format(
-            trace_id=quote(str(trace_id), safe=""),
+        "method": "delete",
+        "url": "/v2/gate-policies/{scope_type}/{scope_id}".format(
+            scope_type=quote(str(scope_type), safe=""),
+            scope_id=quote(str(scope_id), safe=""),
         ),
-        "params": params,
     }
 
     return _kwargs
@@ -40,9 +29,9 @@ def _get_kwargs(
 
 def _parse_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> TraceControllerGetTraceSummaryResponse200 | None:
+) -> GatePolicyDeleteDto | None:
     if response.status_code == 200:
-        response_200 = TraceControllerGetTraceSummaryResponse200.from_dict(response.json())
+        response_200 = GatePolicyDeleteDto.from_dict(response.json())
 
         return response_200
 
@@ -54,7 +43,7 @@ def _parse_response(
 
 def _build_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> Response[TraceControllerGetTraceSummaryResponse200]:
+) -> Response[GatePolicyDeleteDto]:
     return Response(
         status_code=HTTPStatus(response.status_code),
         content=response.content,
@@ -64,30 +53,27 @@ def _build_response(
 
 
 def sync_detailed(
-    trace_id: str,
+    scope_type: GatePolicyControllerRemoveScopeType,
+    scope_id: str,
     *,
     client: AuthenticatedClient | Client,
-    app_id: str | Unset = UNSET,
-    environment: str | Unset = UNSET,
-) -> Response[TraceControllerGetTraceSummaryResponse200]:
+) -> Response[GatePolicyDeleteDto]:
     """
     Args:
-        trace_id (str):
-        app_id (str | Unset):
-        environment (str | Unset):
+        scope_type (GatePolicyControllerRemoveScopeType):
+        scope_id (str):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[TraceControllerGetTraceSummaryResponse200]
+        Response[GatePolicyDeleteDto]
     """
 
     kwargs = _get_kwargs(
-        trace_id=trace_id,
-        app_id=app_id,
-        environment=environment,
+        scope_type=scope_type,
+        scope_id=scope_id,
     )
 
     response = client.get_httpx_client().request(
@@ -98,59 +84,53 @@ def sync_detailed(
 
 
 def sync(
-    trace_id: str,
+    scope_type: GatePolicyControllerRemoveScopeType,
+    scope_id: str,
     *,
     client: AuthenticatedClient | Client,
-    app_id: str | Unset = UNSET,
-    environment: str | Unset = UNSET,
-) -> TraceControllerGetTraceSummaryResponse200 | None:
+) -> GatePolicyDeleteDto | None:
     """
     Args:
-        trace_id (str):
-        app_id (str | Unset):
-        environment (str | Unset):
+        scope_type (GatePolicyControllerRemoveScopeType):
+        scope_id (str):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        TraceControllerGetTraceSummaryResponse200
+        GatePolicyDeleteDto
     """
 
     return sync_detailed(
-        trace_id=trace_id,
+        scope_type=scope_type,
+        scope_id=scope_id,
         client=client,
-        app_id=app_id,
-        environment=environment,
     ).parsed
 
 
 async def asyncio_detailed(
-    trace_id: str,
+    scope_type: GatePolicyControllerRemoveScopeType,
+    scope_id: str,
     *,
     client: AuthenticatedClient | Client,
-    app_id: str | Unset = UNSET,
-    environment: str | Unset = UNSET,
-) -> Response[TraceControllerGetTraceSummaryResponse200]:
+) -> Response[GatePolicyDeleteDto]:
     """
     Args:
-        trace_id (str):
-        app_id (str | Unset):
-        environment (str | Unset):
+        scope_type (GatePolicyControllerRemoveScopeType):
+        scope_id (str):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[TraceControllerGetTraceSummaryResponse200]
+        Response[GatePolicyDeleteDto]
     """
 
     kwargs = _get_kwargs(
-        trace_id=trace_id,
-        app_id=app_id,
-        environment=environment,
+        scope_type=scope_type,
+        scope_id=scope_id,
     )
 
     response = await client.get_async_httpx_client().request(**kwargs)
@@ -159,31 +139,28 @@ async def asyncio_detailed(
 
 
 async def asyncio(
-    trace_id: str,
+    scope_type: GatePolicyControllerRemoveScopeType,
+    scope_id: str,
     *,
     client: AuthenticatedClient | Client,
-    app_id: str | Unset = UNSET,
-    environment: str | Unset = UNSET,
-) -> TraceControllerGetTraceSummaryResponse200 | None:
+) -> GatePolicyDeleteDto | None:
     """
     Args:
-        trace_id (str):
-        app_id (str | Unset):
-        environment (str | Unset):
+        scope_type (GatePolicyControllerRemoveScopeType):
+        scope_id (str):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        TraceControllerGetTraceSummaryResponse200
+        GatePolicyDeleteDto
     """
 
     return (
         await asyncio_detailed(
-            trace_id=trace_id,
+            scope_type=scope_type,
+            scope_id=scope_id,
             client=client,
-            app_id=app_id,
-            environment=environment,
         )
     ).parsed

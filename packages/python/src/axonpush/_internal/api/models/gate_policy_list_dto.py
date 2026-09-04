@@ -1,44 +1,43 @@
 from __future__ import annotations
 
 from collections.abc import Mapping
-from typing import TYPE_CHECKING, Any, BinaryIO, Generator, TextIO, TypeVar
+from typing import TYPE_CHECKING, Any, BinaryIO, Generator, TextIO, TypeVar, cast
 
 from attrs import define as _attrs_define
 from attrs import field as _attrs_field
 
 from ..types import UNSET, Unset
 
-T = TypeVar("T", bound="TraceControllerListTracesResponse200Meta")
+if TYPE_CHECKING:
+    from ..models.gate_policy_dto import GatePolicyDto
+
+
+T = TypeVar("T", bound="GatePolicyListDto")
 
 
 @_attrs_define
-class TraceControllerListTracesResponse200Meta:
+class GatePolicyListDto:
     """
     Attributes:
-        has_more (bool):
-        limit (float):
-        page (float):
+        data (list[GatePolicyDto]):
     """
 
-    has_more: bool
-    limit: float
-    page: float
+    data: list[GatePolicyDto]
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
-        has_more = self.has_more
+        from ..models.gate_policy_dto import GatePolicyDto
 
-        limit = self.limit
-
-        page = self.page
+        data = []
+        for data_item_data in self.data:
+            data_item = data_item_data.to_dict()
+            data.append(data_item)
 
         field_dict: dict[str, Any] = {}
         field_dict.update(self.additional_properties)
         field_dict.update(
             {
-                "hasMore": has_more,
-                "limit": limit,
-                "page": page,
+                "data": data,
             }
         )
 
@@ -46,21 +45,22 @@ class TraceControllerListTracesResponse200Meta:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
+        from ..models.gate_policy_dto import GatePolicyDto
+
         d = dict(src_dict)
-        has_more = d.pop("hasMore")
+        data = []
+        _data = d.pop("data")
+        for data_item_data in _data:
+            data_item = GatePolicyDto.from_dict(data_item_data)
 
-        limit = d.pop("limit")
+            data.append(data_item)
 
-        page = d.pop("page")
-
-        trace_controller_list_traces_response_200_meta = cls(
-            has_more=has_more,
-            limit=limit,
-            page=page,
+        gate_policy_list_dto = cls(
+            data=data,
         )
 
-        trace_controller_list_traces_response_200_meta.additional_properties = d
-        return trace_controller_list_traces_response_200_meta
+        gate_policy_list_dto.additional_properties = d
+        return gate_policy_list_dto
 
     @property
     def additional_keys(self) -> list[str]:

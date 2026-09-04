@@ -244,11 +244,6 @@ class AxonPush:
         return self._resource("webhooks", "Webhooks")
 
     @property
-    def traces(self) -> Any:
-        """Traces resource accessor (lazy import)."""
-        return self._resource("traces", "Traces")
-
-    @property
     def api_keys(self) -> Any:
         """API keys resource accessor (lazy import)."""
         return self._resource("api_keys", "ApiKeys")
@@ -519,11 +514,6 @@ class AsyncAxonPush:
     def webhooks(self) -> Any:
         """Webhooks resource accessor (lazy import)."""
         return self._resource("webhooks", "AsyncWebhooks")
-
-    @property
-    def traces(self) -> Any:
-        """Traces resource accessor (lazy import)."""
-        return self._resource("traces", "AsyncTraces")
 
     @property
     def api_keys(self) -> Any:

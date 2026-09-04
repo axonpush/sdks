@@ -6,30 +6,15 @@ import httpx
 
 from ... import errors
 from ...client import AuthenticatedClient, Client
-from ...models.trace_controller_get_dashboard_stats_response_200 import (
-    TraceControllerGetDashboardStatsResponse200,
-)
-from ...types import UNSET, Response, Unset
+from ...models.gate_policy_list_dto import GatePolicyListDto
+from ...types import UNSET, Response
 
 
-def _get_kwargs(
-    *,
-    app_id: str | Unset = UNSET,
-    environment: str | Unset = UNSET,
-) -> dict[str, Any]:
-
-    params: dict[str, Any] = {}
-
-    params["appId"] = app_id
-
-    params["environment"] = environment
-
-    params = {k: v for k, v in params.items() if v is not UNSET and v is not None}
+def _get_kwargs() -> dict[str, Any]:
 
     _kwargs: dict[str, Any] = {
         "method": "get",
-        "url": "/traces/stats",
-        "params": params,
+        "url": "/v2/gate-policies",
     }
 
     return _kwargs
@@ -37,9 +22,9 @@ def _get_kwargs(
 
 def _parse_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> TraceControllerGetDashboardStatsResponse200 | None:
+) -> GatePolicyListDto | None:
     if response.status_code == 200:
-        response_200 = TraceControllerGetDashboardStatsResponse200.from_dict(response.json())
+        response_200 = GatePolicyListDto.from_dict(response.json())
 
         return response_200
 
@@ -51,7 +36,7 @@ def _parse_response(
 
 def _build_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> Response[TraceControllerGetDashboardStatsResponse200]:
+) -> Response[GatePolicyListDto]:
     return Response(
         status_code=HTTPStatus(response.status_code),
         content=response.content,
@@ -63,26 +48,17 @@ def _build_response(
 def sync_detailed(
     *,
     client: AuthenticatedClient | Client,
-    app_id: str | Unset = UNSET,
-    environment: str | Unset = UNSET,
-) -> Response[TraceControllerGetDashboardStatsResponse200]:
+) -> Response[GatePolicyListDto]:
     """
-    Args:
-        app_id (str | Unset):
-        environment (str | Unset):
-
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[TraceControllerGetDashboardStatsResponse200]
+        Response[GatePolicyListDto]
     """
 
-    kwargs = _get_kwargs(
-        app_id=app_id,
-        environment=environment,
-    )
+    kwargs = _get_kwargs()
 
     response = client.get_httpx_client().request(
         **kwargs,
@@ -94,52 +70,35 @@ def sync_detailed(
 def sync(
     *,
     client: AuthenticatedClient | Client,
-    app_id: str | Unset = UNSET,
-    environment: str | Unset = UNSET,
-) -> TraceControllerGetDashboardStatsResponse200 | None:
+) -> GatePolicyListDto | None:
     """
-    Args:
-        app_id (str | Unset):
-        environment (str | Unset):
-
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        TraceControllerGetDashboardStatsResponse200
+        GatePolicyListDto
     """
 
     return sync_detailed(
         client=client,
-        app_id=app_id,
-        environment=environment,
     ).parsed
 
 
 async def asyncio_detailed(
     *,
     client: AuthenticatedClient | Client,
-    app_id: str | Unset = UNSET,
-    environment: str | Unset = UNSET,
-) -> Response[TraceControllerGetDashboardStatsResponse200]:
+) -> Response[GatePolicyListDto]:
     """
-    Args:
-        app_id (str | Unset):
-        environment (str | Unset):
-
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[TraceControllerGetDashboardStatsResponse200]
+        Response[GatePolicyListDto]
     """
 
-    kwargs = _get_kwargs(
-        app_id=app_id,
-        environment=environment,
-    )
+    kwargs = _get_kwargs()
 
     response = await client.get_async_httpx_client().request(**kwargs)
 
@@ -149,26 +108,18 @@ async def asyncio_detailed(
 async def asyncio(
     *,
     client: AuthenticatedClient | Client,
-    app_id: str | Unset = UNSET,
-    environment: str | Unset = UNSET,
-) -> TraceControllerGetDashboardStatsResponse200 | None:
+) -> GatePolicyListDto | None:
     """
-    Args:
-        app_id (str | Unset):
-        environment (str | Unset):
-
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        TraceControllerGetDashboardStatsResponse200
+        GatePolicyListDto
     """
 
     return (
         await asyncio_detailed(
             client=client,
-            app_id=app_id,
-            environment=environment,
         )
     ).parsed

@@ -8,14 +8,14 @@ from attrs import field as _attrs_field
 
 from ..types import UNSET, Unset
 
-T = TypeVar("T", bound="LocalExperimentResultDtoOutput")
+T = TypeVar("T", bound="GateRunDtoThresholds")
 
 
 @_attrs_define
-class LocalExperimentResultDtoOutput:
+class GateRunDtoThresholds:
     """ """
 
-    additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
+    additional_properties: dict[str, float] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
 
@@ -27,19 +27,19 @@ class LocalExperimentResultDtoOutput:
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         d = dict(src_dict)
-        local_experiment_result_dto_output = cls()
+        gate_run_dto_thresholds = cls()
 
-        local_experiment_result_dto_output.additional_properties = d
-        return local_experiment_result_dto_output
+        gate_run_dto_thresholds.additional_properties = d
+        return gate_run_dto_thresholds
 
     @property
     def additional_keys(self) -> list[str]:
         return list(self.additional_properties.keys())
 
-    def __getitem__(self, key: str) -> Any:
+    def __getitem__(self, key: str) -> float:
         return self.additional_properties[key]
 
-    def __setitem__(self, key: str, value: Any) -> None:
+    def __setitem__(self, key: str, value: float) -> None:
         self.additional_properties[key] = value
 
     def __delitem__(self, key: str) -> None:

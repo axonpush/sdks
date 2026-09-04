@@ -112,8 +112,6 @@ export type {
   EventListResponseDto,
   EventType,
   Organization,
-  TraceListItem,
-  TraceSummary,
   WebhookDelivery,
   WebhookDeliveryStatus,
   WebhookEndpoint,
@@ -134,7 +132,7 @@ export { ChannelsResource } from "./resources/channels.js";
 export { EnvironmentsResource } from "./resources/environments.js";
 export { EventsResource } from "./resources/events.js";
 export { OrganizationsResource } from "./resources/organizations.js";
-export { TracesResource } from "./resources/traces.js";
+export { TracesV2Resource } from "./resources/traces-v2.js";
 export { WebhooksResource } from "./resources/webhooks.js";
 export { currentTrace, getOrCreateTrace, TraceContext } from "./tracing.js";
 export { __version__ } from "./version.js";

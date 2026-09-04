@@ -11,9 +11,6 @@ from ..types import UNSET, Unset
 
 if TYPE_CHECKING:
     from ..models.create_evaluator_version_dto_config import CreateEvaluatorVersionDtoConfig
-    from ..models.create_evaluator_version_dto_output_schema import (
-        CreateEvaluatorVersionDtoOutputSchema,
-    )
 
 
 T = TypeVar("T", bound="CreateEvaluatorVersionDto")
@@ -26,7 +23,7 @@ class CreateEvaluatorVersionDto:
         config (CreateEvaluatorVersionDtoConfig):
         kind (EvaluatorKind):
         model (str | Unset):
-        output_schema (CreateEvaluatorVersionDtoOutputSchema | Unset):
+        output_schema (Any | Unset):
         provider (str | Unset):
         rubric (str | Unset):
     """
@@ -34,16 +31,13 @@ class CreateEvaluatorVersionDto:
     config: CreateEvaluatorVersionDtoConfig
     kind: EvaluatorKind
     model: str | Unset = UNSET
-    output_schema: CreateEvaluatorVersionDtoOutputSchema | Unset = UNSET
+    output_schema: Any | Unset = UNSET
     provider: str | Unset = UNSET
     rubric: str | Unset = UNSET
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
         from ..models.create_evaluator_version_dto_config import CreateEvaluatorVersionDtoConfig
-        from ..models.create_evaluator_version_dto_output_schema import (
-            CreateEvaluatorVersionDtoOutputSchema,
-        )
 
         config = self.config.to_dict()
 
@@ -51,9 +45,7 @@ class CreateEvaluatorVersionDto:
 
         model = self.model
 
-        output_schema: dict[str, Any] | Unset = UNSET
-        if not isinstance(self.output_schema, Unset):
-            output_schema = self.output_schema.to_dict()
+        output_schema = self.output_schema
 
         provider = self.provider
 
@@ -81,9 +73,6 @@ class CreateEvaluatorVersionDto:
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         from ..models.create_evaluator_version_dto_config import CreateEvaluatorVersionDtoConfig
-        from ..models.create_evaluator_version_dto_output_schema import (
-            CreateEvaluatorVersionDtoOutputSchema,
-        )
 
         d = dict(src_dict)
         config = CreateEvaluatorVersionDtoConfig.from_dict(d.pop("config"))
@@ -92,12 +81,7 @@ class CreateEvaluatorVersionDto:
 
         model = d.pop("model", UNSET)
 
-        _output_schema = d.pop("outputSchema", UNSET)
-        output_schema: CreateEvaluatorVersionDtoOutputSchema | Unset
-        if isinstance(_output_schema, Unset):
-            output_schema = UNSET
-        else:
-            output_schema = CreateEvaluatorVersionDtoOutputSchema.from_dict(_output_schema)
+        output_schema = d.pop("outputSchema", UNSET)
 
         provider = d.pop("provider", UNSET)
 

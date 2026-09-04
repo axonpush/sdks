@@ -86,13 +86,14 @@ def main() -> None:
              EventType.AGENT_END)
 
         time.sleep(0.5)
-        summary = client.traces.summary(trace.trace_id)
-        if summary is not None:
+        detail = client.traces_v2.detail(trace.trace_id)
+        if detail is not None:
+            summary = detail.summary
             print("\n--- Trace Summary ---")
             print(f"  Trace ID:    {summary.trace_id}")
             print(f"  Agents:      {', '.join(summary.agents)}")
             print(f"  Events:      {int(summary.event_count)}")
-            print(f"  Duration:    {summary.duration:.0f}ms")
+            print(f"  Duration:    {summary.duration_ms:.0f}ms")
             print(f"  Handoffs:    {int(summary.handoff_count)}")
             print(f"  Tool calls:  {int(summary.tool_call_count)}")
             print(f"  Errors:      {int(summary.error_count)}")

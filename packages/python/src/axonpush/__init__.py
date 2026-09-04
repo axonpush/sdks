@@ -34,9 +34,6 @@ from axonpush.models import (
     EventDetails,
     EventType,
     Organization,
-    TraceListItem,
-    TraceStats,
-    TraceSummary,
     WebhookDelivery,
     WebhookEndpoint,
     WebhookEndpointCreateResponseDto,
@@ -47,7 +44,7 @@ from axonpush.resources.channels import AsyncChannels, Channels
 from axonpush.resources.environments import AsyncEnvironments, Environments
 from axonpush.resources.events import AsyncEvents, Events
 from axonpush.resources.organizations import AsyncOrganizations, Organizations
-from axonpush.resources.traces import AsyncTraces, Traces
+from axonpush.resources.traces_v2 import AsyncTracesV2, TracesV2
 from axonpush.resources.webhooks import AsyncWebhooks, Webhooks
 
 # from _exports_c.txt
@@ -70,7 +67,7 @@ __all__ = [
     "AsyncEvents",
     "AsyncOrganizations",
     "AsyncRealtimeClient",
-    "AsyncTraces",
+    "AsyncTracesV2",
     "AsyncWebhooks",
     "AuthenticationError",
     "AxonPush",
@@ -95,10 +92,7 @@ __all__ = [
     "ServerError",
     "Settings",
     "TraceContext",
-    "TraceListItem",
-    "TraceStats",
-    "TraceSummary",
-    "Traces",
+    "TracesV2",
     "ValidationError",
     "WebhookDelivery",
     "WebhookEndpoint",

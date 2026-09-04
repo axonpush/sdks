@@ -6,7 +6,7 @@ import httpx
 
 from ... import errors
 from ...client import AuthenticatedClient, Client
-from ...models.trace_controller_list_traces_response_200 import TraceControllerListTracesResponse200
+from ...models.trace_v2_controller_stats_response_200 import TraceV2ControllerStatsResponse200
 from ...types import UNSET, Response, Unset
 
 
@@ -14,8 +14,6 @@ def _get_kwargs(
     *,
     app_id: str | Unset = UNSET,
     environment: str | Unset = UNSET,
-    limit: float | Unset = UNSET,
-    page: float | Unset = UNSET,
 ) -> dict[str, Any]:
 
     params: dict[str, Any] = {}
@@ -24,15 +22,11 @@ def _get_kwargs(
 
     params["environment"] = environment
 
-    params["limit"] = limit
-
-    params["page"] = page
-
     params = {k: v for k, v in params.items() if v is not UNSET and v is not None}
 
     _kwargs: dict[str, Any] = {
         "method": "get",
-        "url": "/traces",
+        "url": "/v2/traces/stats",
         "params": params,
     }
 
@@ -41,9 +35,9 @@ def _get_kwargs(
 
 def _parse_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> TraceControllerListTracesResponse200 | None:
+) -> TraceV2ControllerStatsResponse200 | None:
     if response.status_code == 200:
-        response_200 = TraceControllerListTracesResponse200.from_dict(response.json())
+        response_200 = TraceV2ControllerStatsResponse200.from_dict(response.json())
 
         return response_200
 
@@ -55,7 +49,7 @@ def _parse_response(
 
 def _build_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> Response[TraceControllerListTracesResponse200]:
+) -> Response[TraceV2ControllerStatsResponse200]:
     return Response(
         status_code=HTTPStatus(response.status_code),
         content=response.content,
@@ -69,29 +63,23 @@ def sync_detailed(
     client: AuthenticatedClient | Client,
     app_id: str | Unset = UNSET,
     environment: str | Unset = UNSET,
-    limit: float | Unset = UNSET,
-    page: float | Unset = UNSET,
-) -> Response[TraceControllerListTracesResponse200]:
+) -> Response[TraceV2ControllerStatsResponse200]:
     """
     Args:
         app_id (str | Unset):
         environment (str | Unset):
-        limit (float | Unset):
-        page (float | Unset):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[TraceControllerListTracesResponse200]
+        Response[TraceV2ControllerStatsResponse200]
     """
 
     kwargs = _get_kwargs(
         app_id=app_id,
         environment=environment,
-        limit=limit,
-        page=page,
     )
 
     response = client.get_httpx_client().request(
@@ -106,30 +94,24 @@ def sync(
     client: AuthenticatedClient | Client,
     app_id: str | Unset = UNSET,
     environment: str | Unset = UNSET,
-    limit: float | Unset = UNSET,
-    page: float | Unset = UNSET,
-) -> TraceControllerListTracesResponse200 | None:
+) -> TraceV2ControllerStatsResponse200 | None:
     """
     Args:
         app_id (str | Unset):
         environment (str | Unset):
-        limit (float | Unset):
-        page (float | Unset):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        TraceControllerListTracesResponse200
+        TraceV2ControllerStatsResponse200
     """
 
     return sync_detailed(
         client=client,
         app_id=app_id,
         environment=environment,
-        limit=limit,
-        page=page,
     ).parsed
 
 
@@ -138,29 +120,23 @@ async def asyncio_detailed(
     client: AuthenticatedClient | Client,
     app_id: str | Unset = UNSET,
     environment: str | Unset = UNSET,
-    limit: float | Unset = UNSET,
-    page: float | Unset = UNSET,
-) -> Response[TraceControllerListTracesResponse200]:
+) -> Response[TraceV2ControllerStatsResponse200]:
     """
     Args:
         app_id (str | Unset):
         environment (str | Unset):
-        limit (float | Unset):
-        page (float | Unset):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[TraceControllerListTracesResponse200]
+        Response[TraceV2ControllerStatsResponse200]
     """
 
     kwargs = _get_kwargs(
         app_id=app_id,
         environment=environment,
-        limit=limit,
-        page=page,
     )
 
     response = await client.get_async_httpx_client().request(**kwargs)
@@ -173,22 +149,18 @@ async def asyncio(
     client: AuthenticatedClient | Client,
     app_id: str | Unset = UNSET,
     environment: str | Unset = UNSET,
-    limit: float | Unset = UNSET,
-    page: float | Unset = UNSET,
-) -> TraceControllerListTracesResponse200 | None:
+) -> TraceV2ControllerStatsResponse200 | None:
     """
     Args:
         app_id (str | Unset):
         environment (str | Unset):
-        limit (float | Unset):
-        page (float | Unset):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        TraceControllerListTracesResponse200
+        TraceV2ControllerStatsResponse200
     """
 
     return (
@@ -196,7 +168,5 @@ async def asyncio(
             client=client,
             app_id=app_id,
             environment=environment,
-            limit=limit,
-            page=page,
         )
     ).parsed

@@ -10,11 +10,11 @@ from dateutil.parser import isoparse
 
 from ..types import UNSET, Unset
 
-T = TypeVar("T", bound="TraceControllerGetDashboardStatsResponse200EventsByHourItem")
+T = TypeVar("T", bound="TraceV2ControllerStatsResponse200EventsByHourItem")
 
 
 @_attrs_define
-class TraceControllerGetDashboardStatsResponse200EventsByHourItem:
+class TraceV2ControllerStatsResponse200EventsByHourItem:
     """
     Attributes:
         count (float | Unset):
@@ -54,13 +54,13 @@ class TraceControllerGetDashboardStatsResponse200EventsByHourItem:
         else:
             hour = isoparse(_hour)
 
-        trace_controller_get_dashboard_stats_response_200_events_by_hour_item = cls(
+        trace_v2_controller_stats_response_200_events_by_hour_item = cls(
             count=count,
             hour=hour,
         )
 
-        trace_controller_get_dashboard_stats_response_200_events_by_hour_item.additional_properties = d
-        return trace_controller_get_dashboard_stats_response_200_events_by_hour_item
+        trace_v2_controller_stats_response_200_events_by_hour_item.additional_properties = d
+        return trace_v2_controller_stats_response_200_events_by_hour_item
 
     @property
     def additional_keys(self) -> list[str]:
