@@ -6,31 +6,22 @@ import httpx
 
 from ... import errors
 from ...client import AuthenticatedClient, Client
-from ...models.event_response_dto import EventResponseDto
-from ...types import UNSET, Response, Unset
+from ...models.gate_policy_controller_get_scope_type import GatePolicyControllerGetScopeType
+from ...models.gate_policy_dto import GatePolicyDto
+from ...types import UNSET, Response
 
 
 def _get_kwargs(
-    trace_id: str,
-    *,
-    app_id: str | Unset = UNSET,
-    environment: str | Unset = UNSET,
+    scope_type: GatePolicyControllerGetScopeType,
+    scope_id: str,
 ) -> dict[str, Any]:
-
-    params: dict[str, Any] = {}
-
-    params["appId"] = app_id
-
-    params["environment"] = environment
-
-    params = {k: v for k, v in params.items() if v is not UNSET and v is not None}
 
     _kwargs: dict[str, Any] = {
         "method": "get",
-        "url": "/traces/{trace_id}/events".format(
-            trace_id=quote(str(trace_id), safe=""),
+        "url": "/v2/gate-policies/{scope_type}/{scope_id}".format(
+            scope_type=quote(str(scope_type), safe=""),
+            scope_id=quote(str(scope_id), safe=""),
         ),
-        "params": params,
     }
 
     return _kwargs
@@ -38,14 +29,9 @@ def _get_kwargs(
 
 def _parse_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> list[EventResponseDto] | None:
+) -> GatePolicyDto | None:
     if response.status_code == 200:
-        response_200 = []
-        _response_200 = response.json()
-        for response_200_item_data in _response_200:
-            response_200_item = EventResponseDto.from_dict(response_200_item_data)
-
-            response_200.append(response_200_item)
+        response_200 = GatePolicyDto.from_dict(response.json())
 
         return response_200
 
@@ -57,7 +43,7 @@ def _parse_response(
 
 def _build_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> Response[list[EventResponseDto]]:
+) -> Response[GatePolicyDto]:
     return Response(
         status_code=HTTPStatus(response.status_code),
         content=response.content,
@@ -67,30 +53,27 @@ def _build_response(
 
 
 def sync_detailed(
-    trace_id: str,
+    scope_type: GatePolicyControllerGetScopeType,
+    scope_id: str,
     *,
     client: AuthenticatedClient | Client,
-    app_id: str | Unset = UNSET,
-    environment: str | Unset = UNSET,
-) -> Response[list[EventResponseDto]]:
+) -> Response[GatePolicyDto]:
     """
     Args:
-        trace_id (str):
-        app_id (str | Unset):
-        environment (str | Unset):
+        scope_type (GatePolicyControllerGetScopeType):
+        scope_id (str):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[list[EventResponseDto]]
+        Response[GatePolicyDto]
     """
 
     kwargs = _get_kwargs(
-        trace_id=trace_id,
-        app_id=app_id,
-        environment=environment,
+        scope_type=scope_type,
+        scope_id=scope_id,
     )
 
     response = client.get_httpx_client().request(
@@ -101,59 +84,53 @@ def sync_detailed(
 
 
 def sync(
-    trace_id: str,
+    scope_type: GatePolicyControllerGetScopeType,
+    scope_id: str,
     *,
     client: AuthenticatedClient | Client,
-    app_id: str | Unset = UNSET,
-    environment: str | Unset = UNSET,
-) -> list[EventResponseDto] | None:
+) -> GatePolicyDto | None:
     """
     Args:
-        trace_id (str):
-        app_id (str | Unset):
-        environment (str | Unset):
+        scope_type (GatePolicyControllerGetScopeType):
+        scope_id (str):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        list[EventResponseDto]
+        GatePolicyDto
     """
 
     return sync_detailed(
-        trace_id=trace_id,
+        scope_type=scope_type,
+        scope_id=scope_id,
         client=client,
-        app_id=app_id,
-        environment=environment,
     ).parsed
 
 
 async def asyncio_detailed(
-    trace_id: str,
+    scope_type: GatePolicyControllerGetScopeType,
+    scope_id: str,
     *,
     client: AuthenticatedClient | Client,
-    app_id: str | Unset = UNSET,
-    environment: str | Unset = UNSET,
-) -> Response[list[EventResponseDto]]:
+) -> Response[GatePolicyDto]:
     """
     Args:
-        trace_id (str):
-        app_id (str | Unset):
-        environment (str | Unset):
+        scope_type (GatePolicyControllerGetScopeType):
+        scope_id (str):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[list[EventResponseDto]]
+        Response[GatePolicyDto]
     """
 
     kwargs = _get_kwargs(
-        trace_id=trace_id,
-        app_id=app_id,
-        environment=environment,
+        scope_type=scope_type,
+        scope_id=scope_id,
     )
 
     response = await client.get_async_httpx_client().request(**kwargs)
@@ -162,31 +139,28 @@ async def asyncio_detailed(
 
 
 async def asyncio(
-    trace_id: str,
+    scope_type: GatePolicyControllerGetScopeType,
+    scope_id: str,
     *,
     client: AuthenticatedClient | Client,
-    app_id: str | Unset = UNSET,
-    environment: str | Unset = UNSET,
-) -> list[EventResponseDto] | None:
+) -> GatePolicyDto | None:
     """
     Args:
-        trace_id (str):
-        app_id (str | Unset):
-        environment (str | Unset):
+        scope_type (GatePolicyControllerGetScopeType):
+        scope_id (str):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        list[EventResponseDto]
+        GatePolicyDto
     """
 
     return (
         await asyncio_detailed(
-            trace_id=trace_id,
+            scope_type=scope_type,
+            scope_id=scope_id,
             client=client,
-            app_id=app_id,
-            environment=environment,
         )
     ).parsed

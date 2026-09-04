@@ -13,7 +13,6 @@ from ..types import UNSET, Unset
 
 if TYPE_CHECKING:
     from ..models.evaluator_version_dto_config import EvaluatorVersionDtoConfig
-    from ..models.evaluator_version_dto_output_schema import EvaluatorVersionDtoOutputSchema
 
 
 T = TypeVar("T", bound="EvaluatorVersionDto")
@@ -30,7 +29,7 @@ class EvaluatorVersionDto:
         org_id (str):
         version (float):
         model (str | Unset):
-        output_schema (EvaluatorVersionDtoOutputSchema | Unset):
+        output_schema (Any | Unset):
         provider (str | Unset):
         rubric (str | Unset):
     """
@@ -42,14 +41,13 @@ class EvaluatorVersionDto:
     org_id: str
     version: float
     model: str | Unset = UNSET
-    output_schema: EvaluatorVersionDtoOutputSchema | Unset = UNSET
+    output_schema: Any | Unset = UNSET
     provider: str | Unset = UNSET
     rubric: str | Unset = UNSET
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
         from ..models.evaluator_version_dto_config import EvaluatorVersionDtoConfig
-        from ..models.evaluator_version_dto_output_schema import EvaluatorVersionDtoOutputSchema
 
         config = self.config.to_dict()
 
@@ -65,9 +63,7 @@ class EvaluatorVersionDto:
 
         model = self.model
 
-        output_schema: dict[str, Any] | Unset = UNSET
-        if not isinstance(self.output_schema, Unset):
-            output_schema = self.output_schema.to_dict()
+        output_schema = self.output_schema
 
         provider = self.provider
 
@@ -99,7 +95,6 @@ class EvaluatorVersionDto:
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         from ..models.evaluator_version_dto_config import EvaluatorVersionDtoConfig
-        from ..models.evaluator_version_dto_output_schema import EvaluatorVersionDtoOutputSchema
 
         d = dict(src_dict)
         config = EvaluatorVersionDtoConfig.from_dict(d.pop("config"))
@@ -116,12 +111,7 @@ class EvaluatorVersionDto:
 
         model = d.pop("model", UNSET)
 
-        _output_schema = d.pop("outputSchema", UNSET)
-        output_schema: EvaluatorVersionDtoOutputSchema | Unset
-        if isinstance(_output_schema, Unset):
-            output_schema = UNSET
-        else:
-            output_schema = EvaluatorVersionDtoOutputSchema.from_dict(_output_schema)
+        output_schema = d.pop("outputSchema", UNSET)
 
         provider = d.pop("provider", UNSET)
 

@@ -86,13 +86,14 @@ def main() -> None:
         # Backend ingest is eventually consistent — give it a beat before
         # asking for the trace summary.
         time.sleep(0.5)
-        summary = client.traces.summary(trace.trace_id)
-        if summary is not None:
+        detail = client.traces_v2.detail(trace.trace_id)
+        if detail is not None:
+            summary = detail.summary
             print("--- Trace Summary ---")
             print(f"  Trace ID:     {summary.trace_id}")
             print(f"  Events:       {int(summary.event_count)}")
             print(f"  Agents:       {summary.agents}")
-            print(f"  Duration:     {summary.duration:.0f}ms")
+            print(f"  Duration:     {summary.duration_ms:.0f}ms")
             print(f"  Tool calls:   {int(summary.tool_call_count)}")
             print(f"  Errors:       {int(summary.error_count)}")
 

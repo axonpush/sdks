@@ -29,11 +29,7 @@ export type {
   WebhookEndpointResponseDto as WebhookEndpoint,
 } from "./_internal/api/types.gen.js";
 
-import type {
-  CreateEventDto as _CreateEventDto,
-  TraceControllerGetTraceSummaryResponse,
-  TraceControllerListTracesResponse,
-} from "./_internal/api/types.gen.js";
+import type { CreateEventDto as _CreateEventDto } from "./_internal/api/types.gen.js";
 
 /**
  * Canonical event-type discriminators accepted by
@@ -52,15 +48,3 @@ export type CanonicalEventType = NonNullable<_CreateEventDto["eventType"]>;
 export type WebhookDeliveryStatus = NonNullable<
   import("./_internal/api/types.gen.js").WebhookDeliveryResponseDto["status"]
 >;
-
-/**
- * One row in the paginated trace list returned by
- * {@link TracesResource.list}.
- */
-export type TraceListItem = NonNullable<TraceControllerListTracesResponse>["data"][number];
-
-/**
- * Aggregated summary for a single trace, returned by
- * {@link TracesResource.summary}.
- */
-export type TraceSummary = NonNullable<TraceControllerGetTraceSummaryResponse>;

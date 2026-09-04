@@ -3,7 +3,7 @@ import uuid
 
 import pytest
 
-from axonpush.models import EventDetails, EventType, TraceSummary
+from axonpush.models import EventType
 
 pytestmark = pytest.mark.e2e
 
@@ -40,7 +40,7 @@ class TestTraces:
     def test_list_traces(self, client, channel):
         trace_id = self._publish_traced_events(client, channel)
         time.sleep(0.5)
-        result = client.traces.list()
+        result = client.traces_v2.list()
         assert result is not None
         assert hasattr(result, "data")
         trace_ids = [t.trace_id for t in result.data]
@@ -49,17 +49,18 @@ class TestTraces:
     def test_events_for_trace(self, client, channel):
         trace_id = self._publish_traced_events(client, channel)
         time.sleep(0.5)
-        events = client.traces.events(trace_id)
-        assert isinstance(events, list)
+        result = client.traces_v2.events(trace_id)
+        assert result is not None
+        events = result.data
         assert len(events) >= 3
-        assert all(isinstance(e, EventDetails) for e in events)
         assert all(e.trace_id == trace_id for e in events)
 
     def test_summary(self, client, channel):
         trace_id = self._publish_traced_events(client, channel)
         time.sleep(0.5)
-        summary = client.traces.summary(trace_id)
-        assert isinstance(summary, TraceSummary)
+        detail = client.traces_v2.detail(trace_id)
+        assert detail is not None
+        summary = detail.summary
         assert summary.trace_id == trace_id
         assert summary.event_count >= 3
         assert "tracer" in summary.agents
@@ -68,6 +69,6 @@ class TestTraces:
     def test_stats(self, client, channel):
         self._publish_traced_events(client, channel)
         time.sleep(0.5)
-        stats = client.traces.stats()
+        stats = client.traces_v2.stats()
         assert stats is not None
         assert stats.total_events >= 3

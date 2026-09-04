@@ -5,6 +5,7 @@ import {
   traceV2ControllerFacets,
   traceV2ControllerList,
   traceV2ControllerSpans,
+  traceV2ControllerStats,
 } from "../_internal/api/sdk.gen.js";
 import type {
   TraceAttributeKeysV2ResponseDto,
@@ -13,12 +14,21 @@ import type {
   TraceFacetsV2ResponseDto,
   TraceListV2ResponseDto,
   TraceSpanSearchV2ResponseDto,
+  TraceV2ControllerStatsResponse,
 } from "../_internal/api/types.gen.js";
 import type { ResourceClient } from "./_client.js";
+
+/** Aggregated dashboard stats returned by {@link TracesV2Resource.stats}. */
+export type DashboardStatsV2 = NonNullable<TraceV2ControllerStatsResponse>;
 
 /** Trace search with facets, spans and attribute keys. */
 export class TracesV2Resource {
   constructor(private readonly client: ResourceClient) {}
+
+  /** Aggregated dashboard stats. `GET /v2/traces/stats` */
+  async stats(query?: { appId?: string; environment?: string }): Promise<DashboardStatsV2 | null> {
+    return this.client.invoke(traceV2ControllerStats, { query });
+  }
 
   /** List them all. `GET /v2/traces` */
   async list(query?: {

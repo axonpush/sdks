@@ -8,11 +8,11 @@ from attrs import field as _attrs_field
 
 from ..types import UNSET, Unset
 
-T = TypeVar("T", bound="AssessmentDtoCorrection")
+T = TypeVar("T", bound="GateRunDtoMetrics")
 
 
 @_attrs_define
-class AssessmentDtoCorrection:
+class GateRunDtoMetrics:
     """ """
 
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
@@ -27,10 +27,10 @@ class AssessmentDtoCorrection:
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         d = dict(src_dict)
-        assessment_dto_correction = cls()
+        gate_run_dto_metrics = cls()
 
-        assessment_dto_correction.additional_properties = d
-        return assessment_dto_correction
+        gate_run_dto_metrics.additional_properties = d
+        return gate_run_dto_metrics
 
     @property
     def additional_keys(self) -> list[str]:

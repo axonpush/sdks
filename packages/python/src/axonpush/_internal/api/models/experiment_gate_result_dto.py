@@ -24,6 +24,7 @@ class ExperimentGateResultDto:
         passed (bool):
         reasons (list[str]):
         baseline_experiment_id (str | Unset):
+        gate_run_id (str | Unset): The recorded decision. Absent when the experiment was not gateable.
     """
 
     experiment_id: str
@@ -31,6 +32,7 @@ class ExperimentGateResultDto:
     passed: bool
     reasons: list[str]
     baseline_experiment_id: str | Unset = UNSET
+    gate_run_id: str | Unset = UNSET
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
@@ -46,6 +48,8 @@ class ExperimentGateResultDto:
 
         baseline_experiment_id = self.baseline_experiment_id
 
+        gate_run_id = self.gate_run_id
+
         field_dict: dict[str, Any] = {}
         field_dict.update(self.additional_properties)
         field_dict.update(
@@ -58,6 +62,8 @@ class ExperimentGateResultDto:
         )
         if baseline_experiment_id is not UNSET:
             field_dict["baselineExperimentId"] = baseline_experiment_id
+        if gate_run_id is not UNSET:
+            field_dict["gateRunId"] = gate_run_id
 
         return field_dict
 
@@ -76,12 +82,15 @@ class ExperimentGateResultDto:
 
         baseline_experiment_id = d.pop("baselineExperimentId", UNSET)
 
+        gate_run_id = d.pop("gateRunId", UNSET)
+
         experiment_gate_result_dto = cls(
             experiment_id=experiment_id,
             metrics=metrics,
             passed=passed,
             reasons=reasons,
             baseline_experiment_id=baseline_experiment_id,
+            gate_run_id=gate_run_id,
         )
 
         experiment_gate_result_dto.additional_properties = d
