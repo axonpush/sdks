@@ -105,6 +105,31 @@ By default the client treats AxonPush as a soft dependency. If a publish fails a
 
 The OpenTelemetry exporter follows the same setting. When fail-open is on, `Export` returns `ExportResult.Success` even when individual spans could not be delivered, so the OpenTelemetry SDK never propagates the failure into user code.
 
+## Release gates
+
+`client.Gates` reads and writes release-gate policies and the history of gate
+decisions, matching the `gates` resource in the Python and TypeScript SDKs.
+Unlike telemetry publishing these are control-plane calls, so they throw
+`AxonPushException` on failure rather than failing open.
+
+```csharp
+using AxonPush;
+using AxonPush.Gates;
+
+using var client = new AxonPushClient(AxonPushOptions.FromEnvironment());
+
+await client.Gates.SavePolicyAsync(new SaveGatePolicyDto
+{
+    ScopeType = GatePolicyScope.Dataset,
+    ScopeId = "ds_123",
+    MinScore = 0.8,
+    MaxFailureRate = 0.05,
+});
+
+var policies = await client.Gates.ListPoliciesAsync();
+var runs = await client.Gates.ListRunsAsync(experimentId: "exp_123");
+```
+
 ## Cross-source correlation
 
 Span payloads emitted by `AxonPush.Otel` use the same JSON shape as the Python (`axonpush`) and TypeScript (`@axonpush/sdk`) exporters. A Semantic Kernel chat completion span shows up in the AxonPush UI with the same schema as a LangChain run from Python or a Vercel AI middleware trace from Node. Trace and span identifiers are preserved, so spans emitted by multiple SDKs against the same workflow correlate naturally.

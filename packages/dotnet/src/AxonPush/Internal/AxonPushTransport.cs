@@ -126,6 +126,87 @@ internal sealed class AxonPushTransport : IDisposable
             attempt);
     }
 
+    /// <summary>
+    /// Drives a typed request through the same retry ladder and header stamping as
+    /// <see cref="PostEventAsync"/>. Unlike event publishing this never fails open:
+    /// gate reads and writes are control-plane calls whose result the caller needs,
+    /// so a terminal failure throws <see cref="AxonPushException"/> rather than
+    /// handing back a silent null.
+    /// </summary>
+    public async Task<TResponse?> SendAsync<TResponse>(
+        HttpMethod method,
+        string path,
+        object? body,
+        CancellationToken userCancellation)
+        where TResponse : class
+    {
+        var attempt = 0;
+        Exception? lastException = null;
+        string? lastError = null;
+
+        while (attempt < _retryPolicy.TotalAttempts)
+        {
+            attempt++;
+            try
+            {
+                using var message = new HttpRequestMessage(method, path);
+                if (body is not null)
+                {
+                    message.Content = JsonContent.Create(body, body.GetType(), options: AxonPushJsonOptions.Default);
+                }
+
+                StampHeaders(message);
+
+                using var response = await _httpClient.SendAsync(message, userCancellation).ConfigureAwait(false);
+                if (response.IsSuccessStatusCode)
+                {
+                    if (response.StatusCode == HttpStatusCode.NoContent)
+                    {
+                        return null;
+                    }
+
+                    return await response.Content
+                        .ReadFromJsonAsync<TResponse>(AxonPushJsonOptions.Default, userCancellation)
+                        .ConfigureAwait(false);
+                }
+
+                lastError = await ReadBodyAsync(response).ConfigureAwait(false);
+
+                if (!RetryPolicy.ShouldRetry(response) || attempt >= _retryPolicy.TotalAttempts)
+                {
+                    throw new AxonPushException($"AxonPush request to {path} failed with {(int)response.StatusCode} {response.ReasonPhrase}.")
+                    {
+                        StatusCode = response.StatusCode,
+                        ResponseBody = lastError,
+                    };
+                }
+
+                var delay = RetryPolicy.ParseRetryAfter(response, RetryPolicy.DelayFor(attempt));
+                await Task.Delay(delay, userCancellation).ConfigureAwait(false);
+            }
+            catch (OperationCanceledException) when (userCancellation.IsCancellationRequested)
+            {
+                throw;
+            }
+            catch (Exception ex) when (RetryPolicy.ShouldRetry(ex, userCancellation))
+            {
+                lastException = ex;
+                lastError = ex.Message;
+                if (attempt >= _retryPolicy.TotalAttempts)
+                {
+                    throw new AxonPushException($"AxonPush request to {path} failed after retries.", ex);
+                }
+
+                var delay = RetryPolicy.DelayFor(attempt);
+                await Task.Delay(delay, userCancellation).ConfigureAwait(false);
+            }
+        }
+
+        throw new AxonPushException(
+            lastError ?? $"AxonPush request to {path} failed.",
+            lastException ?? new InvalidOperationException("retries exhausted"));
+    }
+
     private void StampHeaders(HttpRequestMessage message)
     {
         if (!message.Headers.Contains("X-API-Key") && !string.IsNullOrWhiteSpace(_options.ApiKey))
