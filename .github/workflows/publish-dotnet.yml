@@ -37,7 +37,7 @@ jobs:
         id: nuget-login
         uses: NuGet/login@v1
         with:
-          user: axonpush
+          user: sayanbiswas
       - name: Push to NuGet
         run: >-
           dotnet nuget push "artifacts/*.nupkg"
