@@ -1,6 +1,6 @@
 [project]
 name = "axonpush"
-version = "0.0.14"
+version = "0.0.15"
 description = "Python SDK for AxonPush — real-time event infrastructure for AI agent systems"
 readme = "README.md"
 license = "MIT"
@@ -57,6 +57,9 @@ dependencies = [
     "attrs>=21.3.0",
     "python-dateutil>=2.8.2",
 ]
+
+[project.scripts]
+axonpush-eval = "axonpush.eval.cli:main"
 
 [project.urls]
 Homepage = "https://github.com/axonpush/sdks/tree/master/packages/python"

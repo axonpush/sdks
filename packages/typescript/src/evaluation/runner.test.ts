@@ -1,8 +1,22 @@
+import { mkdtempSync, writeFileSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
 import { describe, expect, it, vi } from "vitest";
 import type { EvaluationApi } from "./api.js";
 import { toGitHubSummary, toJUnitXml } from "./reports.js";
 import { runLocalEvaluation } from "./runner.js";
 import type { EvaluationItemResult, EvaluationRunResult } from "./types.js";
+
+/**
+ * A command that runs `source` as a script file rather than `node -e "..."`.
+ * cmd.exe mangles the nested quotes of an inline script, so the inline form
+ * silently produced an empty result on Windows and only ever ran on Linux.
+ */
+function evaluator(source: string): string {
+  const file = join(mkdtempSync(join(tmpdir(), "axonpush-eval-")), "evaluator.mjs");
+  writeFileSync(file, source, "utf-8");
+  return `${JSON.stringify(process.execPath)} ${JSON.stringify(file)}`;
+}
 
 function api(
   items = [
@@ -27,7 +41,9 @@ function api(
 describe("runLocalEvaluation", () => {
   it("executes the local JSONL protocol and independently submits each item", async () => {
     const fixture = api();
-    const command = `${JSON.stringify(process.execPath)} -e ${JSON.stringify("let source='';process.stdin.on('data', c => source += c).on('end', () => { const input = JSON.parse(source); process.stdout.write(JSON.stringify({ output: input.item.input.name.toUpperCase(), totalTokens: 3 }) + '\\n'); });")}`;
+    const command = evaluator(
+      "let source='';process.stdin.on('data', c => source += c).on('end', () => { const input = JSON.parse(source); process.stdout.write(JSON.stringify({ output: input.item.input.name.toUpperCase(), totalTokens: 3 }) + '\\n'); });",
+    );
     const result = await runLocalEvaluation(fixture.value, {
       datasetId: "dataset_1",
       datasetRevision: 3,
@@ -62,7 +78,9 @@ describe("runLocalEvaluation", () => {
 
   it("records a timeout as a failed item without corrupting the complete run", async () => {
     const fixture = api([{ id: "slow", input: { name: "Slow" } }]);
-    const command = `${JSON.stringify(process.execPath)} -e ${JSON.stringify("setTimeout(() => process.stdout.write(JSON.stringify({ output: 'late' }) + '\\n'), 500)")}`;
+    const command = evaluator(
+      "setTimeout(() => process.stdout.write(JSON.stringify({ output: 'late' }) + '\\n'), 500)",
+    );
     const result = await runLocalEvaluation(fixture.value, {
       datasetId: "dataset_1",
       datasetRevision: 1,
@@ -81,7 +99,9 @@ describe("runLocalEvaluation", () => {
   it("cancels the remote experiment when the local signal is aborted", async () => {
     const fixture = api([{ id: "slow", input: { name: "Slow" } }]);
     const controller = new AbortController();
-    const command = `${JSON.stringify(process.execPath)} -e ${JSON.stringify("setTimeout(() => process.stdout.write(JSON.stringify({ output: 'late' }) + '\\n'), 500)")}`;
+    const command = evaluator(
+      "setTimeout(() => process.stdout.write(JSON.stringify({ output: 'late' }) + '\\n'), 500)",
+    );
     const promise = runLocalEvaluation(fixture.value, {
       datasetId: "dataset_1",
       datasetRevision: 1,

@@ -313,6 +313,11 @@ class AxonPush:
         """Trace search with facets and spans. Lazy import."""
         return self._resource("traces_v2", "TracesV2")
 
+    @property
+    def gates(self) -> Any:
+        """Release-gate policies and gate-decision history. Lazy import."""
+        return self._resource("gates", "Gates")
+
     def connect_realtime(self, **kwargs: Any) -> Any:
         """Open a realtime (MQTT) connection.
 
@@ -584,6 +589,11 @@ class AsyncAxonPush:
     def traces_v2(self) -> Any:
         """Trace search with facets and spans. Lazy import."""
         return self._resource("traces_v2", "AsyncTracesV2")
+
+    @property
+    def gates(self) -> Any:
+        """Release-gate policies and gate-decision history. Lazy import."""
+        return self._resource("gates", "AsyncGates")
 
     async def connect_realtime(self, **kwargs: Any) -> Any:
         """Open an asynchronous realtime (MQTT) connection.

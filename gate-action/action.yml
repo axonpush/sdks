@@ -1,0 +1,225 @@
+name: axonpush release gate
+description: >-
+  Replay your real production failures against this change and fail the build
+  if it regresses.
+author: axonpush
+
+branding:
+  icon: shield
+  color: green
+
+inputs:
+  dataset:
+    description: Dataset id holding the regression examples.
+    required: true
+  revision:
+    description: Dataset revision to replay. Revisions are immutable.
+    required: true
+  command:
+    description: >-
+      Your evaluator command. It reads one JSON object on stdin and writes one
+      JSON object on stdout. See the docs for the protocol.
+    required: true
+  experiment:
+    description: Existing experiment id. Leave unset to create one from `target`.
+    required: false
+  target:
+    description: Evaluation target id, used when creating an experiment.
+    required: false
+  name:
+    description: Name for a newly created experiment.
+    required: false
+  evaluator:
+    description: Evaluator versions as `id@version`, one per line.
+    required: false
+  baseline:
+    description: Baseline experiment id, required by the delta thresholds.
+    required: false
+
+  minimum-score:
+    description: Fail below this absolute score.
+    required: false
+  max-failure-rate:
+    description: Fail above this share of errored examples (0-1).
+    required: false
+  maximum-latency-ms:
+    description: Fail above this mean latency.
+    required: false
+  maximum-cost-usd:
+    description: Fail above this total run cost.
+    required: false
+  max-score-regression:
+    description: Fail if the score drops more than this against the baseline.
+    required: false
+  max-latency-increase-ratio:
+    description: Fail above this latency increase vs baseline (0.1 = 10%).
+    required: false
+  max-cost-increase-ratio:
+    description: Fail above this cost increase vs baseline (0.1 = 10%).
+    required: false
+
+  api-key:
+    description: axonpush API key. Store it as a repository secret.
+    required: true
+  tenant-id:
+    description: Organisation id.
+    required: true
+  base-url:
+    description: API base URL. Override for self-hosted deployments.
+    required: false
+    default: https://api.axonpush.xyz
+  environment:
+    description: Logical environment label recorded on the run.
+    required: false
+
+  comment-on-pr:
+    description: Post the gate result as a pull-request comment.
+    required: false
+    default: "true"
+  fail-on-gate:
+    description: >-
+      Fail the job when the gate blocks. Set to false to report without
+      blocking, which is the honest way to trial a gate on an existing repo.
+    required: false
+    default: "true"
+  version:
+    description: >-
+      Version of @axonpush/sdk to run. Accepts anything npx does, including a
+      path to a packed tarball, which is how the smoke test pins it.
+    required: false
+    default: latest
+
+outputs:
+  passed:
+    description: "true when the gate passed."
+    value: ${{ steps.gate.outputs.passed }}
+  experiment-id:
+    description: The experiment the gate ran against.
+    value: ${{ steps.gate.outputs.experiment-id }}
+  report:
+    description: Path to the JSON report artifact.
+    value: ${{ steps.gate.outputs.report }}
+  junit:
+    description: Path to the JUnit XML artifact.
+    value: ${{ steps.gate.outputs.junit }}
+  summary:
+    description: Path to the markdown summary written to the job summary.
+    value: ${{ steps.gate.outputs.summary }}
+  exit-code:
+    description: The CLI's exit code, for a workflow that wants the distinction.
+    value: ${{ steps.gate.outputs.exit-code }}
+
+runs:
+  using: composite
+  steps:
+    - name: Run the evaluation and gate it
+      id: gate
+      shell: bash
+      # Every input arrives as an environment variable rather than being
+      # interpolated into the script. `command` is by design arbitrary user
+      # code, so interpolating it would let a quote break out of the script.
+      env:
+        AXONPUSH_API_KEY: ${{ inputs.api-key }}
+        AXONPUSH_TENANT_ID: ${{ inputs.tenant-id }}
+        AXONPUSH_BASE_URL: ${{ inputs.base-url }}
+        AXONPUSH_ENVIRONMENT: ${{ inputs.environment }}
+        INPUT_DATASET: ${{ inputs.dataset }}
+        INPUT_REVISION: ${{ inputs.revision }}
+        INPUT_COMMAND: ${{ inputs.command }}
+        INPUT_EXPERIMENT: ${{ inputs.experiment }}
+        INPUT_TARGET: ${{ inputs.target }}
+        INPUT_NAME: ${{ inputs.name }}
+        INPUT_EVALUATOR: ${{ inputs.evaluator }}
+        INPUT_BASELINE: ${{ inputs.baseline }}
+        INPUT_MINIMUM_SCORE: ${{ inputs.minimum-score }}
+        INPUT_MAX_FAILURE_RATE: ${{ inputs.max-failure-rate }}
+        INPUT_MAXIMUM_LATENCY_MS: ${{ inputs.maximum-latency-ms }}
+        INPUT_MAXIMUM_COST_USD: ${{ inputs.maximum-cost-usd }}
+        INPUT_MAX_SCORE_REGRESSION: ${{ inputs.max-score-regression }}
+        INPUT_MAX_LATENCY_INCREASE_RATIO: ${{ inputs.max-latency-increase-ratio }}
+        INPUT_MAX_COST_INCREASE_RATIO: ${{ inputs.max-cost-increase-ratio }}
+        INPUT_VERSION: ${{ inputs.version }}
+      run: |
+        set -o pipefail
+
+        report="${RUNNER_TEMP}/axonpush-gate.json"
+        junit="${RUNNER_TEMP}/axonpush-gate.xml"
+        summary="${RUNNER_TEMP}/axonpush-gate.md"
+
+        args=(run
+          --dataset "$INPUT_DATASET"
+          --revision "$INPUT_REVISION"
+          --command "$INPUT_COMMAND"
+          --json "$report"
+          --junit "$junit"
+          --github-summary "$summary")
+
+        add() { if [ -n "$2" ]; then args+=("$1" "$2"); fi; }
+        add --experiment "$INPUT_EXPERIMENT"
+        add --target "$INPUT_TARGET"
+        add --name "$INPUT_NAME"
+        add --baseline "$INPUT_BASELINE"
+        add --minimum-score "$INPUT_MINIMUM_SCORE"
+        add --max-failure-rate "$INPUT_MAX_FAILURE_RATE"
+        add --maximum-latency-ms "$INPUT_MAXIMUM_LATENCY_MS"
+        add --maximum-cost-usd "$INPUT_MAXIMUM_COST_USD"
+        add --max-score-regression "$INPUT_MAX_SCORE_REGRESSION"
+        add --max-latency-increase-ratio "$INPUT_MAX_LATENCY_INCREASE_RATIO"
+        add --max-cost-increase-ratio "$INPUT_MAX_COST_INCREASE_RATIO"
+
+        while IFS= read -r line; do
+          [ -n "$line" ] && args+=(--evaluator "$line")
+        done <<< "$INPUT_EVALUATOR"
+
+        set +e
+        npx --yes --package "@axonpush/sdk@${INPUT_VERSION}" axonpush-eval "${args[@]}"
+        code=$?
+        set -e
+
+        # 0 passed, 1 the gate blocked, 4 an example failed to evaluate,
+        # 130 the run was cancelled. Anything else is the CLI itself failing
+        # and should stop the job.
+        case "$code" in
+          0) passed=true ;;
+          1|4) passed=false ;;
+          130) echo "::notice::axonpush-eval was cancelled"; exit 0 ;;
+          *) echo "::error::axonpush-eval exited with $code"; exit "$code" ;;
+        esac
+
+        {
+          echo "passed=$passed"
+          echo "report=$report"
+          echo "junit=$junit"
+          echo "summary=$summary"
+          echo "exit-code=$code"
+        } >> "$GITHUB_OUTPUT"
+
+        if [ -f "$report" ]; then
+          echo "experiment-id=$(jq -r '.experimentId // empty' "$report")" >> "$GITHUB_OUTPUT"
+        fi
+
+        if [ -f "$summary" ] && [ -n "${GITHUB_STEP_SUMMARY:-}" ]; then
+          cat "$summary" >> "$GITHUB_STEP_SUMMARY"
+        fi
+
+    - name: Comment on the pull request
+      if: >-
+        inputs.comment-on-pr == 'true' &&
+        github.event_name == 'pull_request' &&
+        steps.gate.outputs.passed == 'false'
+      shell: bash
+      env:
+        GH_TOKEN: ${{ github.token }}
+        SUMMARY: ${{ steps.gate.outputs.summary }}
+        PR_NUMBER: ${{ github.event.pull_request.number }}
+      run: |
+        [ -f "$SUMMARY" ] || exit 0
+        gh pr comment "$PR_NUMBER" --body-file "$SUMMARY" || \
+          echo "::warning::Could not post the gate comment. Grant pull-requests: write to this job."
+
+    - name: Fail the build when the gate blocked
+      if: inputs.fail-on-gate == 'true' && steps.gate.outputs.passed == 'false'
+      shell: bash
+      run: |
+        echo "::error::The release gate blocked this change. See the job summary for what regressed."
+        exit 1

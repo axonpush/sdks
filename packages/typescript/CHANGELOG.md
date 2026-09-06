@@ -1,5 +1,61 @@
 # Changelog
 
+## [0.0.8] – 2026-09-02
+
+The release that makes the release gate installable. Everything below has been
+in the repository for months and in none of your builds: `axonpush-eval`, the
+evaluation runner it drives and the twelve v2 resources all landed after 0.0.7
+was tagged, so the published package had no `bin` entry at all and the GitHub
+Action that runs `npx --package @axonpush/sdk axonpush-eval` could not start.
+
+### Added
+- **`axonpush-eval`**, the release-gate CLI. It replays an immutable dataset
+  revision against a local evaluator command, submits each result as it lands,
+  applies the gate and exits `0` passed, `1` blocked, `2` usage, `3` API, `4`
+  evaluation, `130` cancelled. It writes a JSON report, a JUnit file and a
+  GitHub Actions summary. The evaluator is your own command reading one JSON
+  object on stdin and writing one on stdout; nothing of yours is uploaded.
+- **`client.gates`** — gate policies and the history of gate decisions:
+  `listPolicies`, `getPolicy`, `savePolicy`, `deletePolicy` and `listRuns`.
+  Store the thresholds once and every pipeline inherits them.
+- **The v2 resource surface**: datasets, experiments, evaluators, evaluation
+  targets, prompts, alerts, assessments, analytics, issues, online evaluations,
+  trace intelligence and trace search v2.
+- **Every resource is exported from the package root.** Only the eight original
+  ones were, so `import { ExperimentsResource } from "@axonpush/sdk"` failed.
+- Agent telemetry helpers and the contract fixtures replayed as conformance
+  tests, so the topic grammar and header names cannot drift per language.
+
+### Fixed
+- **Creating an experiment always failed.** `createExperiment` read `id` from a
+  response that carries `experimentId`, so `axonpush-eval --target …` — the
+  first thing a new user runs — exited 3 every time.
+- **Thresholds never reached the gate.** The CLI sent `minimumScore` and
+  friends; the endpoint accepts `minScore` and validates with
+  `forbidNonWhitelisted`, so every gated run came back 400. Two of the
+  conversions are more than a rename: `--max-score-regression` is a positive
+  tolerance while the API takes the lowest acceptable delta, and the ratio
+  options are fractions while the API takes percentages.
+- `--max-failure-rate` is exposed; the API always accepted it.
+- The JUnit report now includes the gate itself as a test case when it blocks,
+  so CI shows what failed rather than only a non-zero exit code.
+- The evaluation calls route through the same transport chokepoint as every
+  other request, so retries and error mapping behave the same.
+- The build emits the `./integrations/*` and `./evaluation` subpaths the
+  package advertises.
+
+### Changed
+- **The gate call now identifies itself.** It sends `source`, and the commit and
+  branch it gated, so a pipeline that reuses an experiment no longer files its
+  decision against the commit the experiment was created on.
+- **Breaking — two path parameters swapped order.** They followed the contract's
+  parameter order rather than the URL's, so
+  `assessments.delete(assessmentId, traceId)` is now
+  `assessments.delete(traceId, assessmentId)` and
+  `datasets.exportRevision(datasetId, format, revision)` is now
+  `datasets.exportRevision(datasetId, revision, format)`. Both take two strings,
+  so the old order was silently wrong rather than a type error.
+
 ## [0.0.7] – 2026-05-05
 
 Quality-of-life fix for traces emitted from LangGraph and modern

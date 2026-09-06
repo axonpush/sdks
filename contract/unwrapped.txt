@@ -1,0 +1,37 @@
+# Operations with no hand-written resource method, and why.
+# check-contract.ts fails on anything published but neither wrapped nor listed
+# here, so a new server endpoint forces a decision instead of arriving unusable.
+
+# Ingest surfaces. Called by a wire protocol, an exporter or another vendor's
+# SDK, never by an axonpush resource method.
+EventController_createEventBatch
+OtlpController_ingestLogs
+OtlpController_ingestTraces
+SentryController_ingestEnvelope
+SentryController_ingestMinidump
+SentryController_ingestSecurity
+SentryController_ingestStore
+WebhookController_ingestWebhook
+
+# Infrastructure the client reaches through its own code paths, not a resource.
+HealthController_check
+IotCredentialsController_getCredentials
+
+# Not wrapped yet. Each is a real gap; wrap it or delete the endpoint.
+CapabilitiesController_getCapabilities
+ExportController_create
+ExportController_get
+ExportController_list
+ExportController_remove
+ExportController_update
+IntelligenceController_get
+IntelligenceController_list
+IntelligenceController_run
+IotTokenController_create
+IotTokenController_list
+IotTokenController_revoke
+OrganizationController_getTelemetryPolicy
+OrganizationController_updateTelemetryPolicy
+PublicIngestTokenController_create
+PublicIngestTokenController_list
+PublicIngestTokenController_revoke

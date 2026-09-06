@@ -16,16 +16,21 @@ export function toJsonReport(result: EvaluationRunResult): string {
 
 /** Render a compact JUnit report so any CI system can surface failures per dataset item. */
 export function toJUnitXml(result: EvaluationRunResult): string {
-  const failures = result.results.filter((entry) => entry.status !== "passed");
-  const cases = result.results
-    .map((entry) => {
-      const attrs = `classname="axonpush.evaluation" name="${xml(entry.itemId)}" time="${(entry.latencyMs / 1000).toFixed(3)}"`;
-      if (entry.status === "passed") return `  <testcase ${attrs}/>`;
-      const kind = entry.status === "cancelled" ? "skipped" : "failure";
-      return `  <testcase ${attrs}><${kind} message="${xml(entry.error ?? entry.status)}"/></testcase>`;
-    })
-    .join("\n");
-  return `<?xml version="1.0" encoding="UTF-8"?>\n<testsuite name="axonpush.evaluation" tests="${result.results.length}" failures="${failures.length}" skipped="${result.results.filter((entry) => entry.status === "cancelled").length}" timestamp="${xml(result.startedAt)}">\n${cases}\n</testsuite>\n`;
+  const blocked = Boolean(result.gate && !result.gate.passed);
+  const failures =
+    result.results.filter((entry) => entry.status !== "passed").length + Number(blocked);
+  const cases = result.results.map((entry) => {
+    const attrs = `classname="axonpush.evaluation" name="${xml(entry.itemId)}" time="${(entry.latencyMs / 1000).toFixed(3)}"`;
+    if (entry.status === "passed") return `  <testcase ${attrs}/>`;
+    const kind = entry.status === "cancelled" ? "skipped" : "failure";
+    return `  <testcase ${attrs}><${kind} message="${xml(entry.error ?? entry.status)}"/></testcase>`;
+  });
+  if (result.gate && !result.gate.passed) {
+    cases.push(
+      `  <testcase classname="axonpush.evaluation" name="release gate" time="0.000"><failure message="gate failed">${xml(result.gate.reasons.join("; "))}</failure></testcase>`,
+    );
+  }
+  return `<?xml version="1.0" encoding="UTF-8"?>\n<testsuite name="axonpush.evaluation" tests="${result.results.length + Number(blocked)}" failures="${failures}" skipped="${result.results.filter((entry) => entry.status === "cancelled").length}" timestamp="${xml(result.startedAt)}">\n${cases.join("\n")}\n</testsuite>\n`;
 }
 
 /** Markdown accepted by GitHub Actions step summaries. */
