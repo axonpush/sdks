@@ -23,7 +23,7 @@
     <RepositoryType>git</RepositoryType>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageTags>axonpush;opentelemetry;observability;tracing;llm;agents;semantic-kernel</PackageTags>
-    <VersionPrefix>0.1.0</VersionPrefix>
+    <VersionPrefix>0.0.1</VersionPrefix>
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
   </PropertyGroup>
