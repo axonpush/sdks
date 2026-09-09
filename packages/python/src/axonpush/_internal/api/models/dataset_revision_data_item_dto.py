@@ -12,6 +12,7 @@ from ..types import UNSET, Unset
 
 if TYPE_CHECKING:
     from ..models.dataset_revision_data_item_dto_metadata import DatasetRevisionDataItemDtoMetadata
+    from ..models.reference_review_dto import ReferenceReviewDto
 
 
 T = TypeVar("T", bound="DatasetRevisionDataItemDto")
@@ -28,6 +29,9 @@ class DatasetRevisionDataItemDto:
         expected_output (Any | Unset):
         item_id (str | Unset):
         metadata (DatasetRevisionDataItemDtoMetadata | Unset):
+        observed_output (Any | Unset):
+        reference_present (bool | Unset):
+        review (ReferenceReviewDto | Unset):
         source_span_id (str | Unset):
         source_trace_id (str | Unset):
         tool_trajectory (Any | Unset):
@@ -40,6 +44,9 @@ class DatasetRevisionDataItemDto:
     expected_output: Any | Unset = UNSET
     item_id: str | Unset = UNSET
     metadata: DatasetRevisionDataItemDtoMetadata | Unset = UNSET
+    observed_output: Any | Unset = UNSET
+    reference_present: bool | Unset = UNSET
+    review: ReferenceReviewDto | Unset = UNSET
     source_span_id: str | Unset = UNSET
     source_trace_id: str | Unset = UNSET
     tool_trajectory: Any | Unset = UNSET
@@ -49,6 +56,7 @@ class DatasetRevisionDataItemDto:
         from ..models.dataset_revision_data_item_dto_metadata import (
             DatasetRevisionDataItemDtoMetadata,
         )
+        from ..models.reference_review_dto import ReferenceReviewDto
 
         content_hash = self.content_hash
 
@@ -65,6 +73,14 @@ class DatasetRevisionDataItemDto:
         metadata: dict[str, Any] | Unset = UNSET
         if not isinstance(self.metadata, Unset):
             metadata = self.metadata.to_dict()
+
+        observed_output = self.observed_output
+
+        reference_present = self.reference_present
+
+        review: dict[str, Any] | Unset = UNSET
+        if not isinstance(self.review, Unset):
+            review = self.review.to_dict()
 
         source_span_id = self.source_span_id
 
@@ -89,6 +105,12 @@ class DatasetRevisionDataItemDto:
             field_dict["itemId"] = item_id
         if metadata is not UNSET:
             field_dict["metadata"] = metadata
+        if observed_output is not UNSET:
+            field_dict["observedOutput"] = observed_output
+        if reference_present is not UNSET:
+            field_dict["referencePresent"] = reference_present
+        if review is not UNSET:
+            field_dict["review"] = review
         if source_span_id is not UNSET:
             field_dict["sourceSpanId"] = source_span_id
         if source_trace_id is not UNSET:
@@ -103,6 +125,7 @@ class DatasetRevisionDataItemDto:
         from ..models.dataset_revision_data_item_dto_metadata import (
             DatasetRevisionDataItemDtoMetadata,
         )
+        from ..models.reference_review_dto import ReferenceReviewDto
 
         d = dict(src_dict)
         content_hash = d.pop("contentHash")
@@ -124,6 +147,17 @@ class DatasetRevisionDataItemDto:
         else:
             metadata = DatasetRevisionDataItemDtoMetadata.from_dict(_metadata)
 
+        observed_output = d.pop("observedOutput", UNSET)
+
+        reference_present = d.pop("referencePresent", UNSET)
+
+        _review = d.pop("review", UNSET)
+        review: ReferenceReviewDto | Unset
+        if isinstance(_review, Unset):
+            review = UNSET
+        else:
+            review = ReferenceReviewDto.from_dict(_review)
+
         source_span_id = d.pop("sourceSpanId", UNSET)
 
         source_trace_id = d.pop("sourceTraceId", UNSET)
@@ -138,6 +172,9 @@ class DatasetRevisionDataItemDto:
             expected_output=expected_output,
             item_id=item_id,
             metadata=metadata,
+            observed_output=observed_output,
+            reference_present=reference_present,
+            review=review,
             source_span_id=source_span_id,
             source_trace_id=source_trace_id,
             tool_trajectory=tool_trajectory,

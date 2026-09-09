@@ -21,11 +21,13 @@ class CreateDatasetRevisionDto:
     """
     Attributes:
         items (list[DatasetItemInputDto]):
+        base_revision (float | Unset):
         note (str | Unset):
         source (DatasetRevisionSource | Unset):
     """
 
     items: list[DatasetItemInputDto]
+    base_revision: float | Unset = UNSET
     note: str | Unset = UNSET
     source: DatasetRevisionSource | Unset = UNSET
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
@@ -37,6 +39,8 @@ class CreateDatasetRevisionDto:
         for items_item_data in self.items:
             items_item = items_item_data.to_dict()
             items.append(items_item)
+
+        base_revision = self.base_revision
 
         note = self.note
 
@@ -51,6 +55,8 @@ class CreateDatasetRevisionDto:
                 "items": items,
             }
         )
+        if base_revision is not UNSET:
+            field_dict["baseRevision"] = base_revision
         if note is not UNSET:
             field_dict["note"] = note
         if source is not UNSET:
@@ -70,6 +76,8 @@ class CreateDatasetRevisionDto:
 
             items.append(items_item)
 
+        base_revision = d.pop("baseRevision", UNSET)
+
         note = d.pop("note", UNSET)
 
         _source = d.pop("source", UNSET)
@@ -81,6 +89,7 @@ class CreateDatasetRevisionDto:
 
         create_dataset_revision_dto = cls(
             items=items,
+            base_revision=base_revision,
             note=note,
             source=source,
         )

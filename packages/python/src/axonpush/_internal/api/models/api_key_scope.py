@@ -2,6 +2,10 @@ from enum import Enum
 
 
 class ApiKeyScope(str, Enum):
+    ACTIONSREAD = "actions:read"
+    ACTIONSVERIFY = "actions:verify"
+    ACTIONSWRITE = "actions:write"
+    ACTION_CONTRACTSMANAGE = "action-contracts:manage"
     ALERTSMANAGE = "alerts:manage"
     ANALYTICSREAD = "analytics:read"
     APPSMANAGE = "apps:manage"
