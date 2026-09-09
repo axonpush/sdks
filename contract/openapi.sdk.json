@@ -1,6 +1,262 @@
 {
   "components": {
     "schemas": {
+      "ActionCheckDto": {
+        "properties": {
+          "name": {
+            "maxLength": 100,
+            "type": "string"
+          },
+          "reason": {
+            "maxLength": 1000,
+            "type": "string"
+          },
+          "state": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ActionCheckState"
+              }
+            ]
+          }
+        },
+        "required": [
+          "name",
+          "state",
+          "reason"
+        ],
+        "type": "object"
+      },
+      "ActionCheckState": {
+        "enum": [
+          "match",
+          "conflict",
+          "pending",
+          "unknown"
+        ],
+        "type": "string"
+      },
+      "ActionContractListDto": {
+        "properties": {
+          "data": {
+            "items": {
+              "$ref": "#/components/schemas/CreateActionContractDto"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "data"
+        ],
+        "type": "object"
+      },
+      "ActionDetailDto": {
+        "properties": {
+          "actionId": {
+            "type": "string"
+          },
+          "contract": {
+            "$ref": "#/components/schemas/CreateActionContractDto"
+          },
+          "createdAt": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "evidence": {
+            "items": {
+              "$ref": "#/components/schemas/ActionEvidenceDto"
+            },
+            "type": "array"
+          },
+          "latestObservation": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ObserveActionDto"
+              }
+            ],
+            "nullable": true,
+            "type": "object"
+          },
+          "registration": {
+            "$ref": "#/components/schemas/RegisterActionDto"
+          },
+          "reviewState": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ActionReviewState"
+              }
+            ]
+          },
+          "state": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ActionVerificationState"
+              }
+            ]
+          },
+          "updatedAt": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "verificationDueAt": {
+            "format": "date-time",
+            "type": "string"
+          }
+        },
+        "required": [
+          "actionId",
+          "registration",
+          "contract",
+          "state",
+          "reviewState",
+          "verificationDueAt",
+          "createdAt",
+          "updatedAt",
+          "evidence"
+        ],
+        "type": "object"
+      },
+      "ActionDto": {
+        "properties": {
+          "actionId": {
+            "type": "string"
+          },
+          "contract": {
+            "$ref": "#/components/schemas/CreateActionContractDto"
+          },
+          "createdAt": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "latestObservation": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ObserveActionDto"
+              }
+            ],
+            "nullable": true,
+            "type": "object"
+          },
+          "registration": {
+            "$ref": "#/components/schemas/RegisterActionDto"
+          },
+          "reviewState": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ActionReviewState"
+              }
+            ]
+          },
+          "state": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ActionVerificationState"
+              }
+            ]
+          },
+          "updatedAt": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "verificationDueAt": {
+            "format": "date-time",
+            "type": "string"
+          }
+        },
+        "required": [
+          "actionId",
+          "registration",
+          "contract",
+          "state",
+          "reviewState",
+          "verificationDueAt",
+          "createdAt",
+          "updatedAt"
+        ],
+        "type": "object"
+      },
+      "ActionEvidenceDto": {
+        "properties": {
+          "actorId": {
+            "type": "string"
+          },
+          "eventId": {
+            "type": "string"
+          },
+          "kind": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ActionEvidenceKind"
+              }
+            ]
+          },
+          "payload": {
+            "additionalProperties": true,
+            "type": "object"
+          },
+          "receivedAt": {
+            "format": "date-time",
+            "type": "string"
+          }
+        },
+        "required": [
+          "eventId",
+          "kind",
+          "payload",
+          "actorId",
+          "receivedAt"
+        ],
+        "type": "object"
+      },
+      "ActionEvidenceKind": {
+        "enum": [
+          "claim",
+          "observation",
+          "review"
+        ],
+        "type": "string"
+      },
+      "ActionListDto": {
+        "properties": {
+          "cursor": {
+            "nullable": true,
+            "type": "string"
+          },
+          "data": {
+            "items": {
+              "$ref": "#/components/schemas/ActionDto"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "data"
+        ],
+        "type": "object"
+      },
+      "ActionReviewDecision": {
+        "enum": [
+          "useful",
+          "noise"
+        ],
+        "type": "string"
+      },
+      "ActionReviewState": {
+        "enum": [
+          "unreviewed",
+          "useful",
+          "noise"
+        ],
+        "type": "string"
+      },
+      "ActionVerificationState": {
+        "enum": [
+          "pending",
+          "confirmed",
+          "contradicted",
+          "unknown"
+        ],
+        "type": "string"
+      },
       "AddIssueToDatasetDto": {
         "properties": {
           "datasetId": {
@@ -386,6 +642,10 @@
       },
       "ApiKeyScope": {
         "enum": [
+          "actions:read",
+          "actions:write",
+          "actions:verify",
+          "action-contracts:manage",
           "publish",
           "subscribe",
           "events:read",
@@ -701,10 +961,16 @@
       },
       "CapabilityFlagsDto": {
         "properties": {
+          "action_verification": {
+            "type": "boolean"
+          },
           "analytics_v2": {
             "type": "boolean"
           },
           "assessments": {
+            "type": "boolean"
+          },
+          "audit_log": {
             "type": "boolean"
           },
           "canonical_ingest": {
@@ -725,6 +991,9 @@
           "prompt_registry": {
             "type": "boolean"
           },
+          "rbac": {
+            "type": "boolean"
+          },
           "trace_intelligence": {
             "type": "boolean"
           },
@@ -736,6 +1005,7 @@
           }
         },
         "required": [
+          "action_verification",
           "canonical_ingest",
           "trace_v2_write",
           "trace_v2_read",
@@ -746,7 +1016,9 @@
           "issues",
           "failure_intelligence",
           "trace_intelligence",
-          "prompt_registry"
+          "prompt_registry",
+          "audit_log",
+          "rbac"
         ],
         "type": "object"
       },
@@ -793,6 +1065,23 @@
         ],
         "type": "object"
       },
+      "ClaimActionDto": {
+        "properties": {
+          "claimId": {
+            "pattern": "^[a-zA-Z0-9_-]{1,100}$",
+            "type": "string"
+          },
+          "output": {
+            "additionalProperties": true,
+            "type": "object"
+          }
+        },
+        "required": [
+          "claimId",
+          "output"
+        ],
+        "type": "object"
+      },
       "ContentCaptureMode": {
         "enum": [
           "metadata_only",
@@ -800,6 +1089,52 @@
           "full"
         ],
         "type": "string"
+      },
+      "CreateActionContractDto": {
+        "properties": {
+          "contractId": {
+            "pattern": "^[a-zA-Z0-9_-]{1,100}$",
+            "type": "string"
+          },
+          "description": {
+            "maxLength": 2000,
+            "minLength": 1,
+            "type": "string"
+          },
+          "name": {
+            "maxLength": 120,
+            "minLength": 1,
+            "type": "string"
+          },
+          "observationWindowSeconds": {
+            "maximum": 604800,
+            "minimum": 1,
+            "type": "number"
+          },
+          "requiredChecks": {
+            "items": {
+              "pattern": "^[a-zA-Z0-9_-]{1,100}$",
+              "type": "string"
+            },
+            "maxItems": 30,
+            "minItems": 1,
+            "type": "array",
+            "uniqueItems": true
+          },
+          "version": {
+            "minimum": 1,
+            "type": "number"
+          }
+        },
+        "required": [
+          "contractId",
+          "version",
+          "name",
+          "description",
+          "requiredChecks",
+          "observationWindowSeconds"
+        ],
+        "type": "object"
       },
       "CreateAlertRuleDto": {
         "properties": {
@@ -1000,6 +1335,10 @@
       },
       "CreateDatasetRevisionDto": {
         "properties": {
+          "baseRevision": {
+            "minimum": 0,
+            "type": "number"
+          },
           "items": {
             "items": {
               "$ref": "#/components/schemas/DatasetItemInputDto"
@@ -1693,6 +2032,7 @@
             "additionalProperties": true,
             "type": "object"
           },
+          "observedOutput": {},
           "sourceSpanId": {
             "type": "string"
           },
@@ -1740,6 +2080,13 @@
           "metadata": {
             "additionalProperties": true,
             "type": "object"
+          },
+          "observedOutput": {},
+          "referencePresent": {
+            "type": "boolean"
+          },
+          "review": {
+            "$ref": "#/components/schemas/ReferenceReviewDto"
           },
           "sourceSpanId": {
             "type": "string"
@@ -2399,6 +2746,40 @@
         ],
         "type": "string"
       },
+      "ExperimentCaseComparisonDto": {
+        "properties": {
+          "cursor": {
+            "type": "string"
+          },
+          "data": {
+            "items": {
+              "$ref": "#/components/schemas/ExperimentCasePairDto"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "data"
+        ],
+        "type": "object"
+      },
+      "ExperimentCasePairDto": {
+        "properties": {
+          "baseline": {
+            "$ref": "#/components/schemas/ExperimentResultDto"
+          },
+          "candidate": {
+            "$ref": "#/components/schemas/ExperimentResultDto"
+          },
+          "itemId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "itemId"
+        ],
+        "type": "object"
+      },
       "ExperimentComparisonDto": {
         "properties": {
           "baseline": {
@@ -2726,7 +3107,8 @@
           "running",
           "passed",
           "failed",
-          "error"
+          "error",
+          "not_evaluated"
         ],
         "type": "string"
       },
@@ -3676,6 +4058,63 @@
         ],
         "type": "object"
       },
+      "ObserveActionDto": {
+        "properties": {
+          "checks": {
+            "items": {
+              "$ref": "#/components/schemas/ActionCheckDto"
+            },
+            "maxItems": 30,
+            "type": "array"
+          },
+          "objectRef": {
+            "maxLength": 200,
+            "type": "string"
+          },
+          "observationId": {
+            "pattern": "^[a-zA-Z0-9_-]{1,100}$",
+            "type": "string"
+          },
+          "observedAt": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "observedFields": {
+            "additionalProperties": true,
+            "type": "object"
+          },
+          "provider": {
+            "maxLength": 100,
+            "type": "string"
+          },
+          "providerAccountRef": {
+            "maxLength": 200,
+            "type": "string"
+          },
+          "sequence": {
+            "maximum": 9007199254740991,
+            "minimum": 1,
+            "type": "number"
+          },
+          "verifierVersion": {
+            "maxLength": 100,
+            "minLength": 1,
+            "type": "string"
+          }
+        },
+        "required": [
+          "observationId",
+          "sequence",
+          "observedAt",
+          "provider",
+          "providerAccountRef",
+          "objectRef",
+          "verifierVersion",
+          "checks",
+          "observedFields"
+        ],
+        "type": "object"
+      },
       "OkResponseDto": {
         "properties": {
           "ok": {
@@ -4435,6 +4874,138 @@
           "orgId",
           "name",
           "createdAt"
+        ],
+        "type": "object"
+      },
+      "ReferenceReviewDto": {
+        "properties": {
+          "actorId": {
+            "type": "string"
+          },
+          "reviewedAt": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "sourceRevision": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "actorId",
+          "reviewedAt",
+          "sourceRevision"
+        ],
+        "type": "object"
+      },
+      "RegisterActionDto": {
+        "properties": {
+          "actionId": {
+            "pattern": "^[a-zA-Z0-9_-]{1,100}$",
+            "type": "string"
+          },
+          "appId": {
+            "maxLength": 100,
+            "minLength": 1,
+            "type": "string"
+          },
+          "contractId": {
+            "maxLength": 100,
+            "type": "string"
+          },
+          "contractVersion": {
+            "minimum": 1,
+            "type": "number"
+          },
+          "environmentId": {
+            "maxLength": 100,
+            "minLength": 1,
+            "type": "string"
+          },
+          "intendedFields": {
+            "additionalProperties": true,
+            "type": "object"
+          },
+          "intentSource": {
+            "maxLength": 300,
+            "minLength": 1,
+            "type": "string"
+          },
+          "objectRef": {
+            "maxLength": 200,
+            "minLength": 1,
+            "type": "string"
+          },
+          "provider": {
+            "maxLength": 100,
+            "minLength": 1,
+            "type": "string"
+          },
+          "providerAccountRef": {
+            "maxLength": 200,
+            "minLength": 1,
+            "type": "string"
+          },
+          "spanId": {
+            "maxLength": 100,
+            "type": "string"
+          },
+          "traceId": {
+            "maxLength": 100,
+            "type": "string"
+          }
+        },
+        "required": [
+          "actionId",
+          "contractId",
+          "contractVersion",
+          "appId",
+          "environmentId",
+          "intentSource",
+          "intendedFields",
+          "provider",
+          "providerAccountRef",
+          "objectRef"
+        ],
+        "type": "object"
+      },
+      "ReviewActionDto": {
+        "properties": {
+          "decision": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ActionReviewDecision"
+              }
+            ]
+          },
+          "reason": {
+            "maxLength": 1000,
+            "minLength": 1,
+            "type": "string"
+          },
+          "reviewId": {
+            "pattern": "^[a-zA-Z0-9_-]{1,100}$",
+            "type": "string"
+          }
+        },
+        "required": [
+          "reviewId",
+          "decision",
+          "reason"
+        ],
+        "type": "object"
+      },
+      "ReviewDatasetRevisionDto": {
+        "properties": {
+          "itemIds": {
+            "description": "Items explicitly reviewed in this revision.",
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "itemIds"
         ],
         "type": "object"
       },
@@ -8511,6 +9082,341 @@
         ]
       }
     },
+    "/v2/action-contracts": {
+      "get": {
+        "operationId": "ActionContractController_list",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ActionContractListDto"
+                }
+              }
+            },
+            "description": ""
+          }
+        },
+        "tags": [
+          "action-verification"
+        ],
+        "x-axonpush-scopes": [
+          "actions:read"
+        ]
+      },
+      "post": {
+        "operationId": "ActionContractController_create",
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateActionContractDto"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateActionContractDto"
+                }
+              }
+            },
+            "description": ""
+          }
+        },
+        "tags": [
+          "action-verification"
+        ],
+        "x-axonpush-scopes": [
+          "action-contracts:manage"
+        ]
+      }
+    },
+    "/v2/actions": {
+      "get": {
+        "operationId": "ActionController_list",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "appId",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "contractId",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "cursor",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "environmentId",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "reviewState",
+            "required": false,
+            "schema": {
+              "enum": [
+                "unreviewed",
+                "useful",
+                "noise"
+              ],
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "state",
+            "required": false,
+            "schema": {
+              "enum": [
+                "pending",
+                "confirmed",
+                "contradicted",
+                "unknown"
+              ],
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ActionListDto"
+                }
+              }
+            },
+            "description": ""
+          }
+        },
+        "tags": [
+          "action-verification"
+        ],
+        "x-axonpush-scopes": [
+          "actions:read"
+        ]
+      },
+      "post": {
+        "operationId": "ActionController_register",
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RegisterActionDto"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ActionDto"
+                }
+              }
+            },
+            "description": ""
+          }
+        },
+        "tags": [
+          "action-verification"
+        ],
+        "x-axonpush-scopes": [
+          "actions:write"
+        ]
+      }
+    },
+    "/v2/actions/{actionId}": {
+      "get": {
+        "operationId": "ActionController_detail",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "actionId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ActionDetailDto"
+                }
+              }
+            },
+            "description": ""
+          }
+        },
+        "tags": [
+          "action-verification"
+        ],
+        "x-axonpush-scopes": [
+          "actions:read"
+        ]
+      }
+    },
+    "/v2/actions/{actionId}/claims": {
+      "post": {
+        "operationId": "ActionController_claim",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "actionId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ClaimActionDto"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ActionDto"
+                }
+              }
+            },
+            "description": ""
+          }
+        },
+        "tags": [
+          "action-verification"
+        ],
+        "x-axonpush-scopes": [
+          "actions:write"
+        ]
+      }
+    },
+    "/v2/actions/{actionId}/observations": {
+      "post": {
+        "operationId": "ActionController_observe",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "actionId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ObserveActionDto"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ActionDto"
+                }
+              }
+            },
+            "description": ""
+          }
+        },
+        "tags": [
+          "action-verification"
+        ],
+        "x-axonpush-scopes": [
+          "actions:verify"
+        ]
+      }
+    },
+    "/v2/actions/{actionId}/reviews": {
+      "post": {
+        "operationId": "ActionController_review",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "actionId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReviewActionDto"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ActionDto"
+                }
+              }
+            },
+            "description": ""
+          }
+        },
+        "tags": [
+          "action-verification"
+        ],
+        "x-axonpush-scopes": [
+          "actions:read",
+          "evaluations:manage"
+        ]
+      }
+    },
     "/v2/alerts": {
       "get": {
         "operationId": "AlertController_list",
@@ -10043,6 +10949,57 @@
         ]
       }
     },
+    "/v2/datasets/{datasetId}/revisions/{revision}/review": {
+      "post": {
+        "operationId": "DatasetController_review",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "datasetId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "revision",
+            "required": true,
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReviewDatasetRevisionDto"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DatasetRevisionDto"
+                }
+              }
+            },
+            "description": ""
+          }
+        },
+        "tags": [
+          "datasets"
+        ],
+        "x-axonpush-scopes": [
+          "evaluations:manage"
+        ]
+      }
+    },
     "/v2/evaluation-targets": {
       "get": {
         "operationId": "EvaluationTargetController_list",
@@ -10619,6 +11576,55 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ExperimentComparisonDto"
+                }
+              }
+            },
+            "description": ""
+          }
+        },
+        "tags": [
+          "experiments"
+        ],
+        "x-axonpush-scopes": [
+          "evaluations:manage"
+        ]
+      }
+    },
+    "/v2/experiments/{experimentId}/compare/cases": {
+      "get": {
+        "operationId": "ExperimentController_compareCases",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "experimentId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "baselineExperimentId",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "cursor",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExperimentCaseComparisonDto"
                 }
               }
             },

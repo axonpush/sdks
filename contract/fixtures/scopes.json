@@ -1,6 +1,10 @@
 {
   "description": "API-key scopes. Each published operation carries the scopes it needs as x-axonpush-scopes in contract/openapi.sdk.json.",
   "scopes": [
+    "action-contracts:manage",
+    "actions:read",
+    "actions:verify",
+    "actions:write",
     "alerts:manage",
     "analytics:read",
     "apps:manage",

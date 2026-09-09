@@ -1,3 +1,11 @@
+ActionContractController_create
+ActionContractController_list
+ActionController_claim
+ActionController_detail
+ActionController_list
+ActionController_observe
+ActionController_register
+ActionController_review
 AlertController_create
 AlertController_list
 AlertController_remove
@@ -32,6 +40,7 @@ DatasetController_importRevision
 DatasetController_items
 DatasetController_list
 DatasetController_remove
+DatasetController_review
 DatasetController_revisions
 EnvironmentController_create
 EnvironmentController_list
@@ -56,6 +65,7 @@ EventController_listEvents
 EventsSearchController_search
 ExperimentController_cancel
 ExperimentController_compare
+ExperimentController_compareCases
 ExperimentController_create
 ExperimentController_gate
 ExperimentController_get

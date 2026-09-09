@@ -24,6 +24,7 @@ class DatasetItemInputDto:
         expected_output (Any | Unset):
         item_id (str | Unset):
         metadata (DatasetItemInputDtoMetadata | Unset):
+        observed_output (Any | Unset):
         source_span_id (str | Unset):
         source_trace_id (str | Unset):
         tool_trajectory (Any | Unset):
@@ -34,6 +35,7 @@ class DatasetItemInputDto:
     expected_output: Any | Unset = UNSET
     item_id: str | Unset = UNSET
     metadata: DatasetItemInputDtoMetadata | Unset = UNSET
+    observed_output: Any | Unset = UNSET
     source_span_id: str | Unset = UNSET
     source_trace_id: str | Unset = UNSET
     tool_trajectory: Any | Unset = UNSET
@@ -53,6 +55,8 @@ class DatasetItemInputDto:
         metadata: dict[str, Any] | Unset = UNSET
         if not isinstance(self.metadata, Unset):
             metadata = self.metadata.to_dict()
+
+        observed_output = self.observed_output
 
         source_span_id = self.source_span_id
 
@@ -75,6 +79,8 @@ class DatasetItemInputDto:
             field_dict["itemId"] = item_id
         if metadata is not UNSET:
             field_dict["metadata"] = metadata
+        if observed_output is not UNSET:
+            field_dict["observedOutput"] = observed_output
         if source_span_id is not UNSET:
             field_dict["sourceSpanId"] = source_span_id
         if source_trace_id is not UNSET:
@@ -104,6 +110,8 @@ class DatasetItemInputDto:
         else:
             metadata = DatasetItemInputDtoMetadata.from_dict(_metadata)
 
+        observed_output = d.pop("observedOutput", UNSET)
+
         source_span_id = d.pop("sourceSpanId", UNSET)
 
         source_trace_id = d.pop("sourceTraceId", UNSET)
@@ -116,6 +124,7 @@ class DatasetItemInputDto:
             expected_output=expected_output,
             item_id=item_id,
             metadata=metadata,
+            observed_output=observed_output,
             source_span_id=source_span_id,
             source_trace_id=source_trace_id,
             tool_trajectory=tool_trajectory,

@@ -4,6 +4,66 @@ export type ClientOptions = {
     baseUrl: string;
 };
 
+export type ActionCheckDto = {
+    name: string;
+    reason: string;
+    state: ActionCheckState;
+};
+
+export type ActionCheckState = 'match' | 'conflict' | 'pending' | 'unknown';
+
+export type ActionContractListDto = {
+    data: Array<CreateActionContractDto>;
+};
+
+export type ActionDetailDto = {
+    actionId: string;
+    contract: CreateActionContractDto;
+    createdAt: string;
+    evidence: Array<ActionEvidenceDto>;
+    latestObservation?: ObserveActionDto | null;
+    registration: RegisterActionDto;
+    reviewState: ActionReviewState;
+    state: ActionVerificationState;
+    updatedAt: string;
+    verificationDueAt: string;
+};
+
+export type ActionDto = {
+    actionId: string;
+    contract: CreateActionContractDto;
+    createdAt: string;
+    latestObservation?: ObserveActionDto | null;
+    registration: RegisterActionDto;
+    reviewState: ActionReviewState;
+    state: ActionVerificationState;
+    updatedAt: string;
+    verificationDueAt: string;
+};
+
+export type ActionEvidenceDto = {
+    actorId: string;
+    eventId: string;
+    kind: ActionEvidenceKind;
+    payload: {
+        [key: string]: unknown;
+    };
+    receivedAt: string;
+};
+
+export type ActionEvidenceKind = 'claim' | 'observation' | 'review';
+
+export type ActionListDto = {
+    cursor?: string | null;
+    data: Array<ActionDto>;
+};
+
+export type ActionReviewDecision = 'useful' | 'noise';
+
+export type ActionReviewState = 'unreviewed' | 'useful' | 'noise';
+
+export type ActionVerificationState = 'pending' | 'confirmed' | 'contradicted' | 'unknown';
+
 export type AddIssueToDatasetDto = {
     datasetId: string;
     note?: string;
@@ -115,7 +175,7 @@ export type ApiKeyResponseDto = {
     scopes: Array<ApiKeyScope>;
 };
 
-export type ApiKeyScope = 'publish' | 'subscribe' | 'events:read' | 'traces:read' | 'analytics:read' | 'assessments:write' | 'alerts:manage' | 'evaluations:manage' | 'intelligence:manage' | 'prompts:manage' | 'apps:manage' | 'channels:manage' | 'webhooks:manage';
+export type ApiKeyScope = 'actions:read' | 'actions:write' | 'actions:verify' | 'action-contracts:manage' | 'publish' | 'subscribe' | 'events:read' | 'traces:read' | 'analytics:read' | 'assessments:write' | 'alerts:manage' | 'evaluations:manage' | 'intelligence:manage' | 'prompts:manage' | 'apps:manage' | 'channels:manage' | 'webhooks:manage';
 
 export type AppResponseDto = {
     appId: string;
@@ -205,14 +265,17 @@ export type CapabilitiesResponseDto = {
 };
 
 export type CapabilityFlagsDto = {
+    action_verification: boolean;
     analytics_v2: boolean;
     assessments: boolean;
+    audit_log: boolean;
     canonical_ingest: boolean;
     evaluations: boolean;
     failure_intelligence: boolean;
     issues: boolean;
     online_evaluations: boolean;
     prompt_registry: boolean;
+    rbac: boolean;
     trace_intelligence: boolean;
     trace_v2_read: boolean;
     trace_v2_write: boolean;
@@ -230,7 +293,23 @@ export type ChannelResponseDto = {
     updatedAt?: string;
 };
 
+export type ClaimActionDto = {
+    claimId: string;
+    output: {
+        [key: string]: unknown;
+    };
+};
+
 export type ContentCaptureMode = 'metadata_only' | 'redacted' | 'full';
+
+export type CreateActionContractDto = {
+    contractId: string;
+    description: string;
+    name: string;
+    observationWindowSeconds: number;
+    requiredChecks: Array<string>;
+    version: number;
+};
 
 export type CreateAlertRuleDto = {
     appId?: string;
@@ -292,6 +371,7 @@ export type CreateDatasetDto = {
 };
 
 export type CreateDatasetRevisionDto = {
+    baseRevision?: number;
     items: Array<DatasetItemInputDto>;
     note?: string;
     source?: DatasetRevisionSource;
@@ -545,6 +625,7 @@ export type DatasetItemInputDto = {
     metadata?: {
         [key: string]: unknown;
     };
+    observedOutput?: unknown;
     sourceSpanId?: string;
     sourceTraceId?: string;
     toolTrajectory?: unknown;
@@ -567,6 +648,9 @@ export type DatasetRevisionDataItemDto = {
     metadata?: {
         [key: string]: unknown;
     };
+    observedOutput?: unknown;
+    referencePresent?: boolean;
+    review?: ReferenceReviewDto;
     sourceSpanId?: string;
     sourceTraceId?: string;
     toolTrajectory?: unknown;
@@ -778,6 +862,17 @@ export type EventResponseDto = {
 
 export type EventType = 'agent.start' | 'agent.end' | 'agent.message' | 'agent.tool_call.start' | 'agent.tool_call.end' | 'agent.error' | 'agent.handoff' | 'agent.llm.token' | 'agent.log' | 'app.log' | 'app.span' | 'custom';
 
+export type ExperimentCaseComparisonDto = {
+    cursor?: string;
+    data: Array<ExperimentCasePairDto>;
+};
+
+export type ExperimentCasePairDto = {
+    baseline?: ExperimentResultDto;
+    candidate?: ExperimentResultDto;
+    itemId: string;
+};
+
 export type ExperimentComparisonDto = {
     baseline: {
         [key: string]: unknown;
@@ -917,7 +1012,7 @@ export type ExperimentResultListDto = {
     data: Array<ExperimentResultDto>;
 };
 
-export type ExperimentResultStatus = 'pending' | 'running' | 'passed' | 'failed' | 'error';
+export type ExperimentResultStatus = 'pending' | 'running' | 'passed' | 'failed' | 'error' | 'not_evaluated';
 
 export type ExperimentStatus = 'draft' | 'queued' | 'running' | 'completed' | 'failed' | 'cancelled';
 
@@ -1233,6 +1328,20 @@ export type MessageResponseDto = {
     message: string;
 };
 
+export type ObserveActionDto = {
+    checks: Array<ActionCheckDto>;
+    objectRef: string;
+    observationId: string;
+    observedAt: string;
+    observedFields: {
+        [key: string]: unknown;
+    };
+    provider: string;
+    providerAccountRef: string;
+    sequence: number;
+    verifierVersion: string;
+};
+
 export type OkResponseDto = {
     ok: boolean;
 };
@@ -1449,6 +1558,42 @@ export type PublicIngestTokenResponseDto = {
     revokedAt?: string;
     scopes?: Array<string>;
     tokenId: string;
+};
+
+export type ReferenceReviewDto = {
+    actorId: string;
+    reviewedAt: string;
+    sourceRevision: number;
+};
+
+export type RegisterActionDto = {
+    actionId: string;
+    appId: string;
+    contractId: string;
+    contractVersion: number;
+    environmentId: string;
+    intendedFields: {
+        [key: string]: unknown;
+    };
+    intentSource: string;
+    objectRef: string;
+    provider: string;
+    providerAccountRef: string;
+    spanId?: string;
+    traceId?: string;
+};
+
+export type ReviewActionDto = {
+    decision: ActionReviewDecision;
+    reason: string;
+    reviewId: string;
+};
+
+export type ReviewDatasetRevisionDto = {
+    /**
+     * Items explicitly reviewed in this revision.
+     */
+    itemIds: Array<string>;
 };
 
 export type RollbackPromptDto = {
@@ -2985,6 +3130,125 @@ export type OtlpControllerIngestTracesResponses = {
     200: unknown;
 };
 
+export type ActionContractControllerListData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/v2/action-contracts';
+};
+
+export type ActionContractControllerListResponses = {
+    200: ActionContractListDto;
+};
+
+export type ActionContractControllerListResponse = ActionContractControllerListResponses[keyof ActionContractControllerListResponses];
+
+export type ActionContractControllerCreateData = {
+    body: CreateActionContractDto;
+    path?: never;
+    query?: never;
+    url: '/v2/action-contracts';
+};
+
+export type ActionContractControllerCreateResponses = {
+    200: CreateActionContractDto;
+};
+
+export type ActionContractControllerCreateResponse = ActionContractControllerCreateResponses[keyof ActionContractControllerCreateResponses];
+
+export type ActionControllerListData = {
+    body?: never;
+    path?: never;
+    query?: {
+        appId?: string;
+        contractId?: string;
+        cursor?: string;
+        environmentId?: string;
+        reviewState?: 'unreviewed' | 'useful' | 'noise';
+        state?: 'pending' | 'confirmed' | 'contradicted' | 'unknown';
+    };
+    url: '/v2/actions';
+};
+
+export type ActionControllerListResponses = {
+    200: ActionListDto;
+};
+
+export type ActionControllerListResponse = ActionControllerListResponses[keyof ActionControllerListResponses];
+
+export type ActionControllerRegisterData = {
+    body: RegisterActionDto;
+    path?: never;
+    query?: never;
+    url: '/v2/actions';
+};
+
+export type ActionControllerRegisterResponses = {
+    200: ActionDto;
+};
+
+export type ActionControllerRegisterResponse = ActionControllerRegisterResponses[keyof ActionControllerRegisterResponses];
+
+export type ActionControllerDetailData = {
+    body?: never;
+    path: {
+        actionId: string;
+    };
+    query?: never;
+    url: '/v2/actions/{actionId}';
+};
+
+export type ActionControllerDetailResponses = {
+    200: ActionDetailDto;
+};
+
+export type ActionControllerDetailResponse = ActionControllerDetailResponses[keyof ActionControllerDetailResponses];
+
+export type ActionControllerClaimData = {
+    body: ClaimActionDto;
+    path: {
+        actionId: string;
+    };
+    query?: never;
+    url: '/v2/actions/{actionId}/claims';
+};
+
+export type ActionControllerClaimResponses = {
+    200: ActionDto;
+};
+
+export type ActionControllerClaimResponse = ActionControllerClaimResponses[keyof ActionControllerClaimResponses];
+
+export type ActionControllerObserveData = {
+    body: ObserveActionDto;
+    path: {
+        actionId: string;
+    };
+    query?: never;
+    url: '/v2/actions/{actionId}/observations';
+};
+
+export type ActionControllerObserveResponses = {
+    200: ActionDto;
+};
+
+export type ActionControllerObserveResponse = ActionControllerObserveResponses[keyof ActionControllerObserveResponses];
+
+export type ActionControllerReviewData = {
+    body: ReviewActionDto;
+    path: {
+        actionId: string;
+    };
+    query?: never;
+    url: '/v2/actions/{actionId}/reviews';
+};
+
+export type ActionControllerReviewResponses = {
+    200: ActionDto;
+};
+
+export type ActionControllerReviewResponse = ActionControllerReviewResponses[keyof ActionControllerReviewResponses];
+
 export type AlertControllerListData = {
     body?: never;
     path?: never;
@@ -3396,6 +3660,22 @@ export type DatasetControllerItemsResponses = {
 
 export type DatasetControllerItemsResponse = DatasetControllerItemsResponses[keyof DatasetControllerItemsResponses];
 
+export type DatasetControllerReviewData = {
+    body: ReviewDatasetRevisionDto;
+    path: {
+        datasetId: string;
+        revision: number;
+    };
+    query?: never;
+    url: '/v2/datasets/{datasetId}/revisions/{revision}/review';
+};
+
+export type DatasetControllerReviewResponses = {
+    200: DatasetRevisionDto;
+};
+
+export type DatasetControllerReviewResponse = DatasetControllerReviewResponses[keyof DatasetControllerReviewResponses];
+
 export type EvaluationTargetControllerListData = {
     body?: never;
     path?: never;
@@ -3656,6 +3936,24 @@ export type ExperimentControllerCompareResponses = {
 };
 
 export type ExperimentControllerCompareResponse = ExperimentControllerCompareResponses[keyof ExperimentControllerCompareResponses];
+
+export type ExperimentControllerCompareCasesData = {
+    body?: never;
+    path: {
+        experimentId: string;
+    };
+    query?: {
+        baselineExperimentId?: string;
+        cursor?: string;
+    };
+    url: '/v2/experiments/{experimentId}/compare/cases';
+};
+
+export type ExperimentControllerCompareCasesResponses = {
+    200: ExperimentCaseComparisonDto;
+};
+
+export type ExperimentControllerCompareCasesResponse = ExperimentControllerCompareCasesResponses[keyof ExperimentControllerCompareCasesResponses];
 
 export type ExperimentControllerGateData = {
     body: ExperimentGateDto;

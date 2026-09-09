@@ -15,36 +15,46 @@ T = TypeVar("T", bound="CapabilityFlagsDto")
 class CapabilityFlagsDto:
     """
     Attributes:
+        action_verification (bool):
         analytics_v2 (bool):
         assessments (bool):
+        audit_log (bool):
         canonical_ingest (bool):
         evaluations (bool):
         failure_intelligence (bool):
         issues (bool):
         online_evaluations (bool):
         prompt_registry (bool):
+        rbac (bool):
         trace_intelligence (bool):
         trace_v2_read (bool):
         trace_v2_write (bool):
     """
 
+    action_verification: bool
     analytics_v2: bool
     assessments: bool
+    audit_log: bool
     canonical_ingest: bool
     evaluations: bool
     failure_intelligence: bool
     issues: bool
     online_evaluations: bool
     prompt_registry: bool
+    rbac: bool
     trace_intelligence: bool
     trace_v2_read: bool
     trace_v2_write: bool
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
+        action_verification = self.action_verification
+
         analytics_v2 = self.analytics_v2
 
         assessments = self.assessments
+
+        audit_log = self.audit_log
 
         canonical_ingest = self.canonical_ingest
 
@@ -58,6 +68,8 @@ class CapabilityFlagsDto:
 
         prompt_registry = self.prompt_registry
 
+        rbac = self.rbac
+
         trace_intelligence = self.trace_intelligence
 
         trace_v2_read = self.trace_v2_read
@@ -68,14 +80,17 @@ class CapabilityFlagsDto:
         field_dict.update(self.additional_properties)
         field_dict.update(
             {
+                "action_verification": action_verification,
                 "analytics_v2": analytics_v2,
                 "assessments": assessments,
+                "audit_log": audit_log,
                 "canonical_ingest": canonical_ingest,
                 "evaluations": evaluations,
                 "failure_intelligence": failure_intelligence,
                 "issues": issues,
                 "online_evaluations": online_evaluations,
                 "prompt_registry": prompt_registry,
+                "rbac": rbac,
                 "trace_intelligence": trace_intelligence,
                 "trace_v2_read": trace_v2_read,
                 "trace_v2_write": trace_v2_write,
@@ -87,9 +102,13 @@ class CapabilityFlagsDto:
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         d = dict(src_dict)
+        action_verification = d.pop("action_verification")
+
         analytics_v2 = d.pop("analytics_v2")
 
         assessments = d.pop("assessments")
+
+        audit_log = d.pop("audit_log")
 
         canonical_ingest = d.pop("canonical_ingest")
 
@@ -103,6 +122,8 @@ class CapabilityFlagsDto:
 
         prompt_registry = d.pop("prompt_registry")
 
+        rbac = d.pop("rbac")
+
         trace_intelligence = d.pop("trace_intelligence")
 
         trace_v2_read = d.pop("trace_v2_read")
@@ -110,14 +131,17 @@ class CapabilityFlagsDto:
         trace_v2_write = d.pop("trace_v2_write")
 
         capability_flags_dto = cls(
+            action_verification=action_verification,
             analytics_v2=analytics_v2,
             assessments=assessments,
+            audit_log=audit_log,
             canonical_ingest=canonical_ingest,
             evaluations=evaluations,
             failure_intelligence=failure_intelligence,
             issues=issues,
             online_evaluations=online_evaluations,
             prompt_registry=prompt_registry,
+            rbac=rbac,
             trace_intelligence=trace_intelligence,
             trace_v2_read=trace_v2_read,
             trace_v2_write=trace_v2_write,
