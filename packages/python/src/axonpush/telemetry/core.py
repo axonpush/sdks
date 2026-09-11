@@ -52,8 +52,7 @@ try:
     from opentelemetry.sdk.trace.export import BatchSpanProcessor
 except ImportError:
     raise ImportError(
-        "axonpush.telemetry requires the 'otel' extra. "
-        "Install it with: pip install axonpush[otel]"
+        "axonpush.telemetry requires the 'otel' extra. Install it with: pip install axonpush[otel]"
     ) from None
 
 from axonpush._config import ContentCaptureMode, Settings

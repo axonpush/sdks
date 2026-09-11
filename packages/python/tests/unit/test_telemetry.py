@@ -111,9 +111,7 @@ def test_attaches_to_existing_global_provider(monkeypatch):
 def test_genai_span_attributes(recording_provider):
     provider, exporter = recording_provider
     tracer = provider.get_tracer("t")
-    with genai_span(
-        tracer, operation="chat", request_model="gpt-4o", system="openai"
-    ) as span:
+    with genai_span(tracer, operation="chat", request_model="gpt-4o", system="openai") as span:
         record_genai_response(
             span,
             response_model="gpt-4o-2024",
@@ -163,9 +161,7 @@ def test_content_full_keeps_content(recording_provider):
     provider, exporter = recording_provider
     tracer = provider.get_tracer("t")
     with genai_span(tracer, operation="chat", request_model="m") as span:
-        record_genai_content(
-            span, prompt="hello", completion="world", content_capture="full"
-        )
+        record_genai_content(span, prompt="hello", completion="world", content_capture="full")
     events = exporter.get_finished_spans()[0].events
     names = {e.name for e in events}
     assert names == {"gen_ai.content.prompt", "gen_ai.content.completion"}

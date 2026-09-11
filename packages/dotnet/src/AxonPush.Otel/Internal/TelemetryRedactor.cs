@@ -53,43 +53,43 @@ internal static partial class TelemetryRedactor
         switch (current)
         {
             case string text:
-            {
-                var limit = inContent
-                    ? Math.Min(ContentPreviewLength, maxContentLength)
-                    : maxContentLength;
-                if (text.Length > limit)
                 {
-                    var previewBound = inContent && ContentPreviewLength < maxContentLength;
-                    var marker = previewBound ? "[REDACTED_PREVIEW]" : "[TRUNCATED]";
-                    return $"{text[..limit]}…{marker}";
+                    var limit = inContent
+                        ? Math.Min(ContentPreviewLength, maxContentLength)
+                        : maxContentLength;
+                    if (text.Length > limit)
+                    {
+                        var previewBound = inContent && ContentPreviewLength < maxContentLength;
+                        var marker = previewBound ? "[REDACTED_PREVIEW]" : "[TRUNCATED]";
+                        return $"{text[..limit]}…{marker}";
+                    }
+                    return text;
                 }
-                return text;
-            }
             case IDictionary<string, object?> map:
-            {
-                var output = new Dictionary<string, object?>(map.Count, StringComparer.Ordinal);
-                foreach (var (key, child) in map)
                 {
-                    var isContent = ContentKey().IsMatch(key);
-                    var shouldRedact =
-                        SecretKey().IsMatch(key)
-                        || configured.Contains(key.ToLowerInvariant())
-                        || (mode == ContentCaptureMode.MetadataOnly && isContent);
-                    output[key] = shouldRedact
-                        ? "[REDACTED]"
-                        : Visit(child, inContent || (previewing && isContent), mode, configured, previewing, maxContentLength);
+                    var output = new Dictionary<string, object?>(map.Count, StringComparer.Ordinal);
+                    foreach (var (key, child) in map)
+                    {
+                        var isContent = ContentKey().IsMatch(key);
+                        var shouldRedact =
+                            SecretKey().IsMatch(key)
+                            || configured.Contains(key.ToLowerInvariant())
+                            || (mode == ContentCaptureMode.MetadataOnly && isContent);
+                        output[key] = shouldRedact
+                            ? "[REDACTED]"
+                            : Visit(child, inContent || (previewing && isContent), mode, configured, previewing, maxContentLength);
+                    }
+                    return output;
                 }
-                return output;
-            }
             case IEnumerable enumerable when current is not string:
-            {
-                var list = new List<object?>();
-                foreach (var item in enumerable)
                 {
-                    list.Add(Visit(item, inContent, mode, configured, previewing, maxContentLength));
+                    var list = new List<object?>();
+                    foreach (var item in enumerable)
+                    {
+                        list.Add(Visit(item, inContent, mode, configured, previewing, maxContentLength));
+                    }
+                    return list;
                 }
-                return list;
-            }
             default:
                 return current;
         }

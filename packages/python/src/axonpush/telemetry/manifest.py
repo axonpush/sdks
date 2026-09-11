@@ -42,7 +42,7 @@ class IntegrationManifest:
         return capability in self.capabilities
 
 
-_VERCEL_AI_SNIPPET = '''\
+_VERCEL_AI_SNIPPET = """\
 from axonpush.telemetry import configure_telemetry, genai_span, record_genai_response
 
 handle = configure_telemetry(
@@ -70,7 +70,7 @@ with genai_span(
     )
 
 handle.flush()
-'''
+"""
 
 
 MANIFESTS: Dict[str, IntegrationManifest] = {

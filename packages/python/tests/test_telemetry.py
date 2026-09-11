@@ -157,23 +157,17 @@ def _decode_json(doc: Dict[str, Any]) -> List[Dict[str, Any]]:
     for rs in doc.get("resourceSpans", []):
         for ss in rs.get("scopeSpans", rs.get("instrumentationLibrarySpans", [])):
             for sp in ss.get("spans", []):
-                attrs = {
-                    a["key"]: _av_to_py(a["value"])
-                    for a in sp.get("attributes", [])
-                }
+                attrs = {a["key"]: _av_to_py(a["value"]) for a in sp.get("attributes", [])}
                 events = [
                     {
                         "name": ev.get("name"),
                         "attributes": {
-                            a["key"]: _av_to_py(a["value"])
-                            for a in ev.get("attributes", [])
+                            a["key"]: _av_to_py(a["value"]) for a in ev.get("attributes", [])
                         },
                     }
                     for ev in sp.get("events", [])
                 ]
-                out.append(
-                    {"name": sp.get("name"), "attributes": attrs, "events": events}
-                )
+                out.append({"name": sp.get("name"), "attributes": attrs, "events": events})
     return out
 
 
@@ -220,8 +214,7 @@ def _decode_protobuf(body: bytes) -> List[Dict[str, Any]]:
         for ss in rs.scope_spans:
             for sp in ss.spans:
                 events = [
-                    {"name": ev.name, "attributes": _proto_attrs(ev.attributes)}
-                    for ev in sp.events
+                    {"name": ev.name, "attributes": _proto_attrs(ev.attributes)} for ev in sp.events
                 ]
                 out.append(
                     {
@@ -277,9 +270,7 @@ def _emit_one_span(
             )
             if prompt is not None or completion is not None:
                 # policy comes from the handle (content_capture + redact_keys)
-                record_genai_content(
-                    span, prompt=prompt, completion=completion, handle=handle
-                )
+                record_genai_content(span, prompt=prompt, completion=completion, handle=handle)
         assert handle.flush(timeout_ms=5000) is True
     finally:
         handle.shutdown()
