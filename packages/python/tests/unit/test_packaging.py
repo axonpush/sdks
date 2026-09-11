@@ -53,6 +53,7 @@ EXTRA_GATED_FILES: set[str] = {
     "integrations/otel.py",
     "integrations/sentry.py",
     "integrations/structlog.py",
+    "telemetry/core.py",
 }
 
 

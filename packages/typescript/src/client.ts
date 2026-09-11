@@ -1,4 +1,4 @@
-import { type GeneratedOp, invokeSync, setSettings } from "./_internal/transport.js";
+import { type GeneratedOp, Transport } from "./_internal/transport.js";
 import { type AxonPushOptions, type ResolvedSettings, resolveSettings } from "./config.js";
 import type { RealtimeClient, RealtimeOptions } from "./realtime/index.js";
 import { redactTelemetry as applyTelemetryRedaction } from "./redaction.js";
@@ -34,6 +34,9 @@ import { getOrCreateTrace, type TraceContext } from "./tracing.js";
 export class AxonPush {
   /** Fully-resolved configuration, materialised in the constructor. */
   readonly settings: ResolvedSettings;
+
+  /** Per-instance transport; carries this facade's settings, no shared slot. */
+  private readonly transport: Transport;
 
   /** Events resource — `publish`, `list`, `search`. */
   readonly events: EventsResource;
@@ -81,7 +84,7 @@ export class AxonPush {
    */
   constructor(options?: AxonPushOptions) {
     this.settings = resolveSettings(options);
-    setSettings(this.settings);
+    this.transport = new Transport(this.settings);
     this.events = new EventsResource(this);
     this.channels = new ChannelsResource(this);
     this.apps = new AppsResource(this);
@@ -138,10 +141,7 @@ export class AxonPush {
    * @throws {AxonPushError} On non-retryable failures.
    */
   invoke<T>(op: GeneratedOp<T>, args?: unknown): Promise<T | null> {
-    return invokeSync<T>(op, args, {
-      failOpen: this.settings.failOpen,
-      maxRetries: this.settings.maxRetries,
-    });
+    return this.transport.invoke<T>(op, args);
   }
 
   /**

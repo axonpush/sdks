@@ -249,6 +249,112 @@ await client.events.publish({
 event, so the UI can stitch agent runs across services. Pass
 `parentEventId` to model hand-offs between agents.
 
+## OpenTelemetry-native telemetry
+
+`@axonpush/sdk/telemetry` ships GenAI spans as real OTLP over HTTP to
+`${base}/v1/traces`, routed by the `X-Axonpush-Channel` header and authed
+by `X-API-Key`. Spans follow the OpenTelemetry GenAI semantic conventions
+(`gen_ai.*`), so they are portable to any OTLP backend, not just axonpush.
+This is the recommended way to send traces.
+
+The OpenTelemetry SDK peers load lazily, so the base SDK runs without them.
+Install them alongside the SDK to use this module:
+
+```bash
+npm install @opentelemetry/api @opentelemetry/sdk-trace-node \
+  @opentelemetry/exporter-trace-otlp-http @opentelemetry/resources
+```
+
+`configureTelemetry()` reuses an existing SDK `TracerProvider` when one is
+already registered (it never replaces it) and only creates a
+`NodeTracerProvider` when the app does not own OpenTelemetry. Config
+resolves from options, then the matching `AXONPUSH_BASE_URL` /
+`AXONPUSH_API_KEY` / `AXONPUSH_CHANNEL_ID` env var. Unlike Python's context
+manager, the caller owns the span lifecycle. Call `span.end()`, typically
+in a `finally`.
+
+```ts
+import {
+  configureTelemetry,
+  genaiSpan,
+  recordGenaiResponse,
+  recordGenaiContent,
+} from "@axonpush/sdk/telemetry";
+
+// Reuses or creates a TracerProvider, attaches a batch OTLP/HTTP exporter,
+// and stamps a Resource with service.name / deployment.environment.name / service.version.
+const handle = await configureTelemetry({
+  serviceName: "my-agent",
+  environment: "prod",
+  serviceVersion: "1.4.0",
+  contentCapture: "metadata_only", // or "redacted" / "full"
+});
+const tracer = handle.tracer();
+
+const span = genaiSpan(tracer, {
+  operation: "chat",
+  requestModel: "gpt-4o",
+  system: "openai",
+});
+try {
+  // ... call the model ...
+  recordGenaiResponse(span, {
+    responseModel: "gpt-4o",
+    inputTokens: 12,
+    outputTokens: 48,
+    cacheWriteTokens: 0,
+  });
+  recordGenaiContent(span, { prompt: "…", completion: "…" });
+} finally {
+  span.end();
+}
+
+await handle.flush(); // or handle.shutdown() on clean exit
+```
+
+Prompt and completion land as span events (`gen_ai.content.prompt` /
+`gen_ai.content.completion`), gated by `contentCapture`: `metadata_only`
+drops content, `redacted` truncates long strings, `full` keeps it. Pass
+`redactKeys` to strip extra keys; credential-shaped keys are always
+stripped regardless of mode.
+
+On serverless (AWS Lambda, Cloud Functions, Azure Functions) the batch
+processor's exit-time flush is unreliable because the container is frozen
+between invocations. `configureTelemetry()` logs a note when it detects
+one; call `handle.flush()` at the end of each invocation, or wrap the
+handler with `flushAfterInvocation`:
+
+```ts
+import { flushAfterInvocation } from "@axonpush/sdk/telemetry";
+
+export const handler = flushAfterInvocation(handle, async (event) => {
+  const span = genaiSpan(handle.tracer(), { operation: "chat", requestModel: "gpt-4o" });
+  try {
+    // ...
+  } finally {
+    span.end();
+  }
+});
+```
+
+### Which should I use
+
+The OTel-native path above is the recommended way to send traces. The
+legacy per-framework event-model exporter
+(`AxonPushSpanExporter` from `@axonpush/sdk/integrations/otel`, which maps
+calls to `/event` payloads) still works and is kept for compatibility, but
+it is being superseded by OTel-native. Frame it as the compatibility path:
+keep it if you already depend on channel fan-out on the events plane,
+otherwise reach for `@axonpush/sdk/telemetry`. Traces from both land in the
+same dashboard (`/v2/traces`); the server reconciles them through the OTLP
+normalizer, so you can migrate call sites incrementally without a gap in
+your traces.
+
+If a framework integration (LangChain, Mastra, the Vercel AI middleware,
+`AxonPushSpanExporter`, …) already emits GenAI spans or events for a call,
+do not also wrap that call with `genaiSpan` / `recordGenai*`. Pick one
+plane so the operation is not recorded twice.
+
 ## Migration: 0.0.4 → 0.0.5
 
 - **All IDs are `string` UUIDs.** `numeric` ids are gone from the public

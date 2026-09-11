@@ -4,4 +4,5 @@ export {
   getSettings,
   invokeSync,
   setSettings,
+  Transport,
 } from "./transport.js";

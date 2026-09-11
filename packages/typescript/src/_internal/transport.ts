@@ -7,21 +7,25 @@ import {
   RateLimitError,
 } from "../errors.js";
 import { currentTrace } from "../tracing.js";
-import type { Config } from "./api/client/index.js";
+import type { Client, Config } from "./api/client/index.js";
+import { createClient } from "./api/client/index.js";
 import type { CreateClientConfig } from "./api/client.gen.js";
 
-// Placeholder until an AxonPush instance calls setSettings. Derived from
-// config so the two cannot drift; they previously disagreed on the base URL,
-// the timeout unit and the fail-open default.
+// Placeholder used by the module-global generated client until an AxonPush
+// instance takes over. Derived from config so the two cannot drift; they
+// previously disagreed on the base URL, the timeout unit and the fail-open
+// default. Per-instance settings now live on {@link Transport}; this global
+// only backs the shared generated `client` for callers that invoke
+// operations without threading a transport (diagnostics / low-level tests).
 let currentSettings: ResolvedSettings = resolveSettings({});
 
 /**
  * `createClientConfig` is invoked by the generated `client.gen.ts` exactly
  * once at module load. We supply the default base URL up-front; per-request
  * behaviour (auth headers, tracing headers, error mapping) is wired via
- * {@link ensureInterceptors}, which runs lazily on the first call to the
- * client to avoid the circular import that would otherwise block top-level
- * `import { client }` from this module.
+ * {@link attachInterceptors}, which the module-global client wires lazily on
+ * the first call to avoid the circular import that would otherwise block
+ * top-level `import { client }` from this module.
  *
  * @param override Optional overrides supplied by the generated layer.
  * @returns A client config with our base URL merged into `override`.
@@ -34,20 +38,17 @@ export const createClientConfig: CreateClientConfig = (override) => {
   return merged as ReturnType<CreateClientConfig>;
 };
 
-let interceptorsAttached = false;
-let lastAppliedBaseUrl: string | undefined;
-
-async function ensureInterceptors(): Promise<void> {
-  if (interceptorsAttached) return;
-  interceptorsAttached = true;
-  const { client } = await import("./api/client.gen.js");
-  if (!client) {
-    interceptorsAttached = false;
-    return;
-  }
-
+/**
+ * Attach the AxonPush request/error interceptors to a generated client. The
+ * request interceptor reads settings through `getSettings` so each client is
+ * bound to its owning instance's configuration with no shared mutable slot.
+ *
+ * @param client The generated client to decorate.
+ * @param getSettings Returns the settings that should drive this client.
+ */
+function attachInterceptors(client: Client, getSettings: () => ResolvedSettings): void {
   client.interceptors.request.use((request) => {
-    const s = currentSettings;
+    const s = getSettings();
     if (s.apiKey) request.headers.set("X-API-Key", s.apiKey);
     if (s.tenantId) request.headers.set("x-tenant-id", s.tenantId);
     if (s.environment) request.headers.set("X-Axonpush-Environment", s.environment);
@@ -89,17 +90,37 @@ async function ensureInterceptors(): Promise<void> {
   });
 }
 
+// --- module-global generated client (legacy / low-level callers) ------------
+
+let globalInterceptorsAttached = false;
+let globalLastBaseUrl: string | undefined;
+
+async function ensureGlobalInterceptors(): Promise<void> {
+  if (globalInterceptorsAttached) return;
+  globalInterceptorsAttached = true;
+  const { client } = await import("./api/client.gen.js");
+  if (!client) {
+    globalInterceptorsAttached = false;
+    return;
+  }
+  attachInterceptors(client, () => currentSettings);
+}
+
+async function applyGlobalBaseUrlIfChanged(): Promise<void> {
+  if (globalLastBaseUrl === currentSettings.baseUrl) return;
+  const { client } = await import("./api/client.gen.js");
+  if (!client) return;
+  client.setConfig({ baseUrl: currentSettings.baseUrl });
+  globalLastBaseUrl = currentSettings.baseUrl;
+}
+
 /**
- * Update the module-scoped settings used by the request interceptors.
+ * Update the module-scoped settings used by the shared generated client.
  *
- * The generated `client.gen.ts` constructs a single global client at import
- * time; rather than rebuild that client on every {@link AxonPush} ctor call,
- * the interceptors read live from this slot so the most recently constructed
- * facade wins.
- *
- * Synchronous on purpose: callers (notably the {@link AxonPush} constructor)
- * must be able to install settings without awaiting. The base URL is reapplied
- * to the generated client lazily inside {@link invokeSync}.
+ * Only affects {@link invokeSync} calls that do not thread a {@link Transport}
+ * (diagnostics and low-level tests). The {@link AxonPush} facade owns a
+ * per-instance {@link Transport} and never mutates this slot, so concurrent
+ * clients no longer race over a single global.
  *
  * @param s Resolved settings produced by `resolveSettings`.
  */
@@ -107,21 +128,49 @@ export function setSettings(s: ResolvedSettings): void {
   currentSettings = s;
 }
 
-async function applyBaseUrlIfChanged(): Promise<void> {
-  if (lastAppliedBaseUrl === currentSettings.baseUrl) return;
-  const { client } = await import("./api/client.gen.js");
-  if (!client) return;
-  client.setConfig({ baseUrl: currentSettings.baseUrl });
-  lastAppliedBaseUrl = currentSettings.baseUrl;
-}
-
 /**
- * Read the currently-active settings. Exposed for diagnostics and tests.
+ * Read the module-global settings backing the shared generated client.
+ * Exposed for diagnostics and tests.
  *
- * @returns The {@link ResolvedSettings} backing the global client.
+ * @returns The {@link ResolvedSettings} backing the shared client.
  */
 export function getSettings(): ResolvedSettings {
   return currentSettings;
+}
+
+// --- per-instance transport -------------------------------------------------
+
+/**
+ * Owns a generated client whose interceptors are bound to a single
+ * {@link AxonPush} instance's settings. Created once per facade so multi-tenant
+ * callers (different API keys / base URLs in the same process) never share a
+ * mutable settings slot.
+ */
+export class Transport {
+  private readonly settings: ResolvedSettings;
+  private readonly client: Client;
+
+  constructor(settings: ResolvedSettings) {
+    this.settings = settings;
+    this.client = createClient({ baseUrl: settings.baseUrl });
+    attachInterceptors(this.client, () => this.settings);
+  }
+
+  /**
+   * Run a generated operation against this instance's client with retries and
+   * fail-open handling. See {@link invokeSync} for the retry semantics.
+   */
+  invoke<T>(
+    op: GeneratedOp<T>,
+    args?: unknown,
+    opts: { failOpen?: boolean; maxRetries?: number } = {},
+  ): Promise<T | null> {
+    return runOp(op, args, {
+      failOpen: opts.failOpen ?? this.settings.failOpen,
+      maxRetries: opts.maxRetries ?? this.settings.maxRetries,
+      client: this.client,
+    });
+  }
 }
 
 /**
@@ -146,13 +195,46 @@ const sleep = (ms: number): Promise<void> =>
   ms > 0 ? new Promise((resolve) => setTimeout(resolve, ms)) : Promise.resolve();
 
 /**
- * Single chokepoint that resources call through. Adds:
+ * Core retry loop shared by {@link Transport.invoke} and {@link invokeSync}.
+ * When `client` is set, each op call is routed to that client (per-instance
+ * interceptors); otherwise it falls back to the generated global client.
+ */
+async function runOp<T>(
+  op: GeneratedOp<T>,
+  args: unknown,
+  opts: { failOpen: boolean; maxRetries: number; client?: Client },
+): Promise<T | null> {
+  const baseArgs = (args ?? {}) as Record<string, unknown>;
+  if (opts.client) baseArgs.client = opts.client;
+  let lastErr: unknown;
+
+  for (let attempt = 0; attempt <= opts.maxRetries; attempt++) {
+    try {
+      const result = await op({ ...baseArgs, throwOnError: true });
+      return result.data ?? null;
+    } catch (err) {
+      lastErr = err;
+      if (!isRetryable(err) || attempt === opts.maxRetries) break;
+      const retryAfter = err instanceof RateLimitError ? err.retryAfter : undefined;
+      await sleep(delayFor(attempt, retryAfter));
+    }
+  }
+
+  if (opts.failOpen && lastErr instanceof APIConnectionError) return null;
+  throw lastErr;
+}
+
+/**
+ * Single chokepoint against the shared generated client. Adds:
  *
  * - Retries on retryable errors with backoff `[250, 500, 1000, 2000, 4000]ms`,
  *   honouring {@link RateLimitError.retryAfter} when present.
  * - Fail-open semantics: when `opts.failOpen` is true and the final attempt
  *   ends in {@link APIConnectionError}, return `null` instead of throwing.
  * - Exception passthrough for all other errors.
+ *
+ * Prefer {@link Transport.invoke} for per-instance settings; this entry point
+ * uses the module-global settings and exists for diagnostics and tests.
  *
  * @typeParam T Success-response type returned by the generated op.
  * @param op A function from `src/_internal/api/sdk.gen.ts`.
@@ -168,25 +250,10 @@ export async function invokeSync<T>(
   args: unknown,
   opts: { failOpen?: boolean; maxRetries?: number } = {},
 ): Promise<T | null> {
-  await ensureInterceptors();
-  await applyBaseUrlIfChanged();
-  const failOpen = opts.failOpen ?? currentSettings.failOpen;
-  const maxRetries = opts.maxRetries ?? currentSettings.maxRetries;
-  const baseArgs = (args ?? {}) as Record<string, unknown>;
-  let lastErr: unknown;
-
-  for (let attempt = 0; attempt <= maxRetries; attempt++) {
-    try {
-      const result = await op({ ...baseArgs, throwOnError: true });
-      return result.data ?? null;
-    } catch (err) {
-      lastErr = err;
-      if (!isRetryable(err) || attempt === maxRetries) break;
-      const retryAfter = err instanceof RateLimitError ? err.retryAfter : undefined;
-      await sleep(delayFor(attempt, retryAfter));
-    }
-  }
-
-  if (failOpen && lastErr instanceof APIConnectionError) return null;
-  throw lastErr;
+  await ensureGlobalInterceptors();
+  await applyGlobalBaseUrlIfChanged();
+  return runOp(op, args, {
+    failOpen: opts.failOpen ?? currentSettings.failOpen,
+    maxRetries: opts.maxRetries ?? currentSettings.maxRetries,
+  });
 }

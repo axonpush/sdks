@@ -4,6 +4,36 @@ All notable changes to the axonpush Python SDK are documented here. The
 format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/);
 versioning is [SemVer](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+- **OTel-native telemetry (`axonpush.telemetry`).** `configure_telemetry()`
+  reuses the application's own OpenTelemetry `TracerProvider` (or creates one),
+  attaches a batch OTLP/HTTP exporter to `${base}/v1/traces` with the
+  `X-API-Key` and `X-Axonpush-Channel` headers, and returns a handle exposing
+  `tracer()`, `flush()`, and `shutdown()`. `genai_span()`,
+  `record_genai_response()`, and `record_genai_content()` emit spans under the
+  OpenTelemetry GenAI semantic conventions (`gen_ai.*`), with prompt and
+  completion carried as span events gated by the content-capture policy
+  (`metadata_only` / `redacted` / `full`, credential-shaped keys always
+  stripped). This is now the recommended way to send traces. The `otel` extra
+  additionally pulls `opentelemetry-exporter-otlp-proto-http`; install with
+  `pip install axonpush[otel]`.
+- Config resolves from arguments, then `AXONPUSH_BASE_URL` /
+  `AXONPUSH_API_KEY` / `AXONPUSH_CHANNEL_ID`. Spans carry a Resource with
+  `service.name`, `deployment.environment.name`, and `service.version`. On
+  serverless hosts, where the batch processor's `atexit` flush is unreliable,
+  `configure_telemetry()` logs a note and the handle exposes `flush()` for
+  per-invocation flushing.
+
+### Changed
+- The legacy per-framework event-model exporter
+  (`axonpush.integrations.otel.AxonPushSpanExporter`, which maps calls to
+  `/event` payloads) is now a compatibility path, superseded by OTel-native
+  telemetry. It still works and is not removed. Traces from both paths land in
+  the same dashboard (`/v2/traces`), reconciled server-side through the OTLP
+  normalizer, so call sites can migrate incrementally.
+
 ## [0.0.15] – 2026-09-02
 
 Python gets the release gate, and gets it on the same terms as TypeScript. The

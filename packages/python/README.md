@@ -211,6 +211,65 @@ print(summary.event_count, summary.duration_ms, summary.tool_call_count)
 
 `get_or_create_trace()` reads the active context (set via `with TraceContext(...):`) when one exists, so framework integrations propagate the trace automatically.
 
+## OpenTelemetry-native telemetry
+
+`axonpush.telemetry` ships GenAI spans as real OTLP over HTTP to `${base}/v1/traces`, routed by the `X-Axonpush-Channel` header and authed by `X-API-Key`. Spans follow the OpenTelemetry GenAI semantic conventions (`gen_ai.*`), so they are portable to any OTLP backend, not just axonpush. This is the recommended way to send traces.
+
+```bash
+pip install axonpush[otel]   # pulls opentelemetry-exporter-otlp-proto-http
+```
+
+`configure_telemetry()` reuses the application's own `TracerProvider` when one is already set globally (it never replaces it) and only creates one when the app does not own OpenTelemetry. Config resolves from arguments, then the matching `AXONPUSH_BASE_URL` / `AXONPUSH_API_KEY` / `AXONPUSH_CHANNEL_ID` env var.
+
+```python
+from axonpush.telemetry import (
+    configure_telemetry,
+    genai_span,
+    record_genai_response,
+    record_genai_content,
+)
+
+# Reuses or creates a TracerProvider, attaches a batch OTLP/HTTP exporter,
+# and stamps a Resource with service.name / deployment.environment.name / service.version.
+handle = configure_telemetry(
+    service_name="my-agent",
+    environment="prod",
+    service_version="1.4.0",
+    content_capture="metadata_only",  # or "redacted" / "full"
+)
+tracer = handle.tracer()
+
+with genai_span(tracer, operation="chat", request_model="gpt-4o", system="openai") as span:
+    # ... call the model ...
+    record_genai_response(
+        span,
+        response_model="gpt-4o",
+        input_tokens=12,
+        output_tokens=48,
+        reasoning_tokens=0,
+        cache_read_tokens=0,
+        cache_write_tokens=0,
+    )
+    record_genai_content(span, prompt="…", completion="…", handle=handle)
+
+handle.flush()  # or handle.shutdown() on clean exit
+```
+
+Prompt and completion land as span events (`gen_ai.content.prompt` / `gen_ai.content.completion`), gated by `content_capture`: `metadata_only` drops content, `redacted` keeps short previews, `full` keeps it. Credential-shaped keys are always stripped regardless of mode.
+
+On serverless hosts (AWS Lambda and friends) the batch processor's `atexit` flush is unreliable because the container is frozen between invocations. `configure_telemetry()` logs a note when it detects one; call `handle.flush()` at the end of each invocation.
+
+```python
+def handler(event, context):
+    with genai_span(handle.tracer(), operation="chat", request_model="gpt-4o") as span:
+        ...
+    handle.flush()  # block until buffered spans ship
+```
+
+### Which should I use
+
+The OTel-native path above is the recommended way to send traces. The legacy per-framework event-model exporter (`axonpush.integrations.otel.AxonPushSpanExporter`, which maps calls to `/event` payloads) still works and is kept for compatibility, but it is being superseded by OTel-native. Frame it as the compatibility path: keep it if you already depend on channel fan-out on the events plane, otherwise reach for `axonpush.telemetry`. Traces from both land in the same dashboard (`/v2/traces`); the server reconciles them through the OTLP normalizer, so you can migrate call sites incrementally without a gap in your traces.
+
 ## Examples
 
 `examples/` contains 14 runnable recipes — quickstart, tracing, MQTT, webhooks, async, error handling, plus one example per integration. Each reads `AXONPUSH_API_KEY` / `AXONPUSH_TENANT_ID` from your environment. See [`examples/README.md`](examples/README.md) for the full table.

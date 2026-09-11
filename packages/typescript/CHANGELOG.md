@@ -1,5 +1,41 @@
 # Changelog
 
+## [Unreleased]
+
+### Added
+- **OTel-native telemetry (`@axonpush/sdk/telemetry`).** `configureTelemetry()`
+  reuses an existing OpenTelemetry SDK `TracerProvider` (or creates a
+  `NodeTracerProvider`), attaches a batch OTLP/HTTP exporter to
+  `${base}/v1/traces` with the `X-API-Key` and `X-Axonpush-Channel` headers, and
+  resolves to a `TelemetryHandle` with `flush()`, `shutdown()`, and `tracer()`.
+  `genaiSpan()`, `recordGenaiResponse()`, and `recordGenaiContent()` emit spans
+  under the OpenTelemetry GenAI semantic conventions (`gen_ai.*`), with prompt
+  and completion carried as span events gated by the content-capture policy
+  (`metadata_only` / `redacted` / `full`, credential-shaped keys always
+  stripped). This is now the recommended way to send traces. The OpenTelemetry
+  SDK packages (`@opentelemetry/sdk-trace-node`,
+  `@opentelemetry/exporter-trace-otlp-http`, `@opentelemetry/resources`) are
+  optional peers loaded lazily; install them alongside the SDK. `flushAfterInvocation`
+  wraps a serverless handler to flush buffered spans per invocation.
+- Config resolves from options, then `AXONPUSH_BASE_URL` / `AXONPUSH_API_KEY` /
+  `AXONPUSH_CHANNEL_ID`. Spans carry a Resource with `service.name`,
+  `deployment.environment.name`, and `service.version`.
+
+### Changed
+- The legacy per-framework event-model exporter (`AxonPushSpanExporter` from
+  `@axonpush/sdk/integrations/otel`, which maps calls to `/event` payloads) is
+  now a compatibility path, superseded by OTel-native telemetry. It still works
+  and is not removed. Traces from both paths land in the same dashboard
+  (`/v2/traces`), reconciled server-side through the OTLP normalizer, so call
+  sites can migrate incrementally.
+
+### Fixed
+- **Multi-tenant transport now uses per-instance settings.** Each `AxonPush`
+  facade owns its own `Transport` bound to that instance's resolved settings, so
+  concurrent clients with different API keys or base URLs in the same process no
+  longer race over a single mutable module-global settings slot. The global slot
+  remains only for low-level diagnostics and tests.
+
 ## [0.0.8] – 2026-09-02
 
 The release that makes the release gate installable. Everything below has been

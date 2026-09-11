@@ -53,6 +53,21 @@ from axonpush.realtime import AsyncRealtimeClient, RealtimeClient
 # from _exports_d.txt
 from axonpush.integrations.sentry import install_sentry
 
+# OTel-native telemetry. Guarded so the base SDK imports without the
+# ``[otel]`` extra installed; the names are only exported when it is.
+try:
+    from axonpush.telemetry import (
+        TelemetryHandle,
+        configure_telemetry,
+        genai_span,
+        record_genai_content,
+        record_genai_response,
+    )
+
+    _HAS_TELEMETRY = True
+except ImportError:
+    _HAS_TELEMETRY = False
+
 __all__ = [
     "APIConnectionError",
     "ApiKey",
@@ -103,3 +118,12 @@ __all__ = [
     "get_or_create_trace",
     "install_sentry",
 ]
+
+if _HAS_TELEMETRY:
+    __all__ += [
+        "TelemetryHandle",
+        "configure_telemetry",
+        "genai_span",
+        "record_genai_content",
+        "record_genai_response",
+    ]

@@ -226,7 +226,10 @@ export function detectServerless(): string | null {
 }
 
 export interface Flushable {
-  flush(timeoutMs?: number): Promise<void>;
+  // Return value is ignored by `flushAfterInvocation`; widened to `unknown`
+  // so both the background publisher (`Promise<void>`) and the telemetry
+  // handle (`Promise<boolean>`) satisfy it.
+  flush(timeoutMs?: number): Promise<unknown>;
 }
 
 export function flushAfterInvocation<TArgs extends unknown[], TReturn>(

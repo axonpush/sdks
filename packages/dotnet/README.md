@@ -1,6 +1,6 @@
-# AxonPush for .NET
+# axonpush for .NET
 
-[AxonPush](https://axonpush.xyz) ships three NuGet packages for .NET:
+[axonpush](https://axonpush.xyz) ships three NuGet packages for .NET:
 
 | Package | What it does |
 | --- | --- |
@@ -50,7 +50,7 @@ That single `AddAxonPushTelemetry` call:
 
 1. Flips Semantic Kernel's GenAI diagnostic switch so the kernel emits OpenTelemetry spans for chat completions, function calls, and prompt rendering.
 2. Subscribes a `TracerProvider` to every `Microsoft.SemanticKernel.*` activity source.
-3. Attaches the AxonPush span exporter, batched in the background.
+3. Attaches the axonpush span exporter, batched in the background.
 
 Call `AddAxonPushTelemetry(..., enableSensitiveData: true)` to also forward prompts and completions as span events. The default is off so PII does not leave the process without an explicit opt-in.
 
@@ -70,6 +70,69 @@ using var tracerProvider = Sdk.CreateTracerProviderBuilder()
 ```
 
 The exporter is a plain `BaseExporter<Activity>`. `AddAxonPushExporter` wraps it in a `BatchActivityExportProcessor` with sensible defaults.
+
+## OpenTelemetry-native telemetry
+
+`AxonPush.Otel.Telemetry` ships GenAI spans as real OTLP over HTTP to `{BaseUrl}/v1/traces`, routed by the `X-Axonpush-Channel` header and authed by `X-API-Key`. Spans follow the OpenTelemetry GenAI semantic conventions (`gen_ai.*`), so they are portable to any OTLP backend, not just AxonPush. This is the recommended way to send traces. It uses the standard `OpenTelemetry.Exporter.OpenTelemetryProtocol` exporter, batched and non-blocking.
+
+Config resolves from the options callback, then the matching `AXONPUSH_BASE_URL` / `AXONPUSH_API_KEY` / `AXONPUSH_CHANNEL_ID` environment variable (or `IConfiguration` when you pass one).
+
+When the app already owns a `TracerProvider`, reuse it with `AddAxonPushTelemetry` on the builder so the app keeps its own instrumentation and only gains the AxonPush exporter:
+
+```csharp
+using OpenTelemetry;
+using OpenTelemetry.Trace;
+using AxonPush.Otel.Telemetry;
+
+using var provider = Sdk.CreateTracerProviderBuilder()
+    .AddSource("axonpush")
+    .AddAxonPushTelemetry(out var handle, o =>
+    {
+        o.ServiceName = "my-agent";
+        o.Environment = "prod";
+        o.ServiceVersion = "1.4.0";
+        o.ContentCapture = ContentCaptureMode.MetadataOnly; // or Redacted / Full
+    })
+    .Build();
+```
+
+When the app does not already own a provider, `ConfigureTelemetry` builds a self-owned one and returns a `TelemetryHandle` for flushing and disposal:
+
+```csharp
+using var handle = AxonPushTelemetry.ConfigureTelemetry(o =>
+{
+    o.ServiceName = "my-agent";
+    o.Environment = "prod";
+});
+```
+
+Wrap a model call in a GenAI span with the `GenAi` helpers. `StartSpan` opens a CLIENT activity on your `ActivitySource` (default source name `"axonpush"`):
+
+```csharp
+using System.Diagnostics;
+using AxonPush.Otel.Telemetry;
+
+var source = new ActivitySource("axonpush");
+
+using (var span = GenAi.StartSpan(source, operation: "chat", requestModel: "gpt-4o", system: "openai"))
+{
+    // ... call the model ...
+    GenAi.RecordResponse(span,
+        responseModel: "gpt-4o",
+        inputTokens: 12,
+        outputTokens: 48,
+        cacheWriteTokens: 0);
+    GenAi.RecordContent(span, prompt: "…", completion: "…", handle: handle);
+}
+```
+
+Prompt and completion land as span events (`gen_ai.content.prompt` / `gen_ai.content.completion`), gated by `ContentCaptureMode`: `MetadataOnly` drops content, `Redacted` keeps previews, `Full` keeps it. Secret-shaped keys are always stripped regardless of mode.
+
+On serverless hosts (AWS Lambda and friends) the batch processor's exit flush is unreliable because the container is frozen between invocations. Call `handle.Flush(timeoutMs)` at the end of each invocation; `handle.Dispose()` flushes and tears down the provider when the handle owns it (it is a no-op when the app owns the provider via `AddAxonPushTelemetry`).
+
+### Which should I use
+
+The OTel-native path above is the recommended way to send traces. The legacy per-framework event-model exporter (`AxonPushSpanExporter` / `AddAxonPushExporter`, which maps `Activity` events to `/event` payloads) still works and is kept for compatibility, but it is being superseded by OTel-native. Frame it as the compatibility path: keep it if you already depend on channel fan-out on the events plane, otherwise reach for `AxonPush.Otel.Telemetry`. Traces from both land in the same dashboard (`/v2/traces`); the server reconciles them through the OTLP normalizer, so you can migrate call sites incrementally without a gap in your traces.
 
 ## Environment variables
 
