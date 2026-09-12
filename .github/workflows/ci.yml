@@ -71,7 +71,7 @@ jobs:
       - name: Build
         working-directory: packages/typescript
         run: bun run build
-      # package.json advertises ./integrations/* and ./evaluation subpaths;
+      # package.json advertises ./integrations/* and ./telemetry subpaths;
       # these fail if the build stops emitting the JS behind them
       - name: Validate the published package
         working-directory: packages/typescript

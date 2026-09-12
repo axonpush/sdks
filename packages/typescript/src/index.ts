@@ -19,30 +19,12 @@ export {
   ServerError,
   ValidationError,
 } from "./errors.js";
-export type {
-  CreateExperimentOptions,
-  DatasetItem,
-  EvaluationApi,
-  EvaluationItemResult,
-  EvaluationRunResult,
-  GateResult,
-  GateThresholds,
-  GitLineage,
-  LocalEvaluationInput,
-  LocalEvaluationOutput,
-  LocalRunnerOptions,
-} from "./evaluation/index.js";
-// Evaluation runner — customer code remains local and communicates through JSONL.
 export {
-  captureGitLineage,
-  EvaluationApiError,
-  EXIT_CODES,
-  HttpEvaluationApi,
-  runLocalEvaluation,
-  toGitHubSummary,
-  toJsonReport,
-  toJUnitXml,
-} from "./evaluation/index.js";
+  anthropicGateway,
+  type GatewayOptions,
+  gatewayHeaders,
+  openaiGateway,
+} from "./gateway.js";
 // Integrations — primitives + helpers (Stream D).
 // Framework-specific installers are reachable via
 // `@axonpush/sdk/integrations/<name>` per package.json `exports`.

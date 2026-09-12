@@ -1,5 +1,4 @@
 using AxonPush.Events;
-using AxonPush.Gates;
 using AxonPush.Internal;
 using Microsoft.Extensions.Logging;
 
@@ -23,14 +22,10 @@ public sealed class AxonPushClient : IDisposable, IAsyncDisposable
         ArgumentNullException.ThrowIfNull(options);
         _transport = new AxonPushTransport(options, httpClient, loggerFactory);
         Events = new EventsResource(_transport);
-        Gates = new GatesResource(_transport);
     }
 
     /// <summary>The events resource (POST /events).</summary>
     public EventsResource Events { get; }
-
-    /// <summary>The release-gate resource (policies and gate-decision history under /v2/gate-*).</summary>
-    public GatesResource Gates { get; }
 
     public void Dispose()
     {

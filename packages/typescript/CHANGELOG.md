@@ -1,5 +1,18 @@
 # Changelog
 
+## [1.0.0]
+
+### Removed
+- **BREAKING:** Removed the evaluation and release-gate surface: the
+  `axonpush-eval` CLI (`bin`), the `@axonpush/sdk/evaluation` entry point and its
+  exports (`runLocalEvaluation`, `HttpEvaluationApi`, `captureGitLineage`,
+  `toGitHubSummary`, `toJsonReport`, `toJUnitXml`, `EXIT_CODES`,
+  `EvaluationApiError`, and the associated types), and the client resources
+  `datasets`, `evaluators`, `experiments`, `evaluationTargets`, `gates`,
+  `onlineEvaluations`, `issues`, `traceIntelligence`, `prompts`, and
+  `assessments`. The LLM gateway helpers (`openaiGateway`, `anthropicGateway`,
+  `gatewayHeaders`) are unaffected.
+
 ## [Unreleased]
 
 ### Added

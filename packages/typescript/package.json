@@ -1,13 +1,10 @@
 {
   "name": "@axonpush/sdk",
-  "version": "0.0.9",
+  "version": "1.0.0",
   "type": "module",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "module": "./dist/index.js",
-  "bin": {
-    "axonpush-eval": "./dist/cli.js"
-  },
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
@@ -20,10 +17,6 @@
     "./telemetry": {
       "types": "./dist/telemetry/index.d.ts",
       "import": "./dist/telemetry/index.js"
-    },
-    "./evaluation": {
-      "types": "./dist/evaluation/index.d.ts",
-      "import": "./dist/evaluation/index.js"
     }
   },
   "repository": {

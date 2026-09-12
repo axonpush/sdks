@@ -4,6 +4,15 @@ All notable changes to the axonpush Python SDK are documented here. The
 format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/);
 versioning is [SemVer](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.0]
+
+### Removed
+- **BREAKING:** Removed the evaluation and release-gate surface: the
+  `axonpush-eval` console script, the `axonpush.eval` package, and the client
+  resources `datasets`, `evaluators`, `experiments`, `evaluation_targets`,
+  `gates`, `online_evaluations`, `issues`, `trace_intelligence`, `prompts`, and
+  `assessments`. The LLM gateway helpers (`axonpush.gateway`) are unaffected.
+
 ## [Unreleased]
 
 ### Added
