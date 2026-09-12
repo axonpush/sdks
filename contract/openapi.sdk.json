@@ -8767,6 +8767,44 @@
         ]
       }
     },
+    "/organizations/{id}/invitations/{invitationId}/resend": {
+      "post": {
+        "operationId": "OrganizationController_resendInvitation",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "invitationId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InvitationResponseDto"
+                }
+              }
+            },
+            "description": ""
+          }
+        },
+        "tags": [
+          "organizations"
+        ]
+      }
+    },
     "/organizations/{id}/members/{userId}": {
       "delete": {
         "operationId": "OrganizationController_removeMember",
@@ -15174,10 +15212,6 @@
     {
       "description": "Self-host licence state and the telemetry preview.",
       "name": "license"
-    },
-    {
-      "description": "Tokens for the hosted MCP server.",
-      "name": "mcp-tokens"
     },
     {
       "description": "Evaluators applied to live traffic rather than a fixed dataset.",
