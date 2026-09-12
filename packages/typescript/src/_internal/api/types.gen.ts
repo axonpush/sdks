@@ -2996,6 +2996,22 @@ export type OrganizationControllerDeleteInvitationResponses = {
 
 export type OrganizationControllerDeleteInvitationResponse = OrganizationControllerDeleteInvitationResponses[keyof OrganizationControllerDeleteInvitationResponses];
 
+export type OrganizationControllerResendInvitationData = {
+    body?: never;
+    path: {
+        id: string;
+        invitationId: string;
+    };
+    query?: never;
+    url: '/organizations/{id}/invitations/{invitationId}/resend';
+};
+
+export type OrganizationControllerResendInvitationResponses = {
+    201: InvitationResponseDto;
+};
+
+export type OrganizationControllerResendInvitationResponse = OrganizationControllerResendInvitationResponses[keyof OrganizationControllerResendInvitationResponses];
+
 export type OrganizationControllerRemoveMemberData = {
     body?: never;
     path: {
