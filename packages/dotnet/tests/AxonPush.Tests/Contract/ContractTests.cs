@@ -18,7 +18,6 @@ namespace AxonPush.Tests.Contract;
 public sealed class ContractTests
 {
     private static readonly JsonNode Spec = LoadContract("openapi.sdk.json");
-    private static readonly JsonNode Topics = LoadContract("fixtures/topics.json");
     private static readonly JsonNode Headers = LoadContract("fixtures/headers.json");
     private static readonly JsonNode Env = LoadContract("fixtures/env.json");
 
@@ -125,6 +124,7 @@ public sealed class ContractTests
     public void HeaderNamesMatchTheFixture()
     {
         Assert.Equal("X-API-Key", Headers["auth"]!["apiKey"]!.GetValue<string>());
+        Assert.Equal("X-Public-Token", Headers["auth"]!["publicToken"]!.GetValue<string>());
         Assert.Equal("x-tenant-id", Headers["tenancy"]!["orgId"]!.GetValue<string>());
         Assert.Equal(
             "X-Axonpush-Environment",
@@ -157,16 +157,5 @@ public sealed class ContractTests
             .ToArray();
 
         Assert.Equal(expected, RetryPolicy.BackoffSchedule.ToArray());
-    }
-
-    [Fact]
-    public void TopicGrammarIsRecorded()
-    {
-        // .NET does not build topics yet; assert the shape it must follow when it does
-        Assert.Equal(
-            new[] { "prefix", "orgId", "envSlug", "appId", "channelId", "eventType", "agentId" },
-            Topics["segments"]!.AsArray().Select(n => n!.GetValue<string>()).ToArray());
-        Assert.Equal("_", Topics["publishFallback"]!.GetValue<string>());
-        Assert.Equal("+", Topics["subscribeWildcard"]!.GetValue<string>());
     }
 }

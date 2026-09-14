@@ -17,26 +17,26 @@ from axonpush import AxonPush
 from axonpush.exceptions import RateLimitError, AuthenticationError, ServerError
 import time
 
-with AxonPush(api_key="ak_...", tenant_id="1") as client:
+with AxonPush(api_key="ak_...", tenant_id="<org-uuid>") as client:
     try:
         event = client.events.publish(
             "web_search", {"query": "AI agents"},
-            channel_id=1, agent_id="researcher",
+            channel_id="chan_a1b2c3", agent_id="researcher",
         )
     except RateLimitError as e:
         # Server tells you exactly how long to wait
         print(f"Rate limited. Retry after {e.retry_after}s")
         time.sleep(e.retry_after or 1)
     except AuthenticationError:
-        print("Invalid API key — check your credentials")
+        print("Invalid API key, check your credentials")
     except ServerError:
-        print("axonpush is temporarily unavailable — fall back to local logging")
+        print("axonpush is temporarily unavailable, fall back to local logging")
 ```
 
 ## What Just Happened
 
 - axonpush raises typed exceptions mapped to HTTP status codes. You catch specific errors, not generic ones.
-- `RateLimitError` (429) includes `retry_after` — the number of seconds to wait before retrying.
+- `RateLimitError` (429) includes `retry_after`, the number of seconds to wait before retrying.
 - `AuthenticationError` (401) means your API key is invalid or expired.
 - `ServerError` (5xx) means axonpush itself is having issues. Your agent can fall back gracefully.
 - The `with` block ensures the HTTP client is closed cleanly, even if an exception is raised.
@@ -88,7 +88,7 @@ event = publish_with_retry(
     client,
     identifier="web_search",
     payload={"query": "AI agents"},
-    channel_id=1,
+    channel_id="chan_a1b2c3",
     agent_id="researcher",
 )
 ```
@@ -99,12 +99,12 @@ event = publish_with_retry(
 from axonpush.exceptions import ValidationError, NotFoundError
 
 try:
-    client.channels.get(channel_id=999)
+    client.channels.get(channel_id="chan_does_not_exist")
 except NotFoundError:
-    print("Channel doesn't exist — create it first")
+    print("Channel doesn't exist, create it first")
 
 try:
-    client.events.publish("", {}, channel_id=1)  # empty identifier
+    client.events.publish("", {}, channel_id="chan_a1b2c3")  # empty identifier
 except ValidationError as e:
     print(f"Bad request: {e}")
 ```
@@ -127,7 +127,7 @@ except Exception as e:
         client.events.publish(
             "tool_failure",
             {"error": str(e), "tool": "web_search"},
-            channel_id=1,
+            channel_id="chan_a1b2c3",
             agent_id="researcher",
             trace_id=trace.trace_id,
             event_type=EventType.AGENT_ERROR,
@@ -146,11 +146,11 @@ from axonpush import AsyncAxonPush
 from axonpush.exceptions import RateLimitError
 import asyncio
 
-async with AsyncAxonPush(api_key="ak_...", tenant_id="1") as client:
+async with AsyncAxonPush(api_key="ak_...", tenant_id="<org-uuid>") as client:
     try:
         event = await client.events.publish(
             "web_search", {"query": "AI agents"},
-            channel_id=1, agent_id="researcher",
+            channel_id="chan_a1b2c3", agent_id="researcher",
         )
     except RateLimitError as e:
         await asyncio.sleep(e.retry_after or 1)

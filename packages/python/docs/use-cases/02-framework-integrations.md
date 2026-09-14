@@ -4,7 +4,7 @@
 
 ## The Problem
 
-You're using a framework to build your agent. You want to see every chain step, tool call, and LLM interaction — without wrapping each one in custom logging. You need observability that plugs into your existing code, not a rewrite.
+You're using a framework to build your agent. You want to see every chain step, tool call, and LLM interaction, without wrapping each one in custom logging. You need observability that plugs into your existing code, not a rewrite.
 
 ## The Solution
 
@@ -23,8 +23,8 @@ pip install axonpush[crewai]          # CrewAI
 from axonpush import AxonPush
 from axonpush.integrations.langchain import AxonPushCallbackHandler
 
-client = AxonPush(api_key="ak_...", tenant_id="1")
-handler = AxonPushCallbackHandler(client, channel_id=1, agent_id="my-agent")
+client = AxonPush(api_key="ak_...", tenant_id="<org-uuid>")
+handler = AxonPushCallbackHandler(client, channel_id="chan_a1b2c3", agent_id="my-agent")
 
 # Every chain, tool, and LLM event is published automatically
 chain.invoke({"input": "research AI frameworks"}, config={"callbacks": [handler]})
@@ -36,8 +36,8 @@ chain.invoke({"input": "research AI frameworks"}, config={"callbacks": [handler]
 from axonpush import AsyncAxonPush
 from axonpush.integrations.openai_agents import AxonPushRunHooks
 
-client = AsyncAxonPush(api_key="ak_...", tenant_id="1")
-hooks = AxonPushRunHooks(client, channel_id=1)
+client = AsyncAxonPush(api_key="ak_...", tenant_id="<org-uuid>")
+hooks = AxonPushRunHooks(client, channel_id="chan_a1b2c3")
 
 result = await Runner.run(agent, input="research AI frameworks", hooks=hooks)
 ```
@@ -48,10 +48,10 @@ result = await Runner.run(agent, input="research AI frameworks", hooks=hooks)
 from axonpush import AxonPush
 from axonpush.integrations.anthropic import AxonPushAnthropicTracer
 
-client = AxonPush(api_key="ak_...", tenant_id="1")
-tracer = AxonPushAnthropicTracer(client, channel_id=1)
+client = AxonPush(api_key="ak_...", tenant_id="<org-uuid>")
+tracer = AxonPushAnthropicTracer(client, channel_id="chan_a1b2c3")
 
-# Wraps messages.create() — auto-emits events for tool_use, text, and turns
+# Wraps messages.create(), auto-emits events for tool_use, text, and turns
 response = tracer.create_message(
     anthropic_client,
     model="claude-sonnet-4-20250514",
@@ -65,8 +65,8 @@ response = tracer.create_message(
 from axonpush import AxonPush
 from axonpush.integrations.crewai import AxonPushCrewCallbacks
 
-client = AxonPush(api_key="ak_...", tenant_id="1")
-callbacks = AxonPushCrewCallbacks(client, channel_id=1)
+client = AxonPush(api_key="ak_...", tenant_id="<org-uuid>")
+callbacks = AxonPushCrewCallbacks(client, channel_id="chan_a1b2c3")
 
 callbacks.on_crew_start()
 result = Crew(
@@ -95,10 +95,10 @@ callbacks.on_crew_end(result)
 Every integration accepts `agent_id` and `trace_id` parameters:
 
 ```python
-# LangChain — custom agent ID and trace correlation
+# LangChain: custom agent ID and trace correlation
 handler = AxonPushCallbackHandler(
     client,
-    channel_id=1,
+    channel_id="chan_a1b2c3",
     agent_id="researcher-v2",
     trace_id="tr_pipeline_run_99",   # correlate with other services
     metadata={"env": "production"},
@@ -111,10 +111,10 @@ Pass the same `trace_id` across services to build a unified trace:
 
 ```python
 # Service A: LangChain agent
-handler = AxonPushCallbackHandler(client, channel_id=1, trace_id="tr_shared_123")
+handler = AxonPushCallbackHandler(client, channel_id="chan_a1b2c3", trace_id="tr_shared_123")
 
 # Service B: OpenAI agent consuming Service A's output
-hooks = AxonPushRunHooks(client, channel_id=2, trace_id="tr_shared_123")
+hooks = AxonPushRunHooks(client, channel_id="chan_d4e5f6", trace_id="tr_shared_123")
 ```
 
 Both services' events appear in the same trace when you call `client.traces_v2.events("tr_shared_123")`.
@@ -146,6 +146,5 @@ await tracer.asend_tool_result(tool_use_id="toolu_abc", result={"answer": 42})
 
 ## Next Steps
 
-- [Stream these events live with SSE](03-live-dashboard-sse.md)
 - [Trace a multi-step run end-to-end](04-distributed-tracing.md)
-- [See what your agent is doing — the basics](01-realtime-agent-events.md)
+- [See what your agent is doing: the basics](01-realtime-agent-events.md)

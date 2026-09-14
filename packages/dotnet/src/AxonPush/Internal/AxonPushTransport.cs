@@ -209,9 +209,16 @@ internal sealed class AxonPushTransport : IDisposable
 
     private void StampHeaders(HttpRequestMessage message)
     {
-        if (!message.Headers.Contains("X-API-Key") && !string.IsNullOrWhiteSpace(_options.ApiKey))
+        if (!string.IsNullOrWhiteSpace(_options.ApiKey))
         {
-            message.Headers.Add("X-API-Key", _options.ApiKey);
+            // pt_ public ingest tokens go on X-Public-Token; ak_ API keys on X-API-Key.
+            var authHeader = _options.ApiKey!.StartsWith("pt_", StringComparison.Ordinal)
+                ? "X-Public-Token"
+                : "X-API-Key";
+            if (!message.Headers.Contains(authHeader))
+            {
+                message.Headers.Add(authHeader, _options.ApiKey);
+            }
         }
 
         if (!message.Headers.Contains("x-tenant-id") && !string.IsNullOrWhiteSpace(_options.TenantId))

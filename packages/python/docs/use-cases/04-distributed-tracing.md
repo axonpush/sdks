@@ -15,20 +15,20 @@ pip install axonpush
 ```python
 from axonpush import AxonPush, EventType, get_or_create_trace
 
-with AxonPush(api_key="ak_...", tenant_id="1") as client:
-    # Create a trace — all events in this run share the same trace_id
+with AxonPush(api_key="ak_...", tenant_id="<org-uuid>") as client:
+    # Create a trace: all events in this run share the same trace_id
     trace = get_or_create_trace()
 
     client.events.publish(
         "web_search", {"query": "AI frameworks"},
-        channel_id=1, agent_id="researcher",
+        channel_id="chan_a1b2c3", agent_id="researcher",
         trace_id=trace.trace_id, span_id=trace.next_span_id(),
         event_type=EventType.AGENT_TOOL_CALL_START,
     )
 
     client.events.publish(
         "summarize", {"input_tokens": 1200},
-        channel_id=1, agent_id="researcher",
+        channel_id="chan_a1b2c3", agent_id="researcher",
         trace_id=trace.trace_id, span_id=trace.next_span_id(),
         event_type=EventType.AGENT_TOOL_CALL_START,
     )
@@ -45,7 +45,7 @@ with AxonPush(api_key="ak_...", tenant_id="1") as client:
 - `trace.next_span_id()` generates sequential span IDs (`sp_<hex>_0001`, `sp_<hex>_0002`, ...) so you can see event order.
 - Both events share the same `trace_id`, linking them as part of one run.
 - `traces.get_summary()` returns analytics: total events, duration, error count, tool call count, handoff count, and the list of agents involved.
-- No external tracing infrastructure needed — no Jaeger, no Datadog, no setup.
+- No external tracing infrastructure needed. No Jaeger, no Datadog, no setup.
 
 <details>
 <summary><strong>Go Deeper</strong></summary>
@@ -56,7 +56,7 @@ with AxonPush(api_key="ak_...", tenant_id="1") as client:
 # List recent traces
 result = client.traces_v2.list({"limit": "20"})
 for t in result.data:
-    print(f"{t.trace_id}: {t.event_count} events ({t.start_time} → {t.end_time})")
+    print(f"{t.trace_id}: {t.event_count} events ({t.start_time} to {t.end_time})")
 
 # Get all events in a trace, ordered
 events = client.traces_v2.events("tr_run_42")
@@ -85,11 +85,11 @@ Pass an explicit `trace_id` to correlate events across microservices:
 ```python
 # Service A
 trace = get_or_create_trace("tr_pipeline_run_99")
-client_a.events.publish("step_a", {...}, channel_id=1, trace_id=trace.trace_id, ...)
+client_a.events.publish("step_a", {...}, channel_id="chan_a1b2c3", trace_id=trace.trace_id, ...)
 
-# Service B — same trace_id, different channel
+# Service B: same trace_id, different channel
 trace = get_or_create_trace("tr_pipeline_run_99")
-client_b.events.publish("step_b", {...}, channel_id=2, trace_id=trace.trace_id, ...)
+client_b.events.publish("step_b", {...}, channel_id="chan_d4e5f6", trace_id=trace.trace_id, ...)
 
 # Query the unified trace
 detail = client.traces_v2.detail("tr_pipeline_run_99")
@@ -110,12 +110,12 @@ This means you can call `get_or_create_trace()` once at the top of your agent ru
 ```python
 from axonpush import AsyncAxonPush, get_or_create_trace
 
-async with AsyncAxonPush(api_key="ak_...", tenant_id="1") as client:
+async with AsyncAxonPush(api_key="ak_...", tenant_id="<org-uuid>") as client:
     trace = get_or_create_trace()
 
     await client.events.publish(
         "web_search", {"query": "AI agents"},
-        channel_id=1, agent_id="researcher",
+        channel_id="chan_a1b2c3", agent_id="researcher",
         trace_id=trace.trace_id, span_id=trace.next_span_id(),
         event_type=EventType.AGENT_TOOL_CALL_START,
     )
@@ -129,5 +129,4 @@ async with AsyncAxonPush(api_key="ak_...", tenant_id="1") as client:
 ## Next Steps
 
 - [Get notified when your agent fails (webhooks)](05-error-webhooks.md)
-- [Stream events live with SSE](03-live-dashboard-sse.md)
 - [Add framework integrations (auto-tracing included)](02-framework-integrations.md)

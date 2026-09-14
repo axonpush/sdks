@@ -49,7 +49,11 @@ export const createClientConfig: CreateClientConfig = (override) => {
 function attachInterceptors(client: Client, getSettings: () => ResolvedSettings): void {
   client.interceptors.request.use((request) => {
     const s = getSettings();
-    if (s.apiKey) request.headers.set("X-API-Key", s.apiKey);
+    if (s.apiKey) {
+      // `pt_` public ingest tokens go on X-Public-Token; `ak_` API keys on X-API-Key.
+      const header = s.apiKey.startsWith("pt_") ? "X-Public-Token" : "X-API-Key";
+      request.headers.set(header, s.apiKey);
+    }
     if (s.tenantId) request.headers.set("x-tenant-id", s.tenantId);
     if (s.environment) request.headers.set("X-Axonpush-Environment", s.environment);
     const trace = currentTrace();

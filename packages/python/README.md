@@ -2,11 +2,11 @@
 
 [![PyPI](https://img.shields.io/pypi/v/axonpush.svg)](https://pypi.org/project/axonpush/)
 
-Python SDK for [axonpush](https://axonpush.xyz) — real-time event infrastructure for AI agent systems.
+Python SDK for [axonpush](https://axonpush.xyz), observability and event infrastructure for AI agent systems.
 
-Publish, subscribe, trace, and deliver agent events with sub-100ms latency. Drop-in integrations for LangChain, LangGraph Deep Agents, OpenAI Agents SDK, Anthropic, CrewAI, and the Python observability stack (stdlib `logging`, Loguru, structlog, OpenTelemetry, Sentry).
+Publish, trace, and deliver agent events. Drop-in integrations for LangChain, LangGraph Deep Agents, OpenAI Agents SDK, Anthropic, CrewAI, and the Python observability stack (stdlib `logging`, Loguru, structlog, OpenTelemetry, Sentry).
 
-> **v0.0.10 is a breaking release.** All IDs are now `str` UUIDs (was `int` / `Union[int, str]`); the deprecated `connect_websocket` alias has been removed; models live under a flat `axonpush.models` namespace. See [`CHANGELOG.md`](CHANGELOG.md) for the migration guide.
+> **v1.0.0 is a breaking release.** All IDs are `str` UUIDs; models live under a flat `axonpush.models` namespace; the realtime feature (MQTT / SSE / WebSocket / `connect_realtime`) has been removed. See [`CHANGELOG.md`](CHANGELOG.md) for the migration guide.
 
 ## Install
 
@@ -23,8 +23,6 @@ pip install axonpush[otel]            # OpenTelemetry SpanExporter
 pip install axonpush[rq]              # Redis Queue durable backend
 pip install axonpush[all]             # everything above
 ```
-
-`paho-mqtt` (sync) and `aiomqtt` (async) are core dependencies — realtime works out of the box.
 
 Installing the package also puts **`axonpush-eval`** on your `PATH`: the release
 gate that replays a dataset revision against a candidate in CI and exits
@@ -88,24 +86,26 @@ AxonPush(
 )
 ```
 
-`fail_open=True` swallows `APIConnectionError` and returns `None` from every resource call — useful when axonpush observability must never break the host application.
+`fail_open=True` swallows `APIConnectionError` and returns `None` from every resource call, useful when axonpush observability must never break the host application.
 
-## Realtime (MQTT-over-WSS)
+## Authentication
 
-`client.connect_realtime()` returns a `RealtimeClient` (sync) or `AsyncRealtimeClient` (async) connected to AWS IoT Core. Credentials are fetched via `/auth/iot-credentials` and rotated automatically before they expire.
+The SDK supports two ingest credentials:
+
+| Credential | Header | Prefix | Use |
+|---|---|---|---|
+| API key | `X-API-Key` | `ak_` | Server-side ingestion and management. Full resource access, scoped per key. |
+| Public ingest token | `X-Public-Token` | `pt_` | Browser and untrusted clients. Publish-only, safe to ship in a frontend. |
 
 ```python
-rt = client.connect_realtime(environment="prod")
-rt.subscribe(
-    channel_id="…channel uuid…",
-    app_id="…app uuid…",
-    callback=lambda msg: print(msg["eventType"], msg["payload"]),
-)
-# … publishes happen elsewhere …
-rt.disconnect()
+# Server-side: API key
+client = AxonPush(api_key="ak_…", tenant_id="…")
+
+# Untrusted / browser context: public ingest token
+client = AxonPush(api_key="pt_…", tenant_id="…")
 ```
 
-Topics are `axonpush/{org}/{env}/{app}/{channel}/{event_type}/{agent}`. Omitted slots become MQTT `+` wildcards on subscribe and `default` (env) / `_` (agent) on publish.
+Both are passed via the `api_key` argument (or `AXONPUSH_API_KEY`); the SDK sends `ak_` values on `X-API-Key` and `pt_` values on `X-Public-Token`.
 
 ## Resources
 
@@ -140,7 +140,7 @@ from axonpush import (
     ForbiddenError,           # 403
     NotFoundError,            # 404
     ValidationError,          # 422 / code='validation_error'
-    RateLimitError,           # 429 — carries .retry_after
+    RateLimitError,           # 429, carries .retry_after
     ServerError,              # 5xx
     RetryableError,           # mixin: APIConnectionError, RateLimitError, ServerError
 )
@@ -272,7 +272,7 @@ The OTel-native path above is the recommended way to send traces. The legacy per
 
 ## Examples
 
-`examples/` contains 14 runnable recipes — quickstart, tracing, MQTT, webhooks, async, error handling, plus one example per integration. Each reads `AXONPUSH_API_KEY` / `AXONPUSH_TENANT_ID` from your environment. See [`examples/README.md`](examples/README.md) for the full table.
+`examples/` contains runnable recipes: quickstart, tracing, webhooks, async, error handling, plus one example per integration. Each reads `AXONPUSH_API_KEY` / `AXONPUSH_TENANT_ID` from your environment. See [`examples/README.md`](examples/README.md) for the full table.
 
 ## Advanced
 

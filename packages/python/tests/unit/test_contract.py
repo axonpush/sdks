@@ -1,10 +1,9 @@
 """Replay contract/fixtures/*.json against the Python SDK.
 
-The server generates these by calling its own topic builder, signing function
-and scope enum, so they cannot describe behaviour the backend does not have.
-The MQTT grammar and the AXONPUSH_* surface were previously transcribed into
-each SDK by hand, which is how the timeout unit and the fail-open default came
-to disagree between languages.
+The server generates these by calling its own signing function and scope enum,
+so they cannot describe behaviour the backend does not have. The AXONPUSH_*
+surface was previously transcribed into each SDK by hand, which is how the
+timeout unit and the fail-open default came to disagree between languages.
 """
 
 from __future__ import annotations
@@ -16,7 +15,6 @@ from typing import Any
 import pytest
 
 from axonpush._config import Settings
-from axonpush.realtime.topics import build_publish_topic, build_subscribe_topic
 
 FIXTURES = Path(__file__).resolve().parents[4] / "contract" / "fixtures"
 
@@ -25,67 +23,9 @@ def load(name: str) -> Any:
     return json.loads((FIXTURES / name).read_text(encoding="utf-8"))
 
 
-TOPICS = load("topics.json")
 ENV = load("env.json")
 HEADERS = load("headers.json")
 ERRORS = load("errors.json")
-
-
-def org_prefix(org_id: str) -> str:
-    """The prefix GET /auth/iot-credentials hands back, per the fixture."""
-    for case in TOPICS["orgPrefixCases"]:
-        if case["orgId"] == org_id:
-            return str(case["prefix"])
-    raise AssertionError(f"no orgPrefix case for {org_id!r}")
-
-
-class TestTopics:
-    def test_grammar_matches_the_server(self) -> None:
-        assert TOPICS["segments"] == [
-            "prefix",
-            "orgId",
-            "envSlug",
-            "appId",
-            "channelId",
-            "eventType",
-            "agentId",
-        ]
-        assert TOPICS["publishFallback"] == "_"
-        assert TOPICS["subscribeWildcard"] == "+"
-
-    def test_org_prefix_already_contains_the_org_id(self) -> None:
-        """The 6-segment builder here only agrees with the server's 7 because of this."""
-        assert TOPICS["orgPrefixIncludesOrgId"] is True
-
-    @pytest.mark.parametrize("case", TOPICS["publishCases"])
-    def test_publish(self, case: dict[str, Any]) -> None:
-        i = case["input"]
-        assert (
-            build_publish_topic(
-                org_prefix(i["orgId"]),
-                app_id=i["appId"],
-                channel_id=i["channelId"],
-                event_type=i["eventType"],
-                agent_id=i.get("agentId"),
-                env_slug=i.get("envSlug"),
-            )
-            == case["topic"]
-        )
-
-    @pytest.mark.parametrize("case", TOPICS["subscribeCases"])
-    def test_subscribe(self, case: dict[str, Any]) -> None:
-        i = case["input"]
-        assert (
-            build_subscribe_topic(
-                org_prefix(i["orgId"]),
-                app_id=i.get("appId"),
-                channel_id=i.get("channelId"),
-                event_type=i.get("eventType"),
-                agent_id=i.get("agentId"),
-                env_slug=i.get("envSlug"),
-            )
-            == case["topic"]
-        )
 
 
 class TestEnvironment:
@@ -123,6 +63,7 @@ class TestEnvironment:
 class TestHeaders:
     def test_canonical_names(self) -> None:
         assert HEADERS["auth"]["apiKey"] == "X-API-Key"
+        assert HEADERS["auth"]["publicToken"] == "X-Public-Token"
         assert HEADERS["tenancy"]["orgId"] == "x-tenant-id"
         assert HEADERS["scoping"]["environment"] == "X-Axonpush-Environment"
         assert HEADERS["tracing"]["traceId"] == "X-Axonpush-Trace-Id"

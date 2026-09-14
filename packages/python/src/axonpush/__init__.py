@@ -1,4 +1,4 @@
-"""AxonPush — real-time event infrastructure for AI agent systems.
+"""AxonPush — observability and event infrastructure for AI agent systems.
 
 Top-level package. Public API is re-exported here; internal helpers live
 under ``axonpush._internal`` and are not part of the supported surface.
@@ -47,9 +47,6 @@ from axonpush.resources.organizations import AsyncOrganizations, Organizations
 from axonpush.resources.traces_v2 import AsyncTracesV2, TracesV2
 from axonpush.resources.webhooks import AsyncWebhooks, Webhooks
 
-# from _exports_c.txt
-from axonpush.realtime import AsyncRealtimeClient, RealtimeClient
-
 # from _exports_d.txt
 from axonpush.integrations.sentry import install_sentry
 
@@ -81,7 +78,6 @@ __all__ = [
     "AsyncEnvironments",
     "AsyncEvents",
     "AsyncOrganizations",
-    "AsyncRealtimeClient",
     "AsyncTracesV2",
     "AsyncWebhooks",
     "AuthenticationError",
@@ -102,7 +98,6 @@ __all__ = [
     "Organization",
     "Organizations",
     "RateLimitError",
-    "RealtimeClient",
     "RetryableError",
     "ServerError",
     "Settings",

@@ -1,9 +1,9 @@
 /**
- * 04 — Multi-agent fan-out with eventType filtering
+ * 04 — Multi-agent fan-out on one channel
  *
- * Three logical agents (`planner`, `coder`, `reviewer`) emit events on
- * one channel. Two subscribers attach: one filters by `eventType` for
- * `agent.error` only, the other listens to everything.
+ * Three logical agents (`planner`, `coder`, `reviewer`) publish events on
+ * one channel under a shared trace, then we list them back and pick out the
+ * error events.
  *
  * Required env vars:
  *   AXONPUSH_API_KEY, AXONPUSH_TENANT_ID, AXONPUSH_CHANNEL_ID
@@ -12,8 +12,8 @@
  *   bun run examples/04-multi-agent.ts
  */
 
-import { AxonPush, RealtimeClient } from "../src/index";
-import { CHANNEL_ID, ENVIRONMENT, requireEnv } from "./config";
+import { AxonPush } from "../src/index";
+import { CHANNEL_ID, requireEnv } from "./config";
 
 const AGENTS = ["planner", "coder", "reviewer"] as const;
 const TYPES = ["agent.start", "agent.message", "agent.error", "agent.end"] as const;
@@ -24,16 +24,7 @@ async function main() {
   if (!CHANNEL_ID) throw new Error("AXONPUSH_CHANNEL_ID required");
 
   const client = new AxonPush();
-  const realtime = (await client.connectRealtime({ environment: ENVIRONMENT })) as RealtimeClient;
-  await realtime.connect();
-
-  await realtime.subscribe({ channelId: CHANNEL_ID }, (event) => {
-    console.log(`[all] ${event.eventType} from ${event.agentId}`);
-  });
-
-  await realtime.subscribe({ channelId: CHANNEL_ID, eventType: "agent.error" }, (event) => {
-    console.log(`[errors] ${event.identifier}: ${JSON.stringify(event.payload)}`);
-  });
+  const trace = client.getOrCreateTrace();
 
   for (let i = 0; i < 12; i++) {
     const agentId = AGENTS[i % AGENTS.length]!;
@@ -43,12 +34,19 @@ async function main() {
       channelId: CHANNEL_ID,
       agentId,
       eventType,
+      traceId: trace.traceId,
       payload: eventType === "agent.error" ? { reason: "synthetic failure" } : { step: i },
     });
   }
 
-  await new Promise((r) => setTimeout(r, 1500));
-  await realtime.disconnect();
+  const listing = await client.events.list(CHANNEL_ID, { limit: 20 });
+  for (const event of listing?.data ?? []) {
+    console.log(`[all] ${event.eventType} from ${event.agentId}`);
+    if (event.eventType === "agent.error") {
+      console.log(`[errors] ${event.identifier}: ${JSON.stringify(event.payload)}`);
+    }
+  }
+
   client.close();
 }
 

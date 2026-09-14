@@ -1,12 +1,10 @@
 # @axonpush/sdk
 
-TypeScript SDK for [axonpush](https://axonpush.xyz) — real-time event
+TypeScript SDK for [axonpush](https://axonpush.xyz), observability and event
 infrastructure for AI agent systems. ESM-only, runs on Node 20+ and Bun.
 
 - **Publish** events over a typed REST client generated from the axonpush
   OpenAPI spec.
-- **Subscribe** in realtime over MQTT-over-WSS (AWS IoT Core), with
-  presigned credentials issued by the SDK.
 - **Trace** multi-agent workflows via `traceId` / `parentEventId`.
 - **Integrate** with LangChain, LangGraph, LlamaIndex, OpenAI Agents,
   Vercel AI SDK, Mastra, Google ADK, OpenTelemetry, Sentry, pino,
@@ -59,19 +57,30 @@ client.close();
 
 | Field | Env var | Default | Notes |
 |---|---|---|---|
-| `apiKey` | `AXONPUSH_API_KEY` | — | Required. |
-| `tenantId` | `AXONPUSH_TENANT_ID` | — | Org UUID; falls back to `AXONPUSH_ORG_ID`. |
+| `apiKey` | `AXONPUSH_API_KEY` | - | Required. An `ak_` API key or a `pt_` public ingest token. |
+| `tenantId` | `AXONPUSH_TENANT_ID` | - | Org UUID; falls back to `AXONPUSH_ORG_ID`. |
 | `orgId` | `AXONPUSH_ORG_ID` | mirrors `tenantId` | |
-| `appId` | `AXONPUSH_APP_ID` | — | Default app for resources that need one. |
+| `appId` | `AXONPUSH_APP_ID` | - | Default app for resources that need one. |
 | `baseUrl` | `AXONPUSH_BASE_URL` | `https://api.axonpush.xyz` | REST API root. |
-| `environment` | `AXONPUSH_ENVIRONMENT` | — | Logical env slug (`production`, `staging`). |
-| `iotEndpoint` | `AXONPUSH_IOT_ENDPOINT` | — | AWS IoT Core MQTT-over-WSS endpoint. |
-| `wsUrl` | `AXONPUSH_WS_URL` | mirrors `iotEndpoint` | Realtime override. |
+| `environment` | `AXONPUSH_ENVIRONMENT` | - | Logical env slug (`production`, `staging`). |
 | `timeout` | `AXONPUSH_TIMEOUT` | `30` | Per-request timeout. The option is milliseconds; the environment variable is seconds. |
 | `maxRetries` | `AXONPUSH_MAX_RETRIES` | `3` | Retries on `RetryableError`. |
 | `failOpen` | `AXONPUSH_FAIL_OPEN` | `true` | Swallow `APIConnectionError` and resolve `null`, so telemetry cannot take your app down. |
 
 Caller-supplied options always win when defined.
+
+### Authentication
+
+Two ingest credentials are supported, both passed via `apiKey` (or
+`AXONPUSH_API_KEY`):
+
+| Credential | Header | Prefix | Use |
+|---|---|---|---|
+| API key | `X-API-Key` | `ak_` | Server-side ingestion and management. Full resource access, scoped per key. |
+| Public ingest token | `X-Public-Token` | `pt_` | Browser and untrusted clients. Publish-only, safe to ship in a frontend. |
+
+The SDK routes `ak_` values to `X-API-Key` and `pt_` values to
+`X-Public-Token` by prefix.
 
 ## Local evaluation and CI gates
 
@@ -81,7 +90,7 @@ or executes your target code on axonpush infrastructure.
 
 It is a `bin` of this package, so `npx` resolves it without an install, or
 `npm install -g @axonpush/sdk` puts it on your `PATH`. The Python and .NET SDKs
-ship the same binary with the same flags and exit codes — see
+ship the same binary with the same flags and exit codes - see
 [the CLI reference](https://docs.axonpush.xyz/cli/).
 
 ```bash
@@ -134,32 +143,6 @@ const client = new AxonPush({
   failOpen: true,
 });
 ```
-
-## Realtime in 30 seconds
-
-```ts
-import { AxonPush, RealtimeClient } from "@axonpush/sdk";
-
-const client = new AxonPush();
-const realtime = (await client.connectRealtime({ environment: "production" })) as RealtimeClient;
-await realtime.connect();
-
-await realtime.subscribe({ channelId: "ch-uuid" }, (event) => {
-  console.log(event.identifier, event.payload);
-});
-
-await client.events.publish({
-  identifier: `tick-${Date.now()}`,
-  channelId: "ch-uuid",
-  eventType: "custom",
-  payload: { hello: "from realtime" },
-});
-
-await realtime.disconnect();
-```
-
-Credentials are short-lived; the SDK pre-emptively refreshes 60 s before
-expiry with backoff `[5, 15, 30, 60] s` if the broker is flaky.
 
 ## Integrations
 
@@ -227,7 +210,7 @@ try {
 
 The SDK already retries `RetryableError` with backoff
 `[250, 500, 1000, 2000, 4000] ms` (honouring `Retry-After`) up to
-`maxRetries` times — handle these in your code only when you need a
+`maxRetries` times - handle these in your code only when you need a
 custom policy.
 
 ## Tracing
@@ -355,15 +338,16 @@ If a framework integration (LangChain, Mastra, the Vercel AI middleware,
 do not also wrap that call with `genaiSpan` / `recordGenai*`. Pick one
 plane so the operation is not recorded twice.
 
-## Migration: 0.0.4 → 0.0.5
+## Migration to 1.0.0
 
 - **All IDs are `string` UUIDs.** `numeric` ids are gone from the public
   boundary; integrations still accept `number` for `channelId` with a
   one-time `console.warn` and migrate it for you.
-- **No more `connectWebSocket` / `WebSocketClient`.** Use
-  `connectRealtime()` and `RealtimeClient`.
-- **`channels.subscribe()` SSE shim is removed.** Subscribe via
-  realtime.
+- **Realtime is removed.** The backend no longer exposes MQTT, SSE,
+  WebSocket, or `/auth/iot-credentials`, so `connectRealtime()`,
+  `RealtimeClient`, the topic builders, the `iotEndpoint` / `wsUrl`
+  options, and the `mqtt` dependency are gone. Ingest over the REST
+  client, OTLP, or the Sentry DSN compat path instead.
 - **`events.list()` returns `EventListResponseDto`** (`{ data, meta }`),
   not a bare array. Read `.data` for the events.
 - **Models live in flat re-exports.** Import `App`, `Channel`, `Event`,
@@ -377,15 +361,15 @@ the rewrite.
 
 ## Examples
 
-Ten runnable examples covering quickstart, tracing, realtime, multi-
-agent fan-out, webhooks, error handling, and every framework integration
-live in [`examples/`](./examples). Each one is a single file you can run
-with `bun run examples/<name>.ts`.
+Runnable examples covering quickstart, tracing, multi-agent fan-out,
+webhooks, error handling, and every framework integration live in
+[`examples/`](./examples). Each one is a single file you can run with
+`bun run examples/<name>.ts`.
 
 ## Advanced topics
 
-For the full v0.0.5 contract — public surface, ID rules, transport
-chokepoint, exception envelope, generated layer ownership — see
+For how the SDK is generated from the shared contract, the transport
+chokepoint, the exception envelope, and generated-layer ownership, see
 [`SHARED-CONTRACT.md`](./SHARED-CONTRACT.md).
 
 ## License

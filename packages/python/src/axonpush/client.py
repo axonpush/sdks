@@ -268,22 +268,6 @@ class AxonPush:
         """Trace search with facets and spans. Lazy import."""
         return self._resource("traces_v2", "TracesV2")
 
-    def connect_realtime(self, **kwargs: Any) -> Any:
-        """Open a realtime (MQTT) connection.
-
-        Args:
-            **kwargs: Forwarded to
-                :class:`axonpush.realtime.mqtt.RealtimeClient`.
-
-        Returns:
-            A connected ``RealtimeClient`` instance.
-        """
-        from axonpush.realtime.mqtt import RealtimeClient
-
-        rt = RealtimeClient(self, **kwargs)
-        rt.connect()
-        return rt
-
 
 class AsyncAxonPush:
     """Asynchronous AxonPush client.
@@ -494,22 +478,6 @@ class AsyncAxonPush:
     def traces_v2(self) -> Any:
         """Trace search with facets and spans. Lazy import."""
         return self._resource("traces_v2", "AsyncTracesV2")
-
-    async def connect_realtime(self, **kwargs: Any) -> Any:
-        """Open an asynchronous realtime (MQTT) connection.
-
-        Args:
-            **kwargs: Forwarded to
-                :class:`axonpush.realtime.mqtt_async.AsyncRealtimeClient`.
-
-        Returns:
-            A connected ``AsyncRealtimeClient`` instance.
-        """
-        from axonpush.realtime.mqtt_async import AsyncRealtimeClient
-
-        rt = AsyncRealtimeClient(self, **kwargs)
-        await rt.connect()
-        return rt
 
 
 __all__ = ["AsyncAxonPush", "AxonPush"]

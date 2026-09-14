@@ -16,10 +16,6 @@ export interface AxonPushOptions {
   baseUrl?: string;
   /** Logical environment label (e.g. `production`, `staging`). */
   environment?: string;
-  /** AWS IoT Core MQTT-over-WSS endpoint, used by realtime. */
-  iotEndpoint?: string;
-  /** Override websocket URL; defaults to `iotEndpoint` when omitted. */
-  wsUrl?: string;
   /**
    * Request timeout in milliseconds. Default `30_000`.
    *
@@ -55,8 +51,6 @@ export interface ResolvedSettings {
   appId: string | undefined;
   baseUrl: string;
   environment: string | undefined;
-  iotEndpoint: string | undefined;
-  wsUrl: string | undefined;
   timeout: number;
   maxRetries: number;
   failOpen: boolean;
@@ -114,8 +108,6 @@ export function resolveSettings(options?: AxonPushOptions): ResolvedSettings {
     appId: opts.appId ?? envString("AXONPUSH_APP_ID"),
     baseUrl: opts.baseUrl ?? envString("AXONPUSH_BASE_URL") ?? DEFAULT_BASE_URL,
     environment: opts.environment ?? envString("AXONPUSH_ENVIRONMENT"),
-    iotEndpoint: opts.iotEndpoint ?? envString("AXONPUSH_IOT_ENDPOINT"),
-    wsUrl: opts.wsUrl ?? envString("AXONPUSH_WS_URL"),
     timeout: opts.timeout ?? (envInt("AXONPUSH_TIMEOUT") ?? DEFAULT_TIMEOUT_SECONDS) * 1000,
     maxRetries: opts.maxRetries ?? envInt("AXONPUSH_MAX_RETRIES") ?? DEFAULT_MAX_RETRIES,
     failOpen: opts.failOpen ?? envBool("AXONPUSH_FAIL_OPEN") ?? true,

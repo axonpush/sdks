@@ -1,8 +1,8 @@
 """06 — Async client.
 
 ``AsyncAxonPush`` is the asyncio mirror of ``AxonPush``. The resource
-methods are awaitable; everything else (resource layout, kwargs,
-``connect_realtime``) is identical.
+methods are awaitable; everything else (resource layout, kwargs) is
+identical.
 
 Run::
 

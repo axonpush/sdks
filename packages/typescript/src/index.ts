@@ -1,5 +1,5 @@
 /**
- * AxonPush — real-time event infrastructure for AI agent systems.
+ * AxonPush — observability and event infrastructure for AI agent systems.
  *
  * Top-level package. Public API is re-exported here; internal helpers
  * live under `./_internal` and are not part of the supported surface.
@@ -99,15 +99,6 @@ export type {
   WebhookEndpoint,
   WebhookEndpointCreateResponseDto,
 } from "./models.js";
-export type {
-  IotCredentials,
-  PublishData,
-  RealtimeOptions,
-  SubscribeFilters,
-  TopicParts,
-} from "./realtime/index.js";
-// Realtime (Stream C)
-export { RealtimeClient } from "./realtime/index.js";
 export { ApiKeysResource } from "./resources/api-keys.js";
 export { AppsResource } from "./resources/apps.js";
 export { ChannelsResource } from "./resources/channels.js";

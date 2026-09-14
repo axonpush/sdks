@@ -14,12 +14,10 @@ You need an axonpush API key and tenant ID. Get them from the [axonpush dashboar
 
 | # | Guide | Difficulty | What you'll learn |
 |---|-------|------------|-------------------|
-| 1 | [See what your agent is doing — in real time](01-realtime-agent-events.md) | Beginner | Publish and retrieve agent events |
+| 1 | [See what your agent is doing](01-realtime-agent-events.md) | Beginner | Publish and retrieve agent events |
 | 2 | [Add observability in 3 lines](02-framework-integrations.md) | Beginner | Drop-in integrations for LangChain, OpenAI, Claude, CrewAI |
-| 3 | [Build a live dashboard with SSE](03-live-dashboard-sse.md) | Intermediate | Stream events to a terminal or web UI |
 | 4 | [Trace a multi-step agent run](04-distributed-tracing.md) | Intermediate | Distributed tracing with auto-generated trace/span IDs |
 | 5 | [Get notified when your agent fails](05-error-webhooks.md) | Intermediate | Push alerts via webhooks |
-| 6 | [Agent-to-agent communication](06-agent-to-agent-websockets.md) | Advanced | Bidirectional real-time pub/sub with WebSockets |
 | 7 | [Production error handling](07-production-error-handling.md) | Advanced | Graceful failures, retries, and rate limits |
 
 Start with Guide 1 if you're new to axonpush. Jump to Guide 2 if you already use LangChain, OpenAI Agents, Claude, or CrewAI.

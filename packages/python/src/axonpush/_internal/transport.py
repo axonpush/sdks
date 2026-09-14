@@ -91,10 +91,20 @@ class _DetailedAsyncOp(Protocol):
     def asyncio_detailed(self, **kwargs: Any) -> Awaitable[Any]: ...
 
 
+def _auth_header_name(api_key: str) -> str:
+    """Route the credential to its header by prefix.
+
+    ``pt_`` public ingest tokens go on ``X-Public-Token``; everything else
+    (``ak_`` API keys) goes on ``X-API-Key``.
+    """
+    return "X-Public-Token" if api_key.startswith("pt_") else "X-API-Key"
+
+
 def _auth_headers(settings: Settings) -> dict[str, str]:
     headers: dict[str, str] = {}
     if settings.api_key is not None:
-        headers["X-API-Key"] = settings.api_key.get_secret_value()
+        key = settings.api_key.get_secret_value()
+        headers[_auth_header_name(key)] = key
     if settings.tenant_id is not None:
         headers["x-tenant-id"] = settings.tenant_id
     if settings.environment is not None:
@@ -161,11 +171,12 @@ def build_sync_client(settings: Settings) -> AuthenticatedClient:
             "response": [_raise_for_status],
         },
     )
+    api_key = settings.api_key.get_secret_value() if settings.api_key is not None else ""
     client = AuthenticatedClient(
         base_url=base_url,
-        token=settings.api_key.get_secret_value() if settings.api_key is not None else "",
+        token=api_key,
         prefix="",
-        auth_header_name="X-API-Key",
+        auth_header_name=_auth_header_name(api_key),
         raise_on_unexpected_status=False,
         timeout=_make_timeout(settings),
         headers=headers,
@@ -196,11 +207,12 @@ def build_async_client(settings: Settings) -> AuthenticatedClient:
             "response": [_async_raise_for_status],
         },
     )
+    api_key = settings.api_key.get_secret_value() if settings.api_key is not None else ""
     client = AuthenticatedClient(
         base_url=base_url,
-        token=settings.api_key.get_secret_value() if settings.api_key is not None else "",
+        token=api_key,
         prefix="",
-        auth_header_name="X-API-Key",
+        auth_header_name=_auth_header_name(api_key),
         raise_on_unexpected_status=False,
         timeout=_make_timeout(settings),
         headers=headers,

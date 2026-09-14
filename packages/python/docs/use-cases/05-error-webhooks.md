@@ -4,7 +4,7 @@
 
 ## The Problem
 
-Your agent runs on a schedule or serves users in production. You can't sit there watching an SSE stream all day. When something breaks — a tool call fails, an API times out, an agent loops — you need a push notification. A Slack message, a Discord alert, a PagerDuty trigger.
+Your agent runs on a schedule or serves users in production. You can't sit there watching a dashboard all day. When something breaks, a tool call fails, an API times out, an agent loops, you need a push notification. A Slack message, a Discord alert, a PagerDuty trigger.
 
 ## The Solution
 
@@ -15,11 +15,11 @@ pip install axonpush
 ```python
 from axonpush import AxonPush
 
-with AxonPush(api_key="ak_...", tenant_id="1") as client:
+with AxonPush(api_key="ak_...", tenant_id="<org-uuid>") as client:
     # Create a webhook that fires on agent errors
     endpoint = client.webhooks.create_endpoint(
         url="https://your-server.com/webhook",
-        channel_id=1,
+        channel_id="chan_a1b2c3",
         event_types=["agent.error"],
         secret="whsec_your_signing_secret",
         description="Slack alert on agent errors",
@@ -48,9 +48,9 @@ with AxonPush(api_key="ak_...", tenant_id="1") as client:
 
 ```python
 # List all webhooks on a channel
-endpoints = client.webhooks.list_endpoints(channel_id=1)
+endpoints = client.webhooks.list_endpoints(channel_id="chan_a1b2c3")
 for ep in endpoints:
-    print(f"{ep.id}: {ep.url} — active={ep.active}, types={ep.event_types}")
+    print(f"{ep.id}: {ep.url}, active={ep.active}, types={ep.event_types}")
 
 # Delete a webhook
 client.webhooks.delete_endpoint(endpoint_id=endpoint.id)
@@ -63,7 +63,7 @@ Pass a list to capture specific combinations:
 ```python
 endpoint = client.webhooks.create_endpoint(
     url="https://your-server.com/webhook",
-    channel_id=1,
+    channel_id="chan_a1b2c3",
     event_types=["agent.error", "agent.handoff", "agent.end"],
     description="Alert on errors, handoffs, and completions",
 )
@@ -99,10 +99,10 @@ The `DeliveryStatus` enum values are: `pending`, `success`, `failed`, `retrying`
 ### Async variant
 
 ```python
-async with AsyncAxonPush(api_key="ak_...", tenant_id="1") as client:
+async with AsyncAxonPush(api_key="ak_...", tenant_id="<org-uuid>") as client:
     endpoint = await client.webhooks.create_endpoint(
         url="https://your-server.com/webhook",
-        channel_id=1,
+        channel_id="chan_a1b2c3",
         event_types=["agent.error"],
     )
 
@@ -113,6 +113,5 @@ async with AsyncAxonPush(api_key="ak_...", tenant_id="1") as client:
 
 ## Next Steps
 
-- [Build agent-to-agent communication with WebSockets](06-agent-to-agent-websockets.md)
 - [Handle errors and rate limits in your code](07-production-error-handling.md)
-- [Stream events live with SSE](03-live-dashboard-sse.md)
+- [Trace a multi-step agent run end-to-end](04-distributed-tracing.md)

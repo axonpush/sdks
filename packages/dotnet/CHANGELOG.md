@@ -7,6 +7,9 @@ versioning is [SemVer](https://semver.org/spec/v2.0.0.html).
 ## [Unreleased]
 
 ### Added
+- **`pt_` public ingest tokens.** When `ApiKey` starts with `pt_`, the client
+  sends it on `X-Public-Token` instead of `X-API-Key`, so untrusted or
+  browser-side callers can publish without a full API key.
 - **OTel-native telemetry (`AxonPush.Otel.Telemetry`).**
   `AxonPushTelemetry.ConfigureTelemetry(...)` builds a self-owned
   `TracerProvider` that exports GenAI spans as real OTLP over HTTP to

@@ -18,7 +18,7 @@ the routes.
 flowchart LR
     S["axonpush/server<br/><i>private</i>"] -- pull request --> C["contract/"]
     C -- codegen --> G["packages/*/_internal/api<br/><i>generated</i>"]
-    G --> H["hand-written helpers<br/>resources, realtime,<br/>integrations, tracing"]
+    G --> H["hand-written helpers<br/>resources,<br/>integrations, tracing"]
     H --> N["@axonpush/sdk"]
     H --> P["axonpush"]
     H --> D["AxonPush.*"]
@@ -30,8 +30,8 @@ is likewise off limits; change the server, let the contract follow, and let
 codegen do the rest.
 
 What you *do* write by hand is the layer on top: the resource classes, the
-realtime client, the framework integrations, the error tree. Those are what
-make the SDK pleasant rather than merely correct.
+framework integrations, the error tree. Those are what make the SDK pleasant
+rather than merely correct.
 
 ## Getting started
 
@@ -62,8 +62,9 @@ nothing compared them. Now:
   their exit codes and the keys of the JSON report. CI configuration is written
   against those, so they are a contract.
 - **`contract/fixtures/`** pins the parts of the contract OpenAPI cannot carry:
-  the MQTT topic grammar, the webhook HMAC scheme, header names, and the
-  `AXONPUSH_*` surface with units. Each SDK replays them as conformance tests.
+  the webhook HMAC scheme, header names (including `X-API-Key` for `ak_` keys
+  and `X-Public-Token` for `pt_` public ingest tokens), and the `AXONPUSH_*`
+  surface with units. Each SDK replays them as conformance tests.
 - **`codegen-clean`** fails CI if a checked-in client no longer matches the
   contract.
 

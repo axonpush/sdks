@@ -54,6 +54,15 @@ That single `AddAxonPushTelemetry` call:
 
 Call `AddAxonPushTelemetry(..., enableSensitiveData: true)` to also forward prompts and completions as span events. The default is off so PII does not leave the process without an explicit opt-in.
 
+## Authentication
+
+`ApiKey` accepts two ingest credentials. The client routes them to the right header by prefix:
+
+| Credential | Header | Prefix | Use |
+| --- | --- | --- | --- |
+| API key | `X-API-Key` | `ak_` | Server-side ingestion and management. Full resource access, scoped per key. |
+| Public ingest token | `X-Public-Token` | `pt_` | Browser and untrusted clients. Publish-only, safe to ship in a frontend. |
+
 ## Standalone OpenTelemetry use
 
 ```csharp

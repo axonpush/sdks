@@ -1,6 +1,5 @@
 import { type GeneratedOp, Transport } from "./_internal/transport.js";
 import { type AxonPushOptions, type ResolvedSettings, resolveSettings } from "./config.js";
-import type { RealtimeClient, RealtimeOptions } from "./realtime/index.js";
 import { redactTelemetry as applyTelemetryRedaction } from "./redaction.js";
 import { AlertsResource } from "./resources/alerts.js";
 import { AnalyticsResource } from "./resources/analytics.js";
@@ -15,7 +14,7 @@ import { WebhooksResource } from "./resources/webhooks.js";
 import { getOrCreateTrace, type TraceContext } from "./tracing.js";
 
 /**
- * High-level facade over the AxonPush REST + realtime APIs.
+ * High-level facade over the AxonPush REST API.
  *
  * Resource accessors (`events`, `channels`, ...) are constructed once
  * per `AxonPush` instance and exposed as plain properties so callers can
@@ -79,19 +78,6 @@ export class AxonPush {
   }
 
   /**
-   * Open a realtime (MQTT-over-WSS) connection. The realtime module is
-   * imported lazily so callers that never use realtime do not pay for the
-   * `mqtt` peer dependency at module-load time.
-   *
-   * @param opts Realtime client options (forwarded as the second arg).
-   * @returns A `RealtimeClient` instance ready to subscribe / publish.
-   */
-  async connectRealtime(opts?: RealtimeOptions): Promise<RealtimeClient> {
-    const { RealtimeClient: Ctor } = await import("./realtime/index.js");
-    return new Ctor(this, opts);
-  }
-
-  /**
    * Run a generated SDK operation through the transport chokepoint.
    *
    * @typeParam T Success-response type returned by `op`.
@@ -116,9 +102,8 @@ export class AxonPush {
   }
 
   /**
-   * Idempotent teardown hook. Currently a no-op; reserved for releasing
-   * realtime connections, flushing publishers, etc. once those are owned by
-   * the facade.
+   * Idempotent teardown hook. Currently a no-op; reserved for flushing
+   * publishers, etc. once those are owned by the facade.
    */
   close(): void {
     /* noop */

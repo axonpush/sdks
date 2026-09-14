@@ -67,7 +67,6 @@ def _normalize(name: str) -> str:
 
 IMPORT_NAME_TO_DIST = {
     "dateutil": "python-dateutil",
-    "paho": "paho-mqtt",
     "pydantic_settings": "pydantic-settings",
     "yaml": "pyyaml",
 }

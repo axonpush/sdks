@@ -15,8 +15,8 @@ export interface ChannelUpdateFields {
 }
 
 /**
- * Manage channels — the `appId`-scoped fan-out unit that events,
- * webhooks, and realtime subscriptions hang off.
+ * Manage channels, the `appId`-scoped fan-out unit that events and
+ * webhooks hang off.
  */
 export class ChannelsResource {
   constructor(private readonly client: ResourceClient) {}
