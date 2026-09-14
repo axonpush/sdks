@@ -4,7 +4,7 @@ All notable changes to the axonpush Python SDK are documented here. The
 format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/);
 versioning is [SemVer](https://semver.org/spec/v2.0.0.html).
 
-## [1.0.0]
+## [0.0.17]
 
 ### Removed
 - **BREAKING:** Removed the realtime feature. The backend no longer exposes

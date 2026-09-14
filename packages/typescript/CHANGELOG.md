@@ -1,6 +1,6 @@
 # Changelog
 
-## [1.0.0]
+## [0.0.10]
 
 ### Removed
 - **BREAKING:** Removed the realtime feature. The backend no longer exposes
