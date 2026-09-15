@@ -25,25 +25,28 @@ from axonpush._config import Settings
 # from _exports_b.txt
 from axonpush.models import (
     App,
-    ApiKey,
     Channel,
-    CreateEventDto,
-    DeliveryStatus,
     Environment,
     Event,
+    EventBody,
     EventDetails,
     EventType,
     Organization,
+    TraceSummary,
+    UserOrg,
     WebhookDelivery,
     WebhookEndpoint,
-    WebhookEndpointCreateResponseDto,
 )
-from axonpush.resources.api_keys import ApiKeys, AsyncApiKeys
+from axonpush.resources.alerts import Alerts, AsyncAlerts
+from axonpush.resources.analytics import Analytics, AsyncAnalytics
 from axonpush.resources.apps import Apps, AsyncApps
+from axonpush.resources.capabilities import AsyncCapabilities, Capabilities
 from axonpush.resources.channels import AsyncChannels, Channels
 from axonpush.resources.environments import AsyncEnvironments, Environments
 from axonpush.resources.events import AsyncEvents, Events
+from axonpush.resources.moderation import AsyncModeration, Moderation
 from axonpush.resources.organizations import AsyncOrganizations, Organizations
+from axonpush.resources.traces import AsyncTraces, Traces
 from axonpush.resources.traces_v2 import AsyncTracesV2, TracesV2
 from axonpush.resources.webhooks import AsyncWebhooks, Webhooks
 
@@ -67,33 +70,38 @@ except ImportError:
 
 __all__ = [
     "APIConnectionError",
-    "ApiKey",
-    "ApiKeys",
+    "Alerts",
+    "Analytics",
     "App",
     "Apps",
-    "AsyncApiKeys",
+    "AsyncAlerts",
+    "AsyncAnalytics",
     "AsyncApps",
     "AsyncAxonPush",
+    "AsyncCapabilities",
     "AsyncChannels",
     "AsyncEnvironments",
     "AsyncEvents",
+    "AsyncModeration",
     "AsyncOrganizations",
+    "AsyncTraces",
     "AsyncTracesV2",
     "AsyncWebhooks",
     "AuthenticationError",
     "AxonPush",
     "AxonPushError",
+    "Capabilities",
     "Channel",
     "Channels",
-    "CreateEventDto",
-    "DeliveryStatus",
     "Environment",
     "Environments",
     "Event",
+    "EventBody",
     "EventDetails",
     "EventType",
     "Events",
     "ForbiddenError",
+    "Moderation",
     "NotFoundError",
     "Organization",
     "Organizations",
@@ -102,11 +110,13 @@ __all__ = [
     "ServerError",
     "Settings",
     "TraceContext",
+    "TraceSummary",
+    "Traces",
     "TracesV2",
+    "UserOrg",
     "ValidationError",
     "WebhookDelivery",
     "WebhookEndpoint",
-    "WebhookEndpointCreateResponseDto",
     "Webhooks",
     "__version__",
     "current_trace",

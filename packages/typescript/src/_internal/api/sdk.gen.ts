@@ -2,7 +2,7 @@
 
 import type { Client, Options as Options2, TDataShape } from './client/index.js';
 import { client } from './client.gen.js';
-import type { ActionContractControllerCreateData, ActionContractControllerCreateResponses, ActionContractControllerListData, ActionContractControllerListResponses, ActionControllerClaimData, ActionControllerClaimResponses, ActionControllerDetailData, ActionControllerDetailResponses, ActionControllerListData, ActionControllerListResponses, ActionControllerObserveData, ActionControllerObserveResponses, ActionControllerRegisterData, ActionControllerRegisterResponses, ActionControllerReviewData, ActionControllerReviewResponses, AlertControllerCreateData, AlertControllerCreateResponses, AlertControllerListData, AlertControllerListResponses, AlertControllerRemoveData, AlertControllerRemoveResponses, AlertControllerUpdateData, AlertControllerUpdateResponses, AnalyticsControllerBreakdownData, AnalyticsControllerBreakdownResponses, AnalyticsControllerCompareData, AnalyticsControllerCompareResponses, AnalyticsControllerTimeseriesData, AnalyticsControllerTimeseriesResponses, ApiKeyControllerCreateApiKeyData, ApiKeyControllerCreateApiKeyResponses, ApiKeyControllerListApiKeysData, ApiKeyControllerListApiKeysResponses, ApiKeyControllerRevokeApiKeyData, ApiKeyControllerRevokeApiKeyResponses, AppsControllerCreateAppData, AppsControllerCreateAppResponses, AppsControllerDeleteAppData, AppsControllerDeleteAppResponses, AppsControllerEditAppData, AppsControllerEditAppResponses, AppsControllerGetAllAppsData, AppsControllerGetAllAppsResponses, AppsControllerGetAppData, AppsControllerGetAppResponses, AssessmentControllerCreateData, AssessmentControllerCreateResponses, AssessmentControllerListData, AssessmentControllerListResponses, AssessmentControllerRemoveByQueryData, AssessmentControllerRemoveByQueryResponses, AssessmentControllerRemoveData, AssessmentControllerRemoveResponses, CapabilitiesControllerGetCapabilitiesData, CapabilitiesControllerGetCapabilitiesResponses, ChannelControllerCreateChannelData, ChannelControllerCreateChannelResponses, ChannelControllerDeleteChannelData, ChannelControllerDeleteChannelResponses, ChannelControllerGetChannelData, ChannelControllerGetChannelResponses, ChannelControllerListChannelsData, ChannelControllerListChannelsResponses, ChannelControllerUpdateChannelData, ChannelControllerUpdateChannelResponses, DatasetControllerCreateData, DatasetControllerCreateResponses, DatasetControllerCreateRevisionData, DatasetControllerCreateRevisionResponses, DatasetControllerExportRevisionData, DatasetControllerExportRevisionResponses, DatasetControllerFromTracesData, DatasetControllerFromTracesResponses, DatasetControllerGetData, DatasetControllerGetResponses, DatasetControllerImportRevisionData, DatasetControllerImportRevisionResponses, DatasetControllerItemsData, DatasetControllerItemsResponses, DatasetControllerListData, DatasetControllerListResponses, DatasetControllerRemoveData, DatasetControllerRemoveResponses, DatasetControllerReviewData, DatasetControllerReviewResponses, DatasetControllerRevisionsData, DatasetControllerRevisionsResponses, EnvironmentControllerCreateData, EnvironmentControllerCreateResponses, EnvironmentControllerListData, EnvironmentControllerListResponses, EnvironmentControllerPromoteData, EnvironmentControllerPromoteResponses, EnvironmentControllerRemoveData, EnvironmentControllerRemoveResponses, EnvironmentControllerUpdateData, EnvironmentControllerUpdateResponses, EvaluationTargetControllerCreateData, EvaluationTargetControllerCreateResponses, EvaluationTargetControllerGetData, EvaluationTargetControllerGetResponses, EvaluationTargetControllerListData, EvaluationTargetControllerListResponses, EvaluationTargetControllerRemoveData, EvaluationTargetControllerRemoveResponses, EvaluationTargetControllerUpdateData, EvaluationTargetControllerUpdateResponses, EvaluatorControllerCreateData, EvaluatorControllerCreateResponses, EvaluatorControllerCreateVersionData, EvaluatorControllerCreateVersionResponses, EvaluatorControllerGetData, EvaluatorControllerGetResponses, EvaluatorControllerListData, EvaluatorControllerListResponses, EvaluatorControllerRemoveData, EvaluatorControllerRemoveResponses, EvaluatorControllerVersionData, EvaluatorControllerVersionResponses, EvaluatorControllerVersionsData, EvaluatorControllerVersionsResponses, EventControllerCreateEventBatchData, EventControllerCreateEventBatchResponses, EventControllerCreateEventData, EventControllerCreateEventResponses, EventControllerListEventsData, EventControllerListEventsResponses, EventsSearchControllerSearchData, EventsSearchControllerSearchResponses, ExperimentControllerCancelData, ExperimentControllerCancelResponses, ExperimentControllerCompareCasesData, ExperimentControllerCompareCasesResponses, ExperimentControllerCompareData, ExperimentControllerCompareResponses, ExperimentControllerCreateData, ExperimentControllerCreateResponses, ExperimentControllerGateData, ExperimentControllerGateResponses, ExperimentControllerGetData, ExperimentControllerGetResponses, ExperimentControllerListData, ExperimentControllerListResponses, ExperimentControllerRemoveData, ExperimentControllerRemoveResponses, ExperimentControllerResultsData, ExperimentControllerResultsResponses, ExperimentControllerRunData, ExperimentControllerRunResponses, ExperimentControllerSubmitResultsData, ExperimentControllerSubmitResultsResponses, ExportControllerCreateData, ExportControllerCreateResponses, ExportControllerGetData, ExportControllerGetResponses, ExportControllerListData, ExportControllerListResponses, ExportControllerRemoveData, ExportControllerRemoveResponses, ExportControllerUpdateData, ExportControllerUpdateResponses, GatePolicyControllerGetData, GatePolicyControllerGetResponses, GatePolicyControllerListData, GatePolicyControllerListResponses, GatePolicyControllerRemoveData, GatePolicyControllerRemoveResponses, GatePolicyControllerSaveData, GatePolicyControllerSaveResponses, GateRunControllerListData, GateRunControllerListResponses, HealthControllerCheckData, HealthControllerCheckResponses, IntelligenceControllerGetData, IntelligenceControllerGetResponses, IntelligenceControllerListData, IntelligenceControllerListResponses, IntelligenceControllerRunData, IntelligenceControllerRunResponses, IotCredentialsControllerGetCredentialsData, IotCredentialsControllerGetCredentialsResponses, IotTokenControllerCreateData, IotTokenControllerCreateResponses, IotTokenControllerListData, IotTokenControllerListResponses, IotTokenControllerRevokeData, IotTokenControllerRevokeResponses, IssueControllerAddToDatasetData, IssueControllerAddToDatasetResponses, IssueControllerGetData, IssueControllerGetResponses, IssueControllerListData, IssueControllerListResponses, IssueControllerMergeData, IssueControllerMergeResponses, IssueControllerOccurrencesData, IssueControllerOccurrencesResponses, IssueControllerUpdateData, IssueControllerUpdateResponses, OnlineEvaluationControllerBackfillData, OnlineEvaluationControllerBackfillResponses, OnlineEvaluationControllerCreateData, OnlineEvaluationControllerCreateResponses, OnlineEvaluationControllerGetData, OnlineEvaluationControllerGetResponses, OnlineEvaluationControllerListData, OnlineEvaluationControllerListResponses, OnlineEvaluationControllerRemoveData, OnlineEvaluationControllerRemoveResponses, OnlineEvaluationControllerRunsData, OnlineEvaluationControllerRunsResponses, OnlineEvaluationControllerUpdateData, OnlineEvaluationControllerUpdateResponses, OrganizationControllerCreateInvitationData, OrganizationControllerCreateInvitationResponses, OrganizationControllerCreateOrganizationData, OrganizationControllerCreateOrganizationResponses, OrganizationControllerDeleteInvitationData, OrganizationControllerDeleteInvitationResponses, OrganizationControllerDeleteOrganizationData, OrganizationControllerDeleteOrganizationResponses, OrganizationControllerEditOrganizationData, OrganizationControllerEditOrganizationResponses, OrganizationControllerGetAllOrganizationsData, OrganizationControllerGetAllOrganizationsResponses, OrganizationControllerGetOrganizationData, OrganizationControllerGetOrganizationResponses, OrganizationControllerGetTelemetryPolicyData, OrganizationControllerGetTelemetryPolicyResponses, OrganizationControllerRemoveMemberData, OrganizationControllerRemoveMemberResponses, OrganizationControllerTransferOwnershipData, OrganizationControllerTransferOwnershipResponses, OrganizationControllerUpdateTelemetryPolicyData, OrganizationControllerUpdateTelemetryPolicyResponses, OtlpControllerIngestLogsData, OtlpControllerIngestLogsResponses, OtlpControllerIngestTracesData, OtlpControllerIngestTracesResponses, PromptControllerCompareData, PromptControllerCompareResponses, PromptControllerCreateData, PromptControllerCreateResponses, PromptControllerCreateVersionData, PromptControllerCreateVersionResponses, PromptControllerDeploymentsData, PromptControllerDeploymentsResponses, PromptControllerGetData, PromptControllerGetResponses, PromptControllerListData, PromptControllerListResponses, PromptControllerPromoteData, PromptControllerPromoteResponses, PromptControllerRemoveData, PromptControllerRemoveResponses, PromptControllerRollbackData, PromptControllerRollbackResponses, PromptControllerUpdateData, PromptControllerUpdateResponses, PromptControllerVersionData, PromptControllerVersionResponses, PromptControllerVersionsData, PromptControllerVersionsResponses, PublicIngestTokenControllerCreateData, PublicIngestTokenControllerCreateResponses, PublicIngestTokenControllerListData, PublicIngestTokenControllerListResponses, PublicIngestTokenControllerRevokeData, PublicIngestTokenControllerRevokeResponses, SentryControllerIngestEnvelopeData, SentryControllerIngestEnvelopeResponses, SentryControllerIngestMinidumpData, SentryControllerIngestMinidumpResponses, SentryControllerIngestSecurityData, SentryControllerIngestSecurityResponses, SentryControllerIngestStoreData, SentryControllerIngestStoreResponses, TraceIntelligenceControllerAddToDatasetData, TraceIntelligenceControllerAddToDatasetResponses, TraceIntelligenceControllerCoverageData, TraceIntelligenceControllerCoverageResponses, TraceIntelligenceControllerCreateBackfillData, TraceIntelligenceControllerCreateBackfillResponses, TraceIntelligenceControllerFlowData, TraceIntelligenceControllerFlowResponses, TraceIntelligenceControllerGetBackfillData, TraceIntelligenceControllerGetBackfillResponses, TraceIntelligenceControllerGetClusterData, TraceIntelligenceControllerGetClusterResponses, TraceIntelligenceControllerGetSettingsData, TraceIntelligenceControllerGetSettingsResponses, TraceIntelligenceControllerGetSignalsData, TraceIntelligenceControllerGetSignalsResponses, TraceIntelligenceControllerListBackfillsData, TraceIntelligenceControllerListBackfillsResponses, TraceIntelligenceControllerListClustersData, TraceIntelligenceControllerListClustersResponses, TraceIntelligenceControllerTestProviderData, TraceIntelligenceControllerTestProviderResponses, TraceIntelligenceControllerUpdateSettingsData, TraceIntelligenceControllerUpdateSettingsResponses, TraceV2ControllerAttributeKeysData, TraceV2ControllerAttributeKeysResponses, TraceV2ControllerDetailData, TraceV2ControllerDetailResponses, TraceV2ControllerEventsData, TraceV2ControllerEventsResponses, TraceV2ControllerFacetsData, TraceV2ControllerFacetsResponses, TraceV2ControllerListData, TraceV2ControllerListResponses, TraceV2ControllerSpansData, TraceV2ControllerSpansResponses, TraceV2ControllerStatsData, TraceV2ControllerStatsResponses, WebhookControllerCreateEndpointData, WebhookControllerCreateEndpointResponses, WebhookControllerDeleteEndpointData, WebhookControllerDeleteEndpointResponses, WebhookControllerGetDeliveriesData, WebhookControllerGetDeliveriesResponses, WebhookControllerIngestWebhookData, WebhookControllerIngestWebhookResponses, WebhookControllerListEndpointsData, WebhookControllerListEndpointsResponses } from './types.gen.js';
+import type { AccessRequestCreateData, AccessRequestCreateErrors, AccessRequestCreateResponses, AdminAbuseFlagsListData, AdminAbuseFlagsListErrors, AdminAbuseFlagsListResponses, AdminAbuseFlagsReviewData, AdminAbuseFlagsReviewErrors, AdminAbuseFlagsReviewResponses, AdminAccessRequestsListData, AdminAccessRequestsListErrors, AdminAccessRequestsListResponses, AdminAccessRequestsSetStatusData, AdminAccessRequestsSetStatusErrors, AdminAccessRequestsSetStatusResponses, AdminBillingEventsListData, AdminBillingEventsListErrors, AdminBillingEventsListResponses, AdminFeedbackListData, AdminFeedbackListErrors, AdminFeedbackListResponses, AdminFeedbackSetStatusData, AdminFeedbackSetStatusErrors, AdminFeedbackSetStatusResponses, AdminOrgsGetData, AdminOrgsGetErrors, AdminOrgsGetResponses, AdminOrgsSearchData, AdminOrgsSearchErrors, AdminOrgsSearchResponses, AdminOrgsSetLimitsData, AdminOrgsSetLimitsErrors, AdminOrgsSetLimitsResponses, AdminOrgsSetPlanData, AdminOrgsSetPlanErrors, AdminOrgsSetPlanResponses, AdminOrgsSetStatusData, AdminOrgsSetStatusErrors, AdminOrgsSetStatusResponses, AdminOrgsSetTrialData, AdminOrgsSetTrialErrors, AdminOrgsSetTrialResponses, AdminOverviewData, AdminOverviewErrors, AdminOverviewResponses, AdminUsersDisableData, AdminUsersDisableErrors, AdminUsersDisableResponses, AdminUsersEnableData, AdminUsersEnableErrors, AdminUsersEnableResponses, AdminUsersSearchData, AdminUsersSearchErrors, AdminUsersSearchResponses, AlertsCreateData, AlertsCreateErrors, AlertsCreateResponses, AlertsDeleteData, AlertsDeleteErrors, AlertsDeleteResponses, AlertsListData, AlertsListErrors, AlertsListResponses, AlertsUpdateData, AlertsUpdateErrors, AlertsUpdateResponses, AnalyticsBreakdownData, AnalyticsBreakdownErrors, AnalyticsBreakdownResponses, AnalyticsTimeseriesData, AnalyticsTimeseriesErrors, AnalyticsTimeseriesResponses, AppsCreateData, AppsCreateErrors, AppsCreateResponses, AppsDeleteData, AppsDeleteErrors, AppsDeleteResponses, AppsGetData, AppsGetErrors, AppsGetResponses, AppsListData, AppsListErrors, AppsListResponses, AppsUpdateData, AppsUpdateErrors, AppsUpdateResponses, AuditListData, AuditListErrors, AuditListResponses, BillingCheckoutData, BillingCheckoutErrors, BillingCheckoutResponses, BillingPlansData, BillingPlansErrors, BillingPlansResponses, BillingPortalData, BillingPortalErrors, BillingPortalResponses, BillingUsageData, BillingUsageErrors, BillingUsageResponses, BillingWebhookData, BillingWebhookErrors, BillingWebhookResponses, CapabilitiesGetData, CapabilitiesGetErrors, CapabilitiesGetResponses, ChannelsCreateData, ChannelsCreateErrors, ChannelsCreateResponses, ChannelsDeleteData, ChannelsDeleteErrors, ChannelsDeleteResponses, ChannelsGetData, ChannelsGetErrors, ChannelsGetResponses, ChannelsListData, ChannelsListErrors, ChannelsListResponses, ChannelsUpdateData, ChannelsUpdateErrors, ChannelsUpdateResponses, CreateEventData, CreateEventErrors, CreateEventResponses, EnvironmentsCreateData, EnvironmentsCreateErrors, EnvironmentsCreateResponses, EnvironmentsDeleteData, EnvironmentsDeleteErrors, EnvironmentsDeleteResponses, EnvironmentsListData, EnvironmentsListErrors, EnvironmentsListResponses, EnvironmentsPromoteData, EnvironmentsPromoteErrors, EnvironmentsPromoteResponses, EnvironmentsUpdateData, EnvironmentsUpdateErrors, EnvironmentsUpdateResponses, EventsSearchData, EventsSearchErrors, EventsSearchResponses, ExportCreateData, ExportCreateErrors, ExportCreateResponses, ExportDeleteData, ExportDeleteErrors, ExportDeleteResponses, ExportGetData, ExportGetErrors, ExportGetResponses, ExportListData, ExportListErrors, ExportListResponses, ExportUpdateData, ExportUpdateErrors, ExportUpdateResponses, FeatureFlagsMeData, FeatureFlagsMeErrors, FeatureFlagsMeResponses, FeedbackCreateData, FeedbackCreateErrors, FeedbackCreateResponses, GetHealthzData, GetHealthzErrors, GetHealthzResponses, LicenseGetData, LicenseGetErrors, LicenseGetResponses, ModerationRulesCreateData, ModerationRulesCreateErrors, ModerationRulesCreateResponses, ModerationRulesDeleteData, ModerationRulesDeleteErrors, ModerationRulesDeleteResponses, ModerationRulesListData, ModerationRulesListErrors, ModerationRulesListResponses, ModerationViolationsListData, ModerationViolationsListErrors, ModerationViolationsListResponses, OrganizationDeleteData, OrganizationDeleteErrors, OrganizationDeleteResponses, OrganizationGetData, OrganizationGetErrors, OrganizationGetResponses, OrganizationInvitationsCancelData, OrganizationInvitationsCancelErrors, OrganizationInvitationsCancelResponses, OrganizationInvitationsCreateData, OrganizationInvitationsCreateErrors, OrganizationInvitationsCreateResponses, OrganizationInvitationsListData, OrganizationInvitationsListErrors, OrganizationInvitationsListResponses, OrganizationMembersListData, OrganizationMembersListErrors, OrganizationMembersListResponses, OrganizationMembersRemoveData, OrganizationMembersRemoveErrors, OrganizationMembersRemoveResponses, OrganizationMembersUpdateRoleData, OrganizationMembersUpdateRoleErrors, OrganizationMembersUpdateRoleResponses, OrganizationTelemetryPolicyGetData, OrganizationTelemetryPolicyGetErrors, OrganizationTelemetryPolicyGetResponses, OrganizationTelemetryPolicyUpdateData, OrganizationTelemetryPolicyUpdateErrors, OrganizationTelemetryPolicyUpdateResponses, OrganizationTransferOwnershipData, OrganizationTransferOwnershipErrors, OrganizationTransferOwnershipResponses, OrganizationUpdateData, OrganizationUpdateErrors, OrganizationUpdateResponses, TokensCreateData, TokensCreateErrors, TokensCreateResponses, TokensListData, TokensListErrors, TokensListResponses, TokensRevokeData, TokensRevokeErrors, TokensRevokeResponses, TracesGetData, TracesGetErrors, TracesGetResponses, TracesListData, TracesListErrors, TracesListResponses, UserMeData, UserMeErrors, UserMeOrganizationsData, UserMeOrganizationsErrors, UserMeOrganizationsResponses, UserMeResponses, UserMeSetActiveOrgData, UserMeSetActiveOrgErrors, UserMeSetActiveOrgResponses, UserMeUpdateData, UserMeUpdateErrors, UserMeUpdateResponses, WebhooksCreateEndpointData, WebhooksCreateEndpointErrors, WebhooksCreateEndpointResponses, WebhooksDeleteEndpointData, WebhooksDeleteEndpointErrors, WebhooksDeleteEndpointResponses, WebhooksListDeliveriesData, WebhooksListDeliveriesErrors, WebhooksListDeliveriesResponses, WebhooksListEndpointsData, WebhooksListEndpointsErrors, WebhooksListEndpointsResponses } from './types.gen.js';
 
 export type Options<TData extends TDataShape = TDataShape, ThrowOnError extends boolean = boolean, TResponse = unknown> = Options2<TData, ThrowOnError, TResponse> & {
     /**
@@ -18,10 +18,11 @@ export type Options<TData extends TDataShape = TDataShape, ThrowOnError extends 
     meta?: Record<string, unknown>;
 };
 
-export const apiKeyControllerListApiKeys = <ThrowOnError extends boolean = false>(options?: Options<ApiKeyControllerListApiKeysData, ThrowOnError>) => (options?.client ?? client).get<ApiKeyControllerListApiKeysResponses, unknown, ThrowOnError>({ url: '/api-keys', ...options });
-
-export const apiKeyControllerCreateApiKey = <ThrowOnError extends boolean = false>(options: Options<ApiKeyControllerCreateApiKeyData, ThrowOnError>) => (options.client ?? client).post<ApiKeyControllerCreateApiKeyResponses, unknown, ThrowOnError>({
-    url: '/api-keys',
+/**
+ * Submit an access request
+ */
+export const accessRequestCreate = <ThrowOnError extends boolean = false>(options: Options<AccessRequestCreateData, ThrowOnError>) => (options.client ?? client).post<AccessRequestCreateResponses, AccessRequestCreateErrors, ThrowOnError>({
+    url: '/access-requests',
     ...options,
     headers: {
         'Content-Type': 'application/json',
@@ -29,22 +30,152 @@ export const apiKeyControllerCreateApiKey = <ThrowOnError extends boolean = fals
     }
 });
 
-export const apiKeyControllerRevokeApiKey = <ThrowOnError extends boolean = false>(options: Options<ApiKeyControllerRevokeApiKeyData, ThrowOnError>) => (options.client ?? client).delete<ApiKeyControllerRevokeApiKeyResponses, unknown, ThrowOnError>({ url: '/api-keys/{id}', ...options });
+/**
+ * List abuse flags
+ */
+export const adminAbuseFlagsList = <ThrowOnError extends boolean = false>(options?: Options<AdminAbuseFlagsListData, ThrowOnError>) => (options?.client ?? client).get<AdminAbuseFlagsListResponses, AdminAbuseFlagsListErrors, ThrowOnError>({ url: '/admin/abuse-flags', ...options });
 
 /**
- * Sentry-compatible envelope ingest
+ * Dismiss an abuse flag
  */
-export const sentryControllerIngestEnvelope = <ThrowOnError extends boolean = false>(options: Options<SentryControllerIngestEnvelopeData, ThrowOnError>) => (options.client ?? client).post<SentryControllerIngestEnvelopeResponses, unknown, ThrowOnError>({ url: '/api/{projectId}/envelope', ...options });
+export const adminAbuseFlagsReview = <ThrowOnError extends boolean = false>(options: Options<AdminAbuseFlagsReviewData, ThrowOnError>) => (options.client ?? client).post<AdminAbuseFlagsReviewResponses, AdminAbuseFlagsReviewErrors, ThrowOnError>({ url: '/admin/abuse-flags/{flagId}/dismiss', ...options });
 
-export const sentryControllerIngestMinidump = <ThrowOnError extends boolean = false>(options: Options<SentryControllerIngestMinidumpData, ThrowOnError>) => (options.client ?? client).post<SentryControllerIngestMinidumpResponses, unknown, ThrowOnError>({ url: '/api/{projectId}/minidump', ...options });
+/**
+ * List access requests
+ */
+export const adminAccessRequestsList = <ThrowOnError extends boolean = false>(options?: Options<AdminAccessRequestsListData, ThrowOnError>) => (options?.client ?? client).get<AdminAccessRequestsListResponses, AdminAccessRequestsListErrors, ThrowOnError>({ url: '/admin/access-requests', ...options });
 
-export const sentryControllerIngestSecurity = <ThrowOnError extends boolean = false>(options: Options<SentryControllerIngestSecurityData, ThrowOnError>) => (options.client ?? client).post<SentryControllerIngestSecurityResponses, unknown, ThrowOnError>({ url: '/api/{projectId}/security', ...options });
+/**
+ * Set access request status
+ */
+export const adminAccessRequestsSetStatus = <ThrowOnError extends boolean = false>(options: Options<AdminAccessRequestsSetStatusData, ThrowOnError>) => (options.client ?? client).post<AdminAccessRequestsSetStatusResponses, AdminAccessRequestsSetStatusErrors, ThrowOnError>({
+    url: '/admin/access-requests/{requestId}/status',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
 
-export const sentryControllerIngestStore = <ThrowOnError extends boolean = false>(options: Options<SentryControllerIngestStoreData, ThrowOnError>) => (options.client ?? client).post<SentryControllerIngestStoreResponses, unknown, ThrowOnError>({ url: '/api/{projectId}/store', ...options });
+/**
+ * List billing events
+ */
+export const adminBillingEventsList = <ThrowOnError extends boolean = false>(options?: Options<AdminBillingEventsListData, ThrowOnError>) => (options?.client ?? client).get<AdminBillingEventsListResponses, AdminBillingEventsListErrors, ThrowOnError>({ url: '/admin/billing-events', ...options });
 
-export const appsControllerGetAllApps = <ThrowOnError extends boolean = false>(options?: Options<AppsControllerGetAllAppsData, ThrowOnError>) => (options?.client ?? client).get<AppsControllerGetAllAppsResponses, unknown, ThrowOnError>({ url: '/apps', ...options });
+/**
+ * List feedback
+ */
+export const adminFeedbackList = <ThrowOnError extends boolean = false>(options?: Options<AdminFeedbackListData, ThrowOnError>) => (options?.client ?? client).get<AdminFeedbackListResponses, AdminFeedbackListErrors, ThrowOnError>({ url: '/admin/feedback', ...options });
 
-export const appsControllerCreateApp = <ThrowOnError extends boolean = false>(options: Options<AppsControllerCreateAppData, ThrowOnError>) => (options.client ?? client).post<AppsControllerCreateAppResponses, unknown, ThrowOnError>({
+/**
+ * Set feedback status
+ */
+export const adminFeedbackSetStatus = <ThrowOnError extends boolean = false>(options: Options<AdminFeedbackSetStatusData, ThrowOnError>) => (options.client ?? client).post<AdminFeedbackSetStatusResponses, AdminFeedbackSetStatusErrors, ThrowOnError>({
+    url: '/admin/feedback/{feedbackId}/status',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * Search organizations
+ */
+export const adminOrgsSearch = <ThrowOnError extends boolean = false>(options?: Options<AdminOrgsSearchData, ThrowOnError>) => (options?.client ?? client).get<AdminOrgsSearchResponses, AdminOrgsSearchErrors, ThrowOnError>({ url: '/admin/orgs', ...options });
+
+/**
+ * Get an organization with members and invitations
+ */
+export const adminOrgsGet = <ThrowOnError extends boolean = false>(options: Options<AdminOrgsGetData, ThrowOnError>) => (options.client ?? client).get<AdminOrgsGetResponses, AdminOrgsGetErrors, ThrowOnError>({ url: '/admin/orgs/{orgId}', ...options });
+
+/**
+ * Set organization limit overrides
+ */
+export const adminOrgsSetLimits = <ThrowOnError extends boolean = false>(options: Options<AdminOrgsSetLimitsData, ThrowOnError>) => (options.client ?? client).post<AdminOrgsSetLimitsResponses, AdminOrgsSetLimitsErrors, ThrowOnError>({
+    url: '/admin/orgs/{orgId}/limits',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * Set organization plan
+ */
+export const adminOrgsSetPlan = <ThrowOnError extends boolean = false>(options: Options<AdminOrgsSetPlanData, ThrowOnError>) => (options.client ?? client).post<AdminOrgsSetPlanResponses, AdminOrgsSetPlanErrors, ThrowOnError>({
+    url: '/admin/orgs/{orgId}/plan',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * Set organization subscription status
+ */
+export const adminOrgsSetStatus = <ThrowOnError extends boolean = false>(options: Options<AdminOrgsSetStatusData, ThrowOnError>) => (options.client ?? client).post<AdminOrgsSetStatusResponses, AdminOrgsSetStatusErrors, ThrowOnError>({
+    url: '/admin/orgs/{orgId}/status',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * Set organization trial
+ */
+export const adminOrgsSetTrial = <ThrowOnError extends boolean = false>(options: Options<AdminOrgsSetTrialData, ThrowOnError>) => (options.client ?? client).post<AdminOrgsSetTrialResponses, AdminOrgsSetTrialErrors, ThrowOnError>({
+    url: '/admin/orgs/{orgId}/trial',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * Super-admin overview stats
+ */
+export const adminOverview = <ThrowOnError extends boolean = false>(options?: Options<AdminOverviewData, ThrowOnError>) => (options?.client ?? client).get<AdminOverviewResponses, AdminOverviewErrors, ThrowOnError>({ url: '/admin/overview', ...options });
+
+/**
+ * Search users
+ */
+export const adminUsersSearch = <ThrowOnError extends boolean = false>(options?: Options<AdminUsersSearchData, ThrowOnError>) => (options?.client ?? client).get<AdminUsersSearchResponses, AdminUsersSearchErrors, ThrowOnError>({ url: '/admin/users', ...options });
+
+/**
+ * Disable a user
+ */
+export const adminUsersDisable = <ThrowOnError extends boolean = false>(options: Options<AdminUsersDisableData, ThrowOnError>) => (options.client ?? client).post<AdminUsersDisableResponses, AdminUsersDisableErrors, ThrowOnError>({ url: '/admin/users/{userId}/disable', ...options });
+
+/**
+ * Enable a user
+ */
+export const adminUsersEnable = <ThrowOnError extends boolean = false>(options: Options<AdminUsersEnableData, ThrowOnError>) => (options.client ?? client).post<AdminUsersEnableResponses, AdminUsersEnableErrors, ThrowOnError>({ url: '/admin/users/{userId}/enable', ...options });
+
+/**
+ * Top-N breakdown by model or provider
+ */
+export const analyticsBreakdown = <ThrowOnError extends boolean = false>(options?: Options<AnalyticsBreakdownData, ThrowOnError>) => (options?.client ?? client).get<AnalyticsBreakdownResponses, AnalyticsBreakdownErrors, ThrowOnError>({ url: '/analytics/breakdown', ...options });
+
+/**
+ * Time-bucketed activity (counts, tokens, cost, latency)
+ */
+export const analyticsTimeseries = <ThrowOnError extends boolean = false>(options?: Options<AnalyticsTimeseriesData, ThrowOnError>) => (options?.client ?? client).get<AnalyticsTimeseriesResponses, AnalyticsTimeseriesErrors, ThrowOnError>({ url: '/analytics/timeseries', ...options });
+
+/**
+ * List apps
+ */
+export const appsList = <ThrowOnError extends boolean = false>(options?: Options<AppsListData, ThrowOnError>) => (options?.client ?? client).get<AppsListResponses, AppsListErrors, ThrowOnError>({ url: '/apps', ...options });
+
+/**
+ * Create an app
+ */
+export const appsCreate = <ThrowOnError extends boolean = false>(options: Options<AppsCreateData, ThrowOnError>) => (options.client ?? client).post<AppsCreateResponses, AppsCreateErrors, ThrowOnError>({
     url: '/apps',
     ...options,
     headers: {
@@ -53,12 +184,21 @@ export const appsControllerCreateApp = <ThrowOnError extends boolean = false>(op
     }
 });
 
-export const appsControllerDeleteApp = <ThrowOnError extends boolean = false>(options: Options<AppsControllerDeleteAppData, ThrowOnError>) => (options.client ?? client).delete<AppsControllerDeleteAppResponses, unknown, ThrowOnError>({ url: '/apps/{id}', ...options });
+/**
+ * Delete an app
+ */
+export const appsDelete = <ThrowOnError extends boolean = false>(options: Options<AppsDeleteData, ThrowOnError>) => (options.client ?? client).delete<AppsDeleteResponses, AppsDeleteErrors, ThrowOnError>({ url: '/apps/{appId}', ...options });
 
-export const appsControllerGetApp = <ThrowOnError extends boolean = false>(options: Options<AppsControllerGetAppData, ThrowOnError>) => (options.client ?? client).get<AppsControllerGetAppResponses, unknown, ThrowOnError>({ url: '/apps/{id}', ...options });
+/**
+ * Get an app
+ */
+export const appsGet = <ThrowOnError extends boolean = false>(options: Options<AppsGetData, ThrowOnError>) => (options.client ?? client).get<AppsGetResponses, AppsGetErrors, ThrowOnError>({ url: '/apps/{appId}', ...options });
 
-export const appsControllerEditApp = <ThrowOnError extends boolean = false>(options: Options<AppsControllerEditAppData, ThrowOnError>) => (options.client ?? client).patch<AppsControllerEditAppResponses, unknown, ThrowOnError>({
-    url: '/apps/{id}',
+/**
+ * Update an app
+ */
+export const appsUpdate = <ThrowOnError extends boolean = false>(options: Options<AppsUpdateData, ThrowOnError>) => (options.client ?? client).patch<AppsUpdateResponses, AppsUpdateErrors, ThrowOnError>({
+    url: '/apps/{appId}',
     ...options,
     headers: {
         'Content-Type': 'application/json',
@@ -66,12 +206,16 @@ export const appsControllerEditApp = <ThrowOnError extends boolean = false>(opti
     }
 });
 
-export const iotCredentialsControllerGetCredentials = <ThrowOnError extends boolean = false>(options?: Options<IotCredentialsControllerGetCredentialsData, ThrowOnError>) => (options?.client ?? client).get<IotCredentialsControllerGetCredentialsResponses, unknown, ThrowOnError>({ url: '/auth/iot-credentials', ...options });
+/**
+ * List channels for an app
+ */
+export const channelsList = <ThrowOnError extends boolean = false>(options: Options<ChannelsListData, ThrowOnError>) => (options.client ?? client).get<ChannelsListResponses, ChannelsListErrors, ThrowOnError>({ url: '/apps/{appId}/channels', ...options });
 
-export const iotTokenControllerList = <ThrowOnError extends boolean = false>(options?: Options<IotTokenControllerListData, ThrowOnError>) => (options?.client ?? client).get<IotTokenControllerListResponses, unknown, ThrowOnError>({ url: '/auth/iot-tokens', ...options });
-
-export const iotTokenControllerCreate = <ThrowOnError extends boolean = false>(options: Options<IotTokenControllerCreateData, ThrowOnError>) => (options.client ?? client).post<IotTokenControllerCreateResponses, unknown, ThrowOnError>({
-    url: '/auth/iot-tokens',
+/**
+ * Create a channel
+ */
+export const channelsCreate = <ThrowOnError extends boolean = false>(options: Options<ChannelsCreateData, ThrowOnError>) => (options.client ?? client).post<ChannelsCreateResponses, ChannelsCreateErrors, ThrowOnError>({
+    url: '/apps/{appId}/channels',
     ...options,
     headers: {
         'Content-Type': 'application/json',
@@ -79,14 +223,21 @@ export const iotTokenControllerCreate = <ThrowOnError extends boolean = false>(o
     }
 });
 
-export const iotTokenControllerRevoke = <ThrowOnError extends boolean = false>(options: Options<IotTokenControllerRevokeData, ThrowOnError>) => (options.client ?? client).delete<IotTokenControllerRevokeResponses, unknown, ThrowOnError>({ url: '/auth/iot-tokens/{id}', ...options });
+/**
+ * Delete a channel
+ */
+export const channelsDelete = <ThrowOnError extends boolean = false>(options: Options<ChannelsDeleteData, ThrowOnError>) => (options.client ?? client).delete<ChannelsDeleteResponses, ChannelsDeleteErrors, ThrowOnError>({ url: '/apps/{appId}/channels/{channelId}', ...options });
 
-export const capabilitiesControllerGetCapabilities = <ThrowOnError extends boolean = false>(options?: Options<CapabilitiesControllerGetCapabilitiesData, ThrowOnError>) => (options?.client ?? client).get<CapabilitiesControllerGetCapabilitiesResponses, unknown, ThrowOnError>({ url: '/capabilities', ...options });
+/**
+ * Get a channel
+ */
+export const channelsGet = <ThrowOnError extends boolean = false>(options: Options<ChannelsGetData, ThrowOnError>) => (options.client ?? client).get<ChannelsGetResponses, ChannelsGetErrors, ThrowOnError>({ url: '/apps/{appId}/channels/{channelId}', ...options });
 
-export const channelControllerListChannels = <ThrowOnError extends boolean = false>(options: Options<ChannelControllerListChannelsData, ThrowOnError>) => (options.client ?? client).get<ChannelControllerListChannelsResponses, unknown, ThrowOnError>({ url: '/channel', ...options });
-
-export const channelControllerCreateChannel = <ThrowOnError extends boolean = false>(options: Options<ChannelControllerCreateChannelData, ThrowOnError>) => (options.client ?? client).post<ChannelControllerCreateChannelResponses, unknown, ThrowOnError>({
-    url: '/channel',
+/**
+ * Update a channel
+ */
+export const channelsUpdate = <ThrowOnError extends boolean = false>(options: Options<ChannelsUpdateData, ThrowOnError>) => (options.client ?? client).put<ChannelsUpdateResponses, ChannelsUpdateErrors, ThrowOnError>({
+    url: '/apps/{appId}/channels/{channelId}',
     ...options,
     headers: {
         'Content-Type': 'application/json',
@@ -94,12 +245,16 @@ export const channelControllerCreateChannel = <ThrowOnError extends boolean = fa
     }
 });
 
-export const channelControllerDeleteChannel = <ThrowOnError extends boolean = false>(options: Options<ChannelControllerDeleteChannelData, ThrowOnError>) => (options.client ?? client).delete<ChannelControllerDeleteChannelResponses, unknown, ThrowOnError>({ url: '/channel/{id}', ...options });
+/**
+ * List audit log entries
+ */
+export const auditList = <ThrowOnError extends boolean = false>(options?: Options<AuditListData, ThrowOnError>) => (options?.client ?? client).get<AuditListResponses, AuditListErrors, ThrowOnError>({ url: '/audit-logs', ...options });
 
-export const channelControllerGetChannel = <ThrowOnError extends boolean = false>(options: Options<ChannelControllerGetChannelData, ThrowOnError>) => (options.client ?? client).get<ChannelControllerGetChannelResponses, unknown, ThrowOnError>({ url: '/channel/{id}', ...options });
-
-export const channelControllerUpdateChannel = <ThrowOnError extends boolean = false>(options: Options<ChannelControllerUpdateChannelData, ThrowOnError>) => (options.client ?? client).put<ChannelControllerUpdateChannelResponses, unknown, ThrowOnError>({
-    url: '/channel/{id}',
+/**
+ * Create a checkout link
+ */
+export const billingCheckout = <ThrowOnError extends boolean = false>(options: Options<BillingCheckoutData, ThrowOnError>) => (options.client ?? client).post<BillingCheckoutResponses, BillingCheckoutErrors, ThrowOnError>({
+    url: '/billing/checkout',
     ...options,
     headers: {
         'Content-Type': 'application/json',
@@ -107,9 +262,48 @@ export const channelControllerUpdateChannel = <ThrowOnError extends boolean = fa
     }
 });
 
-export const environmentControllerList = <ThrowOnError extends boolean = false>(options?: Options<EnvironmentControllerListData, ThrowOnError>) => (options?.client ?? client).get<EnvironmentControllerListResponses, unknown, ThrowOnError>({ url: '/environments', ...options });
+/**
+ * List billing plans
+ */
+export const billingPlans = <ThrowOnError extends boolean = false>(options?: Options<BillingPlansData, ThrowOnError>) => (options?.client ?? client).get<BillingPlansResponses, BillingPlansErrors, ThrowOnError>({ url: '/billing/plans', ...options });
 
-export const environmentControllerCreate = <ThrowOnError extends boolean = false>(options: Options<EnvironmentControllerCreateData, ThrowOnError>) => (options.client ?? client).post<EnvironmentControllerCreateResponses, unknown, ThrowOnError>({
+/**
+ * Get the customer portal link
+ */
+export const billingPortal = <ThrowOnError extends boolean = false>(options?: Options<BillingPortalData, ThrowOnError>) => (options?.client ?? client).get<BillingPortalResponses, BillingPortalErrors, ThrowOnError>({ url: '/billing/portal', ...options });
+
+/**
+ * Get billing usage
+ */
+export const billingUsage = <ThrowOnError extends boolean = false>(options?: Options<BillingUsageData, ThrowOnError>) => (options?.client ?? client).get<BillingUsageResponses, BillingUsageErrors, ThrowOnError>({ url: '/billing/usage', ...options });
+
+/**
+ * LemonSqueezy webhook
+ */
+export const billingWebhook = <ThrowOnError extends boolean = false>(options: Options<BillingWebhookData, ThrowOnError>) => (options.client ?? client).post<BillingWebhookResponses, BillingWebhookErrors, ThrowOnError>({
+    bodySerializer: null,
+    url: '/billing/webhook',
+    ...options,
+    headers: {
+        'Content-Type': 'application/octet-stream',
+        ...options.headers
+    }
+});
+
+/**
+ * Get deployment capabilities
+ */
+export const capabilitiesGet = <ThrowOnError extends boolean = false>(options?: Options<CapabilitiesGetData, ThrowOnError>) => (options?.client ?? client).get<CapabilitiesGetResponses, CapabilitiesGetErrors, ThrowOnError>({ url: '/capabilities', ...options });
+
+/**
+ * List environments
+ */
+export const environmentsList = <ThrowOnError extends boolean = false>(options?: Options<EnvironmentsListData, ThrowOnError>) => (options?.client ?? client).get<EnvironmentsListResponses, EnvironmentsListErrors, ThrowOnError>({ url: '/environments', ...options });
+
+/**
+ * Create an environment
+ */
+export const environmentsCreate = <ThrowOnError extends boolean = false>(options: Options<EnvironmentsCreateData, ThrowOnError>) => (options.client ?? client).post<EnvironmentsCreateResponses, EnvironmentsCreateErrors, ThrowOnError>({
     url: '/environments',
     ...options,
     headers: {
@@ -118,10 +312,16 @@ export const environmentControllerCreate = <ThrowOnError extends boolean = false
     }
 });
 
-export const environmentControllerRemove = <ThrowOnError extends boolean = false>(options: Options<EnvironmentControllerRemoveData, ThrowOnError>) => (options.client ?? client).delete<EnvironmentControllerRemoveResponses, unknown, ThrowOnError>({ url: '/environments/{id}', ...options });
+/**
+ * Remove an environment
+ */
+export const environmentsDelete = <ThrowOnError extends boolean = false>(options: Options<EnvironmentsDeleteData, ThrowOnError>) => (options.client ?? client).delete<EnvironmentsDeleteResponses, EnvironmentsDeleteErrors, ThrowOnError>({ url: '/environments/{slug}', ...options });
 
-export const environmentControllerUpdate = <ThrowOnError extends boolean = false>(options: Options<EnvironmentControllerUpdateData, ThrowOnError>) => (options.client ?? client).patch<EnvironmentControllerUpdateResponses, unknown, ThrowOnError>({
-    url: '/environments/{id}',
+/**
+ * Update an environment
+ */
+export const environmentsUpdate = <ThrowOnError extends boolean = false>(options: Options<EnvironmentsUpdateData, ThrowOnError>) => (options.client ?? client).patch<EnvironmentsUpdateResponses, EnvironmentsUpdateErrors, ThrowOnError>({
+    url: '/environments/{slug}',
     ...options,
     headers: {
         'Content-Type': 'application/json',
@@ -129,9 +329,15 @@ export const environmentControllerUpdate = <ThrowOnError extends boolean = false
     }
 });
 
-export const environmentControllerPromote = <ThrowOnError extends boolean = false>(options: Options<EnvironmentControllerPromoteData, ThrowOnError>) => (options.client ?? client).post<EnvironmentControllerPromoteResponses, unknown, ThrowOnError>({ url: '/environments/{id}/promote-to-default', ...options });
+/**
+ * Promote an environment to the org default
+ */
+export const environmentsPromote = <ThrowOnError extends boolean = false>(options: Options<EnvironmentsPromoteData, ThrowOnError>) => (options.client ?? client).post<EnvironmentsPromoteResponses, EnvironmentsPromoteErrors, ThrowOnError>({ url: '/environments/{slug}/promote', ...options });
 
-export const eventControllerCreateEvent = <ThrowOnError extends boolean = false>(options: Options<EventControllerCreateEventData, ThrowOnError>) => (options.client ?? client).post<EventControllerCreateEventResponses, unknown, ThrowOnError>({
+/**
+ * Ingest a single event
+ */
+export const createEvent = <ThrowOnError extends boolean = false>(options: Options<CreateEventData, ThrowOnError>) => (options.client ?? client).post<CreateEventResponses, CreateEventErrors, ThrowOnError>({
     url: '/event',
     ...options,
     headers: {
@@ -141,24 +347,19 @@ export const eventControllerCreateEvent = <ThrowOnError extends boolean = false>
 });
 
 /**
- * Ingest up to 100 events in one request
+ * Search events with filters
  */
-export const eventControllerCreateEventBatch = <ThrowOnError extends boolean = false>(options: Options<EventControllerCreateEventBatchData, ThrowOnError>) => (options.client ?? client).post<EventControllerCreateEventBatchResponses, unknown, ThrowOnError>({
-    url: '/event/batch',
-    ...options,
-    headers: {
-        'Content-Type': 'application/json',
-        ...options.headers
-    }
-});
+export const eventsSearch = <ThrowOnError extends boolean = false>(options?: Options<EventsSearchData, ThrowOnError>) => (options?.client ?? client).get<EventsSearchResponses, EventsSearchErrors, ThrowOnError>({ url: '/events', ...options });
 
-export const eventControllerListEvents = <ThrowOnError extends boolean = false>(options: Options<EventControllerListEventsData, ThrowOnError>) => (options.client ?? client).get<EventControllerListEventsResponses, unknown, ThrowOnError>({ url: '/event/{channelId}/list', ...options });
+/**
+ * List export destinations
+ */
+export const exportList = <ThrowOnError extends boolean = false>(options?: Options<ExportListData, ThrowOnError>) => (options?.client ?? client).get<ExportListResponses, ExportListErrors, ThrowOnError>({ url: '/export-destinations', ...options });
 
-export const eventsSearchControllerSearch = <ThrowOnError extends boolean = false>(options?: Options<EventsSearchControllerSearchData, ThrowOnError>) => (options?.client ?? client).get<EventsSearchControllerSearchResponses, unknown, ThrowOnError>({ url: '/events/search', ...options });
-
-export const exportControllerList = <ThrowOnError extends boolean = false>(options?: Options<ExportControllerListData, ThrowOnError>) => (options?.client ?? client).get<ExportControllerListResponses, unknown, ThrowOnError>({ url: '/export-destinations', ...options });
-
-export const exportControllerCreate = <ThrowOnError extends boolean = false>(options: Options<ExportControllerCreateData, ThrowOnError>) => (options.client ?? client).post<ExportControllerCreateResponses, unknown, ThrowOnError>({
+/**
+ * Create an export destination
+ */
+export const exportCreate = <ThrowOnError extends boolean = false>(options: Options<ExportCreateData, ThrowOnError>) => (options.client ?? client).post<ExportCreateResponses, ExportCreateErrors, ThrowOnError>({
     url: '/export-destinations',
     ...options,
     headers: {
@@ -167,105 +368,21 @@ export const exportControllerCreate = <ThrowOnError extends boolean = false>(opt
     }
 });
 
-export const exportControllerRemove = <ThrowOnError extends boolean = false>(options: Options<ExportControllerRemoveData, ThrowOnError>) => (options.client ?? client).delete<ExportControllerRemoveResponses, unknown, ThrowOnError>({ url: '/export-destinations/{id}', ...options });
-
-export const exportControllerGet = <ThrowOnError extends boolean = false>(options: Options<ExportControllerGetData, ThrowOnError>) => (options.client ?? client).get<ExportControllerGetResponses, unknown, ThrowOnError>({ url: '/export-destinations/{id}', ...options });
-
-export const exportControllerUpdate = <ThrowOnError extends boolean = false>(options: Options<ExportControllerUpdateData, ThrowOnError>) => (options.client ?? client).patch<ExportControllerUpdateResponses, unknown, ThrowOnError>({
-    url: '/export-destinations/{id}',
-    ...options,
-    headers: {
-        'Content-Type': 'application/json',
-        ...options.headers
-    }
-});
-
-export const healthControllerCheck = <ThrowOnError extends boolean = false>(options: Options<HealthControllerCheckData, ThrowOnError>) => (options.client ?? client).get<HealthControllerCheckResponses, unknown, ThrowOnError>({ url: '/health', ...options });
-
-export const organizationControllerGetAllOrganizations = <ThrowOnError extends boolean = false>(options?: Options<OrganizationControllerGetAllOrganizationsData, ThrowOnError>) => (options?.client ?? client).get<OrganizationControllerGetAllOrganizationsResponses, unknown, ThrowOnError>({ url: '/organizations', ...options });
-
-export const organizationControllerCreateOrganization = <ThrowOnError extends boolean = false>(options: Options<OrganizationControllerCreateOrganizationData, ThrowOnError>) => (options.client ?? client).post<OrganizationControllerCreateOrganizationResponses, unknown, ThrowOnError>({
-    url: '/organizations',
-    ...options,
-    headers: {
-        'Content-Type': 'application/json',
-        ...options.headers
-    }
-});
-
-export const organizationControllerDeleteOrganization = <ThrowOnError extends boolean = false>(options: Options<OrganizationControllerDeleteOrganizationData, ThrowOnError>) => (options.client ?? client).delete<OrganizationControllerDeleteOrganizationResponses, unknown, ThrowOnError>({ url: '/organizations/{id}', ...options });
-
-export const organizationControllerGetOrganization = <ThrowOnError extends boolean = false>(options: Options<OrganizationControllerGetOrganizationData, ThrowOnError>) => (options.client ?? client).get<OrganizationControllerGetOrganizationResponses, unknown, ThrowOnError>({ url: '/organizations/{id}', ...options });
-
-export const organizationControllerEditOrganization = <ThrowOnError extends boolean = false>(options: Options<OrganizationControllerEditOrganizationData, ThrowOnError>) => (options.client ?? client).patch<OrganizationControllerEditOrganizationResponses, unknown, ThrowOnError>({
-    url: '/organizations/{id}',
-    ...options,
-    headers: {
-        'Content-Type': 'application/json',
-        ...options.headers
-    }
-});
-
-export const organizationControllerCreateInvitation = <ThrowOnError extends boolean = false>(options: Options<OrganizationControllerCreateInvitationData, ThrowOnError>) => (options.client ?? client).post<OrganizationControllerCreateInvitationResponses, unknown, ThrowOnError>({
-    url: '/organizations/{id}/invitations',
-    ...options,
-    headers: {
-        'Content-Type': 'application/json',
-        ...options.headers
-    }
-});
-
-export const organizationControllerDeleteInvitation = <ThrowOnError extends boolean = false>(options: Options<OrganizationControllerDeleteInvitationData, ThrowOnError>) => (options.client ?? client).delete<OrganizationControllerDeleteInvitationResponses, unknown, ThrowOnError>({ url: '/organizations/{id}/invitations/{invitationId}', ...options });
-
-export const organizationControllerRemoveMember = <ThrowOnError extends boolean = false>(options: Options<OrganizationControllerRemoveMemberData, ThrowOnError>) => (options.client ?? client).delete<OrganizationControllerRemoveMemberResponses, unknown, ThrowOnError>({ url: '/organizations/{id}/members/{userId}', ...options });
-
-export const organizationControllerGetTelemetryPolicy = <ThrowOnError extends boolean = false>(options: Options<OrganizationControllerGetTelemetryPolicyData, ThrowOnError>) => (options.client ?? client).get<OrganizationControllerGetTelemetryPolicyResponses, unknown, ThrowOnError>({ url: '/organizations/{id}/telemetry-policy', ...options });
-
-export const organizationControllerUpdateTelemetryPolicy = <ThrowOnError extends boolean = false>(options: Options<OrganizationControllerUpdateTelemetryPolicyData, ThrowOnError>) => (options.client ?? client).patch<OrganizationControllerUpdateTelemetryPolicyResponses, unknown, ThrowOnError>({
-    url: '/organizations/{id}/telemetry-policy',
-    ...options,
-    headers: {
-        'Content-Type': 'application/json',
-        ...options.headers
-    }
-});
-
-export const organizationControllerTransferOwnership = <ThrowOnError extends boolean = false>(options: Options<OrganizationControllerTransferOwnershipData, ThrowOnError>) => (options.client ?? client).post<OrganizationControllerTransferOwnershipResponses, unknown, ThrowOnError>({
-    url: '/organizations/{id}/transfer-ownership',
-    ...options,
-    headers: {
-        'Content-Type': 'application/json',
-        ...options.headers
-    }
-});
-
-export const publicIngestTokenControllerList = <ThrowOnError extends boolean = false>(options?: Options<PublicIngestTokenControllerListData, ThrowOnError>) => (options?.client ?? client).get<PublicIngestTokenControllerListResponses, unknown, ThrowOnError>({ url: '/public-tokens', ...options });
-
-export const publicIngestTokenControllerCreate = <ThrowOnError extends boolean = false>(options: Options<PublicIngestTokenControllerCreateData, ThrowOnError>) => (options.client ?? client).post<PublicIngestTokenControllerCreateResponses, unknown, ThrowOnError>({
-    url: '/public-tokens',
-    ...options,
-    headers: {
-        'Content-Type': 'application/json',
-        ...options.headers
-    }
-});
-
-export const publicIngestTokenControllerRevoke = <ThrowOnError extends boolean = false>(options: Options<PublicIngestTokenControllerRevokeData, ThrowOnError>) => (options.client ?? client).delete<PublicIngestTokenControllerRevokeResponses, unknown, ThrowOnError>({ url: '/public-tokens/{id}', ...options });
+/**
+ * Deactivate an export destination
+ */
+export const exportDelete = <ThrowOnError extends boolean = false>(options: Options<ExportDeleteData, ThrowOnError>) => (options.client ?? client).delete<ExportDeleteResponses, ExportDeleteErrors, ThrowOnError>({ url: '/export-destinations/{destinationId}', ...options });
 
 /**
- * OTLP/HTTP logs ingest (protobuf or JSON)
+ * Get an export destination
  */
-export const otlpControllerIngestLogs = <ThrowOnError extends boolean = false>(options: Options<OtlpControllerIngestLogsData, ThrowOnError>) => (options.client ?? client).post<OtlpControllerIngestLogsResponses, unknown, ThrowOnError>({ url: '/v1/logs', ...options });
+export const exportGet = <ThrowOnError extends boolean = false>(options: Options<ExportGetData, ThrowOnError>) => (options.client ?? client).get<ExportGetResponses, ExportGetErrors, ThrowOnError>({ url: '/export-destinations/{destinationId}', ...options });
 
 /**
- * OTLP/HTTP traces ingest (protobuf or JSON)
+ * Update an export destination
  */
-export const otlpControllerIngestTraces = <ThrowOnError extends boolean = false>(options: Options<OtlpControllerIngestTracesData, ThrowOnError>) => (options.client ?? client).post<OtlpControllerIngestTracesResponses, unknown, ThrowOnError>({ url: '/v1/traces', ...options });
-
-export const actionContractControllerList = <ThrowOnError extends boolean = false>(options?: Options<ActionContractControllerListData, ThrowOnError>) => (options?.client ?? client).get<ActionContractControllerListResponses, unknown, ThrowOnError>({ url: '/v2/action-contracts', ...options });
-
-export const actionContractControllerCreate = <ThrowOnError extends boolean = false>(options: Options<ActionContractControllerCreateData, ThrowOnError>) => (options.client ?? client).post<ActionContractControllerCreateResponses, unknown, ThrowOnError>({
-    url: '/v2/action-contracts',
+export const exportUpdate = <ThrowOnError extends boolean = false>(options: Options<ExportUpdateData, ThrowOnError>) => (options.client ?? client).patch<ExportUpdateResponses, ExportUpdateErrors, ThrowOnError>({
+    url: '/export-destinations/{destinationId}',
     ...options,
     headers: {
         'Content-Type': 'application/json',
@@ -273,10 +390,16 @@ export const actionContractControllerCreate = <ThrowOnError extends boolean = fa
     }
 });
 
-export const actionControllerList = <ThrowOnError extends boolean = false>(options?: Options<ActionControllerListData, ThrowOnError>) => (options?.client ?? client).get<ActionControllerListResponses, unknown, ThrowOnError>({ url: '/v2/actions', ...options });
+/**
+ * Get feature flags
+ */
+export const featureFlagsMe = <ThrowOnError extends boolean = false>(options?: Options<FeatureFlagsMeData, ThrowOnError>) => (options?.client ?? client).get<FeatureFlagsMeResponses, FeatureFlagsMeErrors, ThrowOnError>({ url: '/feature-flags/me', ...options });
 
-export const actionControllerRegister = <ThrowOnError extends boolean = false>(options: Options<ActionControllerRegisterData, ThrowOnError>) => (options.client ?? client).post<ActionControllerRegisterResponses, unknown, ThrowOnError>({
-    url: '/v2/actions',
+/**
+ * Submit feedback
+ */
+export const feedbackCreate = <ThrowOnError extends boolean = false>(options: Options<FeedbackCreateData, ThrowOnError>) => (options.client ?? client).post<FeedbackCreateResponses, FeedbackCreateErrors, ThrowOnError>({
+    url: '/feedback',
     ...options,
     headers: {
         'Content-Type': 'application/json',
@@ -284,10 +407,20 @@ export const actionControllerRegister = <ThrowOnError extends boolean = false>(o
     }
 });
 
-export const actionControllerDetail = <ThrowOnError extends boolean = false>(options: Options<ActionControllerDetailData, ThrowOnError>) => (options.client ?? client).get<ActionControllerDetailResponses, unknown, ThrowOnError>({ url: '/v2/actions/{actionId}', ...options });
+/**
+ * Get healthz
+ */
+export const getHealthz = <ThrowOnError extends boolean = false>(options?: Options<GetHealthzData, ThrowOnError>) => (options?.client ?? client).get<GetHealthzResponses, GetHealthzErrors, ThrowOnError>({ url: '/healthz', ...options });
 
-export const actionControllerClaim = <ThrowOnError extends boolean = false>(options: Options<ActionControllerClaimData, ThrowOnError>) => (options.client ?? client).post<ActionControllerClaimResponses, unknown, ThrowOnError>({
-    url: '/v2/actions/{actionId}/claims',
+/**
+ * Get deployment licence state
+ */
+export const licenseGet = <ThrowOnError extends boolean = false>(options?: Options<LicenseGetData, ThrowOnError>) => (options?.client ?? client).get<LicenseGetResponses, LicenseGetErrors, ThrowOnError>({ url: '/license', ...options });
+
+export const moderationRulesList = <ThrowOnError extends boolean = false>(options?: Options<ModerationRulesListData, ThrowOnError>) => (options?.client ?? client).get<ModerationRulesListResponses, ModerationRulesListErrors, ThrowOnError>({ url: '/moderation/rules', ...options });
+
+export const moderationRulesCreate = <ThrowOnError extends boolean = false>(options: Options<ModerationRulesCreateData, ThrowOnError>) => (options.client ?? client).post<ModerationRulesCreateResponses, ModerationRulesCreateErrors, ThrowOnError>({
+    url: '/moderation/rules',
     ...options,
     headers: {
         'Content-Type': 'application/json',
@@ -295,8 +428,20 @@ export const actionControllerClaim = <ThrowOnError extends boolean = false>(opti
     }
 });
 
-export const actionControllerObserve = <ThrowOnError extends boolean = false>(options: Options<ActionControllerObserveData, ThrowOnError>) => (options.client ?? client).post<ActionControllerObserveResponses, unknown, ThrowOnError>({
-    url: '/v2/actions/{actionId}/observations',
+export const moderationRulesDelete = <ThrowOnError extends boolean = false>(options: Options<ModerationRulesDeleteData, ThrowOnError>) => (options.client ?? client).delete<ModerationRulesDeleteResponses, ModerationRulesDeleteErrors, ThrowOnError>({ url: '/moderation/rules/{ruleId}', ...options });
+
+export const moderationViolationsList = <ThrowOnError extends boolean = false>(options?: Options<ModerationViolationsListData, ThrowOnError>) => (options?.client ?? client).get<ModerationViolationsListResponses, ModerationViolationsListErrors, ThrowOnError>({ url: '/moderation/violations', ...options });
+
+/**
+ * Get the caller's organization
+ */
+export const organizationGet = <ThrowOnError extends boolean = false>(options?: Options<OrganizationGetData, ThrowOnError>) => (options?.client ?? client).get<OrganizationGetResponses, OrganizationGetErrors, ThrowOnError>({ url: '/organization', ...options });
+
+/**
+ * Update organization settings
+ */
+export const organizationUpdate = <ThrowOnError extends boolean = false>(options: Options<OrganizationUpdateData, ThrowOnError>) => (options.client ?? client).patch<OrganizationUpdateResponses, OrganizationUpdateErrors, ThrowOnError>({
+    url: '/organization',
     ...options,
     headers: {
         'Content-Type': 'application/json',
@@ -304,8 +449,21 @@ export const actionControllerObserve = <ThrowOnError extends boolean = false>(op
     }
 });
 
-export const actionControllerReview = <ThrowOnError extends boolean = false>(options: Options<ActionControllerReviewData, ThrowOnError>) => (options.client ?? client).post<ActionControllerReviewResponses, unknown, ThrowOnError>({
-    url: '/v2/actions/{actionId}/reviews',
+/**
+ * Delete an organization
+ */
+export const organizationDelete = <ThrowOnError extends boolean = false>(options: Options<OrganizationDeleteData, ThrowOnError>) => (options.client ?? client).delete<OrganizationDeleteResponses, OrganizationDeleteErrors, ThrowOnError>({ url: '/organizations/{orgId}', ...options });
+
+/**
+ * List organization invitations
+ */
+export const organizationInvitationsList = <ThrowOnError extends boolean = false>(options: Options<OrganizationInvitationsListData, ThrowOnError>) => (options.client ?? client).get<OrganizationInvitationsListResponses, OrganizationInvitationsListErrors, ThrowOnError>({ url: '/organizations/{orgId}/invitations', ...options });
+
+/**
+ * Create an organization invitation
+ */
+export const organizationInvitationsCreate = <ThrowOnError extends boolean = false>(options: Options<OrganizationInvitationsCreateData, ThrowOnError>) => (options.client ?? client).post<OrganizationInvitationsCreateResponses, OrganizationInvitationsCreateErrors, ThrowOnError>({
+    url: '/organizations/{orgId}/invitations',
     ...options,
     headers: {
         'Content-Type': 'application/json',
@@ -313,9 +471,137 @@ export const actionControllerReview = <ThrowOnError extends boolean = false>(opt
     }
 });
 
-export const alertControllerList = <ThrowOnError extends boolean = false>(options?: Options<AlertControllerListData, ThrowOnError>) => (options?.client ?? client).get<AlertControllerListResponses, unknown, ThrowOnError>({ url: '/v2/alerts', ...options });
+/**
+ * Cancel an organization invitation
+ */
+export const organizationInvitationsCancel = <ThrowOnError extends boolean = false>(options: Options<OrganizationInvitationsCancelData, ThrowOnError>) => (options.client ?? client).delete<OrganizationInvitationsCancelResponses, OrganizationInvitationsCancelErrors, ThrowOnError>({ url: '/organizations/{orgId}/invitations/{invitationId}', ...options });
 
-export const alertControllerCreate = <ThrowOnError extends boolean = false>(options: Options<AlertControllerCreateData, ThrowOnError>) => (options.client ?? client).post<AlertControllerCreateResponses, unknown, ThrowOnError>({
+/**
+ * List organization members
+ */
+export const organizationMembersList = <ThrowOnError extends boolean = false>(options: Options<OrganizationMembersListData, ThrowOnError>) => (options.client ?? client).get<OrganizationMembersListResponses, OrganizationMembersListErrors, ThrowOnError>({ url: '/organizations/{orgId}/members', ...options });
+
+/**
+ * Remove an organization member
+ */
+export const organizationMembersRemove = <ThrowOnError extends boolean = false>(options: Options<OrganizationMembersRemoveData, ThrowOnError>) => (options.client ?? client).delete<OrganizationMembersRemoveResponses, OrganizationMembersRemoveErrors, ThrowOnError>({ url: '/organizations/{orgId}/members/{userId}', ...options });
+
+/**
+ * Update an organization member's role
+ */
+export const organizationMembersUpdateRole = <ThrowOnError extends boolean = false>(options: Options<OrganizationMembersUpdateRoleData, ThrowOnError>) => (options.client ?? client).patch<OrganizationMembersUpdateRoleResponses, OrganizationMembersUpdateRoleErrors, ThrowOnError>({
+    url: '/organizations/{orgId}/members/{userId}',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * Get the organization telemetry policy
+ */
+export const organizationTelemetryPolicyGet = <ThrowOnError extends boolean = false>(options: Options<OrganizationTelemetryPolicyGetData, ThrowOnError>) => (options.client ?? client).get<OrganizationTelemetryPolicyGetResponses, OrganizationTelemetryPolicyGetErrors, ThrowOnError>({ url: '/organizations/{orgId}/telemetry-policy', ...options });
+
+/**
+ * Update the organization telemetry policy
+ */
+export const organizationTelemetryPolicyUpdate = <ThrowOnError extends boolean = false>(options: Options<OrganizationTelemetryPolicyUpdateData, ThrowOnError>) => (options.client ?? client).patch<OrganizationTelemetryPolicyUpdateResponses, OrganizationTelemetryPolicyUpdateErrors, ThrowOnError>({
+    url: '/organizations/{orgId}/telemetry-policy',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * Transfer organization ownership
+ */
+export const organizationTransferOwnership = <ThrowOnError extends boolean = false>(options: Options<OrganizationTransferOwnershipData, ThrowOnError>) => (options.client ?? client).post<OrganizationTransferOwnershipResponses, OrganizationTransferOwnershipErrors, ThrowOnError>({
+    url: '/organizations/{orgId}/transfer-ownership',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * List public ingest tokens
+ */
+export const tokensList = <ThrowOnError extends boolean = false>(options?: Options<TokensListData, ThrowOnError>) => (options?.client ?? client).get<TokensListResponses, TokensListErrors, ThrowOnError>({ url: '/public-ingest-tokens', ...options });
+
+/**
+ * Create a public ingest token
+ */
+export const tokensCreate = <ThrowOnError extends boolean = false>(options: Options<TokensCreateData, ThrowOnError>) => (options.client ?? client).post<TokensCreateResponses, TokensCreateErrors, ThrowOnError>({
+    url: '/public-ingest-tokens',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * Revoke a public ingest token
+ */
+export const tokensRevoke = <ThrowOnError extends boolean = false>(options: Options<TokensRevokeData, ThrowOnError>) => (options.client ?? client).delete<TokensRevokeResponses, TokensRevokeErrors, ThrowOnError>({ url: '/public-ingest-tokens/{tokenId}', ...options });
+
+/**
+ * List traces over a time window
+ */
+export const tracesList = <ThrowOnError extends boolean = false>(options?: Options<TracesListData, ThrowOnError>) => (options?.client ?? client).get<TracesListResponses, TracesListErrors, ThrowOnError>({ url: '/traces', ...options });
+
+/**
+ * Get a trace's spans, ordered by time
+ */
+export const tracesGet = <ThrowOnError extends boolean = false>(options: Options<TracesGetData, ThrowOnError>) => (options.client ?? client).get<TracesGetResponses, TracesGetErrors, ThrowOnError>({ url: '/traces/{traceId}', ...options });
+
+/**
+ * Get the current principal
+ */
+export const userMe = <ThrowOnError extends boolean = false>(options?: Options<UserMeData, ThrowOnError>) => (options?.client ?? client).get<UserMeResponses, UserMeErrors, ThrowOnError>({ url: '/user/me', ...options });
+
+/**
+ * Update the current user's profile
+ */
+export const userMeUpdate = <ThrowOnError extends boolean = false>(options: Options<UserMeUpdateData, ThrowOnError>) => (options.client ?? client).patch<UserMeUpdateResponses, UserMeUpdateErrors, ThrowOnError>({
+    url: '/users/me',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * Set the current user's active organization
+ */
+export const userMeSetActiveOrg = <ThrowOnError extends boolean = false>(options: Options<UserMeSetActiveOrgData, ThrowOnError>) => (options.client ?? client).patch<UserMeSetActiveOrgResponses, UserMeSetActiveOrgErrors, ThrowOnError>({
+    url: '/users/me/active-org',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * List the current user's organizations
+ */
+export const userMeOrganizations = <ThrowOnError extends boolean = false>(options?: Options<UserMeOrganizationsData, ThrowOnError>) => (options?.client ?? client).get<UserMeOrganizationsResponses, UserMeOrganizationsErrors, ThrowOnError>({ url: '/users/me/organizations', ...options });
+
+/**
+ * List alert rules
+ */
+export const alertsList = <ThrowOnError extends boolean = false>(options?: Options<AlertsListData, ThrowOnError>) => (options?.client ?? client).get<AlertsListResponses, AlertsListErrors, ThrowOnError>({ url: '/v2/alerts', ...options });
+
+/**
+ * Create an alert rule
+ */
+export const alertsCreate = <ThrowOnError extends boolean = false>(options: Options<AlertsCreateData, ThrowOnError>) => (options.client ?? client).post<AlertsCreateResponses, AlertsCreateErrors, ThrowOnError>({
     url: '/v2/alerts',
     ...options,
     headers: {
@@ -324,9 +610,15 @@ export const alertControllerCreate = <ThrowOnError extends boolean = false>(opti
     }
 });
 
-export const alertControllerRemove = <ThrowOnError extends boolean = false>(options: Options<AlertControllerRemoveData, ThrowOnError>) => (options.client ?? client).delete<AlertControllerRemoveResponses, unknown, ThrowOnError>({ url: '/v2/alerts/{alertRuleId}', ...options });
+/**
+ * Delete an alert rule
+ */
+export const alertsDelete = <ThrowOnError extends boolean = false>(options: Options<AlertsDeleteData, ThrowOnError>) => (options.client ?? client).delete<AlertsDeleteResponses, AlertsDeleteErrors, ThrowOnError>({ url: '/v2/alerts/{alertRuleId}', ...options });
 
-export const alertControllerUpdate = <ThrowOnError extends boolean = false>(options: Options<AlertControllerUpdateData, ThrowOnError>) => (options.client ?? client).patch<AlertControllerUpdateResponses, unknown, ThrowOnError>({
+/**
+ * Update an alert rule
+ */
+export const alertsUpdate = <ThrowOnError extends boolean = false>(options: Options<AlertsUpdateData, ThrowOnError>) => (options.client ?? client).patch<AlertsUpdateResponses, AlertsUpdateErrors, ThrowOnError>({
     url: '/v2/alerts/{alertRuleId}',
     ...options,
     headers: {
@@ -335,405 +627,15 @@ export const alertControllerUpdate = <ThrowOnError extends boolean = false>(opti
     }
 });
 
-export const analyticsControllerBreakdown = <ThrowOnError extends boolean = false>(options: Options<AnalyticsControllerBreakdownData, ThrowOnError>) => (options.client ?? client).get<AnalyticsControllerBreakdownResponses, unknown, ThrowOnError>({ url: '/v2/analytics/breakdown', ...options });
-
-export const analyticsControllerCompare = <ThrowOnError extends boolean = false>(options: Options<AnalyticsControllerCompareData, ThrowOnError>) => (options.client ?? client).get<AnalyticsControllerCompareResponses, unknown, ThrowOnError>({ url: '/v2/analytics/compare', ...options });
-
-export const analyticsControllerTimeseries = <ThrowOnError extends boolean = false>(options?: Options<AnalyticsControllerTimeseriesData, ThrowOnError>) => (options?.client ?? client).get<AnalyticsControllerTimeseriesResponses, unknown, ThrowOnError>({ url: '/v2/analytics/timeseries', ...options });
-
-export const datasetControllerList = <ThrowOnError extends boolean = false>(options?: Options<DatasetControllerListData, ThrowOnError>) => (options?.client ?? client).get<DatasetControllerListResponses, unknown, ThrowOnError>({ url: '/v2/datasets', ...options });
-
-export const datasetControllerCreate = <ThrowOnError extends boolean = false>(options: Options<DatasetControllerCreateData, ThrowOnError>) => (options.client ?? client).post<DatasetControllerCreateResponses, unknown, ThrowOnError>({
-    url: '/v2/datasets',
-    ...options,
-    headers: {
-        'Content-Type': 'application/json',
-        ...options.headers
-    }
-});
-
-export const datasetControllerRemove = <ThrowOnError extends boolean = false>(options: Options<DatasetControllerRemoveData, ThrowOnError>) => (options.client ?? client).delete<DatasetControllerRemoveResponses, unknown, ThrowOnError>({ url: '/v2/datasets/{datasetId}', ...options });
-
-export const datasetControllerGet = <ThrowOnError extends boolean = false>(options: Options<DatasetControllerGetData, ThrowOnError>) => (options.client ?? client).get<DatasetControllerGetResponses, unknown, ThrowOnError>({ url: '/v2/datasets/{datasetId}', ...options });
-
-export const datasetControllerRevisions = <ThrowOnError extends boolean = false>(options: Options<DatasetControllerRevisionsData, ThrowOnError>) => (options.client ?? client).get<DatasetControllerRevisionsResponses, unknown, ThrowOnError>({ url: '/v2/datasets/{datasetId}/revisions', ...options });
-
-export const datasetControllerCreateRevision = <ThrowOnError extends boolean = false>(options: Options<DatasetControllerCreateRevisionData, ThrowOnError>) => (options.client ?? client).post<DatasetControllerCreateRevisionResponses, unknown, ThrowOnError>({
-    url: '/v2/datasets/{datasetId}/revisions',
-    ...options,
-    headers: {
-        'Content-Type': 'application/json',
-        ...options.headers
-    }
-});
-
-export const datasetControllerFromTraces = <ThrowOnError extends boolean = false>(options: Options<DatasetControllerFromTracesData, ThrowOnError>) => (options.client ?? client).post<DatasetControllerFromTracesResponses, unknown, ThrowOnError>({
-    url: '/v2/datasets/{datasetId}/revisions/from-traces',
-    ...options,
-    headers: {
-        'Content-Type': 'application/json',
-        ...options.headers
-    }
-});
-
-export const datasetControllerImportRevision = <ThrowOnError extends boolean = false>(options: Options<DatasetControllerImportRevisionData, ThrowOnError>) => (options.client ?? client).post<DatasetControllerImportRevisionResponses, unknown, ThrowOnError>({
-    url: '/v2/datasets/{datasetId}/revisions/import',
-    ...options,
-    headers: {
-        'Content-Type': 'application/json',
-        ...options.headers
-    }
-});
-
-export const datasetControllerExportRevision = <ThrowOnError extends boolean = false>(options: Options<DatasetControllerExportRevisionData, ThrowOnError>) => (options.client ?? client).get<DatasetControllerExportRevisionResponses, unknown, ThrowOnError>({ url: '/v2/datasets/{datasetId}/revisions/{revision}/export/{format}', ...options });
-
-export const datasetControllerItems = <ThrowOnError extends boolean = false>(options: Options<DatasetControllerItemsData, ThrowOnError>) => (options.client ?? client).get<DatasetControllerItemsResponses, unknown, ThrowOnError>({ url: '/v2/datasets/{datasetId}/revisions/{revision}/items', ...options });
-
-export const datasetControllerReview = <ThrowOnError extends boolean = false>(options: Options<DatasetControllerReviewData, ThrowOnError>) => (options.client ?? client).post<DatasetControllerReviewResponses, unknown, ThrowOnError>({
-    url: '/v2/datasets/{datasetId}/revisions/{revision}/review',
-    ...options,
-    headers: {
-        'Content-Type': 'application/json',
-        ...options.headers
-    }
-});
-
-export const evaluationTargetControllerList = <ThrowOnError extends boolean = false>(options?: Options<EvaluationTargetControllerListData, ThrowOnError>) => (options?.client ?? client).get<EvaluationTargetControllerListResponses, unknown, ThrowOnError>({ url: '/v2/evaluation-targets', ...options });
-
-export const evaluationTargetControllerCreate = <ThrowOnError extends boolean = false>(options: Options<EvaluationTargetControllerCreateData, ThrowOnError>) => (options.client ?? client).post<EvaluationTargetControllerCreateResponses, unknown, ThrowOnError>({
-    url: '/v2/evaluation-targets',
-    ...options,
-    headers: {
-        'Content-Type': 'application/json',
-        ...options.headers
-    }
-});
-
-export const evaluationTargetControllerRemove = <ThrowOnError extends boolean = false>(options: Options<EvaluationTargetControllerRemoveData, ThrowOnError>) => (options.client ?? client).delete<EvaluationTargetControllerRemoveResponses, unknown, ThrowOnError>({ url: '/v2/evaluation-targets/{targetId}', ...options });
-
-export const evaluationTargetControllerGet = <ThrowOnError extends boolean = false>(options: Options<EvaluationTargetControllerGetData, ThrowOnError>) => (options.client ?? client).get<EvaluationTargetControllerGetResponses, unknown, ThrowOnError>({ url: '/v2/evaluation-targets/{targetId}', ...options });
-
-export const evaluationTargetControllerUpdate = <ThrowOnError extends boolean = false>(options: Options<EvaluationTargetControllerUpdateData, ThrowOnError>) => (options.client ?? client).patch<EvaluationTargetControllerUpdateResponses, unknown, ThrowOnError>({
-    url: '/v2/evaluation-targets/{targetId}',
-    ...options,
-    headers: {
-        'Content-Type': 'application/json',
-        ...options.headers
-    }
-});
-
-export const evaluatorControllerList = <ThrowOnError extends boolean = false>(options?: Options<EvaluatorControllerListData, ThrowOnError>) => (options?.client ?? client).get<EvaluatorControllerListResponses, unknown, ThrowOnError>({ url: '/v2/evaluators', ...options });
-
-export const evaluatorControllerCreate = <ThrowOnError extends boolean = false>(options: Options<EvaluatorControllerCreateData, ThrowOnError>) => (options.client ?? client).post<EvaluatorControllerCreateResponses, unknown, ThrowOnError>({
-    url: '/v2/evaluators',
-    ...options,
-    headers: {
-        'Content-Type': 'application/json',
-        ...options.headers
-    }
-});
-
-export const evaluatorControllerRemove = <ThrowOnError extends boolean = false>(options: Options<EvaluatorControllerRemoveData, ThrowOnError>) => (options.client ?? client).delete<EvaluatorControllerRemoveResponses, unknown, ThrowOnError>({ url: '/v2/evaluators/{evaluatorId}', ...options });
-
-export const evaluatorControllerGet = <ThrowOnError extends boolean = false>(options: Options<EvaluatorControllerGetData, ThrowOnError>) => (options.client ?? client).get<EvaluatorControllerGetResponses, unknown, ThrowOnError>({ url: '/v2/evaluators/{evaluatorId}', ...options });
-
-export const evaluatorControllerVersions = <ThrowOnError extends boolean = false>(options: Options<EvaluatorControllerVersionsData, ThrowOnError>) => (options.client ?? client).get<EvaluatorControllerVersionsResponses, unknown, ThrowOnError>({ url: '/v2/evaluators/{evaluatorId}/versions', ...options });
-
-export const evaluatorControllerCreateVersion = <ThrowOnError extends boolean = false>(options: Options<EvaluatorControllerCreateVersionData, ThrowOnError>) => (options.client ?? client).post<EvaluatorControllerCreateVersionResponses, unknown, ThrowOnError>({
-    url: '/v2/evaluators/{evaluatorId}/versions',
-    ...options,
-    headers: {
-        'Content-Type': 'application/json',
-        ...options.headers
-    }
-});
-
-export const evaluatorControllerVersion = <ThrowOnError extends boolean = false>(options: Options<EvaluatorControllerVersionData, ThrowOnError>) => (options.client ?? client).get<EvaluatorControllerVersionResponses, unknown, ThrowOnError>({ url: '/v2/evaluators/{evaluatorId}/versions/{version}', ...options });
-
-export const experimentControllerList = <ThrowOnError extends boolean = false>(options?: Options<ExperimentControllerListData, ThrowOnError>) => (options?.client ?? client).get<ExperimentControllerListResponses, unknown, ThrowOnError>({ url: '/v2/experiments', ...options });
-
-export const experimentControllerCreate = <ThrowOnError extends boolean = false>(options: Options<ExperimentControllerCreateData, ThrowOnError>) => (options.client ?? client).post<ExperimentControllerCreateResponses, unknown, ThrowOnError>({
-    url: '/v2/experiments',
-    ...options,
-    headers: {
-        'Content-Type': 'application/json',
-        ...options.headers
-    }
-});
-
-export const experimentControllerRemove = <ThrowOnError extends boolean = false>(options: Options<ExperimentControllerRemoveData, ThrowOnError>) => (options.client ?? client).delete<ExperimentControllerRemoveResponses, unknown, ThrowOnError>({ url: '/v2/experiments/{experimentId}', ...options });
-
-export const experimentControllerGet = <ThrowOnError extends boolean = false>(options: Options<ExperimentControllerGetData, ThrowOnError>) => (options.client ?? client).get<ExperimentControllerGetResponses, unknown, ThrowOnError>({ url: '/v2/experiments/{experimentId}', ...options });
-
-export const experimentControllerCancel = <ThrowOnError extends boolean = false>(options: Options<ExperimentControllerCancelData, ThrowOnError>) => (options.client ?? client).post<ExperimentControllerCancelResponses, unknown, ThrowOnError>({ url: '/v2/experiments/{experimentId}/cancel', ...options });
-
-export const experimentControllerCompare = <ThrowOnError extends boolean = false>(options: Options<ExperimentControllerCompareData, ThrowOnError>) => (options.client ?? client).get<ExperimentControllerCompareResponses, unknown, ThrowOnError>({ url: '/v2/experiments/{experimentId}/compare', ...options });
-
-export const experimentControllerCompareCases = <ThrowOnError extends boolean = false>(options: Options<ExperimentControllerCompareCasesData, ThrowOnError>) => (options.client ?? client).get<ExperimentControllerCompareCasesResponses, unknown, ThrowOnError>({ url: '/v2/experiments/{experimentId}/compare/cases', ...options });
-
-export const experimentControllerGate = <ThrowOnError extends boolean = false>(options: Options<ExperimentControllerGateData, ThrowOnError>) => (options.client ?? client).post<ExperimentControllerGateResponses, unknown, ThrowOnError>({
-    url: '/v2/experiments/{experimentId}/gate',
-    ...options,
-    headers: {
-        'Content-Type': 'application/json',
-        ...options.headers
-    }
-});
-
-export const experimentControllerResults = <ThrowOnError extends boolean = false>(options: Options<ExperimentControllerResultsData, ThrowOnError>) => (options.client ?? client).get<ExperimentControllerResultsResponses, unknown, ThrowOnError>({ url: '/v2/experiments/{experimentId}/results', ...options });
-
-export const experimentControllerSubmitResults = <ThrowOnError extends boolean = false>(options: Options<ExperimentControllerSubmitResultsData, ThrowOnError>) => (options.client ?? client).post<ExperimentControllerSubmitResultsResponses, unknown, ThrowOnError>({
-    url: '/v2/experiments/{experimentId}/results',
-    ...options,
-    headers: {
-        'Content-Type': 'application/json',
-        ...options.headers
-    }
-});
-
-export const experimentControllerRun = <ThrowOnError extends boolean = false>(options: Options<ExperimentControllerRunData, ThrowOnError>) => (options.client ?? client).post<ExperimentControllerRunResponses, unknown, ThrowOnError>({ url: '/v2/experiments/{experimentId}/run', ...options });
-
-export const gatePolicyControllerList = <ThrowOnError extends boolean = false>(options?: Options<GatePolicyControllerListData, ThrowOnError>) => (options?.client ?? client).get<GatePolicyControllerListResponses, unknown, ThrowOnError>({ url: '/v2/gate-policies', ...options });
-
-export const gatePolicyControllerSave = <ThrowOnError extends boolean = false>(options: Options<GatePolicyControllerSaveData, ThrowOnError>) => (options.client ?? client).post<GatePolicyControllerSaveResponses, unknown, ThrowOnError>({
-    url: '/v2/gate-policies',
-    ...options,
-    headers: {
-        'Content-Type': 'application/json',
-        ...options.headers
-    }
-});
-
-export const gatePolicyControllerRemove = <ThrowOnError extends boolean = false>(options: Options<GatePolicyControllerRemoveData, ThrowOnError>) => (options.client ?? client).delete<GatePolicyControllerRemoveResponses, unknown, ThrowOnError>({ url: '/v2/gate-policies/{scopeType}/{scopeId}', ...options });
-
-export const gatePolicyControllerGet = <ThrowOnError extends boolean = false>(options: Options<GatePolicyControllerGetData, ThrowOnError>) => (options.client ?? client).get<GatePolicyControllerGetResponses, unknown, ThrowOnError>({ url: '/v2/gate-policies/{scopeType}/{scopeId}', ...options });
-
-export const gateRunControllerList = <ThrowOnError extends boolean = false>(options?: Options<GateRunControllerListData, ThrowOnError>) => (options?.client ?? client).get<GateRunControllerListResponses, unknown, ThrowOnError>({ url: '/v2/gate-runs', ...options });
-
-export const intelligenceControllerList = <ThrowOnError extends boolean = false>(options?: Options<IntelligenceControllerListData, ThrowOnError>) => (options?.client ?? client).get<IntelligenceControllerListResponses, unknown, ThrowOnError>({ url: '/v2/intelligence/jobs', ...options });
-
-export const intelligenceControllerRun = <ThrowOnError extends boolean = false>(options: Options<IntelligenceControllerRunData, ThrowOnError>) => (options.client ?? client).post<IntelligenceControllerRunResponses, unknown, ThrowOnError>({
-    url: '/v2/intelligence/jobs',
-    ...options,
-    headers: {
-        'Content-Type': 'application/json',
-        ...options.headers
-    }
-});
-
-export const intelligenceControllerGet = <ThrowOnError extends boolean = false>(options: Options<IntelligenceControllerGetData, ThrowOnError>) => (options.client ?? client).get<IntelligenceControllerGetResponses, unknown, ThrowOnError>({ url: '/v2/intelligence/jobs/{jobId}', ...options });
-
-export const issueControllerList = <ThrowOnError extends boolean = false>(options?: Options<IssueControllerListData, ThrowOnError>) => (options?.client ?? client).get<IssueControllerListResponses, unknown, ThrowOnError>({ url: '/v2/issues', ...options });
-
-export const issueControllerGet = <ThrowOnError extends boolean = false>(options: Options<IssueControllerGetData, ThrowOnError>) => (options.client ?? client).get<IssueControllerGetResponses, unknown, ThrowOnError>({ url: '/v2/issues/{issueId}', ...options });
-
-export const issueControllerUpdate = <ThrowOnError extends boolean = false>(options: Options<IssueControllerUpdateData, ThrowOnError>) => (options.client ?? client).patch<IssueControllerUpdateResponses, unknown, ThrowOnError>({
-    url: '/v2/issues/{issueId}',
-    ...options,
-    headers: {
-        'Content-Type': 'application/json',
-        ...options.headers
-    }
-});
-
-export const issueControllerAddToDataset = <ThrowOnError extends boolean = false>(options: Options<IssueControllerAddToDatasetData, ThrowOnError>) => (options.client ?? client).post<IssueControllerAddToDatasetResponses, unknown, ThrowOnError>({
-    url: '/v2/issues/{issueId}/actions/add-to-dataset',
-    ...options,
-    headers: {
-        'Content-Type': 'application/json',
-        ...options.headers
-    }
-});
-
-export const issueControllerMerge = <ThrowOnError extends boolean = false>(options: Options<IssueControllerMergeData, ThrowOnError>) => (options.client ?? client).post<IssueControllerMergeResponses, unknown, ThrowOnError>({
-    url: '/v2/issues/{issueId}/merge',
-    ...options,
-    headers: {
-        'Content-Type': 'application/json',
-        ...options.headers
-    }
-});
-
-export const issueControllerOccurrences = <ThrowOnError extends boolean = false>(options: Options<IssueControllerOccurrencesData, ThrowOnError>) => (options.client ?? client).get<IssueControllerOccurrencesResponses, unknown, ThrowOnError>({ url: '/v2/issues/{issueId}/occurrences', ...options });
-
-export const onlineEvaluationControllerList = <ThrowOnError extends boolean = false>(options?: Options<OnlineEvaluationControllerListData, ThrowOnError>) => (options?.client ?? client).get<OnlineEvaluationControllerListResponses, unknown, ThrowOnError>({ url: '/v2/online-evaluation-rules', ...options });
-
-export const onlineEvaluationControllerCreate = <ThrowOnError extends boolean = false>(options: Options<OnlineEvaluationControllerCreateData, ThrowOnError>) => (options.client ?? client).post<OnlineEvaluationControllerCreateResponses, unknown, ThrowOnError>({
-    url: '/v2/online-evaluation-rules',
-    ...options,
-    headers: {
-        'Content-Type': 'application/json',
-        ...options.headers
-    }
-});
-
-export const onlineEvaluationControllerRemove = <ThrowOnError extends boolean = false>(options: Options<OnlineEvaluationControllerRemoveData, ThrowOnError>) => (options.client ?? client).delete<OnlineEvaluationControllerRemoveResponses, unknown, ThrowOnError>({ url: '/v2/online-evaluation-rules/{ruleId}', ...options });
-
-export const onlineEvaluationControllerGet = <ThrowOnError extends boolean = false>(options: Options<OnlineEvaluationControllerGetData, ThrowOnError>) => (options.client ?? client).get<OnlineEvaluationControllerGetResponses, unknown, ThrowOnError>({ url: '/v2/online-evaluation-rules/{ruleId}', ...options });
-
-export const onlineEvaluationControllerUpdate = <ThrowOnError extends boolean = false>(options: Options<OnlineEvaluationControllerUpdateData, ThrowOnError>) => (options.client ?? client).patch<OnlineEvaluationControllerUpdateResponses, unknown, ThrowOnError>({
-    url: '/v2/online-evaluation-rules/{ruleId}',
-    ...options,
-    headers: {
-        'Content-Type': 'application/json',
-        ...options.headers
-    }
-});
-
-export const onlineEvaluationControllerBackfill = <ThrowOnError extends boolean = false>(options: Options<OnlineEvaluationControllerBackfillData, ThrowOnError>) => (options.client ?? client).post<OnlineEvaluationControllerBackfillResponses, unknown, ThrowOnError>({
-    url: '/v2/online-evaluation-rules/{ruleId}/backfill',
-    ...options,
-    headers: {
-        'Content-Type': 'application/json',
-        ...options.headers
-    }
-});
-
-export const onlineEvaluationControllerRuns = <ThrowOnError extends boolean = false>(options: Options<OnlineEvaluationControllerRunsData, ThrowOnError>) => (options.client ?? client).get<OnlineEvaluationControllerRunsResponses, unknown, ThrowOnError>({ url: '/v2/online-evaluation-rules/{ruleId}/runs', ...options });
-
-export const promptControllerList = <ThrowOnError extends boolean = false>(options?: Options<PromptControllerListData, ThrowOnError>) => (options?.client ?? client).get<PromptControllerListResponses, unknown, ThrowOnError>({ url: '/v2/prompts', ...options });
-
-export const promptControllerCreate = <ThrowOnError extends boolean = false>(options: Options<PromptControllerCreateData, ThrowOnError>) => (options.client ?? client).post<PromptControllerCreateResponses, unknown, ThrowOnError>({
-    url: '/v2/prompts',
-    ...options,
-    headers: {
-        'Content-Type': 'application/json',
-        ...options.headers
-    }
-});
-
-export const promptControllerRemove = <ThrowOnError extends boolean = false>(options: Options<PromptControllerRemoveData, ThrowOnError>) => (options.client ?? client).delete<PromptControllerRemoveResponses, unknown, ThrowOnError>({ url: '/v2/prompts/{promptId}', ...options });
-
-export const promptControllerGet = <ThrowOnError extends boolean = false>(options: Options<PromptControllerGetData, ThrowOnError>) => (options.client ?? client).get<PromptControllerGetResponses, unknown, ThrowOnError>({ url: '/v2/prompts/{promptId}', ...options });
-
-export const promptControllerUpdate = <ThrowOnError extends boolean = false>(options: Options<PromptControllerUpdateData, ThrowOnError>) => (options.client ?? client).patch<PromptControllerUpdateResponses, unknown, ThrowOnError>({
-    url: '/v2/prompts/{promptId}',
-    ...options,
-    headers: {
-        'Content-Type': 'application/json',
-        ...options.headers
-    }
-});
-
-export const promptControllerCompare = <ThrowOnError extends boolean = false>(options: Options<PromptControllerCompareData, ThrowOnError>) => (options.client ?? client).get<PromptControllerCompareResponses, unknown, ThrowOnError>({ url: '/v2/prompts/{promptId}/compare', ...options });
-
-export const promptControllerDeployments = <ThrowOnError extends boolean = false>(options: Options<PromptControllerDeploymentsData, ThrowOnError>) => (options.client ?? client).get<PromptControllerDeploymentsResponses, unknown, ThrowOnError>({ url: '/v2/prompts/{promptId}/deployments', ...options });
-
-export const promptControllerPromote = <ThrowOnError extends boolean = false>(options: Options<PromptControllerPromoteData, ThrowOnError>) => (options.client ?? client).post<PromptControllerPromoteResponses, unknown, ThrowOnError>({
-    url: '/v2/prompts/{promptId}/promote',
-    ...options,
-    headers: {
-        'Content-Type': 'application/json',
-        ...options.headers
-    }
-});
-
-export const promptControllerRollback = <ThrowOnError extends boolean = false>(options: Options<PromptControllerRollbackData, ThrowOnError>) => (options.client ?? client).post<PromptControllerRollbackResponses, unknown, ThrowOnError>({
-    url: '/v2/prompts/{promptId}/rollback',
-    ...options,
-    headers: {
-        'Content-Type': 'application/json',
-        ...options.headers
-    }
-});
-
-export const promptControllerVersions = <ThrowOnError extends boolean = false>(options: Options<PromptControllerVersionsData, ThrowOnError>) => (options.client ?? client).get<PromptControllerVersionsResponses, unknown, ThrowOnError>({ url: '/v2/prompts/{promptId}/versions', ...options });
-
-export const promptControllerCreateVersion = <ThrowOnError extends boolean = false>(options: Options<PromptControllerCreateVersionData, ThrowOnError>) => (options.client ?? client).post<PromptControllerCreateVersionResponses, unknown, ThrowOnError>({
-    url: '/v2/prompts/{promptId}/versions',
-    ...options,
-    headers: {
-        'Content-Type': 'application/json',
-        ...options.headers
-    }
-});
-
-export const promptControllerVersion = <ThrowOnError extends boolean = false>(options: Options<PromptControllerVersionData, ThrowOnError>) => (options.client ?? client).get<PromptControllerVersionResponses, unknown, ThrowOnError>({ url: '/v2/prompts/{promptId}/versions/{version}', ...options });
-
-export const traceIntelligenceControllerListBackfills = <ThrowOnError extends boolean = false>(options?: Options<TraceIntelligenceControllerListBackfillsData, ThrowOnError>) => (options?.client ?? client).get<TraceIntelligenceControllerListBackfillsResponses, unknown, ThrowOnError>({ url: '/v2/trace-intelligence/backfills', ...options });
-
-export const traceIntelligenceControllerCreateBackfill = <ThrowOnError extends boolean = false>(options: Options<TraceIntelligenceControllerCreateBackfillData, ThrowOnError>) => (options.client ?? client).post<TraceIntelligenceControllerCreateBackfillResponses, unknown, ThrowOnError>({
-    url: '/v2/trace-intelligence/backfills',
-    ...options,
-    headers: {
-        'Content-Type': 'application/json',
-        ...options.headers
-    }
-});
-
-export const traceIntelligenceControllerGetBackfill = <ThrowOnError extends boolean = false>(options: Options<TraceIntelligenceControllerGetBackfillData, ThrowOnError>) => (options.client ?? client).get<TraceIntelligenceControllerGetBackfillResponses, unknown, ThrowOnError>({ url: '/v2/trace-intelligence/backfills/{jobId}', ...options });
-
-export const traceIntelligenceControllerListClusters = <ThrowOnError extends boolean = false>(options: Options<TraceIntelligenceControllerListClustersData, ThrowOnError>) => (options.client ?? client).get<TraceIntelligenceControllerListClustersResponses, unknown, ThrowOnError>({ url: '/v2/trace-intelligence/clusters', ...options });
-
-export const traceIntelligenceControllerGetCluster = <ThrowOnError extends boolean = false>(options: Options<TraceIntelligenceControllerGetClusterData, ThrowOnError>) => (options.client ?? client).get<TraceIntelligenceControllerGetClusterResponses, unknown, ThrowOnError>({ url: '/v2/trace-intelligence/clusters/{clusterId}', ...options });
-
-export const traceIntelligenceControllerAddToDataset = <ThrowOnError extends boolean = false>(options: Options<TraceIntelligenceControllerAddToDatasetData, ThrowOnError>) => (options.client ?? client).post<TraceIntelligenceControllerAddToDatasetResponses, unknown, ThrowOnError>({
-    url: '/v2/trace-intelligence/clusters/{clusterId}/actions/add-to-dataset',
-    ...options,
-    headers: {
-        'Content-Type': 'application/json',
-        ...options.headers
-    }
-});
-
-export const traceIntelligenceControllerCoverage = <ThrowOnError extends boolean = false>(options: Options<TraceIntelligenceControllerCoverageData, ThrowOnError>) => (options.client ?? client).get<TraceIntelligenceControllerCoverageResponses, unknown, ThrowOnError>({ url: '/v2/trace-intelligence/coverage', ...options });
-
-export const traceIntelligenceControllerFlow = <ThrowOnError extends boolean = false>(options: Options<TraceIntelligenceControllerFlowData, ThrowOnError>) => (options.client ?? client).get<TraceIntelligenceControllerFlowResponses, unknown, ThrowOnError>({ url: '/v2/trace-intelligence/flow', ...options });
-
-export const traceIntelligenceControllerGetSettings = <ThrowOnError extends boolean = false>(options?: Options<TraceIntelligenceControllerGetSettingsData, ThrowOnError>) => (options?.client ?? client).get<TraceIntelligenceControllerGetSettingsResponses, unknown, ThrowOnError>({ url: '/v2/trace-intelligence/settings', ...options });
-
-export const traceIntelligenceControllerUpdateSettings = <ThrowOnError extends boolean = false>(options: Options<TraceIntelligenceControllerUpdateSettingsData, ThrowOnError>) => (options.client ?? client).put<TraceIntelligenceControllerUpdateSettingsResponses, unknown, ThrowOnError>({
-    url: '/v2/trace-intelligence/settings',
-    ...options,
-    headers: {
-        'Content-Type': 'application/json',
-        ...options.headers
-    }
-});
-
-export const traceIntelligenceControllerTestProvider = <ThrowOnError extends boolean = false>(options: Options<TraceIntelligenceControllerTestProviderData, ThrowOnError>) => (options.client ?? client).post<TraceIntelligenceControllerTestProviderResponses, unknown, ThrowOnError>({
-    url: '/v2/trace-intelligence/settings/provider/test',
-    ...options,
-    headers: {
-        'Content-Type': 'application/json',
-        ...options.headers
-    }
-});
-
-export const traceIntelligenceControllerGetSignals = <ThrowOnError extends boolean = false>(options: Options<TraceIntelligenceControllerGetSignalsData, ThrowOnError>) => (options.client ?? client).get<TraceIntelligenceControllerGetSignalsResponses, unknown, ThrowOnError>({ url: '/v2/trace-intelligence/traces/{traceId}/signals', ...options });
-
-export const traceV2ControllerList = <ThrowOnError extends boolean = false>(options?: Options<TraceV2ControllerListData, ThrowOnError>) => (options?.client ?? client).get<TraceV2ControllerListResponses, unknown, ThrowOnError>({ url: '/v2/traces', ...options });
-
-export const traceV2ControllerAttributeKeys = <ThrowOnError extends boolean = false>(options?: Options<TraceV2ControllerAttributeKeysData, ThrowOnError>) => (options?.client ?? client).get<TraceV2ControllerAttributeKeysResponses, unknown, ThrowOnError>({ url: '/v2/traces/attribute-keys', ...options });
-
-export const traceV2ControllerFacets = <ThrowOnError extends boolean = false>(options?: Options<TraceV2ControllerFacetsData, ThrowOnError>) => (options?.client ?? client).get<TraceV2ControllerFacetsResponses, unknown, ThrowOnError>({ url: '/v2/traces/facets', ...options });
-
-export const traceV2ControllerStats = <ThrowOnError extends boolean = false>(options?: Options<TraceV2ControllerStatsData, ThrowOnError>) => (options?.client ?? client).get<TraceV2ControllerStatsResponses, unknown, ThrowOnError>({ url: '/v2/traces/stats', ...options });
-
-export const traceV2ControllerDetail = <ThrowOnError extends boolean = false>(options: Options<TraceV2ControllerDetailData, ThrowOnError>) => (options.client ?? client).get<TraceV2ControllerDetailResponses, unknown, ThrowOnError>({ url: '/v2/traces/{traceId}', ...options });
-
-export const assessmentControllerRemoveByQuery = <ThrowOnError extends boolean = false>(options: Options<AssessmentControllerRemoveByQueryData, ThrowOnError>) => (options.client ?? client).delete<AssessmentControllerRemoveByQueryResponses, unknown, ThrowOnError>({ url: '/v2/traces/{traceId}/assessments', ...options });
-
-export const assessmentControllerList = <ThrowOnError extends boolean = false>(options: Options<AssessmentControllerListData, ThrowOnError>) => (options.client ?? client).get<AssessmentControllerListResponses, unknown, ThrowOnError>({ url: '/v2/traces/{traceId}/assessments', ...options });
-
-export const assessmentControllerCreate = <ThrowOnError extends boolean = false>(options: Options<AssessmentControllerCreateData, ThrowOnError>) => (options.client ?? client).post<AssessmentControllerCreateResponses, unknown, ThrowOnError>({
-    url: '/v2/traces/{traceId}/assessments',
-    ...options,
-    headers: {
-        'Content-Type': 'application/json',
-        ...options.headers
-    }
-});
-
-export const assessmentControllerRemove = <ThrowOnError extends boolean = false>(options: Options<AssessmentControllerRemoveData, ThrowOnError>) => (options.client ?? client).delete<AssessmentControllerRemoveResponses, unknown, ThrowOnError>({ url: '/v2/traces/{traceId}/assessments/{assessmentId}', ...options });
-
-export const traceV2ControllerEvents = <ThrowOnError extends boolean = false>(options: Options<TraceV2ControllerEventsData, ThrowOnError>) => (options.client ?? client).get<TraceV2ControllerEventsResponses, unknown, ThrowOnError>({ url: '/v2/traces/{traceId}/events', ...options });
-
-export const traceV2ControllerSpans = <ThrowOnError extends boolean = false>(options: Options<TraceV2ControllerSpansData, ThrowOnError>) => (options.client ?? client).get<TraceV2ControllerSpansResponses, unknown, ThrowOnError>({ url: '/v2/traces/{traceId}/spans', ...options });
-
-export const webhookControllerGetDeliveries = <ThrowOnError extends boolean = false>(options: Options<WebhookControllerGetDeliveriesData, ThrowOnError>) => (options.client ?? client).get<WebhookControllerGetDeliveriesResponses, unknown, ThrowOnError>({ url: '/webhooks/deliveries/{endpointId}', ...options });
-
-export const webhookControllerCreateEndpoint = <ThrowOnError extends boolean = false>(options: Options<WebhookControllerCreateEndpointData, ThrowOnError>) => (options.client ?? client).post<WebhookControllerCreateEndpointResponses, unknown, ThrowOnError>({
+/**
+ * List recent webhook deliveries
+ */
+export const webhooksListDeliveries = <ThrowOnError extends boolean = false>(options: Options<WebhooksListDeliveriesData, ThrowOnError>) => (options.client ?? client).get<WebhooksListDeliveriesResponses, WebhooksListDeliveriesErrors, ThrowOnError>({ url: '/webhooks/deliveries/{endpointId}', ...options });
+
+/**
+ * Create a webhook endpoint
+ */
+export const webhooksCreateEndpoint = <ThrowOnError extends boolean = false>(options: Options<WebhooksCreateEndpointData, ThrowOnError>) => (options.client ?? client).post<WebhooksCreateEndpointResponses, WebhooksCreateEndpointErrors, ThrowOnError>({
     url: '/webhooks/endpoints',
     ...options,
     headers: {
@@ -742,8 +644,12 @@ export const webhookControllerCreateEndpoint = <ThrowOnError extends boolean = f
     }
 });
 
-export const webhookControllerListEndpoints = <ThrowOnError extends boolean = false>(options: Options<WebhookControllerListEndpointsData, ThrowOnError>) => (options.client ?? client).get<WebhookControllerListEndpointsResponses, unknown, ThrowOnError>({ url: '/webhooks/endpoints/channel/{channelId}', ...options });
+/**
+ * List webhook endpoints for a channel
+ */
+export const webhooksListEndpoints = <ThrowOnError extends boolean = false>(options: Options<WebhooksListEndpointsData, ThrowOnError>) => (options.client ?? client).get<WebhooksListEndpointsResponses, WebhooksListEndpointsErrors, ThrowOnError>({ url: '/webhooks/endpoints/channel/{channelId}', ...options });
 
-export const webhookControllerDeleteEndpoint = <ThrowOnError extends boolean = false>(options: Options<WebhookControllerDeleteEndpointData, ThrowOnError>) => (options.client ?? client).delete<WebhookControllerDeleteEndpointResponses, unknown, ThrowOnError>({ url: '/webhooks/endpoints/{id}', ...options });
-
-export const webhookControllerIngestWebhook = <ThrowOnError extends boolean = false>(options: Options<WebhookControllerIngestWebhookData, ThrowOnError>) => (options.client ?? client).post<WebhookControllerIngestWebhookResponses, unknown, ThrowOnError>({ url: '/webhooks/ingest/{endpointId}', ...options });
+/**
+ * Deactivate a webhook endpoint
+ */
+export const webhooksDeleteEndpoint = <ThrowOnError extends boolean = false>(options: Options<WebhooksDeleteEndpointData, ThrowOnError>) => (options.client ?? client).delete<WebhooksDeleteEndpointResponses, WebhooksDeleteEndpointErrors, ThrowOnError>({ url: '/webhooks/endpoints/{endpointId}', ...options });

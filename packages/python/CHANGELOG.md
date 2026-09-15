@@ -4,6 +4,58 @@ All notable changes to the axonpush Python SDK are documented here. The
 format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/);
 versioning is [SemVer](https://semver.org/spec/v2.0.0.html).
 
+## [0.0.18]
+
+### Changed
+- **BREAKING:** Realigned every route and DTO to the Go/Huma backend contract
+  (`openapi.sdk.json`). The generated `_internal.api` client now comes from the
+  dotted-operationId contract (`createEvent`, `eventsSearch`, `traces.list`,
+  `traces.get`, `environments.list`, `apps.*`, `channels.*`, `alerts.*`,
+  `analytics.*`, `webhooks.*`, `moderation.*`, `capabilities.get`,
+  `user.me.organizations`). Public models are now the DTO facade: `App`
+  (`AppDTO`), `Channel` (`ChannelDTO`), `Environment` (`EnvironmentDTO`),
+  `Organization` (`OrganizationDTO`), `Event` (`EventOutputBody`), `EventBody`,
+  `EventDetails` (`EventDTO`), `TraceSummary`, `UserOrg`, `WebhookEndpoint`
+  (`EndpointDTO`), `WebhookDelivery` (`DeliveryDTO`).
+- **BREAKING:** `client.events` now exposes `publish()` (`POST /event`, body
+  `EventBody` with `channel_id`) and `search()` (`GET /events`). `events.list()`
+  was removed (no per-channel list op); use `search(channel_id=...)`.
+- **BREAKING:** `client.channels` is app-scoped: `list(app_id)`,
+  `get(app_id, channel_id)`, `create(app_id, name)`,
+  `update(app_id, channel_id, name=...)`, `delete(app_id, channel_id)`.
+- **BREAKING:** `client.environments` is addressed by slug for
+  `update`/`delete`/`promote`; `list()` unwraps the envelope and returns a list.
+- **BREAKING:** `client.organizations.list()` returns the caller's
+  memberships from `GET /users/me/organizations` (unwrapped). `get()` fetches
+  the active org (no id arg); `create()` was removed (no contract op).
+- **BREAKING:** Renamed the traces resource `traces_v2` → `traces` with
+  `list()` (`GET /traces`) and `get(trace_id)` (`GET /traces/{traceId}`).
+  `client.traces_v2` remains as a back-compat alias. Removed the trace v2
+  `stats` / `facets` / `attribute-keys` / `spans` / `events` operations.
+- **BREAKING:** `client.analytics` keeps `breakdown()` and `timeseries()`;
+  the removed `compare` op is gone.
+
+### Added
+- `client.moderation` (rules CRUD + violations) and `client.capabilities`
+  (server flags, scopes, license) resources.
+- `EventType` is now defined locally in `axonpush.models` (the contract no
+  longer ships the enum); the bundled framework integrations keep using it.
+
+### Removed
+- **BREAKING:** Removed the `api_keys` resource and all API-key models. API
+  keys are managed by the auth service, not this contract.
+- **BREAKING:** Dropped the removed models/aliases `CreateEventDto`,
+  `EventType` (as a generated symbol), `EventListResponseDto`, `ApiKey`,
+  `ApiKeyCreateResponseDto`, `DeliveryStatus`,
+  `WebhookEndpointCreateResponseDto` from the public surface.
+
+### Notes
+- The `sync` flag on published events is accepted but ignored by the backend
+  (ingest is always asynchronous).
+- The transport authenticates `ak_` keys via the `x-axonpush-api-key` header
+  (the shared `headers.json` contract fixture still records the legacy
+  `X-API-Key` name).
+
 ## [0.0.17]
 
 ### Removed

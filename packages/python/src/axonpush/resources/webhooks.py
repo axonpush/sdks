@@ -2,41 +2,50 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, List
 
 from axonpush._internal.api.api.webhooks import (
-    webhook_controller_create_endpoint as _create_op,
-    webhook_controller_delete_endpoint as _delete_op,
-    webhook_controller_get_deliveries as _deliveries_op,
-    webhook_controller_list_endpoints as _list_op,
+    webhooks_create_endpoint as _create_op,
+    webhooks_delete_endpoint as _delete_op,
+    webhooks_list_deliveries as _deliveries_op,
+    webhooks_list_endpoints as _list_op,
 )
 from axonpush._internal.api.models import (
-    CreateWebhookEndpointDto,
-    MessageResponseDto,
+    CreateEndpointInputBody,
+    CreateEndpointOutputBody,
+    ListDeliveriesOutputBody,
+    ListEndpointsOutputBody,
+    MessageOutputBody,
 )
 from axonpush._internal.api.types import UNSET
-from axonpush.models import (
-    WebhookDelivery,
-    WebhookEndpoint,
-    WebhookEndpointCreateResponseDto,
-)
+from axonpush.models import WebhookDelivery, WebhookEndpoint
 
 if TYPE_CHECKING:
     from axonpush.resources._base import AsyncClientProtocol, SyncClientProtocol
+
+
+def _unwrap_endpoints(result: ListEndpointsOutputBody | None) -> List[WebhookEndpoint] | None:
+    if result is None:
+        return None
+    return list(result.data or [])
+
+
+def _unwrap_deliveries(result: ListDeliveriesOutputBody | None) -> List[WebhookDelivery] | None:
+    if result is None:
+        return None
+    return list(result.data or [])
 
 
 def _build_create_dto(
     *,
     url: str,
     channel_id: str,
-    secret: str | None,
     event_types: list[str] | None,
     description: str | None,
-) -> CreateWebhookEndpointDto:
-    return CreateWebhookEndpointDto(
+) -> CreateEndpointInputBody:
+    return CreateEndpointInputBody(
         url=url,
         channel_id=channel_id,
-        secret=secret if secret is not None else UNSET,
         event_types=event_types if event_types is not None else UNSET,
         description=description if description is not None else UNSET,
     )
@@ -53,17 +62,15 @@ class Webhooks:
         *,
         url: str,
         channel_id: str,
-        secret: str | None = None,
         event_types: list[str] | None = None,
         description: str | None = None,
-    ) -> WebhookEndpointCreateResponseDto | None:
+    ) -> CreateEndpointOutputBody | None:
         """Register a webhook endpoint on a channel.
 
         Args:
             url: Target URL the backend will POST to.
-            channel_id: Source channel UUID.
-            secret: Optional signing secret. Server-generated if omitted.
-            event_types: Optional event-type filter (e.g. ``["agent.start"]``).
+            channel_id: Source channel id.
+            event_types: Optional event-type filter (empty / omitted = all).
             description: Free-form note.
 
         Returns:
@@ -72,23 +79,24 @@ class Webhooks:
         body = _build_create_dto(
             url=url,
             channel_id=channel_id,
-            secret=secret,
             event_types=event_types,
             description=description,
         )
         return self._client._invoke(_create_op, body=body)
 
-    def list_endpoints(self, channel_id: str) -> list[WebhookEndpoint] | None:
-        """List endpoints attached to a channel."""
-        return self._client._invoke(_list_op, channel_id=channel_id)
+    def list_endpoints(self, channel_id: str) -> List[WebhookEndpoint] | None:
+        """List endpoints attached to a channel (envelope unwrapped)."""
+        return self._client._invoke(_list_op, channel_id=channel_id, _coerce=_unwrap_endpoints)
 
-    def delete_endpoint(self, endpoint_id: str) -> MessageResponseDto | None:
+    def delete_endpoint(self, endpoint_id: str) -> MessageOutputBody | None:
         """Delete a webhook endpoint."""
-        return self._client._invoke(_delete_op, id=endpoint_id)
+        return self._client._invoke(_delete_op, endpoint_id=endpoint_id)
 
-    def deliveries(self, endpoint_id: str) -> list[WebhookDelivery] | None:
-        """List deliveries for a webhook endpoint."""
-        return self._client._invoke(_deliveries_op, endpoint_id=endpoint_id)
+    def deliveries(self, endpoint_id: str) -> List[WebhookDelivery] | None:
+        """List deliveries for a webhook endpoint (envelope unwrapped)."""
+        return self._client._invoke(
+            _deliveries_op, endpoint_id=endpoint_id, _coerce=_unwrap_deliveries
+        )
 
 
 class AsyncWebhooks:
@@ -102,28 +110,30 @@ class AsyncWebhooks:
         *,
         url: str,
         channel_id: str,
-        secret: str | None = None,
         event_types: list[str] | None = None,
         description: str | None = None,
-    ) -> WebhookEndpointCreateResponseDto | None:
+    ) -> CreateEndpointOutputBody | None:
         """See :meth:`Webhooks.create_endpoint`."""
         body = _build_create_dto(
             url=url,
             channel_id=channel_id,
-            secret=secret,
             event_types=event_types,
             description=description,
         )
         return await self._client._invoke(_create_op, body=body)
 
-    async def list_endpoints(self, channel_id: str) -> list[WebhookEndpoint] | None:
+    async def list_endpoints(self, channel_id: str) -> List[WebhookEndpoint] | None:
         """See :meth:`Webhooks.list_endpoints`."""
-        return await self._client._invoke(_list_op, channel_id=channel_id)
+        return await self._client._invoke(
+            _list_op, channel_id=channel_id, _coerce=_unwrap_endpoints
+        )
 
-    async def delete_endpoint(self, endpoint_id: str) -> MessageResponseDto | None:
+    async def delete_endpoint(self, endpoint_id: str) -> MessageOutputBody | None:
         """See :meth:`Webhooks.delete_endpoint`."""
-        return await self._client._invoke(_delete_op, id=endpoint_id)
+        return await self._client._invoke(_delete_op, endpoint_id=endpoint_id)
 
-    async def deliveries(self, endpoint_id: str) -> list[WebhookDelivery] | None:
+    async def deliveries(self, endpoint_id: str) -> List[WebhookDelivery] | None:
         """See :meth:`Webhooks.deliveries`."""
-        return await self._client._invoke(_deliveries_op, endpoint_id=endpoint_id)
+        return await self._client._invoke(
+            _deliveries_op, endpoint_id=endpoint_id, _coerce=_unwrap_deliveries
+        )

@@ -1,12 +1,15 @@
 import { describe, expect, it, vi } from "vitest";
 import type { ResourceClient } from "../../resources/_client.js";
-import { ApiKeysResource } from "../../resources/api-keys.js";
+import { AlertsResource } from "../../resources/alerts.js";
+import { AnalyticsResource } from "../../resources/analytics.js";
 import { AppsResource } from "../../resources/apps.js";
+import { CapabilitiesResource } from "../../resources/capabilities.js";
 import { ChannelsResource } from "../../resources/channels.js";
 import { EnvironmentsResource } from "../../resources/environments.js";
 import { EventsResource } from "../../resources/events.js";
+import { ModerationResource } from "../../resources/moderation.js";
 import { OrganizationsResource } from "../../resources/organizations.js";
-import { TracesV2Resource } from "../../resources/traces-v2.js";
+import { TracesResource, TracesV2Resource } from "../../resources/traces.js";
 import { WebhooksResource } from "../../resources/webhooks.js";
 
 vi.mock("../../_internal/api/sdk.gen.js", async () => {
@@ -26,12 +29,12 @@ const expectations: Array<{ name: string; instance: object; methods: string[] }>
   {
     name: "EventsResource",
     instance: new EventsResource(stubClient),
-    methods: ["publish", "list", "search"],
+    methods: ["publish", "search"],
   },
   {
     name: "ChannelsResource",
     instance: new ChannelsResource(stubClient),
-    methods: ["get", "create", "update", "delete"],
+    methods: ["list", "get", "create", "update", "delete"],
   },
   {
     name: "AppsResource",
@@ -49,25 +52,40 @@ const expectations: Array<{ name: string; instance: object; methods: string[] }>
     methods: ["createEndpoint", "listEndpoints", "deleteEndpoint", "deliveries"],
   },
   {
-    name: "TracesV2Resource",
-    instance: new TracesV2Resource(stubClient),
-    methods: ["list", "stats", "detail", "events", "spans", "facets", "attributeKeys"],
+    name: "TracesResource",
+    instance: new TracesResource(stubClient),
+    methods: ["list", "get"],
   },
   {
-    name: "ApiKeysResource",
-    instance: new ApiKeysResource(stubClient),
-    methods: ["create", "list", "delete"],
+    name: "AlertsResource",
+    instance: new AlertsResource(stubClient),
+    methods: ["list", "create", "update", "delete"],
+  },
+  {
+    name: "AnalyticsResource",
+    instance: new AnalyticsResource(stubClient),
+    methods: ["breakdown", "timeseries"],
+  },
+  {
+    name: "ModerationResource",
+    instance: new ModerationResource(stubClient),
+    methods: ["listRules", "createRule", "deleteRule", "listViolations"],
+  },
+  {
+    name: "CapabilitiesResource",
+    instance: new CapabilitiesResource(stubClient),
+    methods: ["get"],
   },
   {
     name: "OrganizationsResource",
     instance: new OrganizationsResource(stubClient),
     methods: [
-      "create",
       "get",
       "list",
       "update",
       "delete",
       "invite",
+      "cancelInvitation",
       "removeMember",
       "transferOwnership",
     ],
@@ -82,4 +100,8 @@ describe("resource method parity (contract §3)", () => {
       });
     }
   }
+
+  it("TracesV2Resource is a back-compat alias for TracesResource", () => {
+    expect(TracesV2Resource).toBe(TracesResource);
+  });
 });

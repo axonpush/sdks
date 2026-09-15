@@ -5,13 +5,16 @@ mysterious AttributeErrors.
 
 from __future__ import annotations
 
-from axonpush.resources.api_keys import ApiKeys, AsyncApiKeys
+from axonpush.resources.alerts import Alerts, AsyncAlerts
+from axonpush.resources.analytics import Analytics, AsyncAnalytics
 from axonpush.resources.apps import Apps, AsyncApps
+from axonpush.resources.capabilities import AsyncCapabilities, Capabilities
 from axonpush.resources.channels import AsyncChannels, Channels
 from axonpush.resources.environments import AsyncEnvironments, Environments
 from axonpush.resources.events import AsyncEvents, Events
+from axonpush.resources.moderation import AsyncModeration, Moderation
 from axonpush.resources.organizations import AsyncOrganizations, Organizations
-from axonpush.resources.traces_v2 import AsyncTracesV2, TracesV2
+from axonpush.resources.traces import AsyncTraces, Traces
 from axonpush.resources.webhooks import AsyncWebhooks, Webhooks
 
 
@@ -25,8 +28,11 @@ _PAIRS: list[tuple[type, type]] = [
     (Apps, AsyncApps),
     (Environments, AsyncEnvironments),
     (Webhooks, AsyncWebhooks),
-    (TracesV2, AsyncTracesV2),
-    (ApiKeys, AsyncApiKeys),
+    (Traces, AsyncTraces),
+    (Alerts, AsyncAlerts),
+    (Analytics, AsyncAnalytics),
+    (Moderation, AsyncModeration),
+    (Capabilities, AsyncCapabilities),
     (Organizations, AsyncOrganizations),
 ]
 

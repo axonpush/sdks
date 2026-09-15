@@ -4,6 +4,14 @@ All notable changes to the axonpush .NET SDKs are documented here. The
 format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/);
 versioning is [SemVer](https://semver.org/spec/v2.0.0.html).
 
+## [0.0.5]
+
+### Fixed
+- **API-key header renamed to `x-axonpush-api-key`.** `ak_` API keys are now
+  sent on the `x-axonpush-api-key` header the backend expects; previously they
+  were sent on `X-API-Key`, which the current backend ignores. `pt_` public
+  ingest tokens continue to use `X-Public-Token`.
+
 ## [Unreleased]
 
 ### Added

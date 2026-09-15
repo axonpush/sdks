@@ -1,14 +1,6 @@
-import {
-  eventControllerCreateEvent,
-  eventControllerListEvents,
-  eventsSearchControllerSearch,
-} from "../_internal/api/sdk.gen.js";
-import type {
-  CreateEventDto,
-  EventControllerListEventsData,
-  EventsSearchControllerSearchData,
-} from "../_internal/api/types.gen.js";
-import type { Event, EventDetails, EventListResponseDto, EventType } from "../models.js";
+import { createEvent, eventsSearch } from "../_internal/api/sdk.gen.js";
+import type { EventBody, EventsSearchData } from "../_internal/api/types.gen.js";
+import type { Event, EventDetails, EventType, SearchEventsOutputBody } from "../models.js";
 import type { ResourceClient } from "./_client.js";
 
 /** Parameters accepted by {@link EventsResource.publish}. */
@@ -27,7 +19,11 @@ export interface PublishParams {
   spanId?: string;
   /** Parent W3C span ID for hierarchy reconstruction. */
   parentSpanId?: string;
-  /** Parent event ID — used to model hand-offs. */
+  /**
+   * Parent event ID — used to model hand-offs. Emitted into `metadata` as
+   * `axonpush.parent_event_id` since the ingest body no longer has a
+   * dedicated field for it.
+   */
   parentEventId?: string;
   /** Discriminator. Defaults to `"custom"` when omitted. */
   eventType?: EventType;
@@ -40,43 +36,47 @@ export interface PublishParams {
   /**
    * Environment slug override. Only honoured when the API key has
    * `allowEnvironmentOverride=true`. Falls through to the client's
-   * default environment when omitted.
+   * default environment when omitted. Sent via the `X-Axonpush-Environment`
+   * request header by the transport, not the body.
    */
   environment?: string;
   /**
-   * When true, wait for the event to be persisted to the DB before
-   * returning. Use only for audit-critical calls.
+   * Idempotency key. Duplicate events sharing a `dedupKey` are collapsed.
+   */
+  dedupKey?: string;
+  /**
+   * Ignored by the backend — ingest is always asynchronous. Kept for
+   * back-compat with callers that still pass it.
    */
   sync?: boolean;
 }
 
-/** Common pagination/filter options for {@link EventsResource.list} & {@link EventsResource.search}. */
-export interface EventListParams {
-  payloadFilter?: string;
-  /** 1–1000. Defaults server-side to 100. */
+/** Search filters (cross-channel). `GET /events` */
+export interface EventSearchParams {
+  /** Max events to return (default 50, max 500). */
   limit?: number;
-  cursor?: string;
-  /** ISO 8601 datetime (exclusive upper bound). */
+  /** ISO 8601 / RFC3339 window end (defaults to now). */
   until?: string;
-  /** ISO 8601 datetime (inclusive lower bound). */
+  /** ISO 8601 / RFC3339 window start (defaults to 24h before `until`). */
   since?: string;
   traceId?: string;
-  agentId?: string;
-  /** Repeat or comma-separate to filter by multiple event types. */
-  eventType?: string[];
-  environment?: string;
-}
-
-/** Search-specific filters (cross-channel). */
-export interface EventSearchParams extends EventListParams {
-  source?: string;
-  query?: string;
-  channelId?: string;
+  /** Filter by a single event type. */
+  eventType?: string;
   appId?: string;
+  channelId?: string;
+  environmentId?: string;
+  source?: string;
+  status?: string;
+  /** Case-insensitive contains match on search text. */
+  q?: string;
+  /** JSONB attribute key for equality filter (paired with `attrValue`). */
+  attrKey?: string;
+  /** JSONB attribute value for equality filter (paired with `attrKey`). */
+  attrValue?: string;
 }
 
 /**
- * Publish, list, and search events.
+ * Publish and search events.
  *
  * Resources never throw on transport errors when the client was
  * constructed with `failOpen=true` (the default). Callers receive
@@ -86,113 +86,76 @@ export class EventsResource {
   constructor(private readonly client: ResourceClient) {}
 
   /**
-   * Publish a single event to a channel.
+   * Publish a single event to a channel. `POST /event`
    *
    * @param params - Event parameters; see {@link PublishParams}.
-   * @returns The persisted event ingest response, or `null` when fail_open swallowed a transport error.
+   * @returns The event ingest ack, or `null` when fail_open swallowed a transport error.
    * @throws {AxonPushError} when fail_open is false and the call fails.
    */
   async publish(params: PublishParams): Promise<Event | null> {
     const trace = this.client.getOrCreateTrace(params.traceId);
-    const body = {
+
+    const hasMeta =
+      params.metadata !== undefined ||
+      params.promptId !== undefined ||
+      params.promptVersionId !== undefined ||
+      params.parentEventId !== undefined;
+    const rawMeta = hasMeta
+      ? {
+          ...(params.metadata ?? {}),
+          ...(params.promptId === undefined ? {} : { "gen_ai.prompt.id": params.promptId }),
+          ...(params.promptVersionId === undefined
+            ? {}
+            : { "gen_ai.prompt.version": params.promptVersionId }),
+          ...(params.parentEventId === undefined
+            ? {}
+            : { "axonpush.parent_event_id": params.parentEventId }),
+        }
+      : undefined;
+
+    const body: EventBody = {
       identifier: params.identifier,
       payload: this.client.redactTelemetry?.(params.payload) ?? params.payload,
       channel_id: params.channelId,
       traceId: trace.traceId,
       spanId: params.spanId ?? trace.nextSpanId(),
-      eventType: (params.eventType ?? "custom") as CreateEventDto["eventType"],
+      eventType: params.eventType ?? "custom",
       sync: params.sync ?? false,
       ...(params.agentId !== undefined ? { agentId: params.agentId } : {}),
-      ...(params.parentEventId !== undefined ? { parentEventId: params.parentEventId } : {}),
       ...(params.parentSpanId !== undefined ? { parentSpanId: params.parentSpanId } : {}),
-      ...(params.metadata !== undefined ||
-      params.promptId !== undefined ||
-      params.promptVersionId !== undefined
-        ? {
-            metadata: this.client.redactTelemetry?.({
-              ...(params.metadata ?? {}),
-              ...(params.promptId === undefined ? {} : { "gen_ai.prompt.id": params.promptId }),
-              ...(params.promptVersionId === undefined
-                ? {}
-                : { "gen_ai.prompt.version": params.promptVersionId }),
-            }) ?? {
-              ...(params.metadata ?? {}),
-              ...(params.promptId === undefined ? {} : { "gen_ai.prompt.id": params.promptId }),
-              ...(params.promptVersionId === undefined
-                ? {}
-                : { "gen_ai.prompt.version": params.promptVersionId }),
-            },
-          }
+      ...(params.dedupKey !== undefined ? { dedupKey: params.dedupKey } : {}),
+      ...(rawMeta !== undefined
+        ? { metadata: this.client.redactTelemetry?.(rawMeta) ?? rawMeta }
         : {}),
-      ...((params.environment ?? this.client.environment)
-        ? { environment: params.environment ?? this.client.environment }
-        : {}),
-    } as CreateEventDto;
-    return this.client.invoke(eventControllerCreateEvent, { body });
+    };
+    return this.client.invoke(createEvent, { body });
   }
 
   /**
-   * List events on a single channel, ordered newest-first.
-   *
-   * @param channelId - Channel UUID.
-   * @param params - Optional pagination & filter parameters.
-   * @returns Paginated list response, or `null` on fail-open error.
-   */
-  async list(
-    channelId: string,
-    params: EventListParams = {},
-  ): Promise<EventListResponseDto | null> {
-    const args: Omit<EventControllerListEventsData, "url"> = {
-      path: { channelId },
-      query: this.buildListQuery(params),
-    };
-    return this.client.invoke(eventControllerListEvents, args);
-  }
-
-  /**
-   * Search events across channels using server-side filters.
+   * Search events across channels using server-side filters. `GET /events`
    *
    * @param params - Optional pagination & filter parameters.
-   * @returns Paginated search response, or `null` on fail-open error.
+   * @returns Search response envelope, or `null` on fail-open error.
    */
-  async search(params: EventSearchParams = {}): Promise<EventListResponseDto | null> {
-    const args: Omit<EventsSearchControllerSearchData, "url"> = {
-      query: this.buildSearchQuery(params),
-    };
-    return this.client.invoke(eventsSearchControllerSearch, args);
+  async search(params: EventSearchParams = {}): Promise<SearchEventsOutputBody | null> {
+    return this.client.invoke(eventsSearch, { query: this.buildSearchQuery(params) });
   }
 
-  private buildListQuery(p: EventListParams): EventControllerListEventsData["query"] {
-    const env = p.environment ?? this.client.environment;
+  private buildSearchQuery(p: EventSearchParams): EventsSearchData["query"] {
     return {
-      ...(p.payloadFilter !== undefined ? { payloadFilter: p.payloadFilter } : {}),
-      ...(p.limit !== undefined ? { limit: p.limit } : {}),
-      ...(p.cursor !== undefined ? { cursor: p.cursor } : {}),
-      ...(p.until !== undefined ? { until: p.until } : {}),
       ...(p.since !== undefined ? { since: p.since } : {}),
-      ...(p.traceId !== undefined ? { traceId: p.traceId } : {}),
-      ...(p.agentId !== undefined ? { agentId: p.agentId } : {}),
-      ...(p.eventType !== undefined ? { eventType: p.eventType } : {}),
-      ...(env !== undefined ? { environment: env } : {}),
-    };
-  }
-
-  private buildSearchQuery(p: EventSearchParams): EventsSearchControllerSearchData["query"] {
-    const env = p.environment ?? this.client.environment;
-    return {
-      ...(p.source !== undefined ? { source: p.source } : {}),
-      ...(p.query !== undefined ? { query: p.query } : {}),
-      ...(p.channelId !== undefined ? { channelId: p.channelId } : {}),
+      ...(p.until !== undefined ? { until: p.until } : {}),
+      ...(p.limit !== undefined ? { limit: p.limit } : {}),
       ...(p.appId !== undefined ? { appId: p.appId } : {}),
-      ...(p.payloadFilter !== undefined ? { payloadFilter: p.payloadFilter } : {}),
-      ...(p.limit !== undefined ? { limit: p.limit } : {}),
-      ...(p.cursor !== undefined ? { cursor: p.cursor } : {}),
-      ...(p.until !== undefined ? { until: p.until } : {}),
-      ...(p.since !== undefined ? { since: p.since } : {}),
-      ...(p.traceId !== undefined ? { traceId: p.traceId } : {}),
-      ...(p.agentId !== undefined ? { agentId: p.agentId } : {}),
+      ...(p.channelId !== undefined ? { channelId: p.channelId } : {}),
+      ...(p.environmentId !== undefined ? { environmentId: p.environmentId } : {}),
       ...(p.eventType !== undefined ? { eventType: p.eventType } : {}),
-      ...(env !== undefined ? { environment: env } : {}),
+      ...(p.source !== undefined ? { source: p.source } : {}),
+      ...(p.status !== undefined ? { status: p.status } : {}),
+      ...(p.traceId !== undefined ? { traceId: p.traceId } : {}),
+      ...(p.q !== undefined ? { q: p.q } : {}),
+      ...(p.attrKey !== undefined ? { attrKey: p.attrKey } : {}),
+      ...(p.attrValue !== undefined ? { attrValue: p.attrValue } : {}),
     };
   }
 }

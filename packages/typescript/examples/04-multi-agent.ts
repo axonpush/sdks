@@ -39,11 +39,11 @@ async function main() {
     });
   }
 
-  const listing = await client.events.list(CHANNEL_ID, { limit: 20 });
-  for (const event of listing?.data ?? []) {
+  const listing = await client.events.search({ channelId: CHANNEL_ID, limit: 20 });
+  for (const event of listing?.events ?? []) {
     console.log(`[all] ${event.eventType} from ${event.agentId}`);
     if (event.eventType === "agent.error") {
-      console.log(`[errors] ${event.identifier}: ${JSON.stringify(event.payload)}`);
+      console.log(`[errors] ${event.eventId}: ${JSON.stringify(event.payload)}`);
     }
   }
 

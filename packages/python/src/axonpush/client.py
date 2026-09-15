@@ -244,11 +244,6 @@ class AxonPush:
         return self._resource("webhooks", "Webhooks")
 
     @property
-    def api_keys(self) -> Any:
-        """API keys resource accessor (lazy import)."""
-        return self._resource("api_keys", "ApiKeys")
-
-    @property
     def organizations(self) -> Any:
         """Organizations resource accessor (lazy import)."""
         return self._resource("organizations", "Organizations")
@@ -260,13 +255,28 @@ class AxonPush:
 
     @property
     def analytics(self) -> Any:
-        """Timeseries, breakdowns and comparisons. Lazy import."""
+        """Timeseries and breakdowns. Lazy import."""
         return self._resource("analytics", "Analytics")
 
     @property
+    def moderation(self) -> Any:
+        """Moderation rules and violations. Lazy import."""
+        return self._resource("moderation", "Moderation")
+
+    @property
+    def capabilities(self) -> Any:
+        """Server capabilities (flags, scopes, license). Lazy import."""
+        return self._resource("capabilities", "Capabilities")
+
+    @property
+    def traces(self) -> Any:
+        """List and fetch traces. Lazy import."""
+        return self._resource("traces", "Traces")
+
+    @property
     def traces_v2(self) -> Any:
-        """Trace search with facets and spans. Lazy import."""
-        return self._resource("traces_v2", "TracesV2")
+        """Deprecated alias for :attr:`traces`. Lazy import."""
+        return self._resource("traces", "Traces")
 
 
 class AsyncAxonPush:
@@ -455,11 +465,6 @@ class AsyncAxonPush:
         return self._resource("webhooks", "AsyncWebhooks")
 
     @property
-    def api_keys(self) -> Any:
-        """API keys resource accessor (lazy import)."""
-        return self._resource("api_keys", "AsyncApiKeys")
-
-    @property
     def organizations(self) -> Any:
         """Organizations resource accessor (lazy import)."""
         return self._resource("organizations", "AsyncOrganizations")
@@ -471,13 +476,28 @@ class AsyncAxonPush:
 
     @property
     def analytics(self) -> Any:
-        """Timeseries, breakdowns and comparisons. Lazy import."""
+        """Timeseries and breakdowns. Lazy import."""
         return self._resource("analytics", "AsyncAnalytics")
 
     @property
+    def moderation(self) -> Any:
+        """Moderation rules and violations. Lazy import."""
+        return self._resource("moderation", "AsyncModeration")
+
+    @property
+    def capabilities(self) -> Any:
+        """Server capabilities (flags, scopes, license). Lazy import."""
+        return self._resource("capabilities", "AsyncCapabilities")
+
+    @property
+    def traces(self) -> Any:
+        """List and fetch traces. Lazy import."""
+        return self._resource("traces", "AsyncTraces")
+
+    @property
     def traces_v2(self) -> Any:
-        """Trace search with facets and spans. Lazy import."""
-        return self._resource("traces_v2", "AsyncTracesV2")
+        """Deprecated alias for :attr:`traces`. Lazy import."""
+        return self._resource("traces", "AsyncTraces")
 
 
 __all__ = ["AsyncAxonPush", "AxonPush"]

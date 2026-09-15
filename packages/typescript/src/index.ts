@@ -83,29 +83,32 @@ export {
 } from "./integrations/winston.js";
 // Models + Resources (Stream B)
 export type {
-  ApiKey,
   App,
   CanonicalEventType,
   Channel,
-  CreateEventDto,
   Environment,
   Event,
+  EventBody,
   EventDetails,
-  EventListResponseDto,
   EventType,
   Organization,
+  SearchEventsOutputBody,
+  TraceSummary,
+  UserOrg,
   WebhookDelivery,
-  WebhookDeliveryStatus,
   WebhookEndpoint,
-  WebhookEndpointCreateResponseDto,
 } from "./models.js";
-export { ApiKeysResource } from "./resources/api-keys.js";
+export { AlertsResource } from "./resources/alerts.js";
+export { AnalyticsResource } from "./resources/analytics.js";
 export { AppsResource } from "./resources/apps.js";
+export { CapabilitiesResource } from "./resources/capabilities.js";
 export { ChannelsResource } from "./resources/channels.js";
 export { EnvironmentsResource } from "./resources/environments.js";
 export { EventsResource } from "./resources/events.js";
+export { ModerationResource } from "./resources/moderation.js";
 export { OrganizationsResource } from "./resources/organizations.js";
-export { TracesV2Resource } from "./resources/traces-v2.js";
+// TracesV2Resource is a back-compat alias for TracesResource.
+export { TracesResource, TracesV2Resource } from "./resources/traces.js";
 export { WebhooksResource } from "./resources/webhooks.js";
 export { currentTrace, getOrCreateTrace, TraceContext } from "./tracing.js";
 export { __version__ } from "./version.js";

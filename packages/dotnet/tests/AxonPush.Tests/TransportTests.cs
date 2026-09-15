@@ -29,7 +29,7 @@ public class TransportTests
         });
 
         var request = captured.Single();
-        Assert.Equal("ak_test", request.Headers.GetValues("X-API-Key").Single());
+        Assert.Equal("ak_test", request.Headers.GetValues("x-axonpush-api-key").Single());
         Assert.Equal("tenant", request.Headers.GetValues("x-tenant-id").Single());
         Assert.Equal("production", request.Headers.GetValues("X-Axonpush-Environment").Single());
     }

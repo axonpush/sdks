@@ -1,78 +1,66 @@
-"""Channels resource — CRUD over channels within an app."""
+"""Channels resource — CRUD over channels nested within an app."""
 
 from __future__ import annotations
 
 from typing import TYPE_CHECKING, List
 
 from axonpush._internal.api.api.channels import (
-    channel_controller_create_channel as _create_op,
-    channel_controller_delete_channel as _delete_op,
-    channel_controller_get_channel as _get_op,
-    channel_controller_list_channels as _list_op,
-    channel_controller_update_channel as _update_op,
+    channels_create as _create_op,
+    channels_delete as _delete_op,
+    channels_get as _get_op,
+    channels_list as _list_op,
+    channels_update as _update_op,
 )
-from axonpush._internal.api.models import CreateChannelDto, OkResponseDto
+from axonpush._internal.api.models import (
+    CreateChannelInputBody,
+    ListChannelsOutputBody,
+    OkOutputBody,
+    UpdateChannelInputBody,
+)
 from axonpush.models import Channel
 
 if TYPE_CHECKING:
     from axonpush.resources._base import AsyncClientProtocol, SyncClientProtocol
 
 
-def _build_create_dto(*, name: str, app_id: str) -> CreateChannelDto:
-    return CreateChannelDto(name=name, app_id=app_id)
+def _unwrap(result: ListChannelsOutputBody | None) -> List[Channel] | None:
+    if result is None:
+        return None
+    return list(result.channels or [])
 
 
 class Channels:
-    """Synchronous channel CRUD."""
+    """Synchronous channel CRUD (all operations are app-scoped)."""
 
     def __init__(self, client: SyncClientProtocol) -> None:
         self._client = client
 
     def list(self, app_id: str) -> List[Channel] | None:
-        """List the channels inside an app.
+        """List the channels inside an app (envelope unwrapped)."""
+        return self._client._invoke(_list_op, app_id=app_id, _coerce=_unwrap)
 
-        Args:
-            app_id: UUID of the app.
+    def get(self, app_id: str, channel_id: str) -> Channel | None:
+        """Fetch a single channel by id within an app."""
+        return self._client._invoke(_get_op, app_id=app_id, channel_id=channel_id)
 
-        Returns:
-            A list of :class:`Channel`, or ``None`` on fail-open.
-        """
-        return self._client._invoke(_list_op, app_id=app_id)
+    def create(self, app_id: str, name: str) -> Channel | None:
+        """Create a channel inside an app."""
+        return self._client._invoke(
+            _create_op, app_id=app_id, body=CreateChannelInputBody(name=name)
+        )
 
-    def get(self, channel_id: str) -> Channel | None:
-        """Fetch a single channel by UUID.
+    def update(self, app_id: str, channel_id: str, *, name: str) -> Channel | None:
+        """Rename a channel."""
+        return self._client._invoke(
+            _update_op,
+            app_id=app_id,
+            channel_id=channel_id,
+            body=UpdateChannelInputBody(name=name),
+        )
 
-        Args:
-            channel_id: UUID of the channel.
-
-        Returns:
-            The :class:`Channel`, or ``None`` on fail-open.
-        """
-        return self._client._invoke(_get_op, id=channel_id)
-
-    def create(self, name: str, app_id: str) -> Channel | None:
-        """Create a channel inside an app.
-
-        Args:
-            name: Human-readable channel name.
-            app_id: UUID of the parent app.
-
-        Returns:
-            The created :class:`Channel`, or ``None`` on fail-open.
-        """
-        return self._client._invoke(_create_op, body=_build_create_dto(name=name, app_id=app_id))
-
-    def update(self, channel_id: str) -> OkResponseDto | None:
-        """Touch / re-validate a channel.
-
-        The backend currently exposes ``PUT /channel/:id`` without a body.
-        See ``channel_controller_update_channel`` in the generated layer.
-        """
-        return self._client._invoke(_update_op, id=channel_id)
-
-    def delete(self, channel_id: str) -> OkResponseDto | None:
-        """Soft-delete a channel."""
-        return self._client._invoke(_delete_op, id=channel_id)
+    def delete(self, app_id: str, channel_id: str) -> OkOutputBody | None:
+        """Delete a channel."""
+        return self._client._invoke(_delete_op, app_id=app_id, channel_id=channel_id)
 
 
 class AsyncChannels:
@@ -83,22 +71,27 @@ class AsyncChannels:
 
     async def list(self, app_id: str) -> List[Channel] | None:
         """See :meth:`Channels.list`."""
-        return await self._client._invoke(_list_op, app_id=app_id)
+        return await self._client._invoke(_list_op, app_id=app_id, _coerce=_unwrap)
 
-    async def get(self, channel_id: str) -> Channel | None:
+    async def get(self, app_id: str, channel_id: str) -> Channel | None:
         """See :meth:`Channels.get`."""
-        return await self._client._invoke(_get_op, id=channel_id)
+        return await self._client._invoke(_get_op, app_id=app_id, channel_id=channel_id)
 
-    async def create(self, name: str, app_id: str) -> Channel | None:
+    async def create(self, app_id: str, name: str) -> Channel | None:
         """See :meth:`Channels.create`."""
         return await self._client._invoke(
-            _create_op, body=_build_create_dto(name=name, app_id=app_id)
+            _create_op, app_id=app_id, body=CreateChannelInputBody(name=name)
         )
 
-    async def update(self, channel_id: str) -> OkResponseDto | None:
+    async def update(self, app_id: str, channel_id: str, *, name: str) -> Channel | None:
         """See :meth:`Channels.update`."""
-        return await self._client._invoke(_update_op, id=channel_id)
+        return await self._client._invoke(
+            _update_op,
+            app_id=app_id,
+            channel_id=channel_id,
+            body=UpdateChannelInputBody(name=name),
+        )
 
-    async def delete(self, channel_id: str) -> OkResponseDto | None:
+    async def delete(self, app_id: str, channel_id: str) -> OkOutputBody | None:
         """See :meth:`Channels.delete`."""
-        return await self._client._invoke(_delete_op, id=channel_id)
+        return await self._client._invoke(_delete_op, app_id=app_id, channel_id=channel_id)

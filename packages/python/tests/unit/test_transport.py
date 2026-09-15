@@ -52,7 +52,7 @@ class TestBuildSyncClient:
             client.get_httpx_client().get("/health")
 
         sent = route.calls.last.request.headers
-        assert sent["x-api-key"] == "ak_test"
+        assert sent["x-axonpush-api-key"] == "ak_test"
         assert sent["x-tenant-id"] == "tnt_42"
         assert sent["x-axonpush-environment"] == "production"
         assert "x-axonpush-trace-id" not in sent
@@ -187,7 +187,7 @@ class TestBuildAsyncClient:
             route = router.get("/health").mock(return_value=httpx.Response(200, json={}))
             await client.get_async_httpx_client().get("/health")
         sent = route.calls.last.request.headers
-        assert sent["x-api-key"] == "ak_test"
+        assert sent["x-axonpush-api-key"] == "ak_test"
         assert sent["x-tenant-id"] == "tnt_42"
         assert sent["x-axonpush-environment"] == "production"
         await client.get_async_httpx_client().aclose()

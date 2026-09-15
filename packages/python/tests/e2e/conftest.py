@@ -407,9 +407,9 @@ def channel(client, backend):
     """A fresh per-test channel inside the bootstrapped app — keeps publish/SSE
     tests from interfering with each other."""
     name = f"test-ch-{uuid.uuid4().hex[:8]}"
-    created = client.channels.create(name, backend.app_id)
+    created = client.channels.create(backend.app_id, name)
     yield created
     try:
-        client.channels.delete(created.id)
+        client.channels.delete(backend.app_id, created.channel_id)
     except Exception:
         pass

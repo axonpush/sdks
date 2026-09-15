@@ -5,22 +5,29 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, List
 
 from axonpush._internal.api.api.environments import (
-    environment_controller_create as _create_op,
-    environment_controller_list as _list_op,
-    environment_controller_promote as _promote_op,
-    environment_controller_remove as _remove_op,
-    environment_controller_update as _update_op,
+    environments_create as _create_op,
+    environments_delete as _remove_op,
+    environments_list as _list_op,
+    environments_promote as _promote_op,
+    environments_update as _update_op,
 )
 from axonpush._internal.api.models import (
-    CreateEnvironmentDto,
-    OkResponseDto,
-    UpdateEnvironmentDto,
+    CreateEnvironmentInputBody,
+    ListEnvironmentsOutputBody,
+    OkOutputBody,
+    UpdateEnvironmentInputBody,
 )
 from axonpush._internal.api.types import UNSET
 from axonpush.models import Environment
 
 if TYPE_CHECKING:
     from axonpush.resources._base import AsyncClientProtocol, SyncClientProtocol
+
+
+def _unwrap(result: ListEnvironmentsOutputBody | None) -> List[Environment] | None:
+    if result is None:
+        return None
+    return list(result.environments or [])
 
 
 def _build_create_dto(
@@ -30,15 +37,13 @@ def _build_create_dto(
     color: str | None,
     is_production: bool | None,
     is_default: bool | None,
-    clone_from_env_id: str | None,
-) -> CreateEnvironmentDto:
-    return CreateEnvironmentDto(
+) -> CreateEnvironmentInputBody:
+    return CreateEnvironmentInputBody(
         name=name,
         slug=slug if slug is not None else UNSET,
         color=color if color is not None else UNSET,
         is_production=is_production if is_production is not None else UNSET,
         is_default=is_default if is_default is not None else UNSET,
-        clone_from_env_id=clone_from_env_id if clone_from_env_id is not None else UNSET,
     )
 
 
@@ -46,16 +51,12 @@ def _build_update_dto(
     *,
     name: str | None,
     color: str | None,
-    require_confirmation_for_destructive: bool | None,
-) -> UpdateEnvironmentDto:
-    return UpdateEnvironmentDto(
+    is_production: bool | None,
+) -> UpdateEnvironmentInputBody:
+    return UpdateEnvironmentInputBody(
         name=name if name is not None else UNSET,
         color=color if color is not None else UNSET,
-        require_confirmation_for_destructive=(
-            require_confirmation_for_destructive
-            if require_confirmation_for_destructive is not None
-            else UNSET
-        ),
+        is_production=is_production if is_production is not None else UNSET,
     )
 
 
@@ -66,8 +67,8 @@ class Environments:
         self._client = client
 
     def list(self) -> List[Environment] | None:
-        """List environments for the caller's organization."""
-        return self._client._invoke(_list_op)
+        """List environments for the caller's organization (envelope unwrapped)."""
+        return self._client._invoke(_list_op, _coerce=_unwrap)
 
     def create(
         self,
@@ -77,17 +78,15 @@ class Environments:
         color: str | None = None,
         is_production: bool | None = None,
         is_default: bool | None = None,
-        clone_from_env_id: str | None = None,
     ) -> Environment | None:
         """Create an environment.
 
         Args:
             name: Human-readable name.
-            slug: Stable slug used in API headers / SDK config.
+            slug: URL-safe slug; derived from name when omitted.
             color: Optional UI tag colour (hex).
             is_production: Mark as production-class.
             is_default: Make this the default for un-tagged calls.
-            clone_from_env_id: Optional source env to copy resources from.
         """
         body = _build_create_dto(
             name=name,
@@ -95,33 +94,31 @@ class Environments:
             color=color,
             is_production=is_production,
             is_default=is_default,
-            clone_from_env_id=clone_from_env_id,
         )
         return self._client._invoke(_create_op, body=body)
 
     def update(
         self,
-        env_id: str,
+        slug: str,
         *,
         name: str | None = None,
         color: str | None = None,
-        require_confirmation_for_destructive: bool | None = None,
+        is_production: bool | None = None,
     ) -> Environment | None:
-        """Edit a mutable subset of environment fields."""
-        body = _build_update_dto(
-            name=name,
-            color=color,
-            require_confirmation_for_destructive=require_confirmation_for_destructive,
-        )
-        return self._client._invoke(_update_op, id=env_id, body=body)
+        """Edit a mutable subset of environment fields (addressed by slug)."""
+        body = _build_update_dto(name=name, color=color, is_production=is_production)
+        return self._client._invoke(_update_op, slug=slug, body=body)
 
-    def delete(self, env_id: str) -> OkResponseDto | None:
-        """Soft-delete an environment."""
-        return self._client._invoke(_remove_op, id=env_id)
+    def delete(self, slug: str) -> OkOutputBody | None:
+        """Delete an environment by slug."""
+        return self._client._invoke(_remove_op, slug=slug)
 
-    def promote_to_default(self, env_id: str) -> Environment | None:
-        """Promote an environment to be the org-wide default."""
-        return self._client._invoke(_promote_op, id=env_id)
+    def promote(self, slug: str) -> Environment | None:
+        """Promote an environment (by slug) to the org-wide default."""
+        return self._client._invoke(_promote_op, slug=slug)
+
+    # Back-compat alias for the pre-rewrite method name.
+    promote_to_default = promote
 
 
 class AsyncEnvironments:
@@ -132,7 +129,7 @@ class AsyncEnvironments:
 
     async def list(self) -> List[Environment] | None:
         """See :meth:`Environments.list`."""
-        return await self._client._invoke(_list_op)
+        return await self._client._invoke(_list_op, _coerce=_unwrap)
 
     async def create(
         self,
@@ -142,7 +139,6 @@ class AsyncEnvironments:
         color: str | None = None,
         is_production: bool | None = None,
         is_default: bool | None = None,
-        clone_from_env_id: str | None = None,
     ) -> Environment | None:
         """See :meth:`Environments.create`."""
         body = _build_create_dto(
@@ -151,30 +147,27 @@ class AsyncEnvironments:
             color=color,
             is_production=is_production,
             is_default=is_default,
-            clone_from_env_id=clone_from_env_id,
         )
         return await self._client._invoke(_create_op, body=body)
 
     async def update(
         self,
-        env_id: str,
+        slug: str,
         *,
         name: str | None = None,
         color: str | None = None,
-        require_confirmation_for_destructive: bool | None = None,
+        is_production: bool | None = None,
     ) -> Environment | None:
         """See :meth:`Environments.update`."""
-        body = _build_update_dto(
-            name=name,
-            color=color,
-            require_confirmation_for_destructive=require_confirmation_for_destructive,
-        )
-        return await self._client._invoke(_update_op, id=env_id, body=body)
+        body = _build_update_dto(name=name, color=color, is_production=is_production)
+        return await self._client._invoke(_update_op, slug=slug, body=body)
 
-    async def delete(self, env_id: str) -> OkResponseDto | None:
+    async def delete(self, slug: str) -> OkOutputBody | None:
         """See :meth:`Environments.delete`."""
-        return await self._client._invoke(_remove_op, id=env_id)
+        return await self._client._invoke(_remove_op, slug=slug)
 
-    async def promote_to_default(self, env_id: str) -> Environment | None:
-        """See :meth:`Environments.promote_to_default`."""
-        return await self._client._invoke(_promote_op, id=env_id)
+    async def promote(self, slug: str) -> Environment | None:
+        """See :meth:`Environments.promote`."""
+        return await self._client._invoke(_promote_op, slug=slug)
+
+    promote_to_default = promote

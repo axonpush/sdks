@@ -1,39 +1,37 @@
-import {
-  alertControllerCreate,
-  alertControllerList,
-  alertControllerRemove,
-  alertControllerUpdate,
-} from "../_internal/api/sdk.gen.js";
+import { alertsCreate, alertsDelete, alertsList, alertsUpdate } from "../_internal/api/sdk.gen.js";
 import type {
-  AlertDeleteDto,
   AlertRuleDto,
-  AlertRuleListDto,
-  CreateAlertRuleDto,
-  UpdateAlertRuleDto,
+  CreateInputBodyWritable,
+  DeleteOutputBody,
+  ListOutputBody,
+  UpdateInputBodyWritable,
 } from "../_internal/api/types.gen.js";
 import type { ResourceClient } from "./_client.js";
+
+export type CreateAlertRuleInput = CreateInputBodyWritable;
+export type UpdateAlertRuleInput = UpdateInputBodyWritable;
 
 /** Alert rules over metric thresholds. */
 export class AlertsResource {
   constructor(private readonly client: ResourceClient) {}
 
   /** List them all. `GET /v2/alerts` */
-  async list(): Promise<AlertRuleListDto | null> {
-    return this.client.invoke(alertControllerList, {});
+  async list(): Promise<ListOutputBody | null> {
+    return this.client.invoke(alertsList, {});
   }
 
   /** Create one. `POST /v2/alerts` */
-  async create(body: CreateAlertRuleDto): Promise<AlertRuleDto | null> {
-    return this.client.invoke(alertControllerCreate, { body });
+  async create(body: CreateAlertRuleInput): Promise<AlertRuleDto | null> {
+    return this.client.invoke(alertsCreate, { body });
   }
 
   /** Delete one. `DELETE /v2/alerts/{alertRuleId}` */
-  async delete(alertRuleId: string): Promise<AlertDeleteDto | null> {
-    return this.client.invoke(alertControllerRemove, { path: { alertRuleId } });
+  async delete(alertRuleId: string): Promise<DeleteOutputBody | null> {
+    return this.client.invoke(alertsDelete, { path: { alertRuleId } });
   }
 
   /** Update one. `PATCH /v2/alerts/{alertRuleId}` */
-  async update(alertRuleId: string, body: UpdateAlertRuleDto): Promise<AlertRuleDto | null> {
-    return this.client.invoke(alertControllerUpdate, { path: { alertRuleId }, body });
+  async update(alertRuleId: string, body: UpdateAlertRuleInput): Promise<AlertRuleDto | null> {
+    return this.client.invoke(alertsUpdate, { path: { alertRuleId }, body });
   }
 }

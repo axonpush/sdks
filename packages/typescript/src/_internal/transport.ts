@@ -50,8 +50,8 @@ function attachInterceptors(client: Client, getSettings: () => ResolvedSettings)
   client.interceptors.request.use((request) => {
     const s = getSettings();
     if (s.apiKey) {
-      // `pt_` public ingest tokens go on X-Public-Token; `ak_` API keys on X-API-Key.
-      const header = s.apiKey.startsWith("pt_") ? "X-Public-Token" : "X-API-Key";
+      // `pt_` public ingest tokens go on X-Public-Token; `ak_` API keys on x-axonpush-api-key.
+      const header = s.apiKey.startsWith("pt_") ? "X-Public-Token" : "x-axonpush-api-key";
       request.headers.set(header, s.apiKey);
     }
     if (s.tenantId) request.headers.set("x-tenant-id", s.tenantId);

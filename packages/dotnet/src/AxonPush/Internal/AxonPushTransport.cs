@@ -211,10 +211,10 @@ internal sealed class AxonPushTransport : IDisposable
     {
         if (!string.IsNullOrWhiteSpace(_options.ApiKey))
         {
-            // pt_ public ingest tokens go on X-Public-Token; ak_ API keys on X-API-Key.
+            // pt_ public ingest tokens go on X-Public-Token; ak_ API keys on x-axonpush-api-key.
             var authHeader = _options.ApiKey!.StartsWith("pt_", StringComparison.Ordinal)
                 ? "X-Public-Token"
-                : "X-API-Key";
+                : "x-axonpush-api-key";
             if (!message.Headers.Contains(authHeader))
             {
                 message.Headers.Add(authHeader, _options.ApiKey);

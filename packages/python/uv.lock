@@ -241,7 +241,7 @@ wheels = [
 
 [[package]]
 name = "axonpush"
-version = "1.0.0"
+version = "0.0.18"
 source = { editable = "." }
 dependencies = [
     { name = "attrs" },

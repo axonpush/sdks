@@ -95,9 +95,10 @@ def _auth_header_name(api_key: str) -> str:
     """Route the credential to its header by prefix.
 
     ``pt_`` public ingest tokens go on ``X-Public-Token``; everything else
-    (``ak_`` API keys) goes on ``X-API-Key``.
+    (``ak_`` API keys) goes on ``x-axonpush-api-key`` (the header the backend
+    expects).
     """
-    return "X-Public-Token" if api_key.startswith("pt_") else "X-API-Key"
+    return "X-Public-Token" if api_key.startswith("pt_") else "x-axonpush-api-key"
 
 
 def _auth_headers(settings: Settings) -> dict[str, str]:

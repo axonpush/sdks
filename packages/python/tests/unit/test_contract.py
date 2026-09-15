@@ -72,8 +72,11 @@ class TestHeaders:
         from axonpush._internal import transport
 
         source = Path(transport.__file__).read_text(encoding="utf-8")
+        # The Go backend authenticates ``ak_`` keys via ``x-axonpush-api-key``
+        # (the shared ``headers.json`` fixture still records the legacy
+        # ``X-API-Key`` name, which the transport intentionally no longer uses).
         for header in (
-            HEADERS["auth"]["apiKey"],
+            "x-axonpush-api-key",
             HEADERS["tenancy"]["orgId"],
             HEADERS["scoping"]["environment"],
         ):

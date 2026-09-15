@@ -1,0 +1,211 @@
+from http import HTTPStatus
+from typing import Any, cast
+from urllib.parse import quote
+
+import httpx
+
+from ... import errors
+from ...client import AuthenticatedClient, Client
+from ...models.analytics_breakdown_dimension import AnalyticsBreakdownDimension
+from ...models.breakdown_output_body import BreakdownOutputBody
+from ...models.error_model import ErrorModel
+from ...types import UNSET, Response, Unset
+
+
+def _get_kwargs(
+    *,
+    since: str | Unset = UNSET,
+    until: str | Unset = UNSET,
+    dimension: AnalyticsBreakdownDimension | Unset = UNSET,
+    limit: int | Unset = UNSET,
+) -> dict[str, Any]:
+
+    params: dict[str, Any] = {}
+
+    params["since"] = since
+
+    params["until"] = until
+
+    json_dimension: str | Unset = UNSET
+    if not isinstance(dimension, Unset):
+        json_dimension = dimension.value
+
+    params["dimension"] = json_dimension
+
+    params["limit"] = limit
+
+    params = {k: v for k, v in params.items() if v is not UNSET and v is not None}
+
+    _kwargs: dict[str, Any] = {
+        "method": "get",
+        "url": "/analytics/breakdown",
+        "params": params,
+    }
+
+    return _kwargs
+
+
+def _parse_response(
+    *, client: AuthenticatedClient | Client, response: httpx.Response
+) -> BreakdownOutputBody | ErrorModel:
+    if response.status_code == 200:
+        response_200 = BreakdownOutputBody.from_dict(response.json())
+
+        return response_200
+
+    response_default = ErrorModel.from_dict(response.json())
+
+    return response_default
+
+
+def _build_response(
+    *, client: AuthenticatedClient | Client, response: httpx.Response
+) -> Response[BreakdownOutputBody | ErrorModel]:
+    return Response(
+        status_code=HTTPStatus(response.status_code),
+        content=response.content,
+        headers=response.headers,
+        parsed=_parse_response(client=client, response=response),
+    )
+
+
+def sync_detailed(
+    *,
+    client: AuthenticatedClient | Client,
+    since: str | Unset = UNSET,
+    until: str | Unset = UNSET,
+    dimension: AnalyticsBreakdownDimension | Unset = UNSET,
+    limit: int | Unset = UNSET,
+) -> Response[BreakdownOutputBody | ErrorModel]:
+    """Top-N breakdown by model or provider
+
+    Args:
+        since (str | Unset): Window start (RFC3339); defaults to 24h before until
+        until (str | Unset): Window end (RFC3339); defaults to now
+        dimension (AnalyticsBreakdownDimension | Unset): Breakdown dimension (default model)
+        limit (int | Unset): Top-N entries (default 50, max 500)
+
+    Raises:
+        errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+        httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+    Returns:
+        Response[BreakdownOutputBody | ErrorModel]
+    """
+
+    kwargs = _get_kwargs(
+        since=since,
+        until=until,
+        dimension=dimension,
+        limit=limit,
+    )
+
+    response = client.get_httpx_client().request(
+        **kwargs,
+    )
+
+    return _build_response(client=client, response=response)
+
+
+def sync(
+    *,
+    client: AuthenticatedClient | Client,
+    since: str | Unset = UNSET,
+    until: str | Unset = UNSET,
+    dimension: AnalyticsBreakdownDimension | Unset = UNSET,
+    limit: int | Unset = UNSET,
+) -> BreakdownOutputBody | ErrorModel | None:
+    """Top-N breakdown by model or provider
+
+    Args:
+        since (str | Unset): Window start (RFC3339); defaults to 24h before until
+        until (str | Unset): Window end (RFC3339); defaults to now
+        dimension (AnalyticsBreakdownDimension | Unset): Breakdown dimension (default model)
+        limit (int | Unset): Top-N entries (default 50, max 500)
+
+    Raises:
+        errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+        httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+    Returns:
+        BreakdownOutputBody | ErrorModel
+    """
+
+    return sync_detailed(
+        client=client,
+        since=since,
+        until=until,
+        dimension=dimension,
+        limit=limit,
+    ).parsed
+
+
+async def asyncio_detailed(
+    *,
+    client: AuthenticatedClient | Client,
+    since: str | Unset = UNSET,
+    until: str | Unset = UNSET,
+    dimension: AnalyticsBreakdownDimension | Unset = UNSET,
+    limit: int | Unset = UNSET,
+) -> Response[BreakdownOutputBody | ErrorModel]:
+    """Top-N breakdown by model or provider
+
+    Args:
+        since (str | Unset): Window start (RFC3339); defaults to 24h before until
+        until (str | Unset): Window end (RFC3339); defaults to now
+        dimension (AnalyticsBreakdownDimension | Unset): Breakdown dimension (default model)
+        limit (int | Unset): Top-N entries (default 50, max 500)
+
+    Raises:
+        errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+        httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+    Returns:
+        Response[BreakdownOutputBody | ErrorModel]
+    """
+
+    kwargs = _get_kwargs(
+        since=since,
+        until=until,
+        dimension=dimension,
+        limit=limit,
+    )
+
+    response = await client.get_async_httpx_client().request(**kwargs)
+
+    return _build_response(client=client, response=response)
+
+
+async def asyncio(
+    *,
+    client: AuthenticatedClient | Client,
+    since: str | Unset = UNSET,
+    until: str | Unset = UNSET,
+    dimension: AnalyticsBreakdownDimension | Unset = UNSET,
+    limit: int | Unset = UNSET,
+) -> BreakdownOutputBody | ErrorModel | None:
+    """Top-N breakdown by model or provider
+
+    Args:
+        since (str | Unset): Window start (RFC3339); defaults to 24h before until
+        until (str | Unset): Window end (RFC3339); defaults to now
+        dimension (AnalyticsBreakdownDimension | Unset): Breakdown dimension (default model)
+        limit (int | Unset): Top-N entries (default 50, max 500)
+
+    Raises:
+        errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+        httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+    Returns:
+        BreakdownOutputBody | ErrorModel
+    """
+
+    return (
+        await asyncio_detailed(
+            client=client,
+            since=since,
+            until=until,
+            dimension=dimension,
+            limit=limit,
+        )
+    ).parsed

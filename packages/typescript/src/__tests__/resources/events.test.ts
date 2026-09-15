@@ -4,9 +4,8 @@ import type { ResourceClient, TraceContextLike } from "../../resources/_client.j
 import { EventsResource } from "../../resources/events.js";
 
 vi.mock("../../_internal/api/sdk.gen.js", () => ({
-  eventControllerCreateEvent: vi.fn(),
-  eventControllerListEvents: vi.fn(),
-  eventsSearchControllerSearch: vi.fn(),
+  createEvent: vi.fn(),
+  eventsSearch: vi.fn(),
 }));
 
 interface InvokeCall {
@@ -51,7 +50,7 @@ describe("EventsResource.publish", () => {
     });
 
     expect(calls).toHaveLength(1);
-    expect(calls[0]?.op).toBe(ops.eventControllerCreateEvent);
+    expect(calls[0]?.op).toBe(ops.createEvent);
     const body = (calls[0]?.args as { body: Record<string, unknown> }).body;
     expect(body).toMatchObject({
       identifier: "evt-1",
@@ -65,7 +64,7 @@ describe("EventsResource.publish", () => {
     expect(client.getOrCreateTrace).toHaveBeenCalledWith(undefined);
   });
 
-  it("honours an explicit eventType, agentId, and parentEventId", async () => {
+  it("honours an explicit eventType, agentId, and folds parentEventId into metadata", async () => {
     const { client, calls } = makeClient();
     const r = new EventsResource(client);
 
@@ -81,9 +80,13 @@ describe("EventsResource.publish", () => {
 
     const body = (calls[0]?.args as { body: Record<string, unknown> }).body;
     expect(body.agentId).toBe("agent-x");
-    expect(body.parentEventId).toBe("evt-parent");
     expect(body.eventType).toBe("agent.tool_call.start");
-    expect(body.metadata).toEqual({ tool: "search" });
+    expect(body.metadata).toEqual({
+      tool: "search",
+      "axonpush.parent_event_id": "evt-parent",
+    });
+    // parentEventId is no longer a top-level body field.
+    expect(body.parentEventId).toBeUndefined();
   });
 
   it("emits prompt lineage using current OpenTelemetry GenAI attribute names", async () => {
@@ -107,31 +110,6 @@ describe("EventsResource.publish", () => {
     });
   });
 
-  it("falls through to the client's environment when params.environment is omitted", async () => {
-    const { client, calls } = makeClient("staging");
-    const r = new EventsResource(client);
-
-    await r.publish({ identifier: "i", payload: {}, channelId: "c" });
-
-    const body = (calls[0]?.args as { body: Record<string, unknown> }).body;
-    expect(body.environment).toBe("staging");
-  });
-
-  it("explicit params.environment overrides the client default", async () => {
-    const { client, calls } = makeClient("staging");
-    const r = new EventsResource(client);
-
-    await r.publish({
-      identifier: "i",
-      payload: {},
-      channelId: "c",
-      environment: "prod",
-    });
-
-    const body = (calls[0]?.args as { body: Record<string, unknown> }).body;
-    expect(body.environment).toBe("prod");
-  });
-
   it("propagates a caller-supplied traceId via getOrCreateTrace", async () => {
     const { client } = makeClient();
     const r = new EventsResource(client);
@@ -142,26 +120,6 @@ describe("EventsResource.publish", () => {
   });
 });
 
-describe("EventsResource.list", () => {
-  it("passes channelId via path and forwards filters as query", async () => {
-    const { client, calls } = makeClient("dev");
-    const r = new EventsResource(client);
-
-    await r.list("ch-uuid", { limit: 50, eventType: ["agent.start"], traceId: "tr-1" });
-
-    expect(calls[0]?.op).toBe(ops.eventControllerListEvents);
-    expect(calls[0]?.args).toEqual({
-      path: { channelId: "ch-uuid" },
-      query: {
-        limit: 50,
-        eventType: ["agent.start"],
-        traceId: "tr-1",
-        environment: "dev",
-      },
-    });
-  });
-});
-
 describe("EventsResource.search", () => {
   it("forwards channelId/appId/source as query params", async () => {
     const { client, calls } = makeClient();
@@ -169,8 +127,8 @@ describe("EventsResource.search", () => {
 
     await r.search({ channelId: "ch", appId: "app", source: "sentry" });
 
-    expect(calls[0]?.op).toBe(ops.eventsSearchControllerSearch);
-    expect((calls[0]?.args as { query: Record<string, unknown> }).query).toMatchObject({
+    expect(calls[0]?.op).toBe(ops.eventsSearch);
+    expect((calls[0]?.args as { query: Record<string, unknown> }).query).toEqual({
       channelId: "ch",
       appId: "app",
       source: "sentry",

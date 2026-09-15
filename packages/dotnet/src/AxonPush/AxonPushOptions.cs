@@ -8,7 +8,7 @@ namespace AxonPush;
 /// </summary>
 public sealed class AxonPushOptions
 {
-    /// <summary>API key. Maps to env var <c>AXONPUSH_API_KEY</c>.</summary>
+    /// <summary>API key, sent as the <c>x-axonpush-api-key</c> header. Maps to env var <c>AXONPUSH_API_KEY</c>.</summary>
     public string? ApiKey { get; set; }
 
     /// <summary>

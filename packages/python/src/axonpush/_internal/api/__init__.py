@@ -1,4 +1,4 @@
-"""A client library for accessing AxonPush"""
+"""A client library for accessing axonpush api"""
 
 from .client import AuthenticatedClient, Client
 

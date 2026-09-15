@@ -1,48 +1,62 @@
-"""Aggregate timeseries, breakdowns and A/B comparisons."""
+"""Aggregate timeseries and breakdowns. ``/analytics``."""
 
 from __future__ import annotations
 
-from collections.abc import Mapping
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING
 
-from axonpush._internal.api.api.analytics_v2 import (
-    analytics_controller_breakdown as _breakdown_op,
-    analytics_controller_compare as _compare_op,
-    analytics_controller_timeseries as _timeseries_op,
+from axonpush._internal.api.api.analytics import (
+    analytics_breakdown as _breakdown_op,
+    analytics_timeseries as _timeseries_op,
 )
 from axonpush._internal.api.models import (
-    AnalyticsBreakdownResponseDto,
-    AnalyticsCompareResponseDto,
-    AnalyticsTimeseriesResponseDto,
+    AnalyticsBreakdownDimension,
+    AnalyticsTimeseriesBucket,
+    BreakdownOutputBody,
+    TimeseriesOutputBody,
 )
+from axonpush._internal.api.types import UNSET
 
 if TYPE_CHECKING:
     from axonpush.resources._base import AsyncClientProtocol, SyncClientProtocol
 
 
 class Analytics:
-    """Aggregate timeseries, breakdowns and A/B comparisons."""
+    """Aggregate timeseries and breakdowns."""
 
     def __init__(self, client: SyncClientProtocol) -> None:
         self._client = client
 
     def breakdown(
-        self, params: Mapping[str, Any] | None = None
-    ) -> AnalyticsBreakdownResponseDto | None:
-        """Breakdown. `GET /v2/analytics/breakdown`"""
-        return self._client._invoke(_breakdown_op, **dict(params or {}))
-
-    def compare(
-        self, params: Mapping[str, Any] | None = None
-    ) -> AnalyticsCompareResponseDto | None:
-        """Compare. `GET /v2/analytics/compare`"""
-        return self._client._invoke(_compare_op, **dict(params or {}))
+        self,
+        *,
+        since: str | None = None,
+        until: str | None = None,
+        dimension: AnalyticsBreakdownDimension | str | None = None,
+        limit: int | None = None,
+    ) -> BreakdownOutputBody | None:
+        """Breakdown by dimension. ``GET /analytics/breakdown``"""
+        return self._client._invoke(
+            _breakdown_op,
+            since=since if since is not None else UNSET,
+            until=until if until is not None else UNSET,
+            dimension=dimension if dimension is not None else UNSET,
+            limit=limit if limit is not None else UNSET,
+        )
 
     def timeseries(
-        self, params: Mapping[str, Any] | None = None
-    ) -> AnalyticsTimeseriesResponseDto | None:
-        """Timeseries. `GET /v2/analytics/timeseries`"""
-        return self._client._invoke(_timeseries_op, **dict(params or {}))
+        self,
+        *,
+        since: str | None = None,
+        until: str | None = None,
+        bucket: AnalyticsTimeseriesBucket | str | None = None,
+    ) -> TimeseriesOutputBody | None:
+        """Bucketed timeseries. ``GET /analytics/timeseries``"""
+        return self._client._invoke(
+            _timeseries_op,
+            since=since if since is not None else UNSET,
+            until=until if until is not None else UNSET,
+            bucket=bucket if bucket is not None else UNSET,
+        )
 
 
 class AsyncAnalytics:
@@ -52,19 +66,33 @@ class AsyncAnalytics:
         self._client = client
 
     async def breakdown(
-        self, params: Mapping[str, Any] | None = None
-    ) -> AnalyticsBreakdownResponseDto | None:
+        self,
+        *,
+        since: str | None = None,
+        until: str | None = None,
+        dimension: AnalyticsBreakdownDimension | str | None = None,
+        limit: int | None = None,
+    ) -> BreakdownOutputBody | None:
         """See :meth:`Analytics.breakdown`."""
-        return await self._client._invoke(_breakdown_op, **dict(params or {}))
-
-    async def compare(
-        self, params: Mapping[str, Any] | None = None
-    ) -> AnalyticsCompareResponseDto | None:
-        """See :meth:`Analytics.compare`."""
-        return await self._client._invoke(_compare_op, **dict(params or {}))
+        return await self._client._invoke(
+            _breakdown_op,
+            since=since if since is not None else UNSET,
+            until=until if until is not None else UNSET,
+            dimension=dimension if dimension is not None else UNSET,
+            limit=limit if limit is not None else UNSET,
+        )
 
     async def timeseries(
-        self, params: Mapping[str, Any] | None = None
-    ) -> AnalyticsTimeseriesResponseDto | None:
+        self,
+        *,
+        since: str | None = None,
+        until: str | None = None,
+        bucket: AnalyticsTimeseriesBucket | str | None = None,
+    ) -> TimeseriesOutputBody | None:
         """See :meth:`Analytics.timeseries`."""
-        return await self._client._invoke(_timeseries_op, **dict(params or {}))
+        return await self._client._invoke(
+            _timeseries_op,
+            since=since if since is not None else UNSET,
+            until=until if until is not None else UNSET,
+            bucket=bucket if bucket is not None else UNSET,
+        )

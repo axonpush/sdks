@@ -21,16 +21,21 @@ from axonpush.integrations.print_capture import setup_print_capture
 pytestmark = pytest.mark.e2e
 
 
+def _search(client, channel_id):
+    result = client.events.search(channel_id=channel_id, limit=50)
+    return result.events if result else []
+
+
 def _find_by_body(events, body):
-    return [e for e in events if e.payload.get("body") == body]
+    return [e for e in events if (e.payload or {}).get("body") == body]
 
 
 def test_logging_handler_round_trip(client, channel):
-    logger = logging.getLogger(f"e2e.logging.{channel.id}")
+    logger = logging.getLogger(f"e2e.logging.{channel.channel_id}")
     logger.handlers.clear()
     logger.setLevel(logging.DEBUG)
     logger.propagate = False
-    handler = AxonPushLoggingHandler(client=client, channel_id=channel.id, service_name="e2e-svc")
+    handler = AxonPushLoggingHandler(client=client, channel_id=channel.channel_id, service_name="e2e-svc")
     logger.addHandler(handler)
     try:
         logger.error("connection refused", extra={"user_id": 42})
@@ -38,7 +43,7 @@ def test_logging_handler_round_trip(client, channel):
     finally:
         logger.removeHandler(handler)
 
-    events = client.events.list(channel.id, limit=50)
+    events = _search(client, channel.channel_id)
     matches = _find_by_body(events, "connection refused")
     assert len(matches) == 1, (
         f"expected one matching event, got payloads: {[e.payload for e in events]}"
@@ -60,7 +65,7 @@ def test_loguru_sink_round_trip(client, channel):
 
     loguru_logger.remove()
     sink = create_axonpush_loguru_sink(
-        client=client, channel_id=channel.id, service_name="loguru-e2e"
+        client=client, channel_id=channel.channel_id, service_name="loguru-e2e"
     )
     loguru_logger.add(sink, serialize=True, level="DEBUG")
     try:
@@ -69,7 +74,7 @@ def test_loguru_sink_round_trip(client, channel):
     finally:
         loguru_logger.remove()
 
-    matches = _find_by_body(client.events.list(channel.id, limit=50), "loguru round trip")
+    matches = _find_by_body(_search(client, channel.channel_id), "loguru round trip")
     assert len(matches) == 1
     assert matches[0].event_type == EventType.APP_LOG
     assert matches[0].payload["severityText"] == "ERROR"
@@ -84,7 +89,7 @@ def test_structlog_processor_round_trip(client, channel):
     from axonpush.integrations.structlog import axonpush_structlog_processor
 
     structlog.reset_defaults()
-    forwarder = axonpush_structlog_processor(client=client, channel_id=channel.id)
+    forwarder = axonpush_structlog_processor(client=client, channel_id=channel.channel_id)
     structlog.configure(
         processors=[
             structlog.processors.add_log_level,
@@ -100,7 +105,7 @@ def test_structlog_processor_round_trip(client, channel):
     finally:
         structlog.reset_defaults()
 
-    matches = _find_by_body(client.events.list(channel.id, limit=50), "structlog round trip")
+    matches = _find_by_body(_search(client, channel.channel_id), "structlog round trip")
     assert len(matches) == 1
     assert matches[0].event_type == EventType.APP_LOG
     assert matches[0].payload["attributes"]["user_id"] == 7
@@ -109,7 +114,7 @@ def test_structlog_processor_round_trip(client, channel):
 
 def test_print_capture_round_trip(client, channel):
     orig_out, orig_err = sys.stdout, sys.stderr
-    handle = setup_print_capture(client, channel_id=channel.id, source="app")
+    handle = setup_print_capture(client, channel_id=channel.channel_id, source="app")
     try:
         print("hello from print_capture")
     finally:
@@ -117,7 +122,7 @@ def test_print_capture_round_trip(client, channel):
         sys.stdout, sys.stderr = orig_out, orig_err
     time.sleep(0.5)
 
-    matches = _find_by_body(client.events.list(channel.id, limit=50), "hello from print_capture")
+    matches = _find_by_body(_search(client, channel.channel_id), "hello from print_capture")
     assert len(matches) == 1
     assert matches[0].payload["severityText"] == "INFO"
     assert matches[0].payload["severityNumber"] == 9
@@ -135,7 +140,7 @@ def test_otel_span_exporter_round_trip(client, channel):
     provider = TracerProvider()
     provider.add_span_processor(
         SimpleSpanProcessor(
-            AxonPushSpanExporter(client=client, channel_id=channel.id, service_name="otel-e2e")
+            AxonPushSpanExporter(client=client, channel_id=channel.channel_id, service_name="otel-e2e")
         )
     )
     tracer = provider.get_tracer(__name__)
@@ -145,7 +150,7 @@ def test_otel_span_exporter_round_trip(client, channel):
     provider.shutdown()
     time.sleep(0.5)
 
-    events = client.events.list(channel.id, limit=50)
+    events = _search(client, channel.channel_id)
     spans = [
         e
         for e in events

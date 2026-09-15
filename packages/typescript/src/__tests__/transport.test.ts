@@ -1,7 +1,7 @@
 import { HttpResponse, http } from "msw";
 import { setupServer } from "msw/node";
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
-import { healthControllerCheck } from "../_internal/api/index.js";
+import { getHealthz } from "../_internal/api/index.js";
 import { invokeSync, setSettings } from "../_internal/transport.js";
 import { resolveSettings } from "../config.js";
 import {
@@ -34,19 +34,19 @@ beforeEach(async () => {
 });
 
 describe("transport interceptors", () => {
-  it("attaches X-API-Key, x-tenant-id, X-Axonpush-Environment headers", async () => {
+  it("attaches x-axonpush-api-key, x-tenant-id, X-Axonpush-Environment headers", async () => {
     let captured: Headers | undefined;
     server.use(
-      http.get(`${BASE}/health`, ({ request }) => {
+      http.get(`${BASE}/healthz`, ({ request }) => {
         captured = request.headers;
         return HttpResponse.json({ status: "ok" });
       }),
     );
 
-    const result = await invokeSync(healthControllerCheck, {}, { failOpen: false, maxRetries: 0 });
+    const result = await invokeSync(getHealthz, {}, { failOpen: false, maxRetries: 0 });
 
     expect(result).toBeDefined();
-    expect(captured?.get("x-api-key")).toBe("test-key");
+    expect(captured?.get("x-axonpush-api-key")).toBe("test-key");
     expect(captured?.get("x-tenant-id")).toBe("tenant-1");
     expect(captured?.get("x-axonpush-environment")).toBe("production");
   });
@@ -54,7 +54,7 @@ describe("transport interceptors", () => {
   it("attaches X-Axonpush-Trace-Id when a trace context is bound", async () => {
     let captured: Headers | undefined;
     server.use(
-      http.get(`${BASE}/health`, ({ request }) => {
+      http.get(`${BASE}/healthz`, ({ request }) => {
         captured = request.headers;
         return HttpResponse.json({ status: "ok" });
       }),
@@ -62,7 +62,7 @@ describe("transport interceptors", () => {
 
     const ctx = new TraceContext("11111111-2222-3333-4444-555555555555");
     setCurrentTrace(ctx);
-    await invokeSync(healthControllerCheck, {}, { failOpen: false, maxRetries: 0 });
+    await invokeSync(getHealthz, {}, { failOpen: false, maxRetries: 0 });
 
     expect(captured?.get("x-axonpush-trace-id")).toBe("11111111-2222-3333-4444-555555555555");
     const spanId = captured?.get("x-axonpush-span-id");
@@ -73,7 +73,7 @@ describe("transport interceptors", () => {
 
   it("maps 401 to AuthenticationError with envelope fields", async () => {
     server.use(
-      http.get(`${BASE}/health`, () =>
+      http.get(`${BASE}/healthz`, () =>
         HttpResponse.json(
           { code: "AUTH_FAILED", message: "bad key", hint: "rotate", requestId: "rq-1" },
           { status: 401 },
@@ -82,7 +82,7 @@ describe("transport interceptors", () => {
     );
 
     await expect(
-      invokeSync(healthControllerCheck, {}, { failOpen: false, maxRetries: 0 }),
+      invokeSync(getHealthz, {}, { failOpen: false, maxRetries: 0 }),
     ).rejects.toMatchObject({
       name: "AuthenticationError",
       statusCode: 401,
@@ -94,7 +94,7 @@ describe("transport interceptors", () => {
 
   it("maps 429 to RateLimitError carrying retryAfter from header", async () => {
     server.use(
-      http.get(`${BASE}/health`, () =>
+      http.get(`${BASE}/healthz`, () =>
         HttpResponse.json(
           { message: "slow down" },
           { status: 429, headers: { "Retry-After": "7" } },
@@ -103,36 +103,38 @@ describe("transport interceptors", () => {
     );
 
     await expect(
-      invokeSync(healthControllerCheck, {}, { failOpen: false, maxRetries: 0 }),
+      invokeSync(getHealthz, {}, { failOpen: false, maxRetries: 0 }),
     ).rejects.toMatchObject({ name: "RateLimitError", statusCode: 429, retryAfter: 7 });
   });
 
   it("maps 503 to ServerError", async () => {
     server.use(
-      http.get(`${BASE}/health`, () => HttpResponse.json({ message: "upstream" }, { status: 503 })),
+      http.get(`${BASE}/healthz`, () =>
+        HttpResponse.json({ message: "upstream" }, { status: 503 }),
+      ),
     );
 
     await expect(
-      invokeSync(healthControllerCheck, {}, { failOpen: false, maxRetries: 0 }),
+      invokeSync(getHealthz, {}, { failOpen: false, maxRetries: 0 }),
     ).rejects.toMatchObject({ name: "ServerError", statusCode: 503 });
   });
 
   it("maps 422 to ValidationError", async () => {
     server.use(
-      http.get(`${BASE}/health`, () =>
+      http.get(`${BASE}/healthz`, () =>
         HttpResponse.json({ message: "bad input" }, { status: 422 }),
       ),
     );
 
     await expect(
-      invokeSync(healthControllerCheck, {}, { failOpen: false, maxRetries: 0 }),
+      invokeSync(getHealthz, {}, { failOpen: false, maxRetries: 0 }),
     ).rejects.toBeInstanceOf(ValidationError);
   });
 
   it("retries retryable errors, then succeeds", async () => {
     let calls = 0;
     server.use(
-      http.get(`${BASE}/health`, () => {
+      http.get(`${BASE}/healthz`, () => {
         calls++;
         if (calls < 3) return new HttpResponse(null, { status: 503 });
         return HttpResponse.json({ status: "ok" });
@@ -140,7 +142,7 @@ describe("transport interceptors", () => {
     );
 
     const t0 = Date.now();
-    const result = await invokeSync(healthControllerCheck, {}, { failOpen: false, maxRetries: 3 });
+    const result = await invokeSync(getHealthz, {}, { failOpen: false, maxRetries: 3 });
     const elapsed = Date.now() - t0;
 
     expect(result).toBeDefined();
@@ -149,17 +151,17 @@ describe("transport interceptors", () => {
   }, 15_000);
 
   it("retries APIConnectionError and exhausts attempts", async () => {
-    server.use(http.get(`${BASE}/health`, () => HttpResponse.error()));
+    server.use(http.get(`${BASE}/healthz`, () => HttpResponse.error()));
 
     await expect(
-      invokeSync(healthControllerCheck, {}, { failOpen: false, maxRetries: 1 }),
+      invokeSync(getHealthz, {}, { failOpen: false, maxRetries: 1 }),
     ).rejects.toBeInstanceOf(APIConnectionError);
   }, 10_000);
 
   it("returns null when failOpen is true and APIConnectionError is final", async () => {
-    server.use(http.get(`${BASE}/health`, () => HttpResponse.error()));
+    server.use(http.get(`${BASE}/healthz`, () => HttpResponse.error()));
 
-    const result = await invokeSync(healthControllerCheck, {}, { failOpen: true, maxRetries: 0 });
+    const result = await invokeSync(getHealthz, {}, { failOpen: true, maxRetries: 0 });
 
     expect(result).toBeNull();
   }, 10_000);
@@ -167,23 +169,23 @@ describe("transport interceptors", () => {
   it("does not retry non-retryable errors", async () => {
     let calls = 0;
     server.use(
-      http.get(`${BASE}/health`, () => {
+      http.get(`${BASE}/healthz`, () => {
         calls++;
         return HttpResponse.json({ message: "bad" }, { status: 401 });
       }),
     );
 
     await expect(
-      invokeSync(healthControllerCheck, {}, { failOpen: false, maxRetries: 5 }),
+      invokeSync(getHealthz, {}, { failOpen: false, maxRetries: 5 }),
     ).rejects.toBeInstanceOf(AuthenticationError);
     expect(calls).toBe(1);
   });
 
   it("throws ServerError for 500 with no JSON body", async () => {
-    server.use(http.get(`${BASE}/health`, () => new HttpResponse("internal", { status: 500 })));
+    server.use(http.get(`${BASE}/healthz`, () => new HttpResponse("internal", { status: 500 })));
 
     await expect(
-      invokeSync(healthControllerCheck, {}, { failOpen: false, maxRetries: 0 }),
+      invokeSync(getHealthz, {}, { failOpen: false, maxRetries: 0 }),
     ).rejects.toBeInstanceOf(ServerError);
   });
 });

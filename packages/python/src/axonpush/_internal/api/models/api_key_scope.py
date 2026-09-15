@@ -1,24 +1,61 @@
-from enum import Enum
+from __future__ import annotations
+
+from collections.abc import Mapping
+from typing import TYPE_CHECKING, Any, BinaryIO, Generator, TextIO, TypeVar
+
+from attrs import define as _attrs_define
+from attrs import field as _attrs_field
+
+from ..types import UNSET, Unset
+
+T = TypeVar("T", bound="ApiKeyScope")
 
 
-class ApiKeyScope(str, Enum):
-    ACTIONSREAD = "actions:read"
-    ACTIONSVERIFY = "actions:verify"
-    ACTIONSWRITE = "actions:write"
-    ACTION_CONTRACTSMANAGE = "action-contracts:manage"
-    ALERTSMANAGE = "alerts:manage"
-    ANALYTICSREAD = "analytics:read"
-    APPSMANAGE = "apps:manage"
-    ASSESSMENTSWRITE = "assessments:write"
-    CHANNELSMANAGE = "channels:manage"
-    EVALUATIONSMANAGE = "evaluations:manage"
-    EVENTSREAD = "events:read"
-    INTELLIGENCEMANAGE = "intelligence:manage"
-    PROMPTSMANAGE = "prompts:manage"
-    PUBLISH = "publish"
-    SUBSCRIBE = "subscribe"
-    TRACESREAD = "traces:read"
-    WEBHOOKSMANAGE = "webhooks:manage"
+@_attrs_define
+class ApiKeyScope:
+    """
+    Attributes:
+        category (str):
+        description (str):
+        scope (str):
+    """
 
-    def __str__(self) -> str:
-        return str(self.value)
+    category: str
+    description: str
+    scope: str
+
+    def to_dict(self) -> dict[str, Any]:
+        category = self.category
+
+        description = self.description
+
+        scope = self.scope
+
+        field_dict: dict[str, Any] = {}
+
+        field_dict.update(
+            {
+                "category": category,
+                "description": description,
+                "scope": scope,
+            }
+        )
+
+        return field_dict
+
+    @classmethod
+    def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
+        d = dict(src_dict)
+        category = d.pop("category")
+
+        description = d.pop("description")
+
+        scope = d.pop("scope")
+
+        api_key_scope = cls(
+            category=category,
+            description=description,
+            scope=scope,
+        )
+
+        return api_key_scope

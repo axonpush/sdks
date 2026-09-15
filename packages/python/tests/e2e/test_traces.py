@@ -10,11 +10,11 @@ pytestmark = pytest.mark.e2e
 
 class TestTraces:
     def _publish_traced_events(self, client, channel):
-        trace_id = f"tr_{uuid.uuid4().hex[:16]}"
+        trace_id = str(uuid.uuid4())
         client.events.publish(
             "trace_start",
             {"step": "begin"},
-            channel_id=channel.id,
+            channel_id=channel.channel_id,
             agent_id="tracer",
             trace_id=trace_id,
             event_type=EventType.AGENT_START,
@@ -22,7 +22,7 @@ class TestTraces:
         client.events.publish(
             "trace_tool",
             {"tool": "search"},
-            channel_id=channel.id,
+            channel_id=channel.channel_id,
             agent_id="tracer",
             trace_id=trace_id,
             event_type=EventType.AGENT_TOOL_CALL_START,
@@ -30,7 +30,7 @@ class TestTraces:
         client.events.publish(
             "trace_end",
             {"step": "finish"},
-            channel_id=channel.id,
+            channel_id=channel.channel_id,
             agent_id="tracer",
             trace_id=trace_id,
             event_type=EventType.AGENT_END,
@@ -40,35 +40,22 @@ class TestTraces:
     def test_list_traces(self, client, channel):
         trace_id = self._publish_traced_events(client, channel)
         time.sleep(0.5)
-        result = client.traces_v2.list()
+        result = client.traces.list()
         assert result is not None
-        assert hasattr(result, "data")
-        trace_ids = [t.trace_id for t in result.data]
+        trace_ids = [t.trace_id for t in (result.traces or [])]
         assert trace_id in trace_ids
 
-    def test_events_for_trace(self, client, channel):
+    def test_get_trace(self, client, channel):
         trace_id = self._publish_traced_events(client, channel)
         time.sleep(0.5)
-        result = client.traces_v2.events(trace_id)
-        assert result is not None
-        events = result.data
-        assert len(events) >= 3
-        assert all(e.trace_id == trace_id for e in events)
-
-    def test_summary(self, client, channel):
-        trace_id = self._publish_traced_events(client, channel)
-        time.sleep(0.5)
-        detail = client.traces_v2.detail(trace_id)
+        detail = client.traces.get(trace_id)
         assert detail is not None
-        summary = detail.summary
-        assert summary.trace_id == trace_id
-        assert summary.event_count >= 3
-        assert "tracer" in summary.agents
-        assert summary.tool_call_count >= 1
+        assert detail.trace_id == trace_id
+        spans = detail.spans or []
+        assert len(spans) >= 3
 
-    def test_stats(self, client, channel):
+    def test_traces_v2_alias_still_works(self, client, channel):
         self._publish_traced_events(client, channel)
         time.sleep(0.5)
-        stats = client.traces_v2.stats()
-        assert stats is not None
-        assert stats.total_events >= 3
+        result = client.traces_v2.list()
+        assert result is not None

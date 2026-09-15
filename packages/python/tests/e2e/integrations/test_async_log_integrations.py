@@ -24,14 +24,14 @@ async def test_logging_handler_with_async_client_round_trip(backend):
         tenant_id=backend.tenant_id,
         base_url=backend.base_url,
     ) as client:
-        ch = await client.channels.create(f"async-int-{uuid.uuid4().hex[:8]}", backend.app_id)
+        ch = await client.channels.create(backend.app_id, f"async-int-{uuid.uuid4().hex[:8]}")
         try:
-            logger_name = f"e2e.async.{ch.id}"
+            logger_name = f"e2e.async.{ch.channel_id}"
             logger = logging.getLogger(logger_name)
             logger.handlers.clear()
             logger.setLevel(logging.DEBUG)
             logger.propagate = False
-            logger.addHandler(AxonPushLoggingHandler(client=client, channel_id=ch.id))
+            logger.addHandler(AxonPushLoggingHandler(client=client, channel_id=ch.channel_id))
             try:
                 logger.error("async round trip")
                 # Poll for up to 2s — gives the create_task'd coroutine
@@ -39,21 +39,22 @@ async def test_logging_handler_with_async_client_round_trip(backend):
                 events = []
                 for _ in range(20):
                     await asyncio.sleep(0.1)
-                    events = await client.events.list(ch.id, limit=50)
-                    if any(e.payload.get("body") == "async round trip" for e in events):
+                    result = await client.events.search(channel_id=ch.channel_id, limit=50)
+                    events = result.events if result else []
+                    if any((e.payload or {}).get("body") == "async round trip" for e in events):
                         break
                 else:
                     pytest.fail(
                         f"async log never reached the backend within 2s; "
                         f"saw events: {[e.payload for e in events]}"
                     )
-                matches = [e for e in events if e.payload.get("body") == "async round trip"]
+                matches = [e for e in events if (e.payload or {}).get("body") == "async round trip"]
                 assert matches[0].event_type == EventType.APP_LOG
                 assert matches[0].payload["severityText"] == "ERROR"
             finally:
                 logger.handlers.clear()
         finally:
             try:
-                await client.channels.delete(ch.id)
+                await client.channels.delete(backend.app_id, ch.channel_id)
             except Exception:
                 pass

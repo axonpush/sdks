@@ -12,35 +12,20 @@ from typing import Any, Awaitable, Callable
 
 import pytest
 
-from axonpush._internal.api.api.event import (
-    event_controller_create_event as _create_op,
-    event_controller_list_events as _list_op,
-)
-from axonpush._internal.api.api.events import (
-    events_search_controller_search as _search_op,
-)
-from axonpush._internal.api.models import (
-    CreateEventDto,
-    EventType,
-    EventIngestResponseDto,
-)
+from axonpush._internal.api.api.event import create_event as _create_op
+from axonpush._internal.api.api.events import events_search as _search_op
+from axonpush._internal.api.models import EventBody, EventOutputBody
 from axonpush._internal.api.types import UNSET
+from axonpush.models import EventType
 from axonpush.resources.events import AsyncEvents, Events
 
 CHANNEL_ID = "11111111-1111-1111-1111-111111111111"
 
 
-def _ingest_response(**overrides: Any) -> EventIngestResponseDto:
-    base = {
-        "id": "ev_1",
-        "event_id": "ev_1",
-        "identifier": "x",
-        "dedup_key": "x",
-        "created_at": "2026-01-01T00:00:00Z",
-        "queued": True,
-    }
+def _ingest_response(**overrides: Any) -> EventOutputBody:
+    base = {"event_id": "ev_1", "status": "queued"}
     base.update(overrides)
-    return EventIngestResponseDto(**base)
+    return EventOutputBody(**base)
 
 
 class FakeSyncClient:
@@ -50,9 +35,9 @@ class FakeSyncClient:
         self.calls: list[tuple[Callable[..., Any], dict[str, Any]]] = []
         self.return_value = return_value
 
-    def _invoke(self, op: Callable[..., Any], /, **kwargs: Any) -> Any:
+    def _invoke(self, op: Callable[..., Any], /, _coerce: Any = None, **kwargs: Any) -> Any:
         self.calls.append((op, kwargs))
-        return self.return_value
+        return _coerce(self.return_value) if _coerce else self.return_value
 
 
 class FakeAsyncClient:
@@ -60,9 +45,11 @@ class FakeAsyncClient:
         self.calls: list[tuple[Callable[..., Awaitable[Any]], dict[str, Any]]] = []
         self.return_value = return_value
 
-    async def _invoke(self, op: Callable[..., Awaitable[Any]], /, **kwargs: Any) -> Any:
+    async def _invoke(
+        self, op: Callable[..., Awaitable[Any]], /, _coerce: Any = None, **kwargs: Any
+    ) -> Any:
         self.calls.append((op, kwargs))
-        return self.return_value
+        return _coerce(self.return_value) if _coerce else self.return_value
 
 
 class TestPublishBody:
@@ -71,11 +58,11 @@ class TestPublishBody:
         events = Events(fake)
         result = events.publish("greet", {"hello": "world"}, channel_id=CHANNEL_ID)
 
-        assert isinstance(result, EventIngestResponseDto)
+        assert isinstance(result, EventOutputBody)
         op, kwargs = fake.calls[0]
         assert op is _create_op
         body = kwargs["body"]
-        assert isinstance(body, CreateEventDto)
+        assert isinstance(body, EventBody)
         assert body.identifier == "greet"
         assert body.channel_id == CHANNEL_ID
         assert body.payload.additional_properties == {"hello": "world"}
@@ -87,9 +74,9 @@ class TestPublishBody:
         assert isinstance(body.span_id, str)
         assert len(body.span_id) == 16
         int(body.span_id, 16)
-        assert body.parent_event_id is UNSET
         assert body.metadata is UNSET
-        assert body.environment is UNSET
+        assert body.event_type is UNSET
+        assert body.dedup_key is UNSET
 
     def test_explicit_trace_id_is_passed_through(self) -> None:
         fake = FakeSyncClient(return_value=_ingest_response())
@@ -99,21 +86,21 @@ class TestPublishBody:
         body = fake.calls[0][1]["body"]
         assert body.trace_id == "tr_explicit"
 
-    def test_string_event_type_is_coerced_to_enum(self) -> None:
+    def test_string_event_type_is_kept_as_string(self) -> None:
         fake = FakeSyncClient(return_value=_ingest_response())
         events = Events(fake)
         events.publish("x", {}, channel_id=CHANNEL_ID, event_type="agent.handoff")
 
         body = fake.calls[0][1]["body"]
-        assert body.event_type is EventType.AGENT_HANDOFF
+        assert body.event_type == "agent.handoff"
 
-    def test_enum_event_type_is_passed_through(self) -> None:
+    def test_enum_event_type_serialized_to_value(self) -> None:
         fake = FakeSyncClient(return_value=_ingest_response())
         events = Events(fake)
         events.publish("x", {}, channel_id=CHANNEL_ID, event_type=EventType.AGENT_END)
 
         body = fake.calls[0][1]["body"]
-        assert body.event_type is EventType.AGENT_END
+        assert body.event_type == "agent.end"
 
     def test_metadata_wrapped_into_dto(self) -> None:
         fake = FakeSyncClient(return_value=_ingest_response())
@@ -154,8 +141,7 @@ class TestPublishBody:
             trace_id="tr_fixed",
             span_id="sp_fixed",
             parent_span_id="sp_parent",
-            parent_event_id="ev_parent",
-            environment="staging",
+            dedup_key="dk_1",
         )
 
         body = fake.calls[0][1]["body"]
@@ -164,8 +150,7 @@ class TestPublishBody:
         assert body.span_id == "sp_fixed"
         assert body.parent_span_id == "sp_parent"
         assert body.to_dict()["parentSpanId"] == "sp_parent"
-        assert body.parent_event_id == "ev_parent"
-        assert body.environment == "staging"
+        assert body.dedup_key == "dk_1"
 
     def test_real_client_redacts_payload_before_building_request(self) -> None:
         from axonpush import AxonPush
@@ -190,7 +175,7 @@ class TestPublishBody:
                     },
                     channel_id=CHANNEL_ID,
                 )
-            assert isinstance(body, CreateEventDto)
+            assert isinstance(body, EventBody)
             assert body.payload.additional_properties == {
                 "input": "[REDACTED]",
                 "authorization": "[REDACTED]",
@@ -201,16 +186,7 @@ class TestPublishBody:
             client.close()
 
 
-class TestList:
-    def test_list_calls_list_op_with_channel_id(self) -> None:
-        fake = FakeSyncClient(return_value=None)
-        events = Events(fake)
-        events.list(CHANNEL_ID)
-
-        op, kwargs = fake.calls[0]
-        assert op is _list_op
-        assert kwargs == {"channel_id": CHANNEL_ID}
-
+class TestSearch:
     def test_search_calls_search_op_with_no_args(self) -> None:
         fake = FakeSyncClient(return_value=None)
         events = Events(fake)
@@ -220,6 +196,15 @@ class TestList:
         assert op is _search_op
         assert kwargs == {}
 
+    def test_search_forwards_filters(self) -> None:
+        fake = FakeSyncClient(return_value=None)
+        events = Events(fake)
+        events.search(channel_id=CHANNEL_ID, event_type="agent.start", limit=10)
+
+        op, kwargs = fake.calls[0]
+        assert op is _search_op
+        assert kwargs == {"channel_id": CHANNEL_ID, "event_type": "agent.start", "limit": 10}
+
 
 class TestAsyncEvents:
     @pytest.mark.asyncio
@@ -228,19 +213,19 @@ class TestAsyncEvents:
         events = AsyncEvents(fake)
         result = await events.publish("greet", {}, channel_id=CHANNEL_ID)
 
-        assert isinstance(result, EventIngestResponseDto)
+        assert isinstance(result, EventOutputBody)
         op, kwargs = fake.calls[0]
         assert op is _create_op
         body = kwargs["body"]
-        assert isinstance(body, CreateEventDto)
+        assert isinstance(body, EventBody)
         assert body.identifier == "greet"
 
     @pytest.mark.asyncio
-    async def test_async_list_dispatches_asyncio_op(self) -> None:
+    async def test_async_search_dispatches_asyncio_op(self) -> None:
         fake = FakeAsyncClient(return_value=None)
         events = AsyncEvents(fake)
-        await events.list(CHANNEL_ID)
+        await events.search(channel_id=CHANNEL_ID)
 
         op, kwargs = fake.calls[0]
-        assert op is _list_op
+        assert op is _search_op
         assert kwargs == {"channel_id": CHANNEL_ID}

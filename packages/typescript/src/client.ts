@@ -3,13 +3,14 @@ import { type AxonPushOptions, type ResolvedSettings, resolveSettings } from "./
 import { redactTelemetry as applyTelemetryRedaction } from "./redaction.js";
 import { AlertsResource } from "./resources/alerts.js";
 import { AnalyticsResource } from "./resources/analytics.js";
-import { ApiKeysResource } from "./resources/api-keys.js";
 import { AppsResource } from "./resources/apps.js";
+import { CapabilitiesResource } from "./resources/capabilities.js";
 import { ChannelsResource } from "./resources/channels.js";
 import { EnvironmentsResource } from "./resources/environments.js";
 import { EventsResource } from "./resources/events.js";
+import { ModerationResource } from "./resources/moderation.js";
 import { OrganizationsResource } from "./resources/organizations.js";
-import { TracesV2Resource } from "./resources/traces-v2.js";
+import { TracesResource } from "./resources/traces.js";
 import { WebhooksResource } from "./resources/webhooks.js";
 import { getOrCreateTrace, type TraceContext } from "./tracing.js";
 
@@ -27,9 +28,9 @@ export class AxonPush {
   /** Per-instance transport; carries this facade's settings, no shared slot. */
   private readonly transport: Transport;
 
-  /** Events resource — `publish`, `list`, `search`. */
+  /** Events resource — `publish`, `search`. */
   readonly events: EventsResource;
-  /** Channels resource — `create`, `get`, `update`, `delete`. */
+  /** Channels resource — `list`, `get`, `create`, `update`, `delete`. */
   readonly channels: ChannelsResource;
   /** Apps resource — `list`, `get`, `create`, `update`, `delete`. */
   readonly apps: AppsResource;
@@ -37,16 +38,23 @@ export class AxonPush {
   readonly environments: EnvironmentsResource;
   /** Webhooks resource — `createEndpoint`, `listEndpoints`, `deleteEndpoint`, `deliveries`. */
   readonly webhooks: WebhooksResource;
-  /** API keys resource — `create`, `list`, `delete`. */
-  readonly apiKeys: ApiKeysResource;
-  /** Organizations resource — `create`, `get`, `list`, `update`, `delete`, `invite`, `removeMember`, `transferOwnership`. */
+  /** Organizations resource — `get`, `list`, `update`, `delete`, `invite`, `cancelInvitation`, `removeMember`, `transferOwnership`. */
   readonly organizations: OrganizationsResource;
   /** Alert rules over metric thresholds. */
   readonly alerts: AlertsResource;
-  /** Timeseries, breakdowns and comparisons. */
+  /** Timeseries and dimension breakdowns. */
   readonly analytics: AnalyticsResource;
-  /** Trace search with facets and spans. */
-  readonly tracesV2: TracesV2Resource;
+  /** Traces — `list`, `get`. */
+  readonly traces: TracesResource;
+  /**
+   * Back-compat alias for {@link AxonPush.traces}.
+   * @deprecated Use `client.traces`.
+   */
+  readonly tracesV2: TracesResource;
+  /** Content moderation — rules and violations. */
+  readonly moderation: ModerationResource;
+  /** Server capabilities — version, feature flags, license, scopes. */
+  readonly capabilities: CapabilitiesResource;
 
   /**
    * @param options Optional caller overrides; falsy fields fall through to
@@ -60,11 +68,13 @@ export class AxonPush {
     this.apps = new AppsResource(this);
     this.environments = new EnvironmentsResource(this);
     this.webhooks = new WebhooksResource(this);
-    this.apiKeys = new ApiKeysResource(this);
     this.organizations = new OrganizationsResource(this);
     this.alerts = new AlertsResource(this);
     this.analytics = new AnalyticsResource(this);
-    this.tracesV2 = new TracesV2Resource(this);
+    this.traces = new TracesResource(this);
+    this.tracesV2 = this.traces;
+    this.moderation = new ModerationResource(this);
+    this.capabilities = new CapabilitiesResource(this);
   }
 
   /** The configured environment label (or `undefined` if none). */

@@ -1,5 +1,43 @@
 # Changelog
 
+## [0.0.11]
+
+### Changed
+- **BREAKING:** Realigned the entire client to the Go/Huma backend contract
+  (regenerated from `contract/openapi.sdk.json`). Routes and DTOs now match the
+  Go API: `POST /event` (`createEvent`, body `EventBody` with `channel_id`),
+  `GET /events` (`eventsSearch`), `GET /traces` + `GET /traces/{traceId}`,
+  and DTO models (`AppDto`, `ChannelDto`, `EnvironmentDto`, `EventDto`,
+  `OrganizationDto`, `UserOrgDto`) with envelope response bodies.
+- **BREAKING:** `client.channels` methods are now app-scoped
+  (`/apps/{appId}/channels/...`): `get(appId, channelId)`,
+  `update(appId, channelId, fields)`, `delete(appId, channelId)`.
+- **BREAKING:** `client.environments` is keyed by `slug` instead of id.
+- **BREAKING:** `client.organizations`: dropped `create()` (org creation is
+  owned by the auth service); `get()`/`update()` now act on the active org
+  (no id argument); `list()` returns membership records
+  (`UserOrg[]`, unwrapped from `/users/me/organizations`).
+- `list()` accessors (`apps`, `channels`, `environments`, `organizations`,
+  `webhooks`, `moderation`) unwrap the envelope and return the inner array.
+- Auth header is `x-axonpush-api-key` for `ak_` keys (`pt_` public ingest
+  tokens still use `X-Public-Token`).
+
+### Added
+- `client.traces` (`list`, `get`) replaces the old trace-v2 surface.
+- `client.moderation` (`listRules`, `createRule`, `deleteRule`,
+  `listViolations`) and `client.capabilities` (`get`).
+- Standalone `EventType` union (canonical members widened to `string`), since
+  the backend no longer publishes a closed event-type enum.
+
+### Removed
+- **BREAKING:** `client.apiKeys` and `ApiKeysResource` (API keys are managed by
+  the auth service).
+- **BREAKING:** `client.events.list()` (per-channel listing); use
+  `client.events.search({ channelId })`.
+- **BREAKING:** trace-v2 `stats`, `facets`, `attributeKeys`, `events`, and
+  `spans` search endpoints, and `analytics.compare`. `client.tracesV2` remains
+  as a deprecated alias of `client.traces`.
+
 ## [0.0.10]
 
 ### Removed
