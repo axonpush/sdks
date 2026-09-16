@@ -1,7 +1,7 @@
 from enum import Enum
 
 
-class CreateInputBody1Operator(str, Enum):
+class CreateInputBodyOperator(str, Enum):
     GT = "gt"
     GTE = "gte"
     LT = "lt"

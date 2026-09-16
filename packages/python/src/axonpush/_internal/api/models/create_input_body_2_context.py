@@ -8,11 +8,11 @@ from attrs import field as _attrs_field
 
 from ..types import UNSET, Unset
 
-T = TypeVar("T", bound="CreateInputBody3Context")
+T = TypeVar("T", bound="CreateInputBody2Context")
 
 
 @_attrs_define
-class CreateInputBody3Context:
+class CreateInputBody2Context:
     """ """
 
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
@@ -27,10 +27,10 @@ class CreateInputBody3Context:
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         d = dict(src_dict)
-        create_input_body_3_context = cls()
+        create_input_body_2_context = cls()
 
-        create_input_body_3_context.additional_properties = d
-        return create_input_body_3_context
+        create_input_body_2_context.additional_properties = d
+        return create_input_body_2_context
 
     @property
     def additional_keys(self) -> list[str]:

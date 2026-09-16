@@ -8,14 +8,14 @@ from ... import errors
 from ...client import AuthenticatedClient, Client
 from ...models.destination_dto import DestinationDTO
 from ...models.error_model import ErrorModel
-from ...models.update_input_body_2 import UpdateInputBody2
+from ...models.update_input_body_1 import UpdateInputBody1
 from ...types import UNSET, Response
 
 
 def _get_kwargs(
     destination_id: str,
     *,
-    body: UpdateInputBody2,
+    body: UpdateInputBody1,
 ) -> dict[str, Any]:
     headers: dict[str, Any] = {}
 
@@ -62,13 +62,13 @@ def sync_detailed(
     destination_id: str,
     *,
     client: AuthenticatedClient | Client,
-    body: UpdateInputBody2,
+    body: UpdateInputBody1,
 ) -> Response[DestinationDTO | ErrorModel]:
     """Update an export destination
 
     Args:
         destination_id (str):
-        body (UpdateInputBody2):
+        body (UpdateInputBody1):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -94,13 +94,13 @@ def sync(
     destination_id: str,
     *,
     client: AuthenticatedClient | Client,
-    body: UpdateInputBody2,
+    body: UpdateInputBody1,
 ) -> DestinationDTO | ErrorModel | None:
     """Update an export destination
 
     Args:
         destination_id (str):
-        body (UpdateInputBody2):
+        body (UpdateInputBody1):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -121,13 +121,13 @@ async def asyncio_detailed(
     destination_id: str,
     *,
     client: AuthenticatedClient | Client,
-    body: UpdateInputBody2,
+    body: UpdateInputBody1,
 ) -> Response[DestinationDTO | ErrorModel]:
     """Update an export destination
 
     Args:
         destination_id (str):
-        body (UpdateInputBody2):
+        body (UpdateInputBody1):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -151,13 +151,13 @@ async def asyncio(
     destination_id: str,
     *,
     client: AuthenticatedClient | Client,
-    body: UpdateInputBody2,
+    body: UpdateInputBody1,
 ) -> DestinationDTO | ErrorModel | None:
     """Update an export destination
 
     Args:
         destination_id (str):
-        body (UpdateInputBody2):
+        body (UpdateInputBody1):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.

@@ -1,15 +1,16 @@
 from __future__ import annotations
 
 from collections.abc import Mapping
-from typing import TYPE_CHECKING, Any, BinaryIO, Generator, TextIO, TypeVar
+from typing import TYPE_CHECKING, Any, BinaryIO, Generator, TextIO, TypeVar, cast
 
 from attrs import define as _attrs_define
 from attrs import field as _attrs_field
 
-from ..models.update_input_body_1_destination_type import UpdateInputBody1DestinationType
-from ..models.update_input_body_1_metric import UpdateInputBody1Metric
-from ..models.update_input_body_1_operator import UpdateInputBody1Operator
 from ..types import UNSET, Unset
+
+if TYPE_CHECKING:
+    from ..models.update_input_body_1_headers import UpdateInputBody1Headers
+
 
 T = TypeVar("T", bound="UpdateInputBody1")
 
@@ -19,112 +20,106 @@ class UpdateInputBody1:
     """
     Attributes:
         schema (str | Unset): A URL to the JSON Schema for this object.
-        destination (str | Unset):
-        destination_type (UpdateInputBody1DestinationType | Unset):
-        enabled (bool | Unset):
-        metric (UpdateInputBody1Metric | Unset):
+        active (bool | Unset):
+        endpoint_url (str | Unset):
+        event_type_filter (list[str] | Unset):
+        headers (UpdateInputBody1Headers | Unset): Replaces the stored header map. Never returned.
         name (str | Unset):
-        operator (UpdateInputBody1Operator | Unset):
-        threshold (float | Unset):
+        service_name (str | Unset):
+        signals (list[str] | Unset):
     """
 
     schema: str | Unset = UNSET
-    destination: str | Unset = UNSET
-    destination_type: UpdateInputBody1DestinationType | Unset = UNSET
-    enabled: bool | Unset = UNSET
-    metric: UpdateInputBody1Metric | Unset = UNSET
+    active: bool | Unset = UNSET
+    endpoint_url: str | Unset = UNSET
+    event_type_filter: list[str] | Unset = UNSET
+    headers: UpdateInputBody1Headers | Unset = UNSET
     name: str | Unset = UNSET
-    operator: UpdateInputBody1Operator | Unset = UNSET
-    threshold: float | Unset = UNSET
+    service_name: str | Unset = UNSET
+    signals: list[str] | Unset = UNSET
 
     def to_dict(self) -> dict[str, Any]:
+        from ..models.update_input_body_1_headers import UpdateInputBody1Headers
+
         schema = self.schema
 
-        destination = self.destination
+        active = self.active
 
-        destination_type: str | Unset = UNSET
-        if not isinstance(self.destination_type, Unset):
-            destination_type = self.destination_type.value
+        endpoint_url = self.endpoint_url
 
-        enabled = self.enabled
+        event_type_filter: list[str] | Unset = UNSET
+        if not isinstance(self.event_type_filter, Unset):
+            event_type_filter = self.event_type_filter
 
-        metric: str | Unset = UNSET
-        if not isinstance(self.metric, Unset):
-            metric = self.metric.value
+        headers: dict[str, Any] | Unset = UNSET
+        if not isinstance(self.headers, Unset):
+            headers = self.headers.to_dict()
 
         name = self.name
 
-        operator: str | Unset = UNSET
-        if not isinstance(self.operator, Unset):
-            operator = self.operator.value
+        service_name = self.service_name
 
-        threshold = self.threshold
+        signals: list[str] | Unset = UNSET
+        if not isinstance(self.signals, Unset):
+            signals = self.signals
 
         field_dict: dict[str, Any] = {}
 
         field_dict.update({})
         if schema is not UNSET:
             field_dict["$schema"] = schema
-        if destination is not UNSET:
-            field_dict["destination"] = destination
-        if destination_type is not UNSET:
-            field_dict["destinationType"] = destination_type
-        if enabled is not UNSET:
-            field_dict["enabled"] = enabled
-        if metric is not UNSET:
-            field_dict["metric"] = metric
+        if active is not UNSET:
+            field_dict["active"] = active
+        if endpoint_url is not UNSET:
+            field_dict["endpointUrl"] = endpoint_url
+        if event_type_filter is not UNSET:
+            field_dict["eventTypeFilter"] = event_type_filter
+        if headers is not UNSET:
+            field_dict["headers"] = headers
         if name is not UNSET:
             field_dict["name"] = name
-        if operator is not UNSET:
-            field_dict["operator"] = operator
-        if threshold is not UNSET:
-            field_dict["threshold"] = threshold
+        if service_name is not UNSET:
+            field_dict["serviceName"] = service_name
+        if signals is not UNSET:
+            field_dict["signals"] = signals
 
         return field_dict
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
+        from ..models.update_input_body_1_headers import UpdateInputBody1Headers
+
         d = dict(src_dict)
         schema = d.pop("$schema", UNSET)
 
-        destination = d.pop("destination", UNSET)
+        active = d.pop("active", UNSET)
 
-        _destination_type = d.pop("destinationType", UNSET)
-        destination_type: UpdateInputBody1DestinationType | Unset
-        if isinstance(_destination_type, Unset):
-            destination_type = UNSET
+        endpoint_url = d.pop("endpointUrl", UNSET)
+
+        event_type_filter = cast(list[str], d.pop("eventTypeFilter", UNSET))
+
+        _headers = d.pop("headers", UNSET)
+        headers: UpdateInputBody1Headers | Unset
+        if isinstance(_headers, Unset):
+            headers = UNSET
         else:
-            destination_type = UpdateInputBody1DestinationType(_destination_type)
-
-        enabled = d.pop("enabled", UNSET)
-
-        _metric = d.pop("metric", UNSET)
-        metric: UpdateInputBody1Metric | Unset
-        if isinstance(_metric, Unset):
-            metric = UNSET
-        else:
-            metric = UpdateInputBody1Metric(_metric)
+            headers = UpdateInputBody1Headers.from_dict(_headers)
 
         name = d.pop("name", UNSET)
 
-        _operator = d.pop("operator", UNSET)
-        operator: UpdateInputBody1Operator | Unset
-        if isinstance(_operator, Unset):
-            operator = UNSET
-        else:
-            operator = UpdateInputBody1Operator(_operator)
+        service_name = d.pop("serviceName", UNSET)
 
-        threshold = d.pop("threshold", UNSET)
+        signals = cast(list[str], d.pop("signals", UNSET))
 
         update_input_body_1 = cls(
             schema=schema,
-            destination=destination,
-            destination_type=destination_type,
-            enabled=enabled,
-            metric=metric,
+            active=active,
+            endpoint_url=endpoint_url,
+            event_type_filter=event_type_filter,
+            headers=headers,
             name=name,
-            operator=operator,
-            threshold=threshold,
+            service_name=service_name,
+            signals=signals,
         )
 
         return update_input_body_1

@@ -8,11 +8,11 @@ from attrs import field as _attrs_field
 
 from ..types import UNSET, Unset
 
-T = TypeVar("T", bound="CreateInputBody2Headers")
+T = TypeVar("T", bound="CreateInputBody1Headers")
 
 
 @_attrs_define
-class CreateInputBody2Headers:
+class CreateInputBody1Headers:
     """Header name -> value map. Stored server-side, never returned."""
 
     additional_properties: dict[str, str] = _attrs_field(init=False, factory=dict)
@@ -27,10 +27,10 @@ class CreateInputBody2Headers:
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         d = dict(src_dict)
-        create_input_body_2_headers = cls()
+        create_input_body_1_headers = cls()
 
-        create_input_body_2_headers.additional_properties = d
-        return create_input_body_2_headers
+        create_input_body_1_headers.additional_properties = d
+        return create_input_body_1_headers
 
     @property
     def additional_keys(self) -> list[str]:

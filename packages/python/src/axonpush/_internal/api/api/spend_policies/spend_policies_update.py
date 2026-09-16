@@ -7,29 +7,38 @@ import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
 from ...models.error_model import ErrorModel
-from ...models.ok_output_body import OkOutputBody
+from ...models.policy import Policy
+from ...models.policy_body import PolicyBody
 from ...types import UNSET, Response
 
 
 def _get_kwargs(
-    budget_id: str,
+    policy_id: str,
+    *,
+    body: PolicyBody,
 ) -> dict[str, Any]:
+    headers: dict[str, Any] = {}
 
     _kwargs: dict[str, Any] = {
-        "method": "delete",
-        "url": "/budgets/{budget_id}".format(
-            budget_id=quote(str(budget_id), safe=""),
+        "method": "patch",
+        "url": "/spend-policies/{policy_id}".format(
+            policy_id=quote(str(policy_id), safe=""),
         ),
     }
 
+    _kwargs["json"] = body.to_dict()
+
+    headers["Content-Type"] = "application/json"
+
+    _kwargs["headers"] = headers
     return _kwargs
 
 
 def _parse_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> ErrorModel | OkOutputBody:
+) -> ErrorModel | Policy:
     if response.status_code == 200:
-        response_200 = OkOutputBody.from_dict(response.json())
+        response_200 = Policy.from_dict(response.json())
 
         return response_200
 
@@ -40,7 +49,7 @@ def _parse_response(
 
 def _build_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> Response[ErrorModel | OkOutputBody]:
+) -> Response[ErrorModel | Policy]:
     return Response(
         status_code=HTTPStatus(response.status_code),
         content=response.content,
@@ -50,25 +59,28 @@ def _build_response(
 
 
 def sync_detailed(
-    budget_id: str,
+    policy_id: str,
     *,
     client: AuthenticatedClient | Client,
-) -> Response[ErrorModel | OkOutputBody]:
-    """Delete a cost budget
+    body: PolicyBody,
+) -> Response[ErrorModel | Policy]:
+    """Update a spend policy
 
     Args:
-        budget_id (str):
+        policy_id (str):
+        body (PolicyBody):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[ErrorModel | OkOutputBody]
+        Response[ErrorModel | Policy]
     """
 
     kwargs = _get_kwargs(
-        budget_id=budget_id,
+        policy_id=policy_id,
+        body=body,
     )
 
     response = client.get_httpx_client().request(
@@ -79,49 +91,55 @@ def sync_detailed(
 
 
 def sync(
-    budget_id: str,
+    policy_id: str,
     *,
     client: AuthenticatedClient | Client,
-) -> ErrorModel | OkOutputBody | None:
-    """Delete a cost budget
+    body: PolicyBody,
+) -> ErrorModel | Policy | None:
+    """Update a spend policy
 
     Args:
-        budget_id (str):
+        policy_id (str):
+        body (PolicyBody):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        ErrorModel | OkOutputBody
+        ErrorModel | Policy
     """
 
     return sync_detailed(
-        budget_id=budget_id,
+        policy_id=policy_id,
         client=client,
+        body=body,
     ).parsed
 
 
 async def asyncio_detailed(
-    budget_id: str,
+    policy_id: str,
     *,
     client: AuthenticatedClient | Client,
-) -> Response[ErrorModel | OkOutputBody]:
-    """Delete a cost budget
+    body: PolicyBody,
+) -> Response[ErrorModel | Policy]:
+    """Update a spend policy
 
     Args:
-        budget_id (str):
+        policy_id (str):
+        body (PolicyBody):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[ErrorModel | OkOutputBody]
+        Response[ErrorModel | Policy]
     """
 
     kwargs = _get_kwargs(
-        budget_id=budget_id,
+        policy_id=policy_id,
+        body=body,
     )
 
     response = await client.get_async_httpx_client().request(**kwargs)
@@ -130,26 +148,29 @@ async def asyncio_detailed(
 
 
 async def asyncio(
-    budget_id: str,
+    policy_id: str,
     *,
     client: AuthenticatedClient | Client,
-) -> ErrorModel | OkOutputBody | None:
-    """Delete a cost budget
+    body: PolicyBody,
+) -> ErrorModel | Policy | None:
+    """Update a spend policy
 
     Args:
-        budget_id (str):
+        policy_id (str):
+        body (PolicyBody):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        ErrorModel | OkOutputBody
+        ErrorModel | Policy
     """
 
     return (
         await asyncio_detailed(
-            budget_id=budget_id,
+            policy_id=policy_id,
             client=client,
+            body=body,
         )
     ).parsed

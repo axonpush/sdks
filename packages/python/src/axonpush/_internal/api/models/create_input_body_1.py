@@ -1,15 +1,16 @@
 from __future__ import annotations
 
 from collections.abc import Mapping
-from typing import TYPE_CHECKING, Any, BinaryIO, Generator, TextIO, TypeVar
+from typing import TYPE_CHECKING, Any, BinaryIO, Generator, TextIO, TypeVar, cast
 
 from attrs import define as _attrs_define
 from attrs import field as _attrs_field
 
-from ..models.create_input_body_1_destination_type import CreateInputBody1DestinationType
-from ..models.create_input_body_1_metric import CreateInputBody1Metric
-from ..models.create_input_body_1_operator import CreateInputBody1Operator
 from ..types import UNSET, Unset
+
+if TYPE_CHECKING:
+    from ..models.create_input_body_1_headers import CreateInputBody1Headers
+
 
 T = TypeVar("T", bound="CreateInputBody1")
 
@@ -18,134 +19,142 @@ T = TypeVar("T", bound="CreateInputBody1")
 class CreateInputBody1:
     """
     Attributes:
-        destination (str):
-        destination_type (CreateInputBody1DestinationType):
-        metric (CreateInputBody1Metric):
-        name (str): Alert rule display name
-        operator (CreateInputBody1Operator):
-        threshold (float):
+        endpoint_url (str):
+        env_slug (str):
+        name (str):
+        signals (list[str] | None): OTLP signals: logs and/or traces
         schema (str | Unset): A URL to the JSON Schema for this object.
-        app_id (str | Unset):
-        enabled (bool | Unset):
-        environment_id (str | Unset):
-        model (str | Unset):
-        release (str | Unset):
-        service (str | Unset):
+        event_type_filter (list[str] | None | Unset):
+        headers (CreateInputBody1Headers | Unset): Header name -> value map. Stored server-side, never returned.
+        service_name (str | Unset):
     """
 
-    destination: str
-    destination_type: CreateInputBody1DestinationType
-    metric: CreateInputBody1Metric
+    endpoint_url: str
+    env_slug: str
     name: str
-    operator: CreateInputBody1Operator
-    threshold: float
+    signals: list[str] | None
     schema: str | Unset = UNSET
-    app_id: str | Unset = UNSET
-    enabled: bool | Unset = UNSET
-    environment_id: str | Unset = UNSET
-    model: str | Unset = UNSET
-    release: str | Unset = UNSET
-    service: str | Unset = UNSET
+    event_type_filter: list[str] | None | Unset = UNSET
+    headers: CreateInputBody1Headers | Unset = UNSET
+    service_name: str | Unset = UNSET
 
     def to_dict(self) -> dict[str, Any]:
-        destination = self.destination
+        from ..models.create_input_body_1_headers import CreateInputBody1Headers
 
-        destination_type = self.destination_type.value
+        endpoint_url = self.endpoint_url
 
-        metric = self.metric.value
+        env_slug = self.env_slug
 
         name = self.name
 
-        operator = self.operator.value
+        signals: list[str] | None
+        if isinstance(self.signals, list):
+            signals = self.signals
 
-        threshold = self.threshold
+        else:
+            signals = self.signals
 
         schema = self.schema
 
-        app_id = self.app_id
+        event_type_filter: list[str] | None | Unset
+        if isinstance(self.event_type_filter, Unset):
+            event_type_filter = UNSET
+        elif isinstance(self.event_type_filter, list):
+            event_type_filter = self.event_type_filter
 
-        enabled = self.enabled
+        else:
+            event_type_filter = self.event_type_filter
 
-        environment_id = self.environment_id
+        headers: dict[str, Any] | Unset = UNSET
+        if not isinstance(self.headers, Unset):
+            headers = self.headers.to_dict()
 
-        model = self.model
-
-        release = self.release
-
-        service = self.service
+        service_name = self.service_name
 
         field_dict: dict[str, Any] = {}
 
         field_dict.update(
             {
-                "destination": destination,
-                "destinationType": destination_type,
-                "metric": metric,
+                "endpointUrl": endpoint_url,
+                "envSlug": env_slug,
                 "name": name,
-                "operator": operator,
-                "threshold": threshold,
+                "signals": signals,
             }
         )
         if schema is not UNSET:
             field_dict["$schema"] = schema
-        if app_id is not UNSET:
-            field_dict["appId"] = app_id
-        if enabled is not UNSET:
-            field_dict["enabled"] = enabled
-        if environment_id is not UNSET:
-            field_dict["environmentId"] = environment_id
-        if model is not UNSET:
-            field_dict["model"] = model
-        if release is not UNSET:
-            field_dict["release"] = release
-        if service is not UNSET:
-            field_dict["service"] = service
+        if event_type_filter is not UNSET:
+            field_dict["eventTypeFilter"] = event_type_filter
+        if headers is not UNSET:
+            field_dict["headers"] = headers
+        if service_name is not UNSET:
+            field_dict["serviceName"] = service_name
 
         return field_dict
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
+        from ..models.create_input_body_1_headers import CreateInputBody1Headers
+
         d = dict(src_dict)
-        destination = d.pop("destination")
+        endpoint_url = d.pop("endpointUrl")
 
-        destination_type = CreateInputBody1DestinationType(d.pop("destinationType"))
-
-        metric = CreateInputBody1Metric(d.pop("metric"))
+        env_slug = d.pop("envSlug")
 
         name = d.pop("name")
 
-        operator = CreateInputBody1Operator(d.pop("operator"))
+        def _parse_signals(data: object) -> list[str] | None:
+            if data is None:
+                return data
+            try:
+                if not isinstance(data, list):
+                    raise TypeError()
+                signals_type_0 = cast(list[str], data)
 
-        threshold = d.pop("threshold")
+                return signals_type_0
+            except (TypeError, ValueError, AttributeError, KeyError):
+                pass
+            return cast(list[str] | None, data)
+
+        signals = _parse_signals(d.pop("signals"))
 
         schema = d.pop("$schema", UNSET)
 
-        app_id = d.pop("appId", UNSET)
+        def _parse_event_type_filter(data: object) -> list[str] | None | Unset:
+            if data is None:
+                return data
+            if isinstance(data, Unset):
+                return data
+            try:
+                if not isinstance(data, list):
+                    raise TypeError()
+                event_type_filter_type_0 = cast(list[str], data)
 
-        enabled = d.pop("enabled", UNSET)
+                return event_type_filter_type_0
+            except (TypeError, ValueError, AttributeError, KeyError):
+                pass
+            return cast(list[str] | None | Unset, data)
 
-        environment_id = d.pop("environmentId", UNSET)
+        event_type_filter = _parse_event_type_filter(d.pop("eventTypeFilter", UNSET))
 
-        model = d.pop("model", UNSET)
+        _headers = d.pop("headers", UNSET)
+        headers: CreateInputBody1Headers | Unset
+        if isinstance(_headers, Unset):
+            headers = UNSET
+        else:
+            headers = CreateInputBody1Headers.from_dict(_headers)
 
-        release = d.pop("release", UNSET)
-
-        service = d.pop("service", UNSET)
+        service_name = d.pop("serviceName", UNSET)
 
         create_input_body_1 = cls(
-            destination=destination,
-            destination_type=destination_type,
-            metric=metric,
+            endpoint_url=endpoint_url,
+            env_slug=env_slug,
             name=name,
-            operator=operator,
-            threshold=threshold,
+            signals=signals,
             schema=schema,
-            app_id=app_id,
-            enabled=enabled,
-            environment_id=environment_id,
-            model=model,
-            release=release,
-            service=service,
+            event_type_filter=event_type_filter,
+            headers=headers,
+            service_name=service_name,
         )
 
         return create_input_body_1

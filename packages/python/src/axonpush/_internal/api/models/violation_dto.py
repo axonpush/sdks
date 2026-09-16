@@ -20,9 +20,13 @@ class ViolationDTO:
         occurred_at (str):
         rule_id (str):
         rule_name (str):
+        target (str):
         violation_id (str):
         app_id (str | Unset):
         channel_id (str | Unset):
+        explanation (str | Unset):
+        latency_ms (float | Unset):
+        trace_id (str | Unset):
     """
 
     action: str
@@ -30,9 +34,13 @@ class ViolationDTO:
     occurred_at: str
     rule_id: str
     rule_name: str
+    target: str
     violation_id: str
     app_id: str | Unset = UNSET
     channel_id: str | Unset = UNSET
+    explanation: str | Unset = UNSET
+    latency_ms: float | Unset = UNSET
+    trace_id: str | Unset = UNSET
 
     def to_dict(self) -> dict[str, Any]:
         action = self.action
@@ -45,11 +53,19 @@ class ViolationDTO:
 
         rule_name = self.rule_name
 
+        target = self.target
+
         violation_id = self.violation_id
 
         app_id = self.app_id
 
         channel_id = self.channel_id
+
+        explanation = self.explanation
+
+        latency_ms = self.latency_ms
+
+        trace_id = self.trace_id
 
         field_dict: dict[str, Any] = {}
 
@@ -60,6 +76,7 @@ class ViolationDTO:
                 "occurredAt": occurred_at,
                 "ruleId": rule_id,
                 "ruleName": rule_name,
+                "target": target,
                 "violationId": violation_id,
             }
         )
@@ -67,6 +84,12 @@ class ViolationDTO:
             field_dict["appId"] = app_id
         if channel_id is not UNSET:
             field_dict["channelId"] = channel_id
+        if explanation is not UNSET:
+            field_dict["explanation"] = explanation
+        if latency_ms is not UNSET:
+            field_dict["latencyMs"] = latency_ms
+        if trace_id is not UNSET:
+            field_dict["traceId"] = trace_id
 
         return field_dict
 
@@ -83,11 +106,19 @@ class ViolationDTO:
 
         rule_name = d.pop("ruleName")
 
+        target = d.pop("target")
+
         violation_id = d.pop("violationId")
 
         app_id = d.pop("appId", UNSET)
 
         channel_id = d.pop("channelId", UNSET)
+
+        explanation = d.pop("explanation", UNSET)
+
+        latency_ms = d.pop("latencyMs", UNSET)
+
+        trace_id = d.pop("traceId", UNSET)
 
         violation_dto = cls(
             action=action,
@@ -95,9 +126,13 @@ class ViolationDTO:
             occurred_at=occurred_at,
             rule_id=rule_id,
             rule_name=rule_name,
+            target=target,
             violation_id=violation_id,
             app_id=app_id,
             channel_id=channel_id,
+            explanation=explanation,
+            latency_ms=latency_ms,
+            trace_id=trace_id,
         )
 
         return violation_dto

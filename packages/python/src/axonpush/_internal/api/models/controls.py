@@ -10,8 +10,8 @@ from ..types import UNSET, Unset
 
 if TYPE_CHECKING:
     from ..models.audit_capability import AuditCapability
-    from ..models.budget_capability import BudgetCapability
     from ..models.moderation_capability import ModerationCapability
+    from ..models.spend_policy_capability import SpendPolicyCapability
 
 
 T = TypeVar("T", bound="Controls")
@@ -22,32 +22,32 @@ class Controls:
     """
     Attributes:
         audit_trail (AuditCapability):
-        cost_budgets (BudgetCapability):
         inline_moderation (ModerationCapability):
+        spend_policies (SpendPolicyCapability):
     """
 
     audit_trail: AuditCapability
-    cost_budgets: BudgetCapability
     inline_moderation: ModerationCapability
+    spend_policies: SpendPolicyCapability
 
     def to_dict(self) -> dict[str, Any]:
         from ..models.audit_capability import AuditCapability
-        from ..models.budget_capability import BudgetCapability
         from ..models.moderation_capability import ModerationCapability
+        from ..models.spend_policy_capability import SpendPolicyCapability
 
         audit_trail = self.audit_trail.to_dict()
 
-        cost_budgets = self.cost_budgets.to_dict()
-
         inline_moderation = self.inline_moderation.to_dict()
+
+        spend_policies = self.spend_policies.to_dict()
 
         field_dict: dict[str, Any] = {}
 
         field_dict.update(
             {
                 "auditTrail": audit_trail,
-                "costBudgets": cost_budgets,
                 "inlineModeration": inline_moderation,
+                "spendPolicies": spend_policies,
             }
         )
 
@@ -56,20 +56,20 @@ class Controls:
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         from ..models.audit_capability import AuditCapability
-        from ..models.budget_capability import BudgetCapability
         from ..models.moderation_capability import ModerationCapability
+        from ..models.spend_policy_capability import SpendPolicyCapability
 
         d = dict(src_dict)
         audit_trail = AuditCapability.from_dict(d.pop("auditTrail"))
 
-        cost_budgets = BudgetCapability.from_dict(d.pop("costBudgets"))
-
         inline_moderation = ModerationCapability.from_dict(d.pop("inlineModeration"))
+
+        spend_policies = SpendPolicyCapability.from_dict(d.pop("spendPolicies"))
 
         controls = cls(
             audit_trail=audit_trail,
-            cost_budgets=cost_budgets,
             inline_moderation=inline_moderation,
+            spend_policies=spend_policies,
         )
 
         return controls

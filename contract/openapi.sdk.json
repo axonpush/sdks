@@ -344,28 +344,6 @@
         ],
         "type": "object"
       },
-      "BudgetCapability": {
-        "additionalProperties": false,
-        "properties": {
-          "enabled": {
-            "type": "boolean"
-          },
-          "periods": {
-            "items": {
-              "type": "string"
-            },
-            "type": [
-              "array",
-              "null"
-            ]
-          }
-        },
-        "required": [
-          "enabled",
-          "periods"
-        ],
-        "type": "object"
-      },
       "CapabilitiesOutputBody": {
         "additionalProperties": false,
         "properties": {
@@ -481,67 +459,17 @@
           "auditTrail": {
             "$ref": "#/components/schemas/AuditCapability"
           },
-          "costBudgets": {
-            "$ref": "#/components/schemas/BudgetCapability"
-          },
           "inlineModeration": {
             "$ref": "#/components/schemas/ModerationCapability"
+          },
+          "spendPolicies": {
+            "$ref": "#/components/schemas/SpendPolicyCapability"
           }
         },
         "required": [
           "inlineModeration",
-          "costBudgets",
+          "spendPolicies",
           "auditTrail"
-        ],
-        "type": "object"
-      },
-      "CostBudget": {
-        "additionalProperties": false,
-        "properties": {
-          "$schema": {
-            "description": "A URL to the JSON Schema for this object.",
-            "examples": [
-              "https://example.com/schemas/CostBudget.json"
-            ],
-            "format": "uri",
-            "readOnly": true,
-            "type": "string"
-          },
-          "appId": {
-            "type": "string"
-          },
-          "budgetId": {
-            "type": "string"
-          },
-          "createdAt": {
-            "type": "string"
-          },
-          "dailyLimitUsd": {
-            "format": "double",
-            "type": "number"
-          },
-          "enabled": {
-            "type": "boolean"
-          },
-          "monthlyLimitUsd": {
-            "format": "double",
-            "type": "number"
-          },
-          "name": {
-            "type": "string"
-          },
-          "updatedAt": {
-            "type": "string"
-          }
-        },
-        "required": [
-          "budgetId",
-          "name",
-          "dailyLimitUsd",
-          "monthlyLimitUsd",
-          "enabled",
-          "createdAt",
-          "updatedAt"
         ],
         "type": "object"
       },
@@ -749,43 +677,6 @@
             "type": "string"
           },
           "appId": {
-            "description": "scope to an app; empty means org-wide",
-            "type": "string"
-          },
-          "dailyLimitUsd": {
-            "description": "per-UTC-day ceiling in USD; 0 disables the daily cap",
-            "format": "double",
-            "type": "number"
-          },
-          "monthlyLimitUsd": {
-            "description": "per-UTC-month ceiling in USD; 0 disables the monthly cap",
-            "format": "double",
-            "type": "number"
-          },
-          "name": {
-            "maxLength": 120,
-            "minLength": 1,
-            "type": "string"
-          }
-        },
-        "required": [
-          "name"
-        ],
-        "type": "object"
-      },
-      "CreateInputBody1": {
-        "additionalProperties": false,
-        "properties": {
-          "$schema": {
-            "description": "A URL to the JSON Schema for this object.",
-            "examples": [
-              "https://example.com/schemas/CreateInputBody1.json"
-            ],
-            "format": "uri",
-            "readOnly": true,
-            "type": "string"
-          },
-          "appId": {
             "type": "string"
           },
           "destination": {
@@ -853,13 +744,13 @@
         ],
         "type": "object"
       },
-      "CreateInputBody2": {
+      "CreateInputBody1": {
         "additionalProperties": false,
         "properties": {
           "$schema": {
             "description": "A URL to the JSON Schema for this object.",
             "examples": [
-              "https://example.com/schemas/CreateInputBody2.json"
+              "https://example.com/schemas/CreateInputBody1.json"
             ],
             "format": "uri",
             "readOnly": true,
@@ -917,13 +808,13 @@
         ],
         "type": "object"
       },
-      "CreateInputBody3": {
+      "CreateInputBody2": {
         "additionalProperties": false,
         "properties": {
           "$schema": {
             "description": "A URL to the JSON Schema for this object.",
             "examples": [
-              "https://example.com/schemas/CreateInputBody3.json"
+              "https://example.com/schemas/CreateInputBody2.json"
             ],
             "format": "uri",
             "readOnly": true,
@@ -953,13 +844,13 @@
         ],
         "type": "object"
       },
-      "CreateInputBody4": {
+      "CreateInputBody3": {
         "additionalProperties": false,
         "properties": {
           "$schema": {
             "description": "A URL to the JSON Schema for this object.",
             "examples": [
-              "https://example.com/schemas/CreateInputBody4.json"
+              "https://example.com/schemas/CreateInputBody3.json"
             ],
             "format": "uri",
             "readOnly": true,
@@ -2552,9 +2443,9 @@
             "readOnly": true,
             "type": "string"
           },
-          "budgets": {
+          "policies": {
             "items": {
-              "$ref": "#/components/schemas/CostBudget"
+              "$ref": "#/components/schemas/Policy"
             },
             "type": [
               "array",
@@ -2563,7 +2454,7 @@
           }
         },
         "required": [
-          "budgets"
+          "policies"
         ],
         "type": "object"
       },
@@ -3316,6 +3207,194 @@
         ],
         "type": "object"
       },
+      "Policy": {
+        "additionalProperties": false,
+        "properties": {
+          "$schema": {
+            "description": "A URL to the JSON Schema for this object.",
+            "examples": [
+              "https://example.com/schemas/Policy.json"
+            ],
+            "format": "uri",
+            "readOnly": true,
+            "type": "string"
+          },
+          "apiKeyId": {
+            "type": "string"
+          },
+          "appId": {
+            "type": "string"
+          },
+          "cooldownMins": {
+            "format": "int32",
+            "type": "integer"
+          },
+          "createdAt": {
+            "type": "string"
+          },
+          "currentSpendUsd": {
+            "format": "double",
+            "type": "number"
+          },
+          "destination": {
+            "type": "string"
+          },
+          "destinationType": {
+            "type": "string"
+          },
+          "enabled": {
+            "type": "boolean"
+          },
+          "environmentId": {
+            "type": "string"
+          },
+          "limitUsd": {
+            "format": "double",
+            "type": "number"
+          },
+          "model": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "policyId": {
+            "type": "string"
+          },
+          "provider": {
+            "type": "string"
+          },
+          "rungs": {
+            "items": {
+              "$ref": "#/components/schemas/Rung"
+            },
+            "type": [
+              "array",
+              "null"
+            ]
+          },
+          "tagKey": {
+            "type": "string"
+          },
+          "tagValue": {
+            "type": "string"
+          },
+          "updatedAt": {
+            "type": "string"
+          },
+          "userId": {
+            "type": "string"
+          },
+          "windowType": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "policyId",
+          "name",
+          "enabled",
+          "windowType",
+          "limitUsd",
+          "rungs",
+          "cooldownMins",
+          "createdAt",
+          "updatedAt"
+        ],
+        "type": "object"
+      },
+      "PolicyBody": {
+        "additionalProperties": false,
+        "properties": {
+          "$schema": {
+            "description": "A URL to the JSON Schema for this object.",
+            "examples": [
+              "https://example.com/schemas/PolicyBody.json"
+            ],
+            "format": "uri",
+            "readOnly": true,
+            "type": "string"
+          },
+          "apiKeyId": {
+            "type": "string"
+          },
+          "appId": {
+            "type": "string"
+          },
+          "cooldownMins": {
+            "format": "int32",
+            "type": "integer"
+          },
+          "destination": {
+            "type": "string"
+          },
+          "destinationType": {
+            "enum": [
+              "email",
+              "webhook",
+              ""
+            ],
+            "type": "string"
+          },
+          "enabled": {
+            "type": "boolean"
+          },
+          "environmentId": {
+            "type": "string"
+          },
+          "limitUsd": {
+            "description": "the 100% amount in USD",
+            "format": "double",
+            "type": "number"
+          },
+          "model": {
+            "description": "model prefix; empty = all models",
+            "type": "string"
+          },
+          "name": {
+            "maxLength": 120,
+            "minLength": 1,
+            "type": "string"
+          },
+          "provider": {
+            "type": "string"
+          },
+          "rungs": {
+            "description": "ordered ladder: each rung is {atPercent, action, blockMode?, fallbackModel?}",
+            "items": {
+              "$ref": "#/components/schemas/Rung"
+            },
+            "type": [
+              "array",
+              "null"
+            ]
+          },
+          "tagKey": {
+            "type": "string"
+          },
+          "tagValue": {
+            "type": "string"
+          },
+          "userId": {
+            "type": "string"
+          },
+          "windowType": {
+            "enum": [
+              "daily",
+              "weekly",
+              "monthly",
+              "cumulative"
+            ],
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "windowType",
+          "limitUsd",
+          "rungs"
+        ],
+        "type": "object"
+      },
       "PublicIngestTokenDTO": {
         "additionalProperties": false,
         "properties": {
@@ -3408,6 +3487,29 @@
           "target",
           "enabled",
           "createdAt"
+        ],
+        "type": "object"
+      },
+      "Rung": {
+        "additionalProperties": false,
+        "properties": {
+          "action": {
+            "type": "string"
+          },
+          "at_percent": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "block_mode": {
+            "type": "string"
+          },
+          "fallback_model": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "at_percent",
+          "action"
         ],
         "type": "object"
       },
@@ -3650,6 +3752,48 @@
         },
         "required": [
           "days"
+        ],
+        "type": "object"
+      },
+      "SpendPolicyCapability": {
+        "additionalProperties": false,
+        "properties": {
+          "actions": {
+            "items": {
+              "type": "string"
+            },
+            "type": [
+              "array",
+              "null"
+            ]
+          },
+          "dimensions": {
+            "items": {
+              "type": "string"
+            },
+            "type": [
+              "array",
+              "null"
+            ]
+          },
+          "enabled": {
+            "type": "boolean"
+          },
+          "windows": {
+            "items": {
+              "type": "string"
+            },
+            "type": [
+              "array",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "enabled",
+          "windows",
+          "actions",
+          "dimensions"
         ],
         "type": "object"
       },
@@ -3919,38 +4063,6 @@
             "readOnly": true,
             "type": "string"
           },
-          "appId": {
-            "type": "string"
-          },
-          "dailyLimitUsd": {
-            "format": "double",
-            "type": "number"
-          },
-          "enabled": {
-            "type": "boolean"
-          },
-          "monthlyLimitUsd": {
-            "format": "double",
-            "type": "number"
-          },
-          "name": {
-            "type": "string"
-          }
-        },
-        "type": "object"
-      },
-      "UpdateInputBody1": {
-        "additionalProperties": false,
-        "properties": {
-          "$schema": {
-            "description": "A URL to the JSON Schema for this object.",
-            "examples": [
-              "https://example.com/schemas/UpdateInputBody1.json"
-            ],
-            "format": "uri",
-            "readOnly": true,
-            "type": "string"
-          },
           "destination": {
             "type": "string"
           },
@@ -3993,13 +4105,13 @@
         },
         "type": "object"
       },
-      "UpdateInputBody2": {
+      "UpdateInputBody1": {
         "additionalProperties": false,
         "properties": {
           "$schema": {
             "description": "A URL to the JSON Schema for this object.",
             "examples": [
-              "https://example.com/schemas/UpdateInputBody2.json"
+              "https://example.com/schemas/UpdateInputBody1.json"
             ],
             "format": "uri",
             "readOnly": true,
@@ -4273,6 +4385,13 @@
           "detector": {
             "type": "string"
           },
+          "explanation": {
+            "type": "string"
+          },
+          "latencyMs": {
+            "format": "double",
+            "type": "number"
+          },
           "occurredAt": {
             "type": "string"
           },
@@ -4280,6 +4399,12 @@
             "type": "string"
           },
           "ruleName": {
+            "type": "string"
+          },
+          "target": {
+            "type": "string"
+          },
+          "traceId": {
             "type": "string"
           },
           "violationId": {
@@ -4292,6 +4417,7 @@
           "ruleName",
           "detector",
           "action",
+          "target",
           "occurredAt"
         ],
         "type": "object"
@@ -4375,7 +4501,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/CreateInputBody4"
+                "$ref": "#/components/schemas/CreateInputBody3"
               }
             }
           },
@@ -6076,166 +6202,6 @@
         ]
       }
     },
-    "/budgets": {
-      "get": {
-        "operationId": "budgets.list",
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ListOutputBody"
-                }
-              }
-            },
-            "description": "OK"
-          },
-          "default": {
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorModel"
-                }
-              }
-            },
-            "description": "Error"
-          }
-        },
-        "summary": "List cost budgets",
-        "tags": [
-          "budgets"
-        ]
-      },
-      "post": {
-        "operationId": "budgets.create",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CreateInputBody"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "201": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/CostBudget"
-                }
-              }
-            },
-            "description": "Created"
-          },
-          "default": {
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorModel"
-                }
-              }
-            },
-            "description": "Error"
-          }
-        },
-        "summary": "Create a cost budget",
-        "tags": [
-          "budgets"
-        ]
-      }
-    },
-    "/budgets/{budgetId}": {
-      "delete": {
-        "operationId": "budgets.delete",
-        "parameters": [
-          {
-            "in": "path",
-            "name": "budgetId",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/OkOutputBody"
-                }
-              }
-            },
-            "description": "OK"
-          },
-          "default": {
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorModel"
-                }
-              }
-            },
-            "description": "Error"
-          }
-        },
-        "summary": "Delete a cost budget",
-        "tags": [
-          "budgets"
-        ]
-      },
-      "patch": {
-        "operationId": "budgets.update",
-        "parameters": [
-          {
-            "in": "path",
-            "name": "budgetId",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/UpdateInputBody"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/CostBudget"
-                }
-              }
-            },
-            "description": "OK"
-          },
-          "default": {
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorModel"
-                }
-              }
-            },
-            "description": "Error"
-          }
-        },
-        "summary": "Update a cost budget",
-        "tags": [
-          "budgets"
-        ]
-      }
-    },
     "/capabilities": {
       "get": {
         "operationId": "capabilities.get",
@@ -6789,7 +6755,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/CreateInputBody2"
+                "$ref": "#/components/schemas/CreateInputBody1"
               }
             }
           },
@@ -6918,7 +6884,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/UpdateInputBody2"
+                "$ref": "#/components/schemas/UpdateInputBody1"
               }
             }
           },
@@ -7013,7 +6979,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/CreateInputBody3"
+                "$ref": "#/components/schemas/CreateInputBody2"
               }
             }
           },
@@ -7958,6 +7924,166 @@
         ]
       }
     },
+    "/spend-policies": {
+      "get": {
+        "operationId": "spend-policies.list",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListOutputBody"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "summary": "List spend policies",
+        "tags": [
+          "spend-policies"
+        ]
+      },
+      "post": {
+        "operationId": "spend-policies.create",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PolicyBody"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Policy"
+                }
+              }
+            },
+            "description": "Created"
+          },
+          "default": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "summary": "Create a spend policy",
+        "tags": [
+          "spend-policies"
+        ]
+      }
+    },
+    "/spend-policies/{policyId}": {
+      "delete": {
+        "operationId": "spend-policies.delete",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "policyId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OkOutputBody"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "summary": "Delete a spend policy",
+        "tags": [
+          "spend-policies"
+        ]
+      },
+      "patch": {
+        "operationId": "spend-policies.update",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "policyId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PolicyBody"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Policy"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "summary": "Update a spend policy",
+        "tags": [
+          "spend-policies"
+        ]
+      }
+    },
     "/traces": {
       "get": {
         "operationId": "traces.list",
@@ -8255,7 +8381,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/CreateInputBody1"
+                "$ref": "#/components/schemas/CreateInputBody"
               }
             }
           },
@@ -8345,7 +8471,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/UpdateInputBody1"
+                "$ref": "#/components/schemas/UpdateInputBody"
               }
             }
           },

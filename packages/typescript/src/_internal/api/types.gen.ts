@@ -106,11 +106,6 @@ export type BreakdownRowDto = {
     totalTokens?: number;
 };
 
-export type BudgetCapability = {
-    enabled: boolean;
-    periods: Array<string> | null;
-};
-
 export type CapabilitiesOutputBody = {
     /**
      * A URL to the JSON Schema for this object.
@@ -153,23 +148,8 @@ export type CheckoutInputBody = {
 
 export type Controls = {
     auditTrail: AuditCapability;
-    costBudgets: BudgetCapability;
     inlineModeration: ModerationCapability;
-};
-
-export type CostBudget = {
-    /**
-     * A URL to the JSON Schema for this object.
-     */
-    readonly $schema?: string;
-    appId?: string;
-    budgetId: string;
-    createdAt: string;
-    dailyLimitUsd: number;
-    enabled: boolean;
-    monthlyLimitUsd: number;
-    name: string;
-    updatedAt: string;
+    spendPolicies: SpendPolicyCapability;
 };
 
 export type CreateAppInputBody = {
@@ -252,26 +232,6 @@ export type CreateInputBody = {
      * A URL to the JSON Schema for this object.
      */
     readonly $schema?: string;
-    /**
-     * scope to an app; empty means org-wide
-     */
-    appId?: string;
-    /**
-     * per-UTC-day ceiling in USD; 0 disables the daily cap
-     */
-    dailyLimitUsd?: number;
-    /**
-     * per-UTC-month ceiling in USD; 0 disables the monthly cap
-     */
-    monthlyLimitUsd?: number;
-    name: string;
-};
-
-export type CreateInputBody1 = {
-    /**
-     * A URL to the JSON Schema for this object.
-     */
-    readonly $schema?: string;
     appId?: string;
     destination: string;
     destinationType: 'email' | 'webhook';
@@ -289,7 +249,7 @@ export type CreateInputBody1 = {
     threshold: number;
 };
 
-export type CreateInputBody2 = {
+export type CreateInputBody1 = {
     /**
      * A URL to the JSON Schema for this object.
      */
@@ -311,7 +271,7 @@ export type CreateInputBody2 = {
     signals: Array<string> | null;
 };
 
-export type CreateInputBody3 = {
+export type CreateInputBody2 = {
     /**
      * A URL to the JSON Schema for this object.
      */
@@ -323,7 +283,7 @@ export type CreateInputBody3 = {
     message: string;
 };
 
-export type CreateInputBody4 = {
+export type CreateInputBody3 = {
     /**
      * A URL to the JSON Schema for this object.
      */
@@ -874,7 +834,7 @@ export type ListOutputBody = {
      * A URL to the JSON Schema for this object.
      */
     readonly $schema?: string;
-    budgets: Array<CostBudget> | null;
+    policies: Array<Policy> | null;
 };
 
 export type ListOutputBody1 = {
@@ -1089,6 +1049,65 @@ export type PlansOutputBody = {
     };
 };
 
+export type Policy = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
+    apiKeyId?: string;
+    appId?: string;
+    cooldownMins: number;
+    createdAt: string;
+    currentSpendUsd?: number;
+    destination?: string;
+    destinationType?: string;
+    enabled: boolean;
+    environmentId?: string;
+    limitUsd: number;
+    model?: string;
+    name: string;
+    policyId: string;
+    provider?: string;
+    rungs: Array<Rung> | null;
+    tagKey?: string;
+    tagValue?: string;
+    updatedAt: string;
+    userId?: string;
+    windowType: string;
+};
+
+export type PolicyBody = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
+    apiKeyId?: string;
+    appId?: string;
+    cooldownMins?: number;
+    destination?: string;
+    destinationType?: 'email' | 'webhook' | '';
+    enabled?: boolean;
+    environmentId?: string;
+    /**
+     * the 100% amount in USD
+     */
+    limitUsd: number;
+    /**
+     * model prefix; empty = all models
+     */
+    model?: string;
+    name: string;
+    provider?: string;
+    /**
+     * ordered ladder: each rung is {atPercent, action, blockMode?, fallbackModel?}
+     */
+    rungs: Array<Rung> | null;
+    tagKey?: string;
+    tagValue?: string;
+    userId?: string;
+    windowType: 'daily' | 'weekly' | 'monthly' | 'cumulative';
+};
+
 export type PublicIngestTokenDto = {
     active: boolean;
     appId?: string;
@@ -1115,6 +1134,13 @@ export type RuleDto = {
     pattern: string;
     ruleId: string;
     target: string;
+};
+
+export type Rung = {
+    action: string;
+    at_percent: number;
+    block_mode?: string;
+    fallback_model?: string;
 };
 
 export type SearchEventsOutputBody = {
@@ -1208,6 +1234,13 @@ export type SetTrialInputBody = {
     days: number;
 };
 
+export type SpendPolicyCapability = {
+    actions: Array<string> | null;
+    dimensions: Array<string> | null;
+    enabled: boolean;
+    windows: Array<string> | null;
+};
+
 export type TelemetryPolicyOutputBody = {
     /**
      * A URL to the JSON Schema for this object.
@@ -1291,18 +1324,6 @@ export type UpdateInputBody = {
      * A URL to the JSON Schema for this object.
      */
     readonly $schema?: string;
-    appId?: string;
-    dailyLimitUsd?: number;
-    enabled?: boolean;
-    monthlyLimitUsd?: number;
-    name?: string;
-};
-
-export type UpdateInputBody1 = {
-    /**
-     * A URL to the JSON Schema for this object.
-     */
-    readonly $schema?: string;
     destination?: string;
     destinationType?: 'email' | 'webhook';
     enabled?: boolean;
@@ -1312,7 +1333,7 @@ export type UpdateInputBody1 = {
     threshold?: number;
 };
 
-export type UpdateInputBody2 = {
+export type UpdateInputBody1 = {
     /**
      * A URL to the JSON Schema for this object.
      */
@@ -1401,9 +1422,13 @@ export type ViolationDto = {
     appId?: string;
     channelId?: string;
     detector: string;
+    explanation?: string;
+    latencyMs?: number;
     occurredAt: string;
     ruleId: string;
     ruleName: string;
+    target: string;
+    traceId?: string;
     violationId: string;
 };
 
@@ -1478,17 +1503,6 @@ export type CheckoutInputBodyWritable = {
     plan: string;
 };
 
-export type CostBudgetWritable = {
-    appId?: string;
-    budgetId: string;
-    createdAt: string;
-    dailyLimitUsd: number;
-    enabled: boolean;
-    monthlyLimitUsd: number;
-    name: string;
-    updatedAt: string;
-};
-
 export type CreateAppInputBodyWritable = {
     /**
      * App display name
@@ -1545,22 +1559,6 @@ export type CreateEnvironmentInputBodyWritable = {
 };
 
 export type CreateInputBodyWritable = {
-    /**
-     * scope to an app; empty means org-wide
-     */
-    appId?: string;
-    /**
-     * per-UTC-day ceiling in USD; 0 disables the daily cap
-     */
-    dailyLimitUsd?: number;
-    /**
-     * per-UTC-month ceiling in USD; 0 disables the monthly cap
-     */
-    monthlyLimitUsd?: number;
-    name: string;
-};
-
-export type CreateInputBody1Writable = {
     appId?: string;
     destination: string;
     destinationType: 'email' | 'webhook';
@@ -1578,7 +1576,7 @@ export type CreateInputBody1Writable = {
     threshold: number;
 };
 
-export type CreateInputBody2Writable = {
+export type CreateInputBody1Writable = {
     endpointUrl: string;
     envSlug: string;
     eventTypeFilter?: Array<string> | null;
@@ -1596,7 +1594,7 @@ export type CreateInputBody2Writable = {
     signals: Array<string> | null;
 };
 
-export type CreateInputBody3Writable = {
+export type CreateInputBody2Writable = {
     category?: 'bug' | 'idea' | 'praise' | 'other';
     context?: {
         [key: string]: unknown;
@@ -1604,7 +1602,7 @@ export type CreateInputBody3Writable = {
     message: string;
 };
 
-export type CreateInputBody4Writable = {
+export type CreateInputBody3Writable = {
     company: string;
     email: string;
     name?: string;
@@ -1888,7 +1886,7 @@ export type ListMembersOutputBodyWritable = {
 };
 
 export type ListOutputBodyWritable = {
-    budgets: Array<CostBudgetWritable> | null;
+    policies: Array<PolicyWritable> | null;
 };
 
 export type ListOutputBody1Writable = {
@@ -1959,6 +1957,57 @@ export type PlansOutputBodyWritable = {
     plans: {
         [key: string]: PlanLimits;
     };
+};
+
+export type PolicyWritable = {
+    apiKeyId?: string;
+    appId?: string;
+    cooldownMins: number;
+    createdAt: string;
+    currentSpendUsd?: number;
+    destination?: string;
+    destinationType?: string;
+    enabled: boolean;
+    environmentId?: string;
+    limitUsd: number;
+    model?: string;
+    name: string;
+    policyId: string;
+    provider?: string;
+    rungs: Array<Rung> | null;
+    tagKey?: string;
+    tagValue?: string;
+    updatedAt: string;
+    userId?: string;
+    windowType: string;
+};
+
+export type PolicyBodyWritable = {
+    apiKeyId?: string;
+    appId?: string;
+    cooldownMins?: number;
+    destination?: string;
+    destinationType?: 'email' | 'webhook' | '';
+    enabled?: boolean;
+    environmentId?: string;
+    /**
+     * the 100% amount in USD
+     */
+    limitUsd: number;
+    /**
+     * model prefix; empty = all models
+     */
+    model?: string;
+    name: string;
+    provider?: string;
+    /**
+     * ordered ladder: each rung is {atPercent, action, blockMode?, fallbackModel?}
+     */
+    rungs: Array<Rung> | null;
+    tagKey?: string;
+    tagValue?: string;
+    userId?: string;
+    windowType: 'daily' | 'weekly' | 'monthly' | 'cumulative';
 };
 
 export type RuleDtoWritable = {
@@ -2055,14 +2104,6 @@ export type UpdateEnvironmentInputBodyWritable = {
 };
 
 export type UpdateInputBodyWritable = {
-    appId?: string;
-    dailyLimitUsd?: number;
-    enabled?: boolean;
-    monthlyLimitUsd?: number;
-    name?: string;
-};
-
-export type UpdateInputBody1Writable = {
     destination?: string;
     destinationType?: 'email' | 'webhook';
     enabled?: boolean;
@@ -2072,7 +2113,7 @@ export type UpdateInputBody1Writable = {
     threshold?: number;
 };
 
-export type UpdateInputBody2Writable = {
+export type UpdateInputBody1Writable = {
     active?: boolean;
     endpointUrl?: string;
     eventTypeFilter?: Array<string>;
@@ -2129,7 +2170,7 @@ export type WebhookOutputBodyWritable = {
 };
 
 export type AccessRequestCreateData = {
-    body: CreateInputBody4Writable;
+    body: CreateInputBody3Writable;
     headers?: {
         'CF-Connecting-IP'?: string;
         'X-Forwarded-For'?: string;
@@ -3182,110 +3223,6 @@ export type BillingWebhookResponses = {
 
 export type BillingWebhookResponse = BillingWebhookResponses[keyof BillingWebhookResponses];
 
-export type BudgetsListData = {
-    body?: never;
-    path?: never;
-    query?: never;
-    url: '/budgets';
-};
-
-export type BudgetsListErrors = {
-    /**
-     * Error
-     */
-    default: ErrorModel;
-};
-
-export type BudgetsListError = BudgetsListErrors[keyof BudgetsListErrors];
-
-export type BudgetsListResponses = {
-    /**
-     * OK
-     */
-    200: ListOutputBody;
-};
-
-export type BudgetsListResponse = BudgetsListResponses[keyof BudgetsListResponses];
-
-export type BudgetsCreateData = {
-    body: CreateInputBodyWritable;
-    path?: never;
-    query?: never;
-    url: '/budgets';
-};
-
-export type BudgetsCreateErrors = {
-    /**
-     * Error
-     */
-    default: ErrorModel;
-};
-
-export type BudgetsCreateError = BudgetsCreateErrors[keyof BudgetsCreateErrors];
-
-export type BudgetsCreateResponses = {
-    /**
-     * Created
-     */
-    201: CostBudget;
-};
-
-export type BudgetsCreateResponse = BudgetsCreateResponses[keyof BudgetsCreateResponses];
-
-export type BudgetsDeleteData = {
-    body?: never;
-    path: {
-        budgetId: string;
-    };
-    query?: never;
-    url: '/budgets/{budgetId}';
-};
-
-export type BudgetsDeleteErrors = {
-    /**
-     * Error
-     */
-    default: ErrorModel;
-};
-
-export type BudgetsDeleteError = BudgetsDeleteErrors[keyof BudgetsDeleteErrors];
-
-export type BudgetsDeleteResponses = {
-    /**
-     * OK
-     */
-    200: OkOutputBody;
-};
-
-export type BudgetsDeleteResponse = BudgetsDeleteResponses[keyof BudgetsDeleteResponses];
-
-export type BudgetsUpdateData = {
-    body: UpdateInputBodyWritable;
-    path: {
-        budgetId: string;
-    };
-    query?: never;
-    url: '/budgets/{budgetId}';
-};
-
-export type BudgetsUpdateErrors = {
-    /**
-     * Error
-     */
-    default: ErrorModel;
-};
-
-export type BudgetsUpdateError = BudgetsUpdateErrors[keyof BudgetsUpdateErrors];
-
-export type BudgetsUpdateResponses = {
-    /**
-     * OK
-     */
-    200: CostBudget;
-};
-
-export type BudgetsUpdateResponse = BudgetsUpdateResponses[keyof BudgetsUpdateResponses];
-
 export type CapabilitiesGetData = {
     body?: never;
     path?: never;
@@ -3595,7 +3532,7 @@ export type ExportListResponses = {
 export type ExportListResponse = ExportListResponses[keyof ExportListResponses];
 
 export type ExportCreateData = {
-    body: CreateInputBody2Writable;
+    body: CreateInputBody1Writable;
     path?: never;
     query?: never;
     url: '/export-destinations';
@@ -3674,7 +3611,7 @@ export type ExportGetResponses = {
 export type ExportGetResponse = ExportGetResponses[keyof ExportGetResponses];
 
 export type ExportUpdateData = {
-    body: UpdateInputBody2Writable;
+    body: UpdateInputBody1Writable;
     path: {
         destinationId: string;
     };
@@ -3726,7 +3663,7 @@ export type FeatureFlagsMeResponses = {
 export type FeatureFlagsMeResponse = FeatureFlagsMeResponses[keyof FeatureFlagsMeResponses];
 
 export type FeedbackCreateData = {
-    body: CreateInputBody3Writable;
+    body: CreateInputBody2Writable;
     headers?: {
         'CF-Connecting-IP'?: string;
         'X-Forwarded-For'?: string;
@@ -4346,6 +4283,110 @@ export type TokensRevokeResponses = {
 
 export type TokensRevokeResponse = TokensRevokeResponses[keyof TokensRevokeResponses];
 
+export type SpendPoliciesListData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/spend-policies';
+};
+
+export type SpendPoliciesListErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type SpendPoliciesListError = SpendPoliciesListErrors[keyof SpendPoliciesListErrors];
+
+export type SpendPoliciesListResponses = {
+    /**
+     * OK
+     */
+    200: ListOutputBody;
+};
+
+export type SpendPoliciesListResponse = SpendPoliciesListResponses[keyof SpendPoliciesListResponses];
+
+export type SpendPoliciesCreateData = {
+    body: PolicyBodyWritable;
+    path?: never;
+    query?: never;
+    url: '/spend-policies';
+};
+
+export type SpendPoliciesCreateErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type SpendPoliciesCreateError = SpendPoliciesCreateErrors[keyof SpendPoliciesCreateErrors];
+
+export type SpendPoliciesCreateResponses = {
+    /**
+     * Created
+     */
+    201: Policy;
+};
+
+export type SpendPoliciesCreateResponse = SpendPoliciesCreateResponses[keyof SpendPoliciesCreateResponses];
+
+export type SpendPoliciesDeleteData = {
+    body?: never;
+    path: {
+        policyId: string;
+    };
+    query?: never;
+    url: '/spend-policies/{policyId}';
+};
+
+export type SpendPoliciesDeleteErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type SpendPoliciesDeleteError = SpendPoliciesDeleteErrors[keyof SpendPoliciesDeleteErrors];
+
+export type SpendPoliciesDeleteResponses = {
+    /**
+     * OK
+     */
+    200: OkOutputBody;
+};
+
+export type SpendPoliciesDeleteResponse = SpendPoliciesDeleteResponses[keyof SpendPoliciesDeleteResponses];
+
+export type SpendPoliciesUpdateData = {
+    body: PolicyBodyWritable;
+    path: {
+        policyId: string;
+    };
+    query?: never;
+    url: '/spend-policies/{policyId}';
+};
+
+export type SpendPoliciesUpdateErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type SpendPoliciesUpdateError = SpendPoliciesUpdateErrors[keyof SpendPoliciesUpdateErrors];
+
+export type SpendPoliciesUpdateResponses = {
+    /**
+     * OK
+     */
+    200: Policy;
+};
+
+export type SpendPoliciesUpdateResponse = SpendPoliciesUpdateResponses[keyof SpendPoliciesUpdateResponses];
+
 export type TracesListData = {
     body?: never;
     path?: never;
@@ -4541,7 +4582,7 @@ export type AlertsListResponses = {
 export type AlertsListResponse = AlertsListResponses[keyof AlertsListResponses];
 
 export type AlertsCreateData = {
-    body: CreateInputBody1Writable;
+    body: CreateInputBodyWritable;
     path?: never;
     query?: never;
     url: '/v2/alerts';
@@ -4593,7 +4634,7 @@ export type AlertsDeleteResponses = {
 export type AlertsDeleteResponse = AlertsDeleteResponses[keyof AlertsDeleteResponses];
 
 export type AlertsUpdateData = {
-    body: UpdateInputBody1Writable;
+    body: UpdateInputBodyWritable;
     path: {
         alertRuleId: string;
     };

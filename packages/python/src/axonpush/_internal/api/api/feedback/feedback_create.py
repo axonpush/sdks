@@ -6,7 +6,7 @@ import httpx
 
 from ... import errors
 from ...client import AuthenticatedClient, Client
-from ...models.create_input_body_3 import CreateInputBody3
+from ...models.create_input_body_2 import CreateInputBody2
 from ...models.create_output_body import CreateOutputBody
 from ...models.error_model import ErrorModel
 from ...types import UNSET, Response, Unset
@@ -14,7 +14,7 @@ from ...types import UNSET, Response, Unset
 
 def _get_kwargs(
     *,
-    body: CreateInputBody3,
+    body: CreateInputBody2,
     cf_connecting_ip: str | Unset = UNSET,
     x_forwarded_for: str | Unset = UNSET,
     x_real_ip: str | Unset = UNSET,
@@ -69,7 +69,7 @@ def _build_response(
 def sync_detailed(
     *,
     client: AuthenticatedClient | Client,
-    body: CreateInputBody3,
+    body: CreateInputBody2,
     cf_connecting_ip: str | Unset = UNSET,
     x_forwarded_for: str | Unset = UNSET,
     x_real_ip: str | Unset = UNSET,
@@ -80,7 +80,7 @@ def sync_detailed(
         cf_connecting_ip (str | Unset):
         x_forwarded_for (str | Unset):
         x_real_ip (str | Unset):
-        body (CreateInputBody3):
+        body (CreateInputBody2):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -107,7 +107,7 @@ def sync_detailed(
 def sync(
     *,
     client: AuthenticatedClient | Client,
-    body: CreateInputBody3,
+    body: CreateInputBody2,
     cf_connecting_ip: str | Unset = UNSET,
     x_forwarded_for: str | Unset = UNSET,
     x_real_ip: str | Unset = UNSET,
@@ -118,7 +118,7 @@ def sync(
         cf_connecting_ip (str | Unset):
         x_forwarded_for (str | Unset):
         x_real_ip (str | Unset):
-        body (CreateInputBody3):
+        body (CreateInputBody2):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -140,7 +140,7 @@ def sync(
 async def asyncio_detailed(
     *,
     client: AuthenticatedClient | Client,
-    body: CreateInputBody3,
+    body: CreateInputBody2,
     cf_connecting_ip: str | Unset = UNSET,
     x_forwarded_for: str | Unset = UNSET,
     x_real_ip: str | Unset = UNSET,
@@ -151,7 +151,7 @@ async def asyncio_detailed(
         cf_connecting_ip (str | Unset):
         x_forwarded_for (str | Unset):
         x_real_ip (str | Unset):
-        body (CreateInputBody3):
+        body (CreateInputBody2):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -176,7 +176,7 @@ async def asyncio_detailed(
 async def asyncio(
     *,
     client: AuthenticatedClient | Client,
-    body: CreateInputBody3,
+    body: CreateInputBody2,
     cf_connecting_ip: str | Unset = UNSET,
     x_forwarded_for: str | Unset = UNSET,
     x_real_ip: str | Unset = UNSET,
@@ -187,7 +187,7 @@ async def asyncio(
         cf_connecting_ip (str | Unset):
         x_forwarded_for (str | Unset):
         x_real_ip (str | Unset):
-        body (CreateInputBody3):
+        body (CreateInputBody2):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.

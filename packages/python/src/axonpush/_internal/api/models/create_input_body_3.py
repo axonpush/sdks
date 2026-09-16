@@ -1,17 +1,12 @@
 from __future__ import annotations
 
 from collections.abc import Mapping
-from typing import TYPE_CHECKING, Any, BinaryIO, Generator, TextIO, TypeVar, cast
+from typing import TYPE_CHECKING, Any, BinaryIO, Generator, TextIO, TypeVar
 
 from attrs import define as _attrs_define
 from attrs import field as _attrs_field
 
-from ..models.create_input_body_3_category import CreateInputBody3Category
 from ..types import UNSET, Unset
-
-if TYPE_CHECKING:
-    from ..models.create_input_body_3_context import CreateInputBody3Context
-
 
 T = TypeVar("T", bound="CreateInputBody3")
 
@@ -20,76 +15,65 @@ T = TypeVar("T", bound="CreateInputBody3")
 class CreateInputBody3:
     """
     Attributes:
-        message (str):
+        company (str):
+        email (str):
+        use_case (str):
         schema (str | Unset): A URL to the JSON Schema for this object.
-        category (CreateInputBody3Category | Unset):
-        context (CreateInputBody3Context | Unset):
+        name (str | Unset):
     """
 
-    message: str
+    company: str
+    email: str
+    use_case: str
     schema: str | Unset = UNSET
-    category: CreateInputBody3Category | Unset = UNSET
-    context: CreateInputBody3Context | Unset = UNSET
+    name: str | Unset = UNSET
 
     def to_dict(self) -> dict[str, Any]:
-        from ..models.create_input_body_3_context import CreateInputBody3Context
+        company = self.company
 
-        message = self.message
+        email = self.email
+
+        use_case = self.use_case
 
         schema = self.schema
 
-        category: str | Unset = UNSET
-        if not isinstance(self.category, Unset):
-            category = self.category.value
-
-        context: dict[str, Any] | Unset = UNSET
-        if not isinstance(self.context, Unset):
-            context = self.context.to_dict()
+        name = self.name
 
         field_dict: dict[str, Any] = {}
 
         field_dict.update(
             {
-                "message": message,
+                "company": company,
+                "email": email,
+                "useCase": use_case,
             }
         )
         if schema is not UNSET:
             field_dict["$schema"] = schema
-        if category is not UNSET:
-            field_dict["category"] = category
-        if context is not UNSET:
-            field_dict["context"] = context
+        if name is not UNSET:
+            field_dict["name"] = name
 
         return field_dict
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        from ..models.create_input_body_3_context import CreateInputBody3Context
-
         d = dict(src_dict)
-        message = d.pop("message")
+        company = d.pop("company")
+
+        email = d.pop("email")
+
+        use_case = d.pop("useCase")
 
         schema = d.pop("$schema", UNSET)
 
-        _category = d.pop("category", UNSET)
-        category: CreateInputBody3Category | Unset
-        if isinstance(_category, Unset):
-            category = UNSET
-        else:
-            category = CreateInputBody3Category(_category)
-
-        _context = d.pop("context", UNSET)
-        context: CreateInputBody3Context | Unset
-        if isinstance(_context, Unset):
-            context = UNSET
-        else:
-            context = CreateInputBody3Context.from_dict(_context)
+        name = d.pop("name", UNSET)
 
         create_input_body_3 = cls(
-            message=message,
+            company=company,
+            email=email,
+            use_case=use_case,
             schema=schema,
-            category=category,
-            context=context,
+            name=name,
         )
 
         return create_input_body_3
