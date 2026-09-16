@@ -291,9 +291,17 @@
       "BreakdownRowDTO": {
         "additionalProperties": false,
         "properties": {
+          "avgDurationMs": {
+            "format": "double",
+            "type": "number"
+          },
           "costUsd": {
             "format": "double",
             "type": "number"
+          },
+          "errorCount": {
+            "format": "int64",
+            "type": "integer"
           },
           "eventCount": {
             "format": "int64",
@@ -4768,7 +4776,9 @@
               "description": "Breakdown dimension (default model)",
               "enum": [
                 "model",
-                "provider"
+                "provider",
+                "agent",
+                "tool"
               ],
               "type": "string"
             }
@@ -4807,7 +4817,7 @@
             "description": "Error"
           }
         },
-        "summary": "Top-N breakdown by model or provider",
+        "summary": "Top-N breakdown by model, provider, agent, or tool",
         "tags": [
           "analytics"
         ]
@@ -5984,6 +5994,46 @@
             "name": "traceId",
             "schema": {
               "description": "Filter by trace id",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Filter by agent id",
+            "explode": false,
+            "in": "query",
+            "name": "agentId",
+            "schema": {
+              "description": "Filter by agent id",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Filter by agent name",
+            "explode": false,
+            "in": "query",
+            "name": "agentName",
+            "schema": {
+              "description": "Filter by agent name",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Filter by tool name",
+            "explode": false,
+            "in": "query",
+            "name": "toolName",
+            "schema": {
+              "description": "Filter by tool name",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Filter by semantic kind (agent, tool, llm, retriever, db, http, log)",
+            "explode": false,
+            "in": "query",
+            "name": "semanticKind",
+            "schema": {
+              "description": "Filter by semantic kind (agent, tool, llm, retriever, db, http, log)",
               "type": "string"
             }
           },

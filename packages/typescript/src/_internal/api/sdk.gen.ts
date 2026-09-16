@@ -158,7 +158,7 @@ export const adminUsersDisable = <ThrowOnError extends boolean = false>(options:
 export const adminUsersEnable = <ThrowOnError extends boolean = false>(options: Options<AdminUsersEnableData, ThrowOnError>) => (options.client ?? client).post<AdminUsersEnableResponses, AdminUsersEnableErrors, ThrowOnError>({ url: '/admin/users/{userId}/enable', ...options });
 
 /**
- * Top-N breakdown by model or provider
+ * Top-N breakdown by model, provider, agent, or tool
  */
 export const analyticsBreakdown = <ThrowOnError extends boolean = false>(options?: Options<AnalyticsBreakdownData, ThrowOnError>) => (options?.client ?? client).get<AnalyticsBreakdownResponses, AnalyticsBreakdownErrors, ThrowOnError>({ url: '/analytics/breakdown', ...options });
 

@@ -164,6 +164,10 @@ class Events:
         source: str | None = None,
         status: str | None = None,
         trace_id: str | None = None,
+        agent_id: str | None = None,
+        agent_name: str | None = None,
+        tool_name: str | None = None,
+        semantic_kind: str | None = None,
         q: str | None = None,
         attr_key: str | None = None,
         attr_value: str | None = None,
@@ -183,6 +187,11 @@ class Events:
             source: Filter by ingest source (``app``, ``sentry``, ``otlp``).
             status: Filter by event status.
             trace_id: Filter by trace id.
+            agent_id: Filter by agent id (tool-call / handoff spans carry one).
+            agent_name: Filter by agent name.
+            tool_name: Filter by tool name (``gen_ai.tool.name``).
+            semantic_kind: Filter by semantic kind (``agent``, ``tool``,
+                ``llm``, ``retriever``, ``db``, ``http``, ``log``).
             q: Case-insensitive free-text match over event fields.
             attr_key: Attribute key to match.
             attr_value: Attribute value to match.
@@ -203,6 +212,10 @@ class Events:
                 "source": source,
                 "status": status,
                 "trace_id": trace_id,
+                "agent_id": agent_id,
+                "agent_name": agent_name,
+                "tool_name": tool_name,
+                "semantic_kind": semantic_kind,
                 "q": q,
                 "attr_key": attr_key,
                 "attr_value": attr_value,
@@ -264,6 +277,10 @@ class AsyncEvents:
         source: str | None = None,
         status: str | None = None,
         trace_id: str | None = None,
+        agent_id: str | None = None,
+        agent_name: str | None = None,
+        tool_name: str | None = None,
+        semantic_kind: str | None = None,
         q: str | None = None,
         attr_key: str | None = None,
         attr_value: str | None = None,
@@ -281,6 +298,10 @@ class AsyncEvents:
                 "source": source,
                 "status": status,
                 "trace_id": trace_id,
+                "agent_id": agent_id,
+                "agent_name": agent_name,
+                "tool_name": tool_name,
+                "semantic_kind": semantic_kind,
                 "q": q,
                 "attr_key": attr_key,
                 "attr_value": attr_value,

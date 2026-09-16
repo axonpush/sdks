@@ -93,7 +93,9 @@ export type BreakdownOutputBody = {
 };
 
 export type BreakdownRowDto = {
+    avgDurationMs?: number;
     costUsd: number;
+    errorCount?: number;
     eventCount: number;
     key: string;
     totalTokens?: number;
@@ -2458,7 +2460,7 @@ export type AnalyticsBreakdownData = {
         /**
          * Breakdown dimension (default model)
          */
-        dimension?: 'model' | 'provider';
+        dimension?: 'model' | 'provider' | 'agent' | 'tool';
         /**
          * Top-N entries (default 50, max 500)
          */
@@ -3184,6 +3186,22 @@ export type EventsSearchData = {
          * Filter by trace id
          */
         traceId?: string;
+        /**
+         * Filter by agent id
+         */
+        agentId?: string;
+        /**
+         * Filter by agent name
+         */
+        agentName?: string;
+        /**
+         * Filter by tool name
+         */
+        toolName?: string;
+        /**
+         * Filter by semantic kind (agent, tool, llm, retriever, db, http, log)
+         */
+        semanticKind?: string;
         /**
          * Case-insensitive contains match on search text
          */

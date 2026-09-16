@@ -12,9 +12,15 @@ versioning is [SemVer](https://semver.org/spec/v2.0.0.html).
   were sent on `X-API-Key`, which the current backend ignores. `pt_` public
   ingest tokens continue to use `X-Public-Token`.
 
-## [Unreleased]
+## [0.0.6]
 
 ### Added
+- **Agent and tool observability event types.** `EventType` now exposes the
+  full agent-lifecycle vocabulary (`AgentStart`, `AgentEnd`, `AgentError`,
+  `AgentMessage`, `AgentHandoff`, `AgentLlmToken`) alongside the existing
+  tool-call constants (`AgentToolCallStart`, `AgentToolCallEnd`). Tool calls
+  and agent handoffs surface as spans server-side, carrying `gen_ai.tool.name`
+  and `gen_ai.tool.call.id` attributes emitted by the OTel exporter.
 - **`pt_` public ingest tokens.** When `ApiKey` starts with `pt_`, the client
   sends it on `X-Public-Token` instead of `X-API-Key`, so untrusted or
   browser-side callers can publish without a full API key.

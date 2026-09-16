@@ -1,5 +1,24 @@
 # Changelog
 
+## [0.0.12]
+
+### Added
+- **Agent and tool observability surface.** `analytics.breakdown()` now accepts
+  `dimension: "agent"` and `dimension: "tool"` (in addition to `model` and
+  `provider`); breakdown rows carry the new `errorCount` and `avgDurationMs`
+  fields.
+- **New event search filters.** `events.search()` gained `agentId`, `agentName`,
+  `toolName`, and `semanticKind` filters, so tool-call and agent-handoff spans
+  can be sliced directly.
+- Tool calls and agent handoffs now surface as spans in traces and event search
+  (event types `agent.tool_call.start` / `agent.tool_call.end` /
+  `agent.handoff`, carrying `gen_ai.tool.name` and `gen_ai.tool.call.id`
+  attributes). The trace and event DTOs (`EventDto`) expose `agentId`,
+  `agentName`, `toolName`, and `semanticKind` via codegen.
+
+### Changed
+- Regenerated the `_internal/api` client from the updated backend contract.
+
 ## [0.0.11]
 
 ### Changed
