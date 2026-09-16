@@ -7,7 +7,7 @@ import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
 from ...models.error_model import ErrorModel
-from ...models.list_output_body import ListOutputBody
+from ...models.list_output_body_1 import ListOutputBody1
 from ...types import UNSET, Response
 
 
@@ -23,9 +23,9 @@ def _get_kwargs() -> dict[str, Any]:
 
 def _parse_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> ErrorModel | ListOutputBody:
+) -> ErrorModel | ListOutputBody1:
     if response.status_code == 200:
-        response_200 = ListOutputBody.from_dict(response.json())
+        response_200 = ListOutputBody1.from_dict(response.json())
 
         return response_200
 
@@ -36,7 +36,7 @@ def _parse_response(
 
 def _build_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> Response[ErrorModel | ListOutputBody]:
+) -> Response[ErrorModel | ListOutputBody1]:
     return Response(
         status_code=HTTPStatus(response.status_code),
         content=response.content,
@@ -48,7 +48,7 @@ def _build_response(
 def sync_detailed(
     *,
     client: AuthenticatedClient | Client,
-) -> Response[ErrorModel | ListOutputBody]:
+) -> Response[ErrorModel | ListOutputBody1]:
     """List alert rules
 
     Raises:
@@ -56,7 +56,7 @@ def sync_detailed(
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[ErrorModel | ListOutputBody]
+        Response[ErrorModel | ListOutputBody1]
     """
 
     kwargs = _get_kwargs()
@@ -71,7 +71,7 @@ def sync_detailed(
 def sync(
     *,
     client: AuthenticatedClient | Client,
-) -> ErrorModel | ListOutputBody | None:
+) -> ErrorModel | ListOutputBody1 | None:
     """List alert rules
 
     Raises:
@@ -79,7 +79,7 @@ def sync(
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        ErrorModel | ListOutputBody
+        ErrorModel | ListOutputBody1
     """
 
     return sync_detailed(
@@ -90,7 +90,7 @@ def sync(
 async def asyncio_detailed(
     *,
     client: AuthenticatedClient | Client,
-) -> Response[ErrorModel | ListOutputBody]:
+) -> Response[ErrorModel | ListOutputBody1]:
     """List alert rules
 
     Raises:
@@ -98,7 +98,7 @@ async def asyncio_detailed(
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[ErrorModel | ListOutputBody]
+        Response[ErrorModel | ListOutputBody1]
     """
 
     kwargs = _get_kwargs()
@@ -111,7 +111,7 @@ async def asyncio_detailed(
 async def asyncio(
     *,
     client: AuthenticatedClient | Client,
-) -> ErrorModel | ListOutputBody | None:
+) -> ErrorModel | ListOutputBody1 | None:
     """List alert rules
 
     Raises:
@@ -119,7 +119,7 @@ async def asyncio(
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        ErrorModel | ListOutputBody
+        ErrorModel | ListOutputBody1
     """
 
     return (

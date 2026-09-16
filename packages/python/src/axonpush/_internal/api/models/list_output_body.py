@@ -9,7 +9,7 @@ from attrs import field as _attrs_field
 from ..types import UNSET, Unset
 
 if TYPE_CHECKING:
-    from ..models.alert_rule_dto import AlertRuleDTO
+    from ..models.cost_budget import CostBudget
 
 
 T = TypeVar("T", bound="ListOutputBody")
@@ -19,25 +19,25 @@ T = TypeVar("T", bound="ListOutputBody")
 class ListOutputBody:
     """
     Attributes:
-        data (list[AlertRuleDTO] | None):
+        budgets (list[CostBudget] | None):
         schema (str | Unset): A URL to the JSON Schema for this object.
     """
 
-    data: list[AlertRuleDTO] | None
+    budgets: list[CostBudget] | None
     schema: str | Unset = UNSET
 
     def to_dict(self) -> dict[str, Any]:
-        from ..models.alert_rule_dto import AlertRuleDTO
+        from ..models.cost_budget import CostBudget
 
-        data: list[dict[str, Any]] | None
-        if isinstance(self.data, list):
-            data = []
-            for data_type_0_item_data in self.data:
-                data_type_0_item = data_type_0_item_data.to_dict()
-                data.append(data_type_0_item)
+        budgets: list[dict[str, Any]] | None
+        if isinstance(self.budgets, list):
+            budgets = []
+            for budgets_type_0_item_data in self.budgets:
+                budgets_type_0_item = budgets_type_0_item_data.to_dict()
+                budgets.append(budgets_type_0_item)
 
         else:
-            data = self.data
+            budgets = self.budgets
 
         schema = self.schema
 
@@ -45,7 +45,7 @@ class ListOutputBody:
 
         field_dict.update(
             {
-                "data": data,
+                "budgets": budgets,
             }
         )
         if schema is not UNSET:
@@ -55,34 +55,34 @@ class ListOutputBody:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        from ..models.alert_rule_dto import AlertRuleDTO
+        from ..models.cost_budget import CostBudget
 
         d = dict(src_dict)
 
-        def _parse_data(data: object) -> list[AlertRuleDTO] | None:
+        def _parse_budgets(data: object) -> list[CostBudget] | None:
             if data is None:
                 return data
             try:
                 if not isinstance(data, list):
                     raise TypeError()
-                data_type_0 = []
-                _data_type_0 = data
-                for data_type_0_item_data in _data_type_0:
-                    data_type_0_item = AlertRuleDTO.from_dict(data_type_0_item_data)
+                budgets_type_0 = []
+                _budgets_type_0 = data
+                for budgets_type_0_item_data in _budgets_type_0:
+                    budgets_type_0_item = CostBudget.from_dict(budgets_type_0_item_data)
 
-                    data_type_0.append(data_type_0_item)
+                    budgets_type_0.append(budgets_type_0_item)
 
-                return data_type_0
+                return budgets_type_0
             except (TypeError, ValueError, AttributeError, KeyError):
                 pass
-            return cast(list[AlertRuleDTO] | None, data)
+            return cast(list[CostBudget] | None, data)
 
-        data = _parse_data(d.pop("data"))
+        budgets = _parse_budgets(d.pop("budgets"))
 
         schema = d.pop("$schema", UNSET)
 
         list_output_body = cls(
-            data=data,
+            budgets=budgets,
             schema=schema,
         )
 

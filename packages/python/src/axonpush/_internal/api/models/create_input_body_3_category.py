@@ -1,7 +1,7 @@
 from enum import Enum
 
 
-class CreateInputBody2Category(str, Enum):
+class CreateInputBody3Category(str, Enum):
     BUG = "bug"
     IDEA = "idea"
     OTHER = "other"

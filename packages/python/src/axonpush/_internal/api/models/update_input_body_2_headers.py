@@ -8,11 +8,11 @@ from attrs import field as _attrs_field
 
 from ..types import UNSET, Unset
 
-T = TypeVar("T", bound="UpdateInputBody1Headers")
+T = TypeVar("T", bound="UpdateInputBody2Headers")
 
 
 @_attrs_define
-class UpdateInputBody1Headers:
+class UpdateInputBody2Headers:
     """Replaces the stored header map. Never returned."""
 
     additional_properties: dict[str, str] = _attrs_field(init=False, factory=dict)
@@ -27,10 +27,10 @@ class UpdateInputBody1Headers:
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         d = dict(src_dict)
-        update_input_body_1_headers = cls()
+        update_input_body_2_headers = cls()
 
-        update_input_body_1_headers.additional_properties = d
-        return update_input_body_1_headers
+        update_input_body_2_headers.additional_properties = d
+        return update_input_body_2_headers
 
     @property
     def additional_keys(self) -> list[str]:

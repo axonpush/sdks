@@ -14,7 +14,7 @@ from axonpush._internal.api.models import (
     AlertRuleDTO,
     CreateInputBody,
     DeleteOutputBody,
-    ListOutputBody,
+    ListOutputBody1,
     UpdateInputBody,
 )
 
@@ -22,7 +22,7 @@ if TYPE_CHECKING:
     from axonpush.resources._base import AsyncClientProtocol, SyncClientProtocol
 
 
-def _unwrap(result: ListOutputBody | None) -> List[AlertRuleDTO] | None:
+def _unwrap(result: ListOutputBody1 | None) -> List[AlertRuleDTO] | None:
     if result is None:
         return None
     return list(result.data or [])

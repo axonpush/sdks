@@ -73,6 +73,11 @@ export type AppDto = {
     updatedAt?: string;
 };
 
+export type AuditCapability = {
+    enabled: boolean;
+    formats: Array<string> | null;
+};
+
 export type BillingEventDto = {
     createdAt: string;
     error?: string;
@@ -101,12 +106,18 @@ export type BreakdownRowDto = {
     totalTokens?: number;
 };
 
+export type BudgetCapability = {
+    enabled: boolean;
+    periods: Array<string> | null;
+};
+
 export type CapabilitiesOutputBody = {
     /**
      * A URL to the JSON Schema for this object.
      */
     readonly $schema?: string;
     apiKeyScopes: Array<ApiKeyScope> | null;
+    controls: Controls;
     featureFlags: FeatureFlags;
     license: LicenseStatus;
     version: string;
@@ -138,6 +149,27 @@ export type CheckoutInputBody = {
      * pro or team
      */
     plan: string;
+};
+
+export type Controls = {
+    auditTrail: AuditCapability;
+    costBudgets: BudgetCapability;
+    inlineModeration: ModerationCapability;
+};
+
+export type CostBudget = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
+    appId?: string;
+    budgetId: string;
+    createdAt: string;
+    dailyLimitUsd: number;
+    enabled: boolean;
+    monthlyLimitUsd: number;
+    name: string;
+    updatedAt: string;
 };
 
 export type CreateAppInputBody = {
@@ -220,6 +252,26 @@ export type CreateInputBody = {
      * A URL to the JSON Schema for this object.
      */
     readonly $schema?: string;
+    /**
+     * scope to an app; empty means org-wide
+     */
+    appId?: string;
+    /**
+     * per-UTC-day ceiling in USD; 0 disables the daily cap
+     */
+    dailyLimitUsd?: number;
+    /**
+     * per-UTC-month ceiling in USD; 0 disables the monthly cap
+     */
+    monthlyLimitUsd?: number;
+    name: string;
+};
+
+export type CreateInputBody1 = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
     appId?: string;
     destination: string;
     destinationType: 'email' | 'webhook';
@@ -237,7 +289,7 @@ export type CreateInputBody = {
     threshold: number;
 };
 
-export type CreateInputBody1 = {
+export type CreateInputBody2 = {
     /**
      * A URL to the JSON Schema for this object.
      */
@@ -259,7 +311,7 @@ export type CreateInputBody1 = {
     signals: Array<string> | null;
 };
 
-export type CreateInputBody2 = {
+export type CreateInputBody3 = {
     /**
      * A URL to the JSON Schema for this object.
      */
@@ -271,7 +323,7 @@ export type CreateInputBody2 = {
     message: string;
 };
 
-export type CreateInputBody3 = {
+export type CreateInputBody4 = {
     /**
      * A URL to the JSON Schema for this object.
      */
@@ -321,11 +373,18 @@ export type CreateRuleInputBody = {
     readonly $schema?: string;
     action: 'allow' | 'redact' | 'block' | 'flag';
     /**
-     * builtin detector name, or 'regex'/'keyword'
+     * builtin detector name, or 'regex'/'keyword'/'tool_name'/'tool_arg'
      */
     detector: string;
     name: string;
+    /**
+     * regex/keyword; tool name for tool_name; a JSON-path expression for tool_arg (e.g. 'amount > 10000', 'account =~ ^ext-')
+     */
     pattern?: string;
+    /**
+     * which part of the loop to evaluate (default request)
+     */
+    target?: 'request' | 'response' | 'tool_call';
 };
 
 export type CreateTokenInputBody = {
@@ -368,6 +427,23 @@ export type CreateTokenOutputBody = {
     tokenId: string;
 };
 
+export type DecisionDto = {
+    appId?: string;
+    budgetApproaching?: string;
+    costUsd: number;
+    enforcementAction?: string;
+    eventType: string;
+    model?: string;
+    occurredAt: string;
+    parentSpanId?: string;
+    provider?: string;
+    semanticKind?: string;
+    spanId?: string;
+    status?: string;
+    toolName?: string;
+    traceId?: string;
+};
+
 export type DeleteOutputBody = {
     /**
      * A URL to the JSON Schema for this object.
@@ -405,6 +481,23 @@ export type DestinationDto = {
     serviceName?: string;
     signals: Array<string> | null;
     updatedAt?: string;
+};
+
+export type EfficacyOutputBody = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
+    rows: Array<EfficacyRowDto> | null;
+};
+
+export type EfficacyRowDto = {
+    action: string;
+    avgLatencyMs: number;
+    detector: string;
+    maxLatencyMs: number;
+    target: string;
+    violationCount: number;
 };
 
 export type EndpointDto = {
@@ -610,6 +703,14 @@ export type GetOrgOutputBody = {
     org: OrgDto;
 };
 
+export type GetOutputBody = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
+    decisions: Array<DecisionDto> | null;
+};
+
 export type GetTraceOutputBody = {
     /**
      * A URL to the JSON Schema for this object.
@@ -773,7 +874,7 @@ export type ListOutputBody = {
      * A URL to the JSON Schema for this object.
      */
     readonly $schema?: string;
-    data: Array<AlertRuleDto> | null;
+    budgets: Array<CostBudget> | null;
 };
 
 export type ListOutputBody1 = {
@@ -781,10 +882,18 @@ export type ListOutputBody1 = {
      * A URL to the JSON Schema for this object.
      */
     readonly $schema?: string;
-    data: Array<DestinationDto> | null;
+    data: Array<AlertRuleDto> | null;
 };
 
 export type ListOutputBody2 = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
+    data: Array<DestinationDto> | null;
+};
+
+export type ListOutputBody3 = {
     /**
      * A URL to the JSON Schema for this object.
      */
@@ -871,6 +980,13 @@ export type MessageOutputBody = {
      */
     readonly $schema?: string;
     message: string;
+};
+
+export type ModerationCapability = {
+    actions: Array<string> | null;
+    detectors: Array<string> | null;
+    enabled: boolean;
+    targets: Array<string> | null;
 };
 
 export type OkOutputBody = {
@@ -998,6 +1114,7 @@ export type RuleDto = {
     name: string;
     pattern: string;
     ruleId: string;
+    target: string;
 };
 
 export type SearchEventsOutputBody = {
@@ -1174,6 +1291,18 @@ export type UpdateInputBody = {
      * A URL to the JSON Schema for this object.
      */
     readonly $schema?: string;
+    appId?: string;
+    dailyLimitUsd?: number;
+    enabled?: boolean;
+    monthlyLimitUsd?: number;
+    name?: string;
+};
+
+export type UpdateInputBody1 = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
     destination?: string;
     destinationType?: 'email' | 'webhook';
     enabled?: boolean;
@@ -1183,7 +1312,7 @@ export type UpdateInputBody = {
     threshold?: number;
 };
 
-export type UpdateInputBody1 = {
+export type UpdateInputBody2 = {
     /**
      * A URL to the JSON Schema for this object.
      */
@@ -1323,6 +1452,7 @@ export type BreakdownOutputBodyWritable = {
 
 export type CapabilitiesOutputBodyWritable = {
     apiKeyScopes: Array<ApiKeyScope> | null;
+    controls: Controls;
     featureFlags: FeatureFlagsWritable;
     license: LicenseStatus;
     version: string;
@@ -1346,6 +1476,17 @@ export type CheckoutInputBodyWritable = {
      * pro or team
      */
     plan: string;
+};
+
+export type CostBudgetWritable = {
+    appId?: string;
+    budgetId: string;
+    createdAt: string;
+    dailyLimitUsd: number;
+    enabled: boolean;
+    monthlyLimitUsd: number;
+    name: string;
+    updatedAt: string;
 };
 
 export type CreateAppInputBodyWritable = {
@@ -1404,6 +1545,22 @@ export type CreateEnvironmentInputBodyWritable = {
 };
 
 export type CreateInputBodyWritable = {
+    /**
+     * scope to an app; empty means org-wide
+     */
+    appId?: string;
+    /**
+     * per-UTC-day ceiling in USD; 0 disables the daily cap
+     */
+    dailyLimitUsd?: number;
+    /**
+     * per-UTC-month ceiling in USD; 0 disables the monthly cap
+     */
+    monthlyLimitUsd?: number;
+    name: string;
+};
+
+export type CreateInputBody1Writable = {
     appId?: string;
     destination: string;
     destinationType: 'email' | 'webhook';
@@ -1421,7 +1578,7 @@ export type CreateInputBodyWritable = {
     threshold: number;
 };
 
-export type CreateInputBody1Writable = {
+export type CreateInputBody2Writable = {
     endpointUrl: string;
     envSlug: string;
     eventTypeFilter?: Array<string> | null;
@@ -1439,7 +1596,7 @@ export type CreateInputBody1Writable = {
     signals: Array<string> | null;
 };
 
-export type CreateInputBody2Writable = {
+export type CreateInputBody3Writable = {
     category?: 'bug' | 'idea' | 'praise' | 'other';
     context?: {
         [key: string]: unknown;
@@ -1447,7 +1604,7 @@ export type CreateInputBody2Writable = {
     message: string;
 };
 
-export type CreateInputBody3Writable = {
+export type CreateInputBody4Writable = {
     company: string;
     email: string;
     name?: string;
@@ -1477,11 +1634,18 @@ export type CreateOutputBody1Writable = {
 export type CreateRuleInputBodyWritable = {
     action: 'allow' | 'redact' | 'block' | 'flag';
     /**
-     * builtin detector name, or 'regex'/'keyword'
+     * builtin detector name, or 'regex'/'keyword'/'tool_name'/'tool_arg'
      */
     detector: string;
     name: string;
+    /**
+     * regex/keyword; tool name for tool_name; a JSON-path expression for tool_arg (e.g. 'amount > 10000', 'account =~ ^ext-')
+     */
     pattern?: string;
+    /**
+     * which part of the loop to evaluate (default request)
+     */
+    target?: 'request' | 'response' | 'tool_call';
 };
 
 export type CreateTokenInputBodyWritable = {
@@ -1533,6 +1697,10 @@ export type DestinationDtoWritable = {
     serviceName?: string;
     signals: Array<string> | null;
     updatedAt?: string;
+};
+
+export type EfficacyOutputBodyWritable = {
+    rows: Array<EfficacyRowDto> | null;
 };
 
 export type EnvironmentDtoWritable = {
@@ -1627,6 +1795,10 @@ export type GetOrgOutputBodyWritable = {
     org: OrgDto;
 };
 
+export type GetOutputBodyWritable = {
+    decisions: Array<DecisionDto> | null;
+};
+
 export type GetTraceOutputBodyWritable = {
     spans: Array<EventDto> | null;
     traceId: string;
@@ -1716,14 +1888,18 @@ export type ListMembersOutputBodyWritable = {
 };
 
 export type ListOutputBodyWritable = {
-    data: Array<AlertRuleDtoWritable> | null;
+    budgets: Array<CostBudgetWritable> | null;
 };
 
 export type ListOutputBody1Writable = {
-    data: Array<DestinationDtoWritable> | null;
+    data: Array<AlertRuleDtoWritable> | null;
 };
 
 export type ListOutputBody2Writable = {
+    data: Array<DestinationDtoWritable> | null;
+};
+
+export type ListOutputBody3Writable = {
     data: Array<LogDto> | null;
 };
 
@@ -1793,6 +1969,7 @@ export type RuleDtoWritable = {
     name: string;
     pattern: string;
     ruleId: string;
+    target: string;
 };
 
 export type SearchEventsOutputBodyWritable = {
@@ -1878,6 +2055,14 @@ export type UpdateEnvironmentInputBodyWritable = {
 };
 
 export type UpdateInputBodyWritable = {
+    appId?: string;
+    dailyLimitUsd?: number;
+    enabled?: boolean;
+    monthlyLimitUsd?: number;
+    name?: string;
+};
+
+export type UpdateInputBody1Writable = {
     destination?: string;
     destinationType?: 'email' | 'webhook';
     enabled?: boolean;
@@ -1887,7 +2072,7 @@ export type UpdateInputBodyWritable = {
     threshold?: number;
 };
 
-export type UpdateInputBody1Writable = {
+export type UpdateInputBody2Writable = {
     active?: boolean;
     endpointUrl?: string;
     eventTypeFilter?: Array<string>;
@@ -1944,7 +2129,7 @@ export type WebhookOutputBodyWritable = {
 };
 
 export type AccessRequestCreateData = {
-    body: CreateInputBody3Writable;
+    body: CreateInputBody4Writable;
     headers?: {
         'CF-Connecting-IP'?: string;
         'X-Forwarded-For'?: string;
@@ -2822,10 +3007,52 @@ export type AuditListResponses = {
     /**
      * OK
      */
-    200: ListOutputBody2;
+    200: ListOutputBody3;
 };
 
 export type AuditListResponse = AuditListResponses[keyof AuditListResponses];
+
+export type AudittrailGetData = {
+    body?: never;
+    path?: never;
+    query?: {
+        /**
+         * Window start (RFC3339); defaults to 24h before until
+         */
+        since?: string;
+        /**
+         * Window end (RFC3339); defaults to now
+         */
+        until?: string;
+        /**
+         * Restrict to a single trace
+         */
+        traceId?: string;
+        /**
+         * Max rows (default 1000, max 10000)
+         */
+        limit?: number;
+    };
+    url: '/audit-trail';
+};
+
+export type AudittrailGetErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type AudittrailGetError = AudittrailGetErrors[keyof AudittrailGetErrors];
+
+export type AudittrailGetResponses = {
+    /**
+     * OK
+     */
+    200: GetOutputBody;
+};
+
+export type AudittrailGetResponse = AudittrailGetResponses[keyof AudittrailGetResponses];
 
 export type BillingCheckoutData = {
     body: CheckoutInputBodyWritable;
@@ -2954,6 +3181,110 @@ export type BillingWebhookResponses = {
 };
 
 export type BillingWebhookResponse = BillingWebhookResponses[keyof BillingWebhookResponses];
+
+export type BudgetsListData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/budgets';
+};
+
+export type BudgetsListErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type BudgetsListError = BudgetsListErrors[keyof BudgetsListErrors];
+
+export type BudgetsListResponses = {
+    /**
+     * OK
+     */
+    200: ListOutputBody;
+};
+
+export type BudgetsListResponse = BudgetsListResponses[keyof BudgetsListResponses];
+
+export type BudgetsCreateData = {
+    body: CreateInputBodyWritable;
+    path?: never;
+    query?: never;
+    url: '/budgets';
+};
+
+export type BudgetsCreateErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type BudgetsCreateError = BudgetsCreateErrors[keyof BudgetsCreateErrors];
+
+export type BudgetsCreateResponses = {
+    /**
+     * Created
+     */
+    201: CostBudget;
+};
+
+export type BudgetsCreateResponse = BudgetsCreateResponses[keyof BudgetsCreateResponses];
+
+export type BudgetsDeleteData = {
+    body?: never;
+    path: {
+        budgetId: string;
+    };
+    query?: never;
+    url: '/budgets/{budgetId}';
+};
+
+export type BudgetsDeleteErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type BudgetsDeleteError = BudgetsDeleteErrors[keyof BudgetsDeleteErrors];
+
+export type BudgetsDeleteResponses = {
+    /**
+     * OK
+     */
+    200: OkOutputBody;
+};
+
+export type BudgetsDeleteResponse = BudgetsDeleteResponses[keyof BudgetsDeleteResponses];
+
+export type BudgetsUpdateData = {
+    body: UpdateInputBodyWritable;
+    path: {
+        budgetId: string;
+    };
+    query?: never;
+    url: '/budgets/{budgetId}';
+};
+
+export type BudgetsUpdateErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type BudgetsUpdateError = BudgetsUpdateErrors[keyof BudgetsUpdateErrors];
+
+export type BudgetsUpdateResponses = {
+    /**
+     * OK
+     */
+    200: CostBudget;
+};
+
+export type BudgetsUpdateResponse = BudgetsUpdateResponses[keyof BudgetsUpdateResponses];
 
 export type CapabilitiesGetData = {
     body?: never;
@@ -3258,13 +3589,13 @@ export type ExportListResponses = {
     /**
      * OK
      */
-    200: ListOutputBody1;
+    200: ListOutputBody2;
 };
 
 export type ExportListResponse = ExportListResponses[keyof ExportListResponses];
 
 export type ExportCreateData = {
-    body: CreateInputBody1Writable;
+    body: CreateInputBody2Writable;
     path?: never;
     query?: never;
     url: '/export-destinations';
@@ -3343,7 +3674,7 @@ export type ExportGetResponses = {
 export type ExportGetResponse = ExportGetResponses[keyof ExportGetResponses];
 
 export type ExportUpdateData = {
-    body: UpdateInputBody1Writable;
+    body: UpdateInputBody2Writable;
     path: {
         destinationId: string;
     };
@@ -3395,7 +3726,7 @@ export type FeatureFlagsMeResponses = {
 export type FeatureFlagsMeResponse = FeatureFlagsMeResponses[keyof FeatureFlagsMeResponses];
 
 export type FeedbackCreateData = {
-    body: CreateInputBody2Writable;
+    body: CreateInputBody3Writable;
     headers?: {
         'CF-Connecting-IP'?: string;
         'X-Forwarded-For'?: string;
@@ -3473,6 +3804,40 @@ export type LicenseGetResponses = {
 };
 
 export type LicenseGetResponse = LicenseGetResponses[keyof LicenseGetResponses];
+
+export type ModerationEfficacyData = {
+    body?: never;
+    path?: never;
+    query?: {
+        /**
+         * Window start (RFC3339); defaults to 24h before until
+         */
+        since?: string;
+        /**
+         * Window end (RFC3339); defaults to now
+         */
+        until?: string;
+    };
+    url: '/moderation/efficacy';
+};
+
+export type ModerationEfficacyErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type ModerationEfficacyError = ModerationEfficacyErrors[keyof ModerationEfficacyErrors];
+
+export type ModerationEfficacyResponses = {
+    /**
+     * OK
+     */
+    200: EfficacyOutputBody;
+};
+
+export type ModerationEfficacyResponse = ModerationEfficacyResponses[keyof ModerationEfficacyResponses];
 
 export type ModerationRulesListData = {
     body?: never;
@@ -4170,13 +4535,13 @@ export type AlertsListResponses = {
     /**
      * OK
      */
-    200: ListOutputBody;
+    200: ListOutputBody1;
 };
 
 export type AlertsListResponse = AlertsListResponses[keyof AlertsListResponses];
 
 export type AlertsCreateData = {
-    body: CreateInputBodyWritable;
+    body: CreateInputBody1Writable;
     path?: never;
     query?: never;
     url: '/v2/alerts';
@@ -4228,7 +4593,7 @@ export type AlertsDeleteResponses = {
 export type AlertsDeleteResponse = AlertsDeleteResponses[keyof AlertsDeleteResponses];
 
 export type AlertsUpdateData = {
-    body: UpdateInputBodyWritable;
+    body: UpdateInputBody1Writable;
     path: {
         alertRuleId: string;
     };

@@ -1,7 +1,7 @@
 from enum import Enum
 
 
-class CreateInputBodyDestinationType(str, Enum):
+class UpdateInputBody1DestinationType(str, Enum):
     EMAIL = "email"
     WEBHOOK = "webhook"
 

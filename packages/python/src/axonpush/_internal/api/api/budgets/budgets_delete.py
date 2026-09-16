@@ -7,25 +7,19 @@ import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
 from ...models.error_model import ErrorModel
-from ...models.list_output_body_2 import ListOutputBody2
-from ...types import UNSET, Response, Unset
+from ...models.ok_output_body import OkOutputBody
+from ...types import UNSET, Response
 
 
 def _get_kwargs(
-    *,
-    env_slug: str | Unset = UNSET,
+    budget_id: str,
 ) -> dict[str, Any]:
 
-    params: dict[str, Any] = {}
-
-    params["envSlug"] = env_slug
-
-    params = {k: v for k, v in params.items() if v is not UNSET and v is not None}
-
     _kwargs: dict[str, Any] = {
-        "method": "get",
-        "url": "/export-destinations",
-        "params": params,
+        "method": "delete",
+        "url": "/budgets/{budget_id}".format(
+            budget_id=quote(str(budget_id), safe=""),
+        ),
     }
 
     return _kwargs
@@ -33,9 +27,9 @@ def _get_kwargs(
 
 def _parse_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> ErrorModel | ListOutputBody2:
+) -> ErrorModel | OkOutputBody:
     if response.status_code == 200:
-        response_200 = ListOutputBody2.from_dict(response.json())
+        response_200 = OkOutputBody.from_dict(response.json())
 
         return response_200
 
@@ -46,7 +40,7 @@ def _parse_response(
 
 def _build_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> Response[ErrorModel | ListOutputBody2]:
+) -> Response[ErrorModel | OkOutputBody]:
     return Response(
         status_code=HTTPStatus(response.status_code),
         content=response.content,
@@ -56,25 +50,25 @@ def _build_response(
 
 
 def sync_detailed(
+    budget_id: str,
     *,
     client: AuthenticatedClient | Client,
-    env_slug: str | Unset = UNSET,
-) -> Response[ErrorModel | ListOutputBody2]:
-    """List export destinations
+) -> Response[ErrorModel | OkOutputBody]:
+    """Delete a cost budget
 
     Args:
-        env_slug (str | Unset):
+        budget_id (str):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[ErrorModel | ListOutputBody2]
+        Response[ErrorModel | OkOutputBody]
     """
 
     kwargs = _get_kwargs(
-        env_slug=env_slug,
+        budget_id=budget_id,
     )
 
     response = client.get_httpx_client().request(
@@ -85,49 +79,49 @@ def sync_detailed(
 
 
 def sync(
+    budget_id: str,
     *,
     client: AuthenticatedClient | Client,
-    env_slug: str | Unset = UNSET,
-) -> ErrorModel | ListOutputBody2 | None:
-    """List export destinations
+) -> ErrorModel | OkOutputBody | None:
+    """Delete a cost budget
 
     Args:
-        env_slug (str | Unset):
+        budget_id (str):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        ErrorModel | ListOutputBody2
+        ErrorModel | OkOutputBody
     """
 
     return sync_detailed(
+        budget_id=budget_id,
         client=client,
-        env_slug=env_slug,
     ).parsed
 
 
 async def asyncio_detailed(
+    budget_id: str,
     *,
     client: AuthenticatedClient | Client,
-    env_slug: str | Unset = UNSET,
-) -> Response[ErrorModel | ListOutputBody2]:
-    """List export destinations
+) -> Response[ErrorModel | OkOutputBody]:
+    """Delete a cost budget
 
     Args:
-        env_slug (str | Unset):
+        budget_id (str):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[ErrorModel | ListOutputBody2]
+        Response[ErrorModel | OkOutputBody]
     """
 
     kwargs = _get_kwargs(
-        env_slug=env_slug,
+        budget_id=budget_id,
     )
 
     response = await client.get_async_httpx_client().request(**kwargs)
@@ -136,26 +130,26 @@ async def asyncio_detailed(
 
 
 async def asyncio(
+    budget_id: str,
     *,
     client: AuthenticatedClient | Client,
-    env_slug: str | Unset = UNSET,
-) -> ErrorModel | ListOutputBody2 | None:
-    """List export destinations
+) -> ErrorModel | OkOutputBody | None:
+    """Delete a cost budget
 
     Args:
-        env_slug (str | Unset):
+        budget_id (str):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        ErrorModel | ListOutputBody2
+        ErrorModel | OkOutputBody
     """
 
     return (
         await asyncio_detailed(
+            budget_id=budget_id,
             client=client,
-            env_slug=env_slug,
         )
     ).parsed

@@ -1,7 +1,7 @@
 from enum import Enum
 
 
-class UpdateInputBodyMetric(str, Enum):
+class UpdateInputBody1Metric(str, Enum):
     COST_USD = "cost_usd"
     ERROR_COUNT = "error_count"
     ERROR_RATE = "error_rate"

@@ -8,103 +8,104 @@ from attrs import field as _attrs_field
 
 from ..types import UNSET, Unset
 
-T = TypeVar("T", bound="RuleDTO")
+T = TypeVar("T", bound="CostBudget")
 
 
 @_attrs_define
-class RuleDTO:
+class CostBudget:
     """
     Attributes:
-        action (str):
+        budget_id (str):
         created_at (str):
-        detector (str):
+        daily_limit_usd (float):
         enabled (bool):
+        monthly_limit_usd (float):
         name (str):
-        pattern (str):
-        rule_id (str):
-        target (str):
+        updated_at (str):
         schema (str | Unset): A URL to the JSON Schema for this object.
+        app_id (str | Unset):
     """
 
-    action: str
+    budget_id: str
     created_at: str
-    detector: str
+    daily_limit_usd: float
     enabled: bool
+    monthly_limit_usd: float
     name: str
-    pattern: str
-    rule_id: str
-    target: str
+    updated_at: str
     schema: str | Unset = UNSET
+    app_id: str | Unset = UNSET
 
     def to_dict(self) -> dict[str, Any]:
-        action = self.action
+        budget_id = self.budget_id
 
         created_at = self.created_at
 
-        detector = self.detector
+        daily_limit_usd = self.daily_limit_usd
 
         enabled = self.enabled
 
+        monthly_limit_usd = self.monthly_limit_usd
+
         name = self.name
 
-        pattern = self.pattern
-
-        rule_id = self.rule_id
-
-        target = self.target
+        updated_at = self.updated_at
 
         schema = self.schema
+
+        app_id = self.app_id
 
         field_dict: dict[str, Any] = {}
 
         field_dict.update(
             {
-                "action": action,
+                "budgetId": budget_id,
                 "createdAt": created_at,
-                "detector": detector,
+                "dailyLimitUsd": daily_limit_usd,
                 "enabled": enabled,
+                "monthlyLimitUsd": monthly_limit_usd,
                 "name": name,
-                "pattern": pattern,
-                "ruleId": rule_id,
-                "target": target,
+                "updatedAt": updated_at,
             }
         )
         if schema is not UNSET:
             field_dict["$schema"] = schema
+        if app_id is not UNSET:
+            field_dict["appId"] = app_id
 
         return field_dict
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         d = dict(src_dict)
-        action = d.pop("action")
+        budget_id = d.pop("budgetId")
 
         created_at = d.pop("createdAt")
 
-        detector = d.pop("detector")
+        daily_limit_usd = d.pop("dailyLimitUsd")
 
         enabled = d.pop("enabled")
 
+        monthly_limit_usd = d.pop("monthlyLimitUsd")
+
         name = d.pop("name")
 
-        pattern = d.pop("pattern")
-
-        rule_id = d.pop("ruleId")
-
-        target = d.pop("target")
+        updated_at = d.pop("updatedAt")
 
         schema = d.pop("$schema", UNSET)
 
-        rule_dto = cls(
-            action=action,
+        app_id = d.pop("appId", UNSET)
+
+        cost_budget = cls(
+            budget_id=budget_id,
             created_at=created_at,
-            detector=detector,
+            daily_limit_usd=daily_limit_usd,
             enabled=enabled,
+            monthly_limit_usd=monthly_limit_usd,
             name=name,
-            pattern=pattern,
-            rule_id=rule_id,
-            target=target,
+            updated_at=updated_at,
             schema=schema,
+            app_id=app_id,
         )
 
-        return rule_dto
+        return cost_budget

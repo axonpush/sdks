@@ -8,14 +8,14 @@ from ... import errors
 from ...client import AuthenticatedClient, Client
 from ...models.alert_rule_dto import AlertRuleDTO
 from ...models.error_model import ErrorModel
-from ...models.update_input_body import UpdateInputBody
+from ...models.update_input_body_1 import UpdateInputBody1
 from ...types import UNSET, Response
 
 
 def _get_kwargs(
     alert_rule_id: str,
     *,
-    body: UpdateInputBody,
+    body: UpdateInputBody1,
 ) -> dict[str, Any]:
     headers: dict[str, Any] = {}
 
@@ -62,13 +62,13 @@ def sync_detailed(
     alert_rule_id: str,
     *,
     client: AuthenticatedClient | Client,
-    body: UpdateInputBody,
+    body: UpdateInputBody1,
 ) -> Response[AlertRuleDTO | ErrorModel]:
     """Update an alert rule
 
     Args:
         alert_rule_id (str):
-        body (UpdateInputBody):
+        body (UpdateInputBody1):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -94,13 +94,13 @@ def sync(
     alert_rule_id: str,
     *,
     client: AuthenticatedClient | Client,
-    body: UpdateInputBody,
+    body: UpdateInputBody1,
 ) -> AlertRuleDTO | ErrorModel | None:
     """Update an alert rule
 
     Args:
         alert_rule_id (str):
-        body (UpdateInputBody):
+        body (UpdateInputBody1):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -121,13 +121,13 @@ async def asyncio_detailed(
     alert_rule_id: str,
     *,
     client: AuthenticatedClient | Client,
-    body: UpdateInputBody,
+    body: UpdateInputBody1,
 ) -> Response[AlertRuleDTO | ErrorModel]:
     """Update an alert rule
 
     Args:
         alert_rule_id (str):
-        body (UpdateInputBody):
+        body (UpdateInputBody1):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -151,13 +151,13 @@ async def asyncio(
     alert_rule_id: str,
     *,
     client: AuthenticatedClient | Client,
-    body: UpdateInputBody,
+    body: UpdateInputBody1,
 ) -> AlertRuleDTO | ErrorModel | None:
     """Update an alert rule
 
     Args:
         alert_rule_id (str):
-        body (UpdateInputBody):
+        body (UpdateInputBody1):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
