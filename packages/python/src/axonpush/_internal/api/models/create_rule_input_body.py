@@ -7,6 +7,7 @@ from attrs import define as _attrs_define
 from attrs import field as _attrs_field
 
 from ..models.create_rule_input_body_action import CreateRuleInputBodyAction
+from ..models.create_rule_input_body_target import CreateRuleInputBodyTarget
 from ..types import UNSET, Unset
 
 T = TypeVar("T", bound="CreateRuleInputBody")
@@ -17,10 +18,12 @@ class CreateRuleInputBody:
     """
     Attributes:
         action (CreateRuleInputBodyAction):
-        detector (str): builtin detector name, or 'regex'/'keyword'
+        detector (str): builtin detector name, or 'regex'/'keyword'/'tool_name'/'tool_arg'
         name (str):
         schema (str | Unset): A URL to the JSON Schema for this object.
-        pattern (str | Unset):
+        pattern (str | Unset): regex/keyword; tool name for tool_name; a JSON-path expression for tool_arg (e.g. 'amount
+            > 10000', 'account =~ ^ext-')
+        target (CreateRuleInputBodyTarget | Unset): which part of the loop to evaluate (default request)
     """
 
     action: CreateRuleInputBodyAction
@@ -28,6 +31,7 @@ class CreateRuleInputBody:
     name: str
     schema: str | Unset = UNSET
     pattern: str | Unset = UNSET
+    target: CreateRuleInputBodyTarget | Unset = UNSET
 
     def to_dict(self) -> dict[str, Any]:
         action = self.action.value
@@ -39,6 +43,10 @@ class CreateRuleInputBody:
         schema = self.schema
 
         pattern = self.pattern
+
+        target: str | Unset = UNSET
+        if not isinstance(self.target, Unset):
+            target = self.target.value
 
         field_dict: dict[str, Any] = {}
 
@@ -53,6 +61,8 @@ class CreateRuleInputBody:
             field_dict["$schema"] = schema
         if pattern is not UNSET:
             field_dict["pattern"] = pattern
+        if target is not UNSET:
+            field_dict["target"] = target
 
         return field_dict
 
@@ -69,12 +79,20 @@ class CreateRuleInputBody:
 
         pattern = d.pop("pattern", UNSET)
 
+        _target = d.pop("target", UNSET)
+        target: CreateRuleInputBodyTarget | Unset
+        if isinstance(_target, Unset):
+            target = UNSET
+        else:
+            target = CreateRuleInputBodyTarget(_target)
+
         create_rule_input_body = cls(
             action=action,
             detector=detector,
             name=name,
             schema=schema,
             pattern=pattern,
+            target=target,
         )
 
         return create_rule_input_body

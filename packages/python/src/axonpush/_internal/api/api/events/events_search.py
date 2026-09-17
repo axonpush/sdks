@@ -23,6 +23,10 @@ def _get_kwargs(
     source: str | Unset = UNSET,
     status: str | Unset = UNSET,
     trace_id: str | Unset = UNSET,
+    agent_id: str | Unset = UNSET,
+    agent_name: str | Unset = UNSET,
+    tool_name: str | Unset = UNSET,
+    semantic_kind: str | Unset = UNSET,
     q: str | Unset = UNSET,
     attr_key: str | Unset = UNSET,
     attr_value: str | Unset = UNSET,
@@ -49,6 +53,14 @@ def _get_kwargs(
     params["status"] = status
 
     params["traceId"] = trace_id
+
+    params["agentId"] = agent_id
+
+    params["agentName"] = agent_name
+
+    params["toolName"] = tool_name
+
+    params["semanticKind"] = semantic_kind
 
     params["q"] = q
 
@@ -104,6 +116,10 @@ def sync_detailed(
     source: str | Unset = UNSET,
     status: str | Unset = UNSET,
     trace_id: str | Unset = UNSET,
+    agent_id: str | Unset = UNSET,
+    agent_name: str | Unset = UNSET,
+    tool_name: str | Unset = UNSET,
+    semantic_kind: str | Unset = UNSET,
     q: str | Unset = UNSET,
     attr_key: str | Unset = UNSET,
     attr_value: str | Unset = UNSET,
@@ -121,6 +137,11 @@ def sync_detailed(
         source (str | Unset): Filter by source
         status (str | Unset): Filter by status
         trace_id (str | Unset): Filter by trace id
+        agent_id (str | Unset): Filter by agent id
+        agent_name (str | Unset): Filter by agent name
+        tool_name (str | Unset): Filter by tool name
+        semantic_kind (str | Unset): Filter by semantic kind (agent, tool, llm, retriever, db,
+            http, log)
         q (str | Unset): Case-insensitive contains match on search text
         attr_key (str | Unset): JSONB attribute key for equality filter (paired with attrValue)
         attr_value (str | Unset): JSONB attribute value for equality filter (paired with attrKey)
@@ -144,6 +165,10 @@ def sync_detailed(
         source=source,
         status=status,
         trace_id=trace_id,
+        agent_id=agent_id,
+        agent_name=agent_name,
+        tool_name=tool_name,
+        semantic_kind=semantic_kind,
         q=q,
         attr_key=attr_key,
         attr_value=attr_value,
@@ -169,6 +194,10 @@ def sync(
     source: str | Unset = UNSET,
     status: str | Unset = UNSET,
     trace_id: str | Unset = UNSET,
+    agent_id: str | Unset = UNSET,
+    agent_name: str | Unset = UNSET,
+    tool_name: str | Unset = UNSET,
+    semantic_kind: str | Unset = UNSET,
     q: str | Unset = UNSET,
     attr_key: str | Unset = UNSET,
     attr_value: str | Unset = UNSET,
@@ -186,6 +215,11 @@ def sync(
         source (str | Unset): Filter by source
         status (str | Unset): Filter by status
         trace_id (str | Unset): Filter by trace id
+        agent_id (str | Unset): Filter by agent id
+        agent_name (str | Unset): Filter by agent name
+        tool_name (str | Unset): Filter by tool name
+        semantic_kind (str | Unset): Filter by semantic kind (agent, tool, llm, retriever, db,
+            http, log)
         q (str | Unset): Case-insensitive contains match on search text
         attr_key (str | Unset): JSONB attribute key for equality filter (paired with attrValue)
         attr_value (str | Unset): JSONB attribute value for equality filter (paired with attrKey)
@@ -210,6 +244,10 @@ def sync(
         source=source,
         status=status,
         trace_id=trace_id,
+        agent_id=agent_id,
+        agent_name=agent_name,
+        tool_name=tool_name,
+        semantic_kind=semantic_kind,
         q=q,
         attr_key=attr_key,
         attr_value=attr_value,
@@ -229,6 +267,10 @@ async def asyncio_detailed(
     source: str | Unset = UNSET,
     status: str | Unset = UNSET,
     trace_id: str | Unset = UNSET,
+    agent_id: str | Unset = UNSET,
+    agent_name: str | Unset = UNSET,
+    tool_name: str | Unset = UNSET,
+    semantic_kind: str | Unset = UNSET,
     q: str | Unset = UNSET,
     attr_key: str | Unset = UNSET,
     attr_value: str | Unset = UNSET,
@@ -246,6 +288,11 @@ async def asyncio_detailed(
         source (str | Unset): Filter by source
         status (str | Unset): Filter by status
         trace_id (str | Unset): Filter by trace id
+        agent_id (str | Unset): Filter by agent id
+        agent_name (str | Unset): Filter by agent name
+        tool_name (str | Unset): Filter by tool name
+        semantic_kind (str | Unset): Filter by semantic kind (agent, tool, llm, retriever, db,
+            http, log)
         q (str | Unset): Case-insensitive contains match on search text
         attr_key (str | Unset): JSONB attribute key for equality filter (paired with attrValue)
         attr_value (str | Unset): JSONB attribute value for equality filter (paired with attrKey)
@@ -269,6 +316,10 @@ async def asyncio_detailed(
         source=source,
         status=status,
         trace_id=trace_id,
+        agent_id=agent_id,
+        agent_name=agent_name,
+        tool_name=tool_name,
+        semantic_kind=semantic_kind,
         q=q,
         attr_key=attr_key,
         attr_value=attr_value,
@@ -292,6 +343,10 @@ async def asyncio(
     source: str | Unset = UNSET,
     status: str | Unset = UNSET,
     trace_id: str | Unset = UNSET,
+    agent_id: str | Unset = UNSET,
+    agent_name: str | Unset = UNSET,
+    tool_name: str | Unset = UNSET,
+    semantic_kind: str | Unset = UNSET,
     q: str | Unset = UNSET,
     attr_key: str | Unset = UNSET,
     attr_value: str | Unset = UNSET,
@@ -309,6 +364,11 @@ async def asyncio(
         source (str | Unset): Filter by source
         status (str | Unset): Filter by status
         trace_id (str | Unset): Filter by trace id
+        agent_id (str | Unset): Filter by agent id
+        agent_name (str | Unset): Filter by agent name
+        tool_name (str | Unset): Filter by tool name
+        semantic_kind (str | Unset): Filter by semantic kind (agent, tool, llm, retriever, db,
+            http, log)
         q (str | Unset): Case-insensitive contains match on search text
         attr_key (str | Unset): JSONB attribute key for equality filter (paired with attrValue)
         attr_value (str | Unset): JSONB attribute value for equality filter (paired with attrKey)
@@ -334,6 +394,10 @@ async def asyncio(
             source=source,
             status=status,
             trace_id=trace_id,
+            agent_id=agent_id,
+            agent_name=agent_name,
+            tool_name=tool_name,
+            semantic_kind=semantic_kind,
             q=q,
             attr_key=attr_key,
             attr_value=attr_value,

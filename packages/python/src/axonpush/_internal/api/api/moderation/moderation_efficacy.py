@@ -6,25 +6,28 @@ import httpx
 
 from ... import errors
 from ...client import AuthenticatedClient, Client
+from ...models.efficacy_output_body import EfficacyOutputBody
 from ...models.error_model import ErrorModel
-from ...models.list_output_body_2 import ListOutputBody2
 from ...types import UNSET, Response, Unset
 
 
 def _get_kwargs(
     *,
-    env_slug: str | Unset = UNSET,
+    since: str | Unset = UNSET,
+    until: str | Unset = UNSET,
 ) -> dict[str, Any]:
 
     params: dict[str, Any] = {}
 
-    params["envSlug"] = env_slug
+    params["since"] = since
+
+    params["until"] = until
 
     params = {k: v for k, v in params.items() if v is not UNSET and v is not None}
 
     _kwargs: dict[str, Any] = {
         "method": "get",
-        "url": "/export-destinations",
+        "url": "/moderation/efficacy",
         "params": params,
     }
 
@@ -33,9 +36,9 @@ def _get_kwargs(
 
 def _parse_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> ErrorModel | ListOutputBody2:
+) -> EfficacyOutputBody | ErrorModel:
     if response.status_code == 200:
-        response_200 = ListOutputBody2.from_dict(response.json())
+        response_200 = EfficacyOutputBody.from_dict(response.json())
 
         return response_200
 
@@ -46,7 +49,7 @@ def _parse_response(
 
 def _build_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> Response[ErrorModel | ListOutputBody2]:
+) -> Response[EfficacyOutputBody | ErrorModel]:
     return Response(
         status_code=HTTPStatus(response.status_code),
         content=response.content,
@@ -58,23 +61,26 @@ def _build_response(
 def sync_detailed(
     *,
     client: AuthenticatedClient | Client,
-    env_slug: str | Unset = UNSET,
-) -> Response[ErrorModel | ListOutputBody2]:
-    """List export destinations
+    since: str | Unset = UNSET,
+    until: str | Unset = UNSET,
+) -> Response[EfficacyOutputBody | ErrorModel]:
+    """Guardrail efficacy + latency
 
     Args:
-        env_slug (str | Unset):
+        since (str | Unset): Window start (RFC3339); defaults to 24h before until
+        until (str | Unset): Window end (RFC3339); defaults to now
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[ErrorModel | ListOutputBody2]
+        Response[EfficacyOutputBody | ErrorModel]
     """
 
     kwargs = _get_kwargs(
-        env_slug=env_slug,
+        since=since,
+        until=until,
     )
 
     response = client.get_httpx_client().request(
@@ -87,47 +93,53 @@ def sync_detailed(
 def sync(
     *,
     client: AuthenticatedClient | Client,
-    env_slug: str | Unset = UNSET,
-) -> ErrorModel | ListOutputBody2 | None:
-    """List export destinations
+    since: str | Unset = UNSET,
+    until: str | Unset = UNSET,
+) -> EfficacyOutputBody | ErrorModel | None:
+    """Guardrail efficacy + latency
 
     Args:
-        env_slug (str | Unset):
+        since (str | Unset): Window start (RFC3339); defaults to 24h before until
+        until (str | Unset): Window end (RFC3339); defaults to now
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        ErrorModel | ListOutputBody2
+        EfficacyOutputBody | ErrorModel
     """
 
     return sync_detailed(
         client=client,
-        env_slug=env_slug,
+        since=since,
+        until=until,
     ).parsed
 
 
 async def asyncio_detailed(
     *,
     client: AuthenticatedClient | Client,
-    env_slug: str | Unset = UNSET,
-) -> Response[ErrorModel | ListOutputBody2]:
-    """List export destinations
+    since: str | Unset = UNSET,
+    until: str | Unset = UNSET,
+) -> Response[EfficacyOutputBody | ErrorModel]:
+    """Guardrail efficacy + latency
 
     Args:
-        env_slug (str | Unset):
+        since (str | Unset): Window start (RFC3339); defaults to 24h before until
+        until (str | Unset): Window end (RFC3339); defaults to now
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[ErrorModel | ListOutputBody2]
+        Response[EfficacyOutputBody | ErrorModel]
     """
 
     kwargs = _get_kwargs(
-        env_slug=env_slug,
+        since=since,
+        until=until,
     )
 
     response = await client.get_async_httpx_client().request(**kwargs)
@@ -138,24 +150,27 @@ async def asyncio_detailed(
 async def asyncio(
     *,
     client: AuthenticatedClient | Client,
-    env_slug: str | Unset = UNSET,
-) -> ErrorModel | ListOutputBody2 | None:
-    """List export destinations
+    since: str | Unset = UNSET,
+    until: str | Unset = UNSET,
+) -> EfficacyOutputBody | ErrorModel | None:
+    """Guardrail efficacy + latency
 
     Args:
-        env_slug (str | Unset):
+        since (str | Unset): Window start (RFC3339); defaults to 24h before until
+        until (str | Unset): Window end (RFC3339); defaults to now
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        ErrorModel | ListOutputBody2
+        EfficacyOutputBody | ErrorModel
     """
 
     return (
         await asyncio_detailed(
             client=client,
-            env_slug=env_slug,
+            since=since,
+            until=until,
         )
     ).parsed
