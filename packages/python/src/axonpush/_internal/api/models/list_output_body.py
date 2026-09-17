@@ -9,7 +9,7 @@ from attrs import field as _attrs_field
 from ..types import UNSET, Unset
 
 if TYPE_CHECKING:
-    from ..models.alert_rule_dto import AlertRuleDTO
+    from ..models.policy import Policy
 
 
 T = TypeVar("T", bound="ListOutputBody")
@@ -19,25 +19,25 @@ T = TypeVar("T", bound="ListOutputBody")
 class ListOutputBody:
     """
     Attributes:
-        data (list[AlertRuleDTO] | None):
+        policies (list[Policy] | None):
         schema (str | Unset): A URL to the JSON Schema for this object.
     """
 
-    data: list[AlertRuleDTO] | None
+    policies: list[Policy] | None
     schema: str | Unset = UNSET
 
     def to_dict(self) -> dict[str, Any]:
-        from ..models.alert_rule_dto import AlertRuleDTO
+        from ..models.policy import Policy
 
-        data: list[dict[str, Any]] | None
-        if isinstance(self.data, list):
-            data = []
-            for data_type_0_item_data in self.data:
-                data_type_0_item = data_type_0_item_data.to_dict()
-                data.append(data_type_0_item)
+        policies: list[dict[str, Any]] | None
+        if isinstance(self.policies, list):
+            policies = []
+            for policies_type_0_item_data in self.policies:
+                policies_type_0_item = policies_type_0_item_data.to_dict()
+                policies.append(policies_type_0_item)
 
         else:
-            data = self.data
+            policies = self.policies
 
         schema = self.schema
 
@@ -45,7 +45,7 @@ class ListOutputBody:
 
         field_dict.update(
             {
-                "data": data,
+                "policies": policies,
             }
         )
         if schema is not UNSET:
@@ -55,34 +55,34 @@ class ListOutputBody:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        from ..models.alert_rule_dto import AlertRuleDTO
+        from ..models.policy import Policy
 
         d = dict(src_dict)
 
-        def _parse_data(data: object) -> list[AlertRuleDTO] | None:
+        def _parse_policies(data: object) -> list[Policy] | None:
             if data is None:
                 return data
             try:
                 if not isinstance(data, list):
                     raise TypeError()
-                data_type_0 = []
-                _data_type_0 = data
-                for data_type_0_item_data in _data_type_0:
-                    data_type_0_item = AlertRuleDTO.from_dict(data_type_0_item_data)
+                policies_type_0 = []
+                _policies_type_0 = data
+                for policies_type_0_item_data in _policies_type_0:
+                    policies_type_0_item = Policy.from_dict(policies_type_0_item_data)
 
-                    data_type_0.append(data_type_0_item)
+                    policies_type_0.append(policies_type_0_item)
 
-                return data_type_0
+                return policies_type_0
             except (TypeError, ValueError, AttributeError, KeyError):
                 pass
-            return cast(list[AlertRuleDTO] | None, data)
+            return cast(list[Policy] | None, data)
 
-        data = _parse_data(d.pop("data"))
+        policies = _parse_policies(d.pop("policies"))
 
         schema = d.pop("$schema", UNSET)
 
         list_output_body = cls(
-            data=data,
+            policies=policies,
             schema=schema,
         )
 

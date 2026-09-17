@@ -7,25 +7,15 @@ import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
 from ...models.error_model import ErrorModel
-from ...models.list_output_body_2 import ListOutputBody2
-from ...types import UNSET, Response, Unset
+from ...models.list_output_body import ListOutputBody
+from ...types import UNSET, Response
 
 
-def _get_kwargs(
-    *,
-    env_slug: str | Unset = UNSET,
-) -> dict[str, Any]:
-
-    params: dict[str, Any] = {}
-
-    params["envSlug"] = env_slug
-
-    params = {k: v for k, v in params.items() if v is not UNSET and v is not None}
+def _get_kwargs() -> dict[str, Any]:
 
     _kwargs: dict[str, Any] = {
         "method": "get",
-        "url": "/export-destinations",
-        "params": params,
+        "url": "/spend-policies",
     }
 
     return _kwargs
@@ -33,9 +23,9 @@ def _get_kwargs(
 
 def _parse_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> ErrorModel | ListOutputBody2:
+) -> ErrorModel | ListOutputBody:
     if response.status_code == 200:
-        response_200 = ListOutputBody2.from_dict(response.json())
+        response_200 = ListOutputBody.from_dict(response.json())
 
         return response_200
 
@@ -46,7 +36,7 @@ def _parse_response(
 
 def _build_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> Response[ErrorModel | ListOutputBody2]:
+) -> Response[ErrorModel | ListOutputBody]:
     return Response(
         status_code=HTTPStatus(response.status_code),
         content=response.content,
@@ -58,24 +48,18 @@ def _build_response(
 def sync_detailed(
     *,
     client: AuthenticatedClient | Client,
-    env_slug: str | Unset = UNSET,
-) -> Response[ErrorModel | ListOutputBody2]:
-    """List export destinations
-
-    Args:
-        env_slug (str | Unset):
+) -> Response[ErrorModel | ListOutputBody]:
+    """List spend policies
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[ErrorModel | ListOutputBody2]
+        Response[ErrorModel | ListOutputBody]
     """
 
-    kwargs = _get_kwargs(
-        env_slug=env_slug,
-    )
+    kwargs = _get_kwargs()
 
     response = client.get_httpx_client().request(
         **kwargs,
@@ -87,48 +71,37 @@ def sync_detailed(
 def sync(
     *,
     client: AuthenticatedClient | Client,
-    env_slug: str | Unset = UNSET,
-) -> ErrorModel | ListOutputBody2 | None:
-    """List export destinations
-
-    Args:
-        env_slug (str | Unset):
+) -> ErrorModel | ListOutputBody | None:
+    """List spend policies
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        ErrorModel | ListOutputBody2
+        ErrorModel | ListOutputBody
     """
 
     return sync_detailed(
         client=client,
-        env_slug=env_slug,
     ).parsed
 
 
 async def asyncio_detailed(
     *,
     client: AuthenticatedClient | Client,
-    env_slug: str | Unset = UNSET,
-) -> Response[ErrorModel | ListOutputBody2]:
-    """List export destinations
-
-    Args:
-        env_slug (str | Unset):
+) -> Response[ErrorModel | ListOutputBody]:
+    """List spend policies
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[ErrorModel | ListOutputBody2]
+        Response[ErrorModel | ListOutputBody]
     """
 
-    kwargs = _get_kwargs(
-        env_slug=env_slug,
-    )
+    kwargs = _get_kwargs()
 
     response = await client.get_async_httpx_client().request(**kwargs)
 
@@ -138,24 +111,19 @@ async def asyncio_detailed(
 async def asyncio(
     *,
     client: AuthenticatedClient | Client,
-    env_slug: str | Unset = UNSET,
-) -> ErrorModel | ListOutputBody2 | None:
-    """List export destinations
-
-    Args:
-        env_slug (str | Unset):
+) -> ErrorModel | ListOutputBody | None:
+    """List spend policies
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        ErrorModel | ListOutputBody2
+        ErrorModel | ListOutputBody
     """
 
     return (
         await asyncio_detailed(
             client=client,
-            env_slug=env_slug,
         )
     ).parsed
