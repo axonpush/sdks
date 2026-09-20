@@ -73,6 +73,11 @@ export type AppDto = {
     updatedAt?: string;
 };
 
+export type AuditCapability = {
+    enabled: boolean;
+    formats: Array<string> | null;
+};
+
 export type BillingEventDto = {
     createdAt: string;
     error?: string;
@@ -93,7 +98,9 @@ export type BreakdownOutputBody = {
 };
 
 export type BreakdownRowDto = {
+    avgDurationMs?: number;
     costUsd: number;
+    errorCount?: number;
     eventCount: number;
     key: string;
     totalTokens?: number;
@@ -105,6 +112,7 @@ export type CapabilitiesOutputBody = {
      */
     readonly $schema?: string;
     apiKeyScopes: Array<ApiKeyScope> | null;
+    controls: Controls;
     featureFlags: FeatureFlags;
     license: LicenseStatus;
     version: string;
@@ -136,6 +144,12 @@ export type CheckoutInputBody = {
      * pro or team
      */
     plan: string;
+};
+
+export type Controls = {
+    auditTrail: AuditCapability;
+    inlineModeration: ModerationCapability;
+    spendPolicies: SpendPolicyCapability;
 };
 
 export type CreateAppInputBody = {
@@ -319,11 +333,18 @@ export type CreateRuleInputBody = {
     readonly $schema?: string;
     action: 'allow' | 'redact' | 'block' | 'flag';
     /**
-     * builtin detector name, or 'regex'/'keyword'
+     * builtin detector name, or 'regex'/'keyword'/'tool_name'/'tool_arg'
      */
     detector: string;
     name: string;
+    /**
+     * regex/keyword; tool name for tool_name; a JSON-path expression for tool_arg (e.g. 'amount > 10000', 'account =~ ^ext-')
+     */
     pattern?: string;
+    /**
+     * which part of the loop to evaluate (default request)
+     */
+    target?: 'request' | 'response' | 'tool_call';
 };
 
 export type CreateTokenInputBody = {
@@ -366,6 +387,23 @@ export type CreateTokenOutputBody = {
     tokenId: string;
 };
 
+export type DecisionDto = {
+    appId?: string;
+    budgetApproaching?: string;
+    costUsd: number;
+    enforcementAction?: string;
+    eventType: string;
+    model?: string;
+    occurredAt: string;
+    parentSpanId?: string;
+    provider?: string;
+    semanticKind?: string;
+    spanId?: string;
+    status?: string;
+    toolName?: string;
+    traceId?: string;
+};
+
 export type DeleteOutputBody = {
     /**
      * A URL to the JSON Schema for this object.
@@ -403,6 +441,23 @@ export type DestinationDto = {
     serviceName?: string;
     signals: Array<string> | null;
     updatedAt?: string;
+};
+
+export type EfficacyOutputBody = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
+    rows: Array<EfficacyRowDto> | null;
+};
+
+export type EfficacyRowDto = {
+    action: string;
+    avgLatencyMs: number;
+    detector: string;
+    maxLatencyMs: number;
+    target: string;
+    violationCount: number;
 };
 
 export type EndpointDto = {
@@ -608,6 +663,14 @@ export type GetOrgOutputBody = {
     org: OrgDto;
 };
 
+export type GetOutputBody = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
+    decisions: Array<DecisionDto> | null;
+};
+
 export type GetTraceOutputBody = {
     /**
      * A URL to the JSON Schema for this object.
@@ -771,7 +834,7 @@ export type ListOutputBody = {
      * A URL to the JSON Schema for this object.
      */
     readonly $schema?: string;
-    data: Array<AlertRuleDto> | null;
+    policies: Array<Policy> | null;
 };
 
 export type ListOutputBody1 = {
@@ -779,10 +842,18 @@ export type ListOutputBody1 = {
      * A URL to the JSON Schema for this object.
      */
     readonly $schema?: string;
-    data: Array<DestinationDto> | null;
+    data: Array<AlertRuleDto> | null;
 };
 
 export type ListOutputBody2 = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
+    data: Array<DestinationDto> | null;
+};
+
+export type ListOutputBody3 = {
     /**
      * A URL to the JSON Schema for this object.
      */
@@ -871,6 +942,13 @@ export type MessageOutputBody = {
     message: string;
 };
 
+export type ModerationCapability = {
+    actions: Array<string> | null;
+    detectors: Array<string> | null;
+    enabled: boolean;
+    targets: Array<string> | null;
+};
+
 export type OkOutputBody = {
     /**
      * A URL to the JSON Schema for this object.
@@ -949,7 +1027,6 @@ export type PlanFeatures = {
 
 export type PlanLimits = {
     events: number | null;
-    experimentsMonthly: number | null;
     features: PlanFeatures;
     hotRetentionDays: number | null;
     lemonsqueezyVariants?: {
@@ -969,6 +1046,65 @@ export type PlansOutputBody = {
     plans: {
         [key: string]: PlanLimits;
     };
+};
+
+export type Policy = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
+    apiKeyId?: string;
+    appId?: string;
+    cooldownMins: number;
+    createdAt: string;
+    currentSpendUsd?: number;
+    destination?: string;
+    destinationType?: string;
+    enabled: boolean;
+    environmentId?: string;
+    limitUsd: number;
+    model?: string;
+    name: string;
+    policyId: string;
+    provider?: string;
+    rungs: Array<Rung> | null;
+    tagKey?: string;
+    tagValue?: string;
+    updatedAt: string;
+    userId?: string;
+    windowType: string;
+};
+
+export type PolicyBody = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
+    apiKeyId?: string;
+    appId?: string;
+    cooldownMins?: number;
+    destination?: string;
+    destinationType?: 'email' | 'webhook' | '';
+    enabled?: boolean;
+    environmentId?: string;
+    /**
+     * the 100% amount in USD
+     */
+    limitUsd: number;
+    /**
+     * model prefix; empty = all models
+     */
+    model?: string;
+    name: string;
+    provider?: string;
+    /**
+     * ordered ladder: each rung is {atPercent, action, blockMode?, fallbackModel?}
+     */
+    rungs: Array<Rung> | null;
+    tagKey?: string;
+    tagValue?: string;
+    userId?: string;
+    windowType: 'daily' | 'weekly' | 'monthly' | 'cumulative';
 };
 
 export type PublicIngestTokenDto = {
@@ -996,6 +1132,14 @@ export type RuleDto = {
     name: string;
     pattern: string;
     ruleId: string;
+    target: string;
+};
+
+export type Rung = {
+    action: string;
+    at_percent: number;
+    block_mode?: string;
+    fallback_model?: string;
 };
 
 export type SearchEventsOutputBody = {
@@ -1087,6 +1231,13 @@ export type SetTrialInputBody = {
      * Trial length in days from now
      */
     days: number;
+};
+
+export type SpendPolicyCapability = {
+    actions: Array<string> | null;
+    dimensions: Array<string> | null;
+    enabled: boolean;
+    windows: Array<string> | null;
 };
 
 export type TelemetryPolicyOutputBody = {
@@ -1270,9 +1421,13 @@ export type ViolationDto = {
     appId?: string;
     channelId?: string;
     detector: string;
+    explanation?: string;
+    latencyMs?: number;
     occurredAt: string;
     ruleId: string;
     ruleName: string;
+    target: string;
+    traceId?: string;
     violationId: string;
 };
 
@@ -1321,6 +1476,7 @@ export type BreakdownOutputBodyWritable = {
 
 export type CapabilitiesOutputBodyWritable = {
     apiKeyScopes: Array<ApiKeyScope> | null;
+    controls: Controls;
     featureFlags: FeatureFlagsWritable;
     license: LicenseStatus;
     version: string;
@@ -1475,11 +1631,18 @@ export type CreateOutputBody1Writable = {
 export type CreateRuleInputBodyWritable = {
     action: 'allow' | 'redact' | 'block' | 'flag';
     /**
-     * builtin detector name, or 'regex'/'keyword'
+     * builtin detector name, or 'regex'/'keyword'/'tool_name'/'tool_arg'
      */
     detector: string;
     name: string;
+    /**
+     * regex/keyword; tool name for tool_name; a JSON-path expression for tool_arg (e.g. 'amount > 10000', 'account =~ ^ext-')
+     */
     pattern?: string;
+    /**
+     * which part of the loop to evaluate (default request)
+     */
+    target?: 'request' | 'response' | 'tool_call';
 };
 
 export type CreateTokenInputBodyWritable = {
@@ -1531,6 +1694,10 @@ export type DestinationDtoWritable = {
     serviceName?: string;
     signals: Array<string> | null;
     updatedAt?: string;
+};
+
+export type EfficacyOutputBodyWritable = {
+    rows: Array<EfficacyRowDto> | null;
 };
 
 export type EnvironmentDtoWritable = {
@@ -1625,6 +1792,10 @@ export type GetOrgOutputBodyWritable = {
     org: OrgDto;
 };
 
+export type GetOutputBodyWritable = {
+    decisions: Array<DecisionDto> | null;
+};
+
 export type GetTraceOutputBodyWritable = {
     spans: Array<EventDto> | null;
     traceId: string;
@@ -1714,14 +1885,18 @@ export type ListMembersOutputBodyWritable = {
 };
 
 export type ListOutputBodyWritable = {
-    data: Array<AlertRuleDtoWritable> | null;
+    policies: Array<PolicyWritable> | null;
 };
 
 export type ListOutputBody1Writable = {
-    data: Array<DestinationDtoWritable> | null;
+    data: Array<AlertRuleDtoWritable> | null;
 };
 
 export type ListOutputBody2Writable = {
+    data: Array<DestinationDtoWritable> | null;
+};
+
+export type ListOutputBody3Writable = {
     data: Array<LogDto> | null;
 };
 
@@ -1783,6 +1958,57 @@ export type PlansOutputBodyWritable = {
     };
 };
 
+export type PolicyWritable = {
+    apiKeyId?: string;
+    appId?: string;
+    cooldownMins: number;
+    createdAt: string;
+    currentSpendUsd?: number;
+    destination?: string;
+    destinationType?: string;
+    enabled: boolean;
+    environmentId?: string;
+    limitUsd: number;
+    model?: string;
+    name: string;
+    policyId: string;
+    provider?: string;
+    rungs: Array<Rung> | null;
+    tagKey?: string;
+    tagValue?: string;
+    updatedAt: string;
+    userId?: string;
+    windowType: string;
+};
+
+export type PolicyBodyWritable = {
+    apiKeyId?: string;
+    appId?: string;
+    cooldownMins?: number;
+    destination?: string;
+    destinationType?: 'email' | 'webhook' | '';
+    enabled?: boolean;
+    environmentId?: string;
+    /**
+     * the 100% amount in USD
+     */
+    limitUsd: number;
+    /**
+     * model prefix; empty = all models
+     */
+    model?: string;
+    name: string;
+    provider?: string;
+    /**
+     * ordered ladder: each rung is {atPercent, action, blockMode?, fallbackModel?}
+     */
+    rungs: Array<Rung> | null;
+    tagKey?: string;
+    tagValue?: string;
+    userId?: string;
+    windowType: 'daily' | 'weekly' | 'monthly' | 'cumulative';
+};
+
 export type RuleDtoWritable = {
     action: string;
     createdAt: string;
@@ -1791,6 +2017,7 @@ export type RuleDtoWritable = {
     name: string;
     pattern: string;
     ruleId: string;
+    target: string;
 };
 
 export type SearchEventsOutputBodyWritable = {
@@ -2458,7 +2685,7 @@ export type AnalyticsBreakdownData = {
         /**
          * Breakdown dimension (default model)
          */
-        dimension?: 'model' | 'provider';
+        dimension?: 'model' | 'provider' | 'agent' | 'tool';
         /**
          * Top-N entries (default 50, max 500)
          */
@@ -2820,10 +3047,52 @@ export type AuditListResponses = {
     /**
      * OK
      */
-    200: ListOutputBody2;
+    200: ListOutputBody3;
 };
 
 export type AuditListResponse = AuditListResponses[keyof AuditListResponses];
+
+export type AudittrailGetData = {
+    body?: never;
+    path?: never;
+    query?: {
+        /**
+         * Window start (RFC3339); defaults to 24h before until
+         */
+        since?: string;
+        /**
+         * Window end (RFC3339); defaults to now
+         */
+        until?: string;
+        /**
+         * Restrict to a single trace
+         */
+        traceId?: string;
+        /**
+         * Max rows (default 1000, max 10000)
+         */
+        limit?: number;
+    };
+    url: '/audit-trail';
+};
+
+export type AudittrailGetErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type AudittrailGetError = AudittrailGetErrors[keyof AudittrailGetErrors];
+
+export type AudittrailGetResponses = {
+    /**
+     * OK
+     */
+    200: GetOutputBody;
+};
+
+export type AudittrailGetResponse = AudittrailGetResponses[keyof AudittrailGetResponses];
 
 export type BillingCheckoutData = {
     body: CheckoutInputBodyWritable;
@@ -3185,6 +3454,22 @@ export type EventsSearchData = {
          */
         traceId?: string;
         /**
+         * Filter by agent id
+         */
+        agentId?: string;
+        /**
+         * Filter by agent name
+         */
+        agentName?: string;
+        /**
+         * Filter by tool name
+         */
+        toolName?: string;
+        /**
+         * Filter by semantic kind (agent, tool, llm, retriever, db, http, log)
+         */
+        semanticKind?: string;
+        /**
          * Case-insensitive contains match on search text
          */
         q?: string;
@@ -3240,7 +3525,7 @@ export type ExportListResponses = {
     /**
      * OK
      */
-    200: ListOutputBody1;
+    200: ListOutputBody2;
 };
 
 export type ExportListResponse = ExportListResponses[keyof ExportListResponses];
@@ -3455,6 +3740,40 @@ export type LicenseGetResponses = {
 };
 
 export type LicenseGetResponse = LicenseGetResponses[keyof LicenseGetResponses];
+
+export type ModerationEfficacyData = {
+    body?: never;
+    path?: never;
+    query?: {
+        /**
+         * Window start (RFC3339); defaults to 24h before until
+         */
+        since?: string;
+        /**
+         * Window end (RFC3339); defaults to now
+         */
+        until?: string;
+    };
+    url: '/moderation/efficacy';
+};
+
+export type ModerationEfficacyErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type ModerationEfficacyError = ModerationEfficacyErrors[keyof ModerationEfficacyErrors];
+
+export type ModerationEfficacyResponses = {
+    /**
+     * OK
+     */
+    200: EfficacyOutputBody;
+};
+
+export type ModerationEfficacyResponse = ModerationEfficacyResponses[keyof ModerationEfficacyResponses];
 
 export type ModerationRulesListData = {
     body?: never;
@@ -3963,6 +4282,110 @@ export type TokensRevokeResponses = {
 
 export type TokensRevokeResponse = TokensRevokeResponses[keyof TokensRevokeResponses];
 
+export type SpendPoliciesListData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/spend-policies';
+};
+
+export type SpendPoliciesListErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type SpendPoliciesListError = SpendPoliciesListErrors[keyof SpendPoliciesListErrors];
+
+export type SpendPoliciesListResponses = {
+    /**
+     * OK
+     */
+    200: ListOutputBody;
+};
+
+export type SpendPoliciesListResponse = SpendPoliciesListResponses[keyof SpendPoliciesListResponses];
+
+export type SpendPoliciesCreateData = {
+    body: PolicyBodyWritable;
+    path?: never;
+    query?: never;
+    url: '/spend-policies';
+};
+
+export type SpendPoliciesCreateErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type SpendPoliciesCreateError = SpendPoliciesCreateErrors[keyof SpendPoliciesCreateErrors];
+
+export type SpendPoliciesCreateResponses = {
+    /**
+     * Created
+     */
+    201: Policy;
+};
+
+export type SpendPoliciesCreateResponse = SpendPoliciesCreateResponses[keyof SpendPoliciesCreateResponses];
+
+export type SpendPoliciesDeleteData = {
+    body?: never;
+    path: {
+        policyId: string;
+    };
+    query?: never;
+    url: '/spend-policies/{policyId}';
+};
+
+export type SpendPoliciesDeleteErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type SpendPoliciesDeleteError = SpendPoliciesDeleteErrors[keyof SpendPoliciesDeleteErrors];
+
+export type SpendPoliciesDeleteResponses = {
+    /**
+     * OK
+     */
+    200: OkOutputBody;
+};
+
+export type SpendPoliciesDeleteResponse = SpendPoliciesDeleteResponses[keyof SpendPoliciesDeleteResponses];
+
+export type SpendPoliciesUpdateData = {
+    body: PolicyBodyWritable;
+    path: {
+        policyId: string;
+    };
+    query?: never;
+    url: '/spend-policies/{policyId}';
+};
+
+export type SpendPoliciesUpdateErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type SpendPoliciesUpdateError = SpendPoliciesUpdateErrors[keyof SpendPoliciesUpdateErrors];
+
+export type SpendPoliciesUpdateResponses = {
+    /**
+     * OK
+     */
+    200: Policy;
+};
+
+export type SpendPoliciesUpdateResponse = SpendPoliciesUpdateResponses[keyof SpendPoliciesUpdateResponses];
+
 export type TracesListData = {
     body?: never;
     path?: never;
@@ -4152,7 +4575,7 @@ export type AlertsListResponses = {
     /**
      * OK
      */
-    200: ListOutputBody;
+    200: ListOutputBody1;
 };
 
 export type AlertsListResponse = AlertsListResponses[keyof AlertsListResponses];

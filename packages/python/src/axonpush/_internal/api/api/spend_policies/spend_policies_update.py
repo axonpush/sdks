@@ -7,35 +7,38 @@ import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
 from ...models.error_model import ErrorModel
-from ...models.list_output_body_2 import ListOutputBody2
-from ...types import UNSET, Response, Unset
+from ...models.policy import Policy
+from ...models.policy_body import PolicyBody
+from ...types import UNSET, Response
 
 
 def _get_kwargs(
+    policy_id: str,
     *,
-    env_slug: str | Unset = UNSET,
+    body: PolicyBody,
 ) -> dict[str, Any]:
-
-    params: dict[str, Any] = {}
-
-    params["envSlug"] = env_slug
-
-    params = {k: v for k, v in params.items() if v is not UNSET and v is not None}
+    headers: dict[str, Any] = {}
 
     _kwargs: dict[str, Any] = {
-        "method": "get",
-        "url": "/export-destinations",
-        "params": params,
+        "method": "patch",
+        "url": "/spend-policies/{policy_id}".format(
+            policy_id=quote(str(policy_id), safe=""),
+        ),
     }
 
+    _kwargs["json"] = body.to_dict()
+
+    headers["Content-Type"] = "application/json"
+
+    _kwargs["headers"] = headers
     return _kwargs
 
 
 def _parse_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> ErrorModel | ListOutputBody2:
+) -> ErrorModel | Policy:
     if response.status_code == 200:
-        response_200 = ListOutputBody2.from_dict(response.json())
+        response_200 = Policy.from_dict(response.json())
 
         return response_200
 
@@ -46,7 +49,7 @@ def _parse_response(
 
 def _build_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> Response[ErrorModel | ListOutputBody2]:
+) -> Response[ErrorModel | Policy]:
     return Response(
         status_code=HTTPStatus(response.status_code),
         content=response.content,
@@ -56,25 +59,28 @@ def _build_response(
 
 
 def sync_detailed(
+    policy_id: str,
     *,
     client: AuthenticatedClient | Client,
-    env_slug: str | Unset = UNSET,
-) -> Response[ErrorModel | ListOutputBody2]:
-    """List export destinations
+    body: PolicyBody,
+) -> Response[ErrorModel | Policy]:
+    """Update a spend policy
 
     Args:
-        env_slug (str | Unset):
+        policy_id (str):
+        body (PolicyBody):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[ErrorModel | ListOutputBody2]
+        Response[ErrorModel | Policy]
     """
 
     kwargs = _get_kwargs(
-        env_slug=env_slug,
+        policy_id=policy_id,
+        body=body,
     )
 
     response = client.get_httpx_client().request(
@@ -85,49 +91,55 @@ def sync_detailed(
 
 
 def sync(
+    policy_id: str,
     *,
     client: AuthenticatedClient | Client,
-    env_slug: str | Unset = UNSET,
-) -> ErrorModel | ListOutputBody2 | None:
-    """List export destinations
+    body: PolicyBody,
+) -> ErrorModel | Policy | None:
+    """Update a spend policy
 
     Args:
-        env_slug (str | Unset):
+        policy_id (str):
+        body (PolicyBody):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        ErrorModel | ListOutputBody2
+        ErrorModel | Policy
     """
 
     return sync_detailed(
+        policy_id=policy_id,
         client=client,
-        env_slug=env_slug,
+        body=body,
     ).parsed
 
 
 async def asyncio_detailed(
+    policy_id: str,
     *,
     client: AuthenticatedClient | Client,
-    env_slug: str | Unset = UNSET,
-) -> Response[ErrorModel | ListOutputBody2]:
-    """List export destinations
+    body: PolicyBody,
+) -> Response[ErrorModel | Policy]:
+    """Update a spend policy
 
     Args:
-        env_slug (str | Unset):
+        policy_id (str):
+        body (PolicyBody):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[ErrorModel | ListOutputBody2]
+        Response[ErrorModel | Policy]
     """
 
     kwargs = _get_kwargs(
-        env_slug=env_slug,
+        policy_id=policy_id,
+        body=body,
     )
 
     response = await client.get_async_httpx_client().request(**kwargs)
@@ -136,26 +148,29 @@ async def asyncio_detailed(
 
 
 async def asyncio(
+    policy_id: str,
     *,
     client: AuthenticatedClient | Client,
-    env_slug: str | Unset = UNSET,
-) -> ErrorModel | ListOutputBody2 | None:
-    """List export destinations
+    body: PolicyBody,
+) -> ErrorModel | Policy | None:
+    """Update a spend policy
 
     Args:
-        env_slug (str | Unset):
+        policy_id (str):
+        body (PolicyBody):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        ErrorModel | ListOutputBody2
+        ErrorModel | Policy
     """
 
     return (
         await asyncio_detailed(
+            policy_id=policy_id,
             client=client,
-            env_slug=env_slug,
+            body=body,
         )
     ).parsed

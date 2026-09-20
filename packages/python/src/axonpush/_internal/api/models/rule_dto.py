@@ -22,6 +22,7 @@ class RuleDTO:
         name (str):
         pattern (str):
         rule_id (str):
+        target (str):
         schema (str | Unset): A URL to the JSON Schema for this object.
     """
 
@@ -32,6 +33,7 @@ class RuleDTO:
     name: str
     pattern: str
     rule_id: str
+    target: str
     schema: str | Unset = UNSET
 
     def to_dict(self) -> dict[str, Any]:
@@ -49,6 +51,8 @@ class RuleDTO:
 
         rule_id = self.rule_id
 
+        target = self.target
+
         schema = self.schema
 
         field_dict: dict[str, Any] = {}
@@ -62,6 +66,7 @@ class RuleDTO:
                 "name": name,
                 "pattern": pattern,
                 "ruleId": rule_id,
+                "target": target,
             }
         )
         if schema is not UNSET:
@@ -86,6 +91,8 @@ class RuleDTO:
 
         rule_id = d.pop("ruleId")
 
+        target = d.pop("target")
+
         schema = d.pop("$schema", UNSET)
 
         rule_dto = cls(
@@ -96,6 +103,7 @@ class RuleDTO:
             name=name,
             pattern=pattern,
             rule_id=rule_id,
+            target=target,
             schema=schema,
         )
 

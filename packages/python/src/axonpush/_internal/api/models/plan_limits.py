@@ -21,7 +21,6 @@ class PlanLimits:
     """
     Attributes:
         events (int | None):
-        experiments_monthly (int | None):
         features (PlanFeatures):
         hot_retention_days (int | None):
         price_annual_usd (int | None):
@@ -32,7 +31,6 @@ class PlanLimits:
     """
 
     events: int | None
-    experiments_monthly: int | None
     features: PlanFeatures
     hot_retention_days: int | None
     price_annual_usd: int | None
@@ -47,9 +45,6 @@ class PlanLimits:
 
         events: int | None
         events = self.events
-
-        experiments_monthly: int | None
-        experiments_monthly = self.experiments_monthly
 
         features = self.features.to_dict()
 
@@ -77,7 +72,6 @@ class PlanLimits:
         field_dict.update(
             {
                 "events": events,
-                "experimentsMonthly": experiments_monthly,
                 "features": features,
                 "hotRetentionDays": hot_retention_days,
                 "priceAnnualUsd": price_annual_usd,
@@ -104,13 +98,6 @@ class PlanLimits:
             return cast(int | None, data)
 
         events = _parse_events(d.pop("events"))
-
-        def _parse_experiments_monthly(data: object) -> int | None:
-            if data is None:
-                return data
-            return cast(int | None, data)
-
-        experiments_monthly = _parse_experiments_monthly(d.pop("experimentsMonthly"))
 
         features = PlanFeatures.from_dict(d.pop("features"))
 
@@ -158,7 +145,6 @@ class PlanLimits:
 
         plan_limits = cls(
             events=events,
-            experiments_monthly=experiments_monthly,
             features=features,
             hot_retention_days=hot_retention_days,
             price_annual_usd=price_annual_usd,

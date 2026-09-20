@@ -226,6 +226,28 @@
         ],
         "type": "object"
       },
+      "AuditCapability": {
+        "additionalProperties": false,
+        "properties": {
+          "enabled": {
+            "type": "boolean"
+          },
+          "formats": {
+            "items": {
+              "type": "string"
+            },
+            "type": [
+              "array",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "enabled",
+          "formats"
+        ],
+        "type": "object"
+      },
       "BillingEventDTO": {
         "additionalProperties": false,
         "properties": {
@@ -291,9 +313,17 @@
       "BreakdownRowDTO": {
         "additionalProperties": false,
         "properties": {
+          "avgDurationMs": {
+            "format": "double",
+            "type": "number"
+          },
           "costUsd": {
             "format": "double",
             "type": "number"
+          },
+          "errorCount": {
+            "format": "int64",
+            "type": "integer"
           },
           "eventCount": {
             "format": "int64",
@@ -335,6 +365,9 @@
               "null"
             ]
           },
+          "controls": {
+            "$ref": "#/components/schemas/Controls"
+          },
           "featureFlags": {
             "$ref": "#/components/schemas/FeatureFlags"
           },
@@ -349,7 +382,8 @@
           "version",
           "featureFlags",
           "license",
-          "apiKeyScopes"
+          "apiKeyScopes",
+          "controls"
         ],
         "type": "object"
       },
@@ -416,6 +450,26 @@
         },
         "required": [
           "plan"
+        ],
+        "type": "object"
+      },
+      "Controls": {
+        "additionalProperties": false,
+        "properties": {
+          "auditTrail": {
+            "$ref": "#/components/schemas/AuditCapability"
+          },
+          "inlineModeration": {
+            "$ref": "#/components/schemas/ModerationCapability"
+          },
+          "spendPolicies": {
+            "$ref": "#/components/schemas/SpendPolicyCapability"
+          }
+        },
+        "required": [
+          "inlineModeration",
+          "spendPolicies",
+          "auditTrail"
         ],
         "type": "object"
       },
@@ -930,7 +984,7 @@
             "type": "string"
           },
           "detector": {
-            "description": "builtin detector name, or 'regex'/'keyword'",
+            "description": "builtin detector name, or 'regex'/'keyword'/'tool_name'/'tool_arg'",
             "type": "string"
           },
           "name": {
@@ -939,6 +993,16 @@
             "type": "string"
           },
           "pattern": {
+            "description": "regex/keyword; tool name for tool_name; a JSON-path expression for tool_arg (e.g. 'amount \u003e 10000', 'account =~ ^ext-')",
+            "type": "string"
+          },
+          "target": {
+            "description": "which part of the loop to evaluate (default request)",
+            "enum": [
+              "request",
+              "response",
+              "tool_call"
+            ],
             "type": "string"
           }
         },
@@ -1040,6 +1104,60 @@
           "environmentId",
           "active",
           "createdAt"
+        ],
+        "type": "object"
+      },
+      "DecisionDTO": {
+        "additionalProperties": false,
+        "properties": {
+          "appId": {
+            "type": "string"
+          },
+          "budgetApproaching": {
+            "type": "string"
+          },
+          "costUsd": {
+            "format": "double",
+            "type": "number"
+          },
+          "enforcementAction": {
+            "type": "string"
+          },
+          "eventType": {
+            "type": "string"
+          },
+          "model": {
+            "type": "string"
+          },
+          "occurredAt": {
+            "type": "string"
+          },
+          "parentSpanId": {
+            "type": "string"
+          },
+          "provider": {
+            "type": "string"
+          },
+          "semanticKind": {
+            "type": "string"
+          },
+          "spanId": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          },
+          "toolName": {
+            "type": "string"
+          },
+          "traceId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "occurredAt",
+          "eventType",
+          "costUsd"
         ],
         "type": "object"
       },
@@ -1183,6 +1301,68 @@
           "headerKeys",
           "active",
           "createdAt"
+        ],
+        "type": "object"
+      },
+      "EfficacyOutputBody": {
+        "additionalProperties": false,
+        "properties": {
+          "$schema": {
+            "description": "A URL to the JSON Schema for this object.",
+            "examples": [
+              "https://example.com/schemas/EfficacyOutputBody.json"
+            ],
+            "format": "uri",
+            "readOnly": true,
+            "type": "string"
+          },
+          "rows": {
+            "items": {
+              "$ref": "#/components/schemas/EfficacyRowDTO"
+            },
+            "type": [
+              "array",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "rows"
+        ],
+        "type": "object"
+      },
+      "EfficacyRowDTO": {
+        "additionalProperties": false,
+        "properties": {
+          "action": {
+            "type": "string"
+          },
+          "avgLatencyMs": {
+            "format": "double",
+            "type": "number"
+          },
+          "detector": {
+            "type": "string"
+          },
+          "maxLatencyMs": {
+            "format": "double",
+            "type": "number"
+          },
+          "target": {
+            "type": "string"
+          },
+          "violationCount": {
+            "format": "int64",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "action",
+          "detector",
+          "target",
+          "violationCount",
+          "avgLatencyMs",
+          "maxLatencyMs"
         ],
         "type": "object"
       },
@@ -1723,6 +1903,33 @@
         ],
         "type": "object"
       },
+      "GetOutputBody": {
+        "additionalProperties": false,
+        "properties": {
+          "$schema": {
+            "description": "A URL to the JSON Schema for this object.",
+            "examples": [
+              "https://example.com/schemas/GetOutputBody.json"
+            ],
+            "format": "uri",
+            "readOnly": true,
+            "type": "string"
+          },
+          "decisions": {
+            "items": {
+              "$ref": "#/components/schemas/DecisionDTO"
+            },
+            "type": [
+              "array",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "decisions"
+        ],
+        "type": "object"
+      },
       "GetTraceOutputBody": {
         "additionalProperties": false,
         "properties": {
@@ -2236,6 +2443,33 @@
             "readOnly": true,
             "type": "string"
           },
+          "policies": {
+            "items": {
+              "$ref": "#/components/schemas/Policy"
+            },
+            "type": [
+              "array",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "policies"
+        ],
+        "type": "object"
+      },
+      "ListOutputBody1": {
+        "additionalProperties": false,
+        "properties": {
+          "$schema": {
+            "description": "A URL to the JSON Schema for this object.",
+            "examples": [
+              "https://example.com/schemas/ListOutputBody1.json"
+            ],
+            "format": "uri",
+            "readOnly": true,
+            "type": "string"
+          },
           "data": {
             "items": {
               "$ref": "#/components/schemas/AlertRuleDTO"
@@ -2251,13 +2485,13 @@
         ],
         "type": "object"
       },
-      "ListOutputBody1": {
+      "ListOutputBody2": {
         "additionalProperties": false,
         "properties": {
           "$schema": {
             "description": "A URL to the JSON Schema for this object.",
             "examples": [
-              "https://example.com/schemas/ListOutputBody1.json"
+              "https://example.com/schemas/ListOutputBody2.json"
             ],
             "format": "uri",
             "readOnly": true,
@@ -2278,13 +2512,13 @@
         ],
         "type": "object"
       },
-      "ListOutputBody2": {
+      "ListOutputBody3": {
         "additionalProperties": false,
         "properties": {
           "$schema": {
             "description": "A URL to the JSON Schema for this object.",
             "examples": [
-              "https://example.com/schemas/ListOutputBody2.json"
+              "https://example.com/schemas/ListOutputBody3.json"
             ],
             "format": "uri",
             "readOnly": true,
@@ -2587,6 +2821,48 @@
         ],
         "type": "object"
       },
+      "ModerationCapability": {
+        "additionalProperties": false,
+        "properties": {
+          "actions": {
+            "items": {
+              "type": "string"
+            },
+            "type": [
+              "array",
+              "null"
+            ]
+          },
+          "detectors": {
+            "items": {
+              "type": "string"
+            },
+            "type": [
+              "array",
+              "null"
+            ]
+          },
+          "enabled": {
+            "type": "boolean"
+          },
+          "targets": {
+            "items": {
+              "type": "string"
+            },
+            "type": [
+              "array",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "enabled",
+          "targets",
+          "detectors",
+          "actions"
+        ],
+        "type": "object"
+      },
       "OkOutputBody": {
         "additionalProperties": false,
         "properties": {
@@ -2843,13 +3119,6 @@
               "null"
             ]
           },
-          "experimentsMonthly": {
-            "format": "int64",
-            "type": [
-              "integer",
-              "null"
-            ]
-          },
           "features": {
             "$ref": "#/components/schemas/PlanFeatures"
           },
@@ -2900,7 +3169,6 @@
           "retentionDays",
           "hotRetentionDays",
           "seats",
-          "experimentsMonthly",
           "priceMonthlyUsd",
           "priceAnnualUsd",
           "features"
@@ -2928,6 +3196,194 @@
         },
         "required": [
           "plans"
+        ],
+        "type": "object"
+      },
+      "Policy": {
+        "additionalProperties": false,
+        "properties": {
+          "$schema": {
+            "description": "A URL to the JSON Schema for this object.",
+            "examples": [
+              "https://example.com/schemas/Policy.json"
+            ],
+            "format": "uri",
+            "readOnly": true,
+            "type": "string"
+          },
+          "apiKeyId": {
+            "type": "string"
+          },
+          "appId": {
+            "type": "string"
+          },
+          "cooldownMins": {
+            "format": "int32",
+            "type": "integer"
+          },
+          "createdAt": {
+            "type": "string"
+          },
+          "currentSpendUsd": {
+            "format": "double",
+            "type": "number"
+          },
+          "destination": {
+            "type": "string"
+          },
+          "destinationType": {
+            "type": "string"
+          },
+          "enabled": {
+            "type": "boolean"
+          },
+          "environmentId": {
+            "type": "string"
+          },
+          "limitUsd": {
+            "format": "double",
+            "type": "number"
+          },
+          "model": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "policyId": {
+            "type": "string"
+          },
+          "provider": {
+            "type": "string"
+          },
+          "rungs": {
+            "items": {
+              "$ref": "#/components/schemas/Rung"
+            },
+            "type": [
+              "array",
+              "null"
+            ]
+          },
+          "tagKey": {
+            "type": "string"
+          },
+          "tagValue": {
+            "type": "string"
+          },
+          "updatedAt": {
+            "type": "string"
+          },
+          "userId": {
+            "type": "string"
+          },
+          "windowType": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "policyId",
+          "name",
+          "enabled",
+          "windowType",
+          "limitUsd",
+          "rungs",
+          "cooldownMins",
+          "createdAt",
+          "updatedAt"
+        ],
+        "type": "object"
+      },
+      "PolicyBody": {
+        "additionalProperties": false,
+        "properties": {
+          "$schema": {
+            "description": "A URL to the JSON Schema for this object.",
+            "examples": [
+              "https://example.com/schemas/PolicyBody.json"
+            ],
+            "format": "uri",
+            "readOnly": true,
+            "type": "string"
+          },
+          "apiKeyId": {
+            "type": "string"
+          },
+          "appId": {
+            "type": "string"
+          },
+          "cooldownMins": {
+            "format": "int32",
+            "type": "integer"
+          },
+          "destination": {
+            "type": "string"
+          },
+          "destinationType": {
+            "enum": [
+              "email",
+              "webhook",
+              ""
+            ],
+            "type": "string"
+          },
+          "enabled": {
+            "type": "boolean"
+          },
+          "environmentId": {
+            "type": "string"
+          },
+          "limitUsd": {
+            "description": "the 100% amount in USD",
+            "format": "double",
+            "type": "number"
+          },
+          "model": {
+            "description": "model prefix; empty = all models",
+            "type": "string"
+          },
+          "name": {
+            "maxLength": 120,
+            "minLength": 1,
+            "type": "string"
+          },
+          "provider": {
+            "type": "string"
+          },
+          "rungs": {
+            "description": "ordered ladder: each rung is {atPercent, action, blockMode?, fallbackModel?}",
+            "items": {
+              "$ref": "#/components/schemas/Rung"
+            },
+            "type": [
+              "array",
+              "null"
+            ]
+          },
+          "tagKey": {
+            "type": "string"
+          },
+          "tagValue": {
+            "type": "string"
+          },
+          "userId": {
+            "type": "string"
+          },
+          "windowType": {
+            "enum": [
+              "daily",
+              "weekly",
+              "monthly",
+              "cumulative"
+            ],
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "windowType",
+          "limitUsd",
+          "rungs"
         ],
         "type": "object"
       },
@@ -3009,6 +3465,9 @@
           },
           "ruleId": {
             "type": "string"
+          },
+          "target": {
+            "type": "string"
           }
         },
         "required": [
@@ -3017,8 +3476,32 @@
           "detector",
           "pattern",
           "action",
+          "target",
           "enabled",
           "createdAt"
+        ],
+        "type": "object"
+      },
+      "Rung": {
+        "additionalProperties": false,
+        "properties": {
+          "action": {
+            "type": "string"
+          },
+          "at_percent": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "block_mode": {
+            "type": "string"
+          },
+          "fallback_model": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "at_percent",
+          "action"
         ],
         "type": "object"
       },
@@ -3261,6 +3744,48 @@
         },
         "required": [
           "days"
+        ],
+        "type": "object"
+      },
+      "SpendPolicyCapability": {
+        "additionalProperties": false,
+        "properties": {
+          "actions": {
+            "items": {
+              "type": "string"
+            },
+            "type": [
+              "array",
+              "null"
+            ]
+          },
+          "dimensions": {
+            "items": {
+              "type": "string"
+            },
+            "type": [
+              "array",
+              "null"
+            ]
+          },
+          "enabled": {
+            "type": "boolean"
+          },
+          "windows": {
+            "items": {
+              "type": "string"
+            },
+            "type": [
+              "array",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "enabled",
+          "windows",
+          "actions",
+          "dimensions"
         ],
         "type": "object"
       },
@@ -3852,6 +4377,13 @@
           "detector": {
             "type": "string"
           },
+          "explanation": {
+            "type": "string"
+          },
+          "latencyMs": {
+            "format": "double",
+            "type": "number"
+          },
           "occurredAt": {
             "type": "string"
           },
@@ -3859,6 +4391,12 @@
             "type": "string"
           },
           "ruleName": {
+            "type": "string"
+          },
+          "target": {
+            "type": "string"
+          },
+          "traceId": {
             "type": "string"
           },
           "violationId": {
@@ -3871,6 +4409,7 @@
           "ruleName",
           "detector",
           "action",
+          "target",
           "occurredAt"
         ],
         "type": "object"
@@ -4768,7 +5307,9 @@
               "description": "Breakdown dimension (default model)",
               "enum": [
                 "model",
-                "provider"
+                "provider",
+                "agent",
+                "tool"
               ],
               "type": "string"
             }
@@ -4807,7 +5348,7 @@
             "description": "Error"
           }
         },
-        "summary": "Top-N breakdown by model or provider",
+        "summary": "Top-N breakdown by model, provider, agent, or tool",
         "tags": [
           "analytics"
         ]
@@ -5370,7 +5911,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ListOutputBody2"
+                  "$ref": "#/components/schemas/ListOutputBody3"
                 }
               }
             },
@@ -5390,6 +5931,80 @@
         "summary": "List audit log entries",
         "tags": [
           "audit-logs"
+        ]
+      }
+    },
+    "/audit-trail": {
+      "get": {
+        "operationId": "audittrail.get",
+        "parameters": [
+          {
+            "description": "Window start (RFC3339); defaults to 24h before until",
+            "explode": false,
+            "in": "query",
+            "name": "since",
+            "schema": {
+              "description": "Window start (RFC3339); defaults to 24h before until",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Window end (RFC3339); defaults to now",
+            "explode": false,
+            "in": "query",
+            "name": "until",
+            "schema": {
+              "description": "Window end (RFC3339); defaults to now",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Restrict to a single trace",
+            "explode": false,
+            "in": "query",
+            "name": "traceId",
+            "schema": {
+              "description": "Restrict to a single trace",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Max rows (default 1000, max 10000)",
+            "explode": false,
+            "in": "query",
+            "name": "limit",
+            "schema": {
+              "description": "Max rows (default 1000, max 10000)",
+              "format": "int64",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetOutputBody"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "summary": "Query and export the decision audit trail",
+        "tags": [
+          "audit-trail"
         ]
       }
     },
@@ -5988,6 +6603,46 @@
             }
           },
           {
+            "description": "Filter by agent id",
+            "explode": false,
+            "in": "query",
+            "name": "agentId",
+            "schema": {
+              "description": "Filter by agent id",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Filter by agent name",
+            "explode": false,
+            "in": "query",
+            "name": "agentName",
+            "schema": {
+              "description": "Filter by agent name",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Filter by tool name",
+            "explode": false,
+            "in": "query",
+            "name": "toolName",
+            "schema": {
+              "description": "Filter by tool name",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Filter by semantic kind (agent, tool, llm, retriever, db, http, log)",
+            "explode": false,
+            "in": "query",
+            "name": "semanticKind",
+            "schema": {
+              "description": "Filter by semantic kind (agent, tool, llm, retriever, db, http, log)",
+              "type": "string"
+            }
+          },
+          {
             "description": "Case-insensitive contains match on search text",
             "explode": false,
             "in": "query",
@@ -6064,7 +6719,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ListOutputBody1"
+                  "$ref": "#/components/schemas/ListOutputBody2"
                 }
               }
             },
@@ -6406,6 +7061,59 @@
         "summary": "Get deployment licence state",
         "tags": [
           "license"
+        ]
+      }
+    },
+    "/moderation/efficacy": {
+      "get": {
+        "operationId": "moderation.efficacy",
+        "parameters": [
+          {
+            "description": "Window start (RFC3339); defaults to 24h before until",
+            "explode": false,
+            "in": "query",
+            "name": "since",
+            "schema": {
+              "description": "Window start (RFC3339); defaults to 24h before until",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Window end (RFC3339); defaults to now",
+            "explode": false,
+            "in": "query",
+            "name": "until",
+            "schema": {
+              "description": "Window end (RFC3339); defaults to now",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EfficacyOutputBody"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "summary": "Guardrail efficacy + latency",
+        "tags": [
+          "moderation"
         ]
       }
     },
@@ -7208,6 +7916,166 @@
         ]
       }
     },
+    "/spend-policies": {
+      "get": {
+        "operationId": "spend-policies.list",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListOutputBody"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "summary": "List spend policies",
+        "tags": [
+          "spend-policies"
+        ]
+      },
+      "post": {
+        "operationId": "spend-policies.create",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PolicyBody"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Policy"
+                }
+              }
+            },
+            "description": "Created"
+          },
+          "default": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "summary": "Create a spend policy",
+        "tags": [
+          "spend-policies"
+        ]
+      }
+    },
+    "/spend-policies/{policyId}": {
+      "delete": {
+        "operationId": "spend-policies.delete",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "policyId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OkOutputBody"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "summary": "Delete a spend policy",
+        "tags": [
+          "spend-policies"
+        ]
+      },
+      "patch": {
+        "operationId": "spend-policies.update",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "policyId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PolicyBody"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Policy"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "summary": "Update a spend policy",
+        "tags": [
+          "spend-policies"
+        ]
+      }
+    },
     "/traces": {
       "get": {
         "operationId": "traces.list",
@@ -7477,7 +8345,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ListOutputBody"
+                  "$ref": "#/components/schemas/ListOutputBody1"
                 }
               }
             },
