@@ -18,12 +18,16 @@ class BreakdownRowDTO:
         cost_usd (float):
         event_count (int):
         key (str):
+        avg_duration_ms (float | Unset):
+        error_count (int | Unset):
         total_tokens (int | Unset):
     """
 
     cost_usd: float
     event_count: int
     key: str
+    avg_duration_ms: float | Unset = UNSET
+    error_count: int | Unset = UNSET
     total_tokens: int | Unset = UNSET
 
     def to_dict(self) -> dict[str, Any]:
@@ -32,6 +36,10 @@ class BreakdownRowDTO:
         event_count = self.event_count
 
         key = self.key
+
+        avg_duration_ms = self.avg_duration_ms
+
+        error_count = self.error_count
 
         total_tokens = self.total_tokens
 
@@ -44,6 +52,10 @@ class BreakdownRowDTO:
                 "key": key,
             }
         )
+        if avg_duration_ms is not UNSET:
+            field_dict["avgDurationMs"] = avg_duration_ms
+        if error_count is not UNSET:
+            field_dict["errorCount"] = error_count
         if total_tokens is not UNSET:
             field_dict["totalTokens"] = total_tokens
 
@@ -58,12 +70,18 @@ class BreakdownRowDTO:
 
         key = d.pop("key")
 
+        avg_duration_ms = d.pop("avgDurationMs", UNSET)
+
+        error_count = d.pop("errorCount", UNSET)
+
         total_tokens = d.pop("totalTokens", UNSET)
 
         breakdown_row_dto = cls(
             cost_usd=cost_usd,
             event_count=event_count,
             key=key,
+            avg_duration_ms=avg_duration_ms,
+            error_count=error_count,
             total_tokens=total_tokens,
         )
 

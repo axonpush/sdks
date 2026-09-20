@@ -10,6 +10,7 @@ from ..types import UNSET, Unset
 
 if TYPE_CHECKING:
     from ..models.api_key_scope import ApiKeyScope
+    from ..models.controls import Controls
     from ..models.feature_flags import FeatureFlags
     from ..models.license_status import LicenseStatus
 
@@ -22,6 +23,7 @@ class CapabilitiesOutputBody:
     """
     Attributes:
         api_key_scopes (list[ApiKeyScope] | None):
+        controls (Controls):
         feature_flags (FeatureFlags):
         license_ (LicenseStatus):
         version (str):
@@ -29,6 +31,7 @@ class CapabilitiesOutputBody:
     """
 
     api_key_scopes: list[ApiKeyScope] | None
+    controls: Controls
     feature_flags: FeatureFlags
     license_: LicenseStatus
     version: str
@@ -36,6 +39,7 @@ class CapabilitiesOutputBody:
 
     def to_dict(self) -> dict[str, Any]:
         from ..models.api_key_scope import ApiKeyScope
+        from ..models.controls import Controls
         from ..models.feature_flags import FeatureFlags
         from ..models.license_status import LicenseStatus
 
@@ -48,6 +52,8 @@ class CapabilitiesOutputBody:
 
         else:
             api_key_scopes = self.api_key_scopes
+
+        controls = self.controls.to_dict()
 
         feature_flags = self.feature_flags.to_dict()
 
@@ -62,6 +68,7 @@ class CapabilitiesOutputBody:
         field_dict.update(
             {
                 "apiKeyScopes": api_key_scopes,
+                "controls": controls,
                 "featureFlags": feature_flags,
                 "license": license_,
                 "version": version,
@@ -75,6 +82,7 @@ class CapabilitiesOutputBody:
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         from ..models.api_key_scope import ApiKeyScope
+        from ..models.controls import Controls
         from ..models.feature_flags import FeatureFlags
         from ..models.license_status import LicenseStatus
 
@@ -102,6 +110,8 @@ class CapabilitiesOutputBody:
 
         api_key_scopes = _parse_api_key_scopes(d.pop("apiKeyScopes"))
 
+        controls = Controls.from_dict(d.pop("controls"))
+
         feature_flags = FeatureFlags.from_dict(d.pop("featureFlags"))
 
         license_ = LicenseStatus.from_dict(d.pop("license"))
@@ -112,6 +122,7 @@ class CapabilitiesOutputBody:
 
         capabilities_output_body = cls(
             api_key_scopes=api_key_scopes,
+            controls=controls,
             feature_flags=feature_flags,
             license_=license_,
             version=version,

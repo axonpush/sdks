@@ -7,25 +7,25 @@ import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
 from ...models.error_model import ErrorModel
-from ...models.list_output_body_3 import ListOutputBody3
+from ...models.get_output_body import GetOutputBody
 from ...types import UNSET, Response, Unset
 
 
 def _get_kwargs(
     *,
-    action: str | Unset = UNSET,
-    resource_type: str | Unset = UNSET,
-    before: str | Unset = UNSET,
-    limit: int | Unset = 50,
+    since: str | Unset = UNSET,
+    until: str | Unset = UNSET,
+    trace_id: str | Unset = UNSET,
+    limit: int | Unset = UNSET,
 ) -> dict[str, Any]:
 
     params: dict[str, Any] = {}
 
-    params["action"] = action
+    params["since"] = since
 
-    params["resourceType"] = resource_type
+    params["until"] = until
 
-    params["before"] = before
+    params["traceId"] = trace_id
 
     params["limit"] = limit
 
@@ -33,7 +33,7 @@ def _get_kwargs(
 
     _kwargs: dict[str, Any] = {
         "method": "get",
-        "url": "/audit-logs",
+        "url": "/audit-trail",
         "params": params,
     }
 
@@ -42,9 +42,9 @@ def _get_kwargs(
 
 def _parse_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> ErrorModel | ListOutputBody3:
+) -> ErrorModel | GetOutputBody:
     if response.status_code == 200:
-        response_200 = ListOutputBody3.from_dict(response.json())
+        response_200 = GetOutputBody.from_dict(response.json())
 
         return response_200
 
@@ -55,7 +55,7 @@ def _parse_response(
 
 def _build_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> Response[ErrorModel | ListOutputBody3]:
+) -> Response[ErrorModel | GetOutputBody]:
     return Response(
         status_code=HTTPStatus(response.status_code),
         content=response.content,
@@ -67,31 +67,31 @@ def _build_response(
 def sync_detailed(
     *,
     client: AuthenticatedClient | Client,
-    action: str | Unset = UNSET,
-    resource_type: str | Unset = UNSET,
-    before: str | Unset = UNSET,
-    limit: int | Unset = 50,
-) -> Response[ErrorModel | ListOutputBody3]:
-    """List audit log entries
+    since: str | Unset = UNSET,
+    until: str | Unset = UNSET,
+    trace_id: str | Unset = UNSET,
+    limit: int | Unset = UNSET,
+) -> Response[ErrorModel | GetOutputBody]:
+    """Query and export the decision audit trail
 
     Args:
-        action (str | Unset):
-        resource_type (str | Unset):
-        before (str | Unset): RFC3339 upper bound (exclusive); defaults to now
-        limit (int | Unset):  Default: 50.
+        since (str | Unset): Window start (RFC3339); defaults to 24h before until
+        until (str | Unset): Window end (RFC3339); defaults to now
+        trace_id (str | Unset): Restrict to a single trace
+        limit (int | Unset): Max rows (default 1000, max 10000)
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[ErrorModel | ListOutputBody3]
+        Response[ErrorModel | GetOutputBody]
     """
 
     kwargs = _get_kwargs(
-        action=action,
-        resource_type=resource_type,
-        before=before,
+        since=since,
+        until=until,
+        trace_id=trace_id,
         limit=limit,
     )
 
@@ -105,32 +105,32 @@ def sync_detailed(
 def sync(
     *,
     client: AuthenticatedClient | Client,
-    action: str | Unset = UNSET,
-    resource_type: str | Unset = UNSET,
-    before: str | Unset = UNSET,
-    limit: int | Unset = 50,
-) -> ErrorModel | ListOutputBody3 | None:
-    """List audit log entries
+    since: str | Unset = UNSET,
+    until: str | Unset = UNSET,
+    trace_id: str | Unset = UNSET,
+    limit: int | Unset = UNSET,
+) -> ErrorModel | GetOutputBody | None:
+    """Query and export the decision audit trail
 
     Args:
-        action (str | Unset):
-        resource_type (str | Unset):
-        before (str | Unset): RFC3339 upper bound (exclusive); defaults to now
-        limit (int | Unset):  Default: 50.
+        since (str | Unset): Window start (RFC3339); defaults to 24h before until
+        until (str | Unset): Window end (RFC3339); defaults to now
+        trace_id (str | Unset): Restrict to a single trace
+        limit (int | Unset): Max rows (default 1000, max 10000)
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        ErrorModel | ListOutputBody3
+        ErrorModel | GetOutputBody
     """
 
     return sync_detailed(
         client=client,
-        action=action,
-        resource_type=resource_type,
-        before=before,
+        since=since,
+        until=until,
+        trace_id=trace_id,
         limit=limit,
     ).parsed
 
@@ -138,31 +138,31 @@ def sync(
 async def asyncio_detailed(
     *,
     client: AuthenticatedClient | Client,
-    action: str | Unset = UNSET,
-    resource_type: str | Unset = UNSET,
-    before: str | Unset = UNSET,
-    limit: int | Unset = 50,
-) -> Response[ErrorModel | ListOutputBody3]:
-    """List audit log entries
+    since: str | Unset = UNSET,
+    until: str | Unset = UNSET,
+    trace_id: str | Unset = UNSET,
+    limit: int | Unset = UNSET,
+) -> Response[ErrorModel | GetOutputBody]:
+    """Query and export the decision audit trail
 
     Args:
-        action (str | Unset):
-        resource_type (str | Unset):
-        before (str | Unset): RFC3339 upper bound (exclusive); defaults to now
-        limit (int | Unset):  Default: 50.
+        since (str | Unset): Window start (RFC3339); defaults to 24h before until
+        until (str | Unset): Window end (RFC3339); defaults to now
+        trace_id (str | Unset): Restrict to a single trace
+        limit (int | Unset): Max rows (default 1000, max 10000)
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[ErrorModel | ListOutputBody3]
+        Response[ErrorModel | GetOutputBody]
     """
 
     kwargs = _get_kwargs(
-        action=action,
-        resource_type=resource_type,
-        before=before,
+        since=since,
+        until=until,
+        trace_id=trace_id,
         limit=limit,
     )
 
@@ -174,33 +174,33 @@ async def asyncio_detailed(
 async def asyncio(
     *,
     client: AuthenticatedClient | Client,
-    action: str | Unset = UNSET,
-    resource_type: str | Unset = UNSET,
-    before: str | Unset = UNSET,
-    limit: int | Unset = 50,
-) -> ErrorModel | ListOutputBody3 | None:
-    """List audit log entries
+    since: str | Unset = UNSET,
+    until: str | Unset = UNSET,
+    trace_id: str | Unset = UNSET,
+    limit: int | Unset = UNSET,
+) -> ErrorModel | GetOutputBody | None:
+    """Query and export the decision audit trail
 
     Args:
-        action (str | Unset):
-        resource_type (str | Unset):
-        before (str | Unset): RFC3339 upper bound (exclusive); defaults to now
-        limit (int | Unset):  Default: 50.
+        since (str | Unset): Window start (RFC3339); defaults to 24h before until
+        until (str | Unset): Window end (RFC3339); defaults to now
+        trace_id (str | Unset): Restrict to a single trace
+        limit (int | Unset): Max rows (default 1000, max 10000)
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        ErrorModel | ListOutputBody3
+        ErrorModel | GetOutputBody
     """
 
     return (
         await asyncio_detailed(
             client=client,
-            action=action,
-            resource_type=resource_type,
-            before=before,
+            since=since,
+            until=until,
+            trace_id=trace_id,
             limit=limit,
         )
     ).parsed

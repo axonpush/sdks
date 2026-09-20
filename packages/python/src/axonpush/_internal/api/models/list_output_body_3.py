@@ -9,25 +9,25 @@ from attrs import field as _attrs_field
 from ..types import UNSET, Unset
 
 if TYPE_CHECKING:
-    from ..models.destination_dto import DestinationDTO
+    from ..models.log_dto import LogDTO
 
 
-T = TypeVar("T", bound="ListOutputBody2")
+T = TypeVar("T", bound="ListOutputBody3")
 
 
 @_attrs_define
-class ListOutputBody2:
+class ListOutputBody3:
     """
     Attributes:
-        data (list[DestinationDTO] | None):
+        data (list[LogDTO] | None):
         schema (str | Unset): A URL to the JSON Schema for this object.
     """
 
-    data: list[DestinationDTO] | None
+    data: list[LogDTO] | None
     schema: str | Unset = UNSET
 
     def to_dict(self) -> dict[str, Any]:
-        from ..models.destination_dto import DestinationDTO
+        from ..models.log_dto import LogDTO
 
         data: list[dict[str, Any]] | None
         if isinstance(self.data, list):
@@ -55,11 +55,11 @@ class ListOutputBody2:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        from ..models.destination_dto import DestinationDTO
+        from ..models.log_dto import LogDTO
 
         d = dict(src_dict)
 
-        def _parse_data(data: object) -> list[DestinationDTO] | None:
+        def _parse_data(data: object) -> list[LogDTO] | None:
             if data is None:
                 return data
             try:
@@ -68,22 +68,22 @@ class ListOutputBody2:
                 data_type_0 = []
                 _data_type_0 = data
                 for data_type_0_item_data in _data_type_0:
-                    data_type_0_item = DestinationDTO.from_dict(data_type_0_item_data)
+                    data_type_0_item = LogDTO.from_dict(data_type_0_item_data)
 
                     data_type_0.append(data_type_0_item)
 
                 return data_type_0
             except (TypeError, ValueError, AttributeError, KeyError):
                 pass
-            return cast(list[DestinationDTO] | None, data)
+            return cast(list[LogDTO] | None, data)
 
         data = _parse_data(d.pop("data"))
 
         schema = d.pop("$schema", UNSET)
 
-        list_output_body_2 = cls(
+        list_output_body_3 = cls(
             data=data,
             schema=schema,
         )
 
-        return list_output_body_2
+        return list_output_body_3

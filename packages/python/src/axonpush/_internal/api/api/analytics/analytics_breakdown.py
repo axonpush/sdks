@@ -77,7 +77,7 @@ def sync_detailed(
     dimension: AnalyticsBreakdownDimension | Unset = UNSET,
     limit: int | Unset = UNSET,
 ) -> Response[BreakdownOutputBody | ErrorModel]:
-    """Top-N breakdown by model or provider
+    """Top-N breakdown by model, provider, agent, or tool
 
     Args:
         since (str | Unset): Window start (RFC3339); defaults to 24h before until
@@ -115,7 +115,7 @@ def sync(
     dimension: AnalyticsBreakdownDimension | Unset = UNSET,
     limit: int | Unset = UNSET,
 ) -> BreakdownOutputBody | ErrorModel | None:
-    """Top-N breakdown by model or provider
+    """Top-N breakdown by model, provider, agent, or tool
 
     Args:
         since (str | Unset): Window start (RFC3339); defaults to 24h before until
@@ -148,7 +148,7 @@ async def asyncio_detailed(
     dimension: AnalyticsBreakdownDimension | Unset = UNSET,
     limit: int | Unset = UNSET,
 ) -> Response[BreakdownOutputBody | ErrorModel]:
-    """Top-N breakdown by model or provider
+    """Top-N breakdown by model, provider, agent, or tool
 
     Args:
         since (str | Unset): Window start (RFC3339); defaults to 24h before until
@@ -184,7 +184,7 @@ async def asyncio(
     dimension: AnalyticsBreakdownDimension | Unset = UNSET,
     limit: int | Unset = UNSET,
 ) -> BreakdownOutputBody | ErrorModel | None:
-    """Top-N breakdown by model or provider
+    """Top-N breakdown by model, provider, agent, or tool
 
     Args:
         since (str | Unset): Window start (RFC3339); defaults to 24h before until
