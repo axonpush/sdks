@@ -1,0 +1,210 @@
+{
+  "description": "MQTT topic grammar. The topicPrefix returned by GET /auth/iot-credentials already includes the org id, so a client that joins prefix + 5 segments lands on the same topic the server builds from 7.",
+  "segments": [
+    "prefix",
+    "orgId",
+    "envSlug",
+    "appId",
+    "channelId",
+    "eventType",
+    "agentId"
+  ],
+  "defaultPrefix": "axonpush",
+  "defaultEnvSlug": "default",
+  "sanitise": {
+    "pattern": "[^a-zA-Z0-9_-]",
+    "replacement": "_"
+  },
+  "publishFallback": "_",
+  "subscribeWildcard": "+",
+  "orgPrefixIncludesOrgId": true,
+  "sanitiseCases": [
+    {
+      "input": "org_1",
+      "output": "org_1"
+    },
+    {
+      "input": "plain",
+      "output": "plain"
+    },
+    {
+      "input": "with-dash",
+      "output": "with-dash"
+    },
+    {
+      "input": "with_underscore",
+      "output": "with_underscore"
+    },
+    {
+      "input": "has space",
+      "output": "has_space"
+    },
+    {
+      "input": "has/slash",
+      "output": "has_slash"
+    },
+    {
+      "input": "has+plus",
+      "output": "has_plus"
+    },
+    {
+      "input": "has#hash",
+      "output": "has_hash"
+    },
+    {
+      "input": "ünïcode",
+      "output": "_n_code"
+    },
+    {
+      "input": "!!!",
+      "output": "___"
+    },
+    {
+      "input": "",
+      "output": "_"
+    }
+  ],
+  "orgPrefixCases": [
+    {
+      "orgId": "org_1",
+      "prefix": "axonpush/org_1",
+      "wildcard": "axonpush/org_1/#"
+    },
+    {
+      "orgId": "org/1",
+      "prefix": "axonpush/org_1",
+      "wildcard": "axonpush/org_1/#"
+    },
+    {
+      "orgId": "",
+      "prefix": "axonpush/_",
+      "wildcard": "axonpush/_/#"
+    }
+  ],
+  "envWildcardCases": [
+    {
+      "input": {
+        "orgId": "org_1",
+        "envSlug": "prod"
+      },
+      "topic": "axonpush/org_1/prod/#"
+    },
+    {
+      "input": {
+        "orgId": "org_1",
+        "envSlug": ""
+      },
+      "topic": "axonpush/org_1/default/#"
+    }
+  ],
+  "publishCases": [
+    {
+      "input": {
+        "orgId": "org_1",
+        "envSlug": "prod",
+        "appId": "app_1",
+        "channelId": "chan_1",
+        "eventType": "agent.start",
+        "agentId": "agent_1"
+      },
+      "topic": "axonpush/org_1/prod/app_1/chan_1/agent_start/agent_1"
+    },
+    {
+      "input": {
+        "orgId": "org_1",
+        "envSlug": null,
+        "appId": "app_1",
+        "channelId": "chan_1",
+        "eventType": "agent.start",
+        "agentId": null
+      },
+      "topic": "axonpush/org_1/default/app_1/chan_1/agent_start/_"
+    },
+    {
+      "input": {
+        "orgId": "org_1",
+        "envSlug": "",
+        "appId": "app_1",
+        "channelId": "chan_1",
+        "eventType": "agent.tool_call.end",
+        "agentId": ""
+      },
+      "topic": "axonpush/org_1/default/app_1/chan_1/agent_tool_call_end/_"
+    },
+    {
+      "input": {
+        "orgId": "org/1",
+        "envSlug": "stag ing",
+        "appId": "app#1",
+        "channelId": "chan+1",
+        "eventType": "a b",
+        "agentId": "x/y"
+      },
+      "topic": "axonpush/org_1/stag_ing/app_1/chan_1/a_b/x_y"
+    },
+    {
+      "input": {
+        "orgId": "org_1",
+        "envSlug": "prod",
+        "appId": "app_1",
+        "channelId": "chan_1",
+        "eventType": "!!!",
+        "agentId": "ünïcode"
+      },
+      "topic": "axonpush/org_1/prod/app_1/chan_1/___/_n_code"
+    }
+  ],
+  "subscribeCases": [
+    {
+      "input": {
+        "orgId": "org_1"
+      },
+      "topic": "axonpush/org_1/+/+/+/+/+"
+    },
+    {
+      "input": {
+        "orgId": "org_1",
+        "envSlug": "prod"
+      },
+      "topic": "axonpush/org_1/prod/+/+/+/+"
+    },
+    {
+      "input": {
+        "orgId": "org_1",
+        "envSlug": "prod",
+        "appId": "app_1"
+      },
+      "topic": "axonpush/org_1/prod/app_1/+/+/+"
+    },
+    {
+      "input": {
+        "orgId": "org_1",
+        "envSlug": null,
+        "appId": "app_1",
+        "channelId": "chan_1"
+      },
+      "topic": "axonpush/org_1/+/app_1/chan_1/+/+"
+    },
+    {
+      "input": {
+        "orgId": "org_1",
+        "envSlug": "prod",
+        "appId": "app_1",
+        "channelId": "chan_1",
+        "eventType": "agent.start"
+      },
+      "topic": "axonpush/org_1/prod/app_1/chan_1/agent_start/+"
+    },
+    {
+      "input": {
+        "orgId": "org_1",
+        "envSlug": "prod",
+        "appId": "app_1",
+        "channelId": "chan_1",
+        "eventType": "agent.start",
+        "agentId": "agent_1"
+      },
+      "topic": "axonpush/org_1/prod/app_1/chan_1/agent_start/agent_1"
+    }
+  ]
+}
