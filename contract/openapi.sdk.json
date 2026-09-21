@@ -5972,6 +5972,96 @@
               "format": "int64",
               "type": "integer"
             }
+          },
+          {
+            "description": "Filter by event source (e.g. gateway)",
+            "explode": false,
+            "in": "query",
+            "name": "source",
+            "schema": {
+              "description": "Filter by event source (e.g. gateway)",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Filter by request/response model",
+            "explode": false,
+            "in": "query",
+            "name": "model",
+            "schema": {
+              "description": "Filter by request/response model",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Filter by model provider",
+            "explode": false,
+            "in": "query",
+            "name": "provider",
+            "schema": {
+              "description": "Filter by model provider",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Filter by app id",
+            "explode": false,
+            "in": "query",
+            "name": "app",
+            "schema": {
+              "description": "Filter by app id",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Filter by environment id",
+            "explode": false,
+            "in": "query",
+            "name": "environment",
+            "schema": {
+              "description": "Filter by environment id",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Filter by API key id",
+            "explode": false,
+            "in": "query",
+            "name": "apiKey",
+            "schema": {
+              "description": "Filter by API key id",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Filter by end-user id",
+            "explode": false,
+            "in": "query",
+            "name": "user",
+            "schema": {
+              "description": "Filter by end-user id",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Custom-dimension (attribute) key to filter on; pair with filterTagValue",
+            "explode": false,
+            "in": "query",
+            "name": "filterTagKey",
+            "schema": {
+              "description": "Custom-dimension (attribute) key to filter on; pair with filterTagValue",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Value for filterTagKey",
+            "explode": false,
+            "in": "query",
+            "name": "filterTagValue",
+            "schema": {
+              "description": "Value for filterTagKey",
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -6146,6 +6236,96 @@
               "description": "Window end (RFC3339); defaults to now",
               "type": "string"
             }
+          },
+          {
+            "description": "Filter by event source (e.g. gateway)",
+            "explode": false,
+            "in": "query",
+            "name": "source",
+            "schema": {
+              "description": "Filter by event source (e.g. gateway)",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Filter by request/response model",
+            "explode": false,
+            "in": "query",
+            "name": "model",
+            "schema": {
+              "description": "Filter by request/response model",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Filter by model provider",
+            "explode": false,
+            "in": "query",
+            "name": "provider",
+            "schema": {
+              "description": "Filter by model provider",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Filter by app id",
+            "explode": false,
+            "in": "query",
+            "name": "app",
+            "schema": {
+              "description": "Filter by app id",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Filter by environment id",
+            "explode": false,
+            "in": "query",
+            "name": "environment",
+            "schema": {
+              "description": "Filter by environment id",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Filter by API key id",
+            "explode": false,
+            "in": "query",
+            "name": "apiKey",
+            "schema": {
+              "description": "Filter by API key id",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Filter by end-user id",
+            "explode": false,
+            "in": "query",
+            "name": "user",
+            "schema": {
+              "description": "Filter by end-user id",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Custom-dimension (attribute) key to filter on; pair with filterTagValue",
+            "explode": false,
+            "in": "query",
+            "name": "filterTagKey",
+            "schema": {
+              "description": "Custom-dimension (attribute) key to filter on; pair with filterTagValue",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Value for filterTagKey",
+            "explode": false,
+            "in": "query",
+            "name": "filterTagValue",
+            "schema": {
+              "description": "Value for filterTagKey",
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -6211,6 +6391,96 @@
                 "hour",
                 "day"
               ],
+              "type": "string"
+            }
+          },
+          {
+            "description": "Filter by event source (e.g. gateway)",
+            "explode": false,
+            "in": "query",
+            "name": "source",
+            "schema": {
+              "description": "Filter by event source (e.g. gateway)",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Filter by request/response model",
+            "explode": false,
+            "in": "query",
+            "name": "model",
+            "schema": {
+              "description": "Filter by request/response model",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Filter by model provider",
+            "explode": false,
+            "in": "query",
+            "name": "provider",
+            "schema": {
+              "description": "Filter by model provider",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Filter by app id",
+            "explode": false,
+            "in": "query",
+            "name": "app",
+            "schema": {
+              "description": "Filter by app id",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Filter by environment id",
+            "explode": false,
+            "in": "query",
+            "name": "environment",
+            "schema": {
+              "description": "Filter by environment id",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Filter by API key id",
+            "explode": false,
+            "in": "query",
+            "name": "apiKey",
+            "schema": {
+              "description": "Filter by API key id",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Filter by end-user id",
+            "explode": false,
+            "in": "query",
+            "name": "user",
+            "schema": {
+              "description": "Filter by end-user id",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Custom-dimension (attribute) key to filter on; pair with filterTagValue",
+            "explode": false,
+            "in": "query",
+            "name": "filterTagKey",
+            "schema": {
+              "description": "Custom-dimension (attribute) key to filter on; pair with filterTagValue",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Value for filterTagKey",
+            "explode": false,
+            "in": "query",
+            "name": "filterTagValue",
+            "schema": {
+              "description": "Value for filterTagKey",
               "type": "string"
             }
           }

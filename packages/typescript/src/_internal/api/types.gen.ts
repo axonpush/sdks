@@ -2987,6 +2987,42 @@ export type AnalyticsBreakdownData = {
          * Top-N entries (default 50, max 500)
          */
         limit?: number;
+        /**
+         * Filter by event source (e.g. gateway)
+         */
+        source?: string;
+        /**
+         * Filter by request/response model
+         */
+        model?: string;
+        /**
+         * Filter by model provider
+         */
+        provider?: string;
+        /**
+         * Filter by app id
+         */
+        app?: string;
+        /**
+         * Filter by environment id
+         */
+        environment?: string;
+        /**
+         * Filter by API key id
+         */
+        apiKey?: string;
+        /**
+         * Filter by end-user id
+         */
+        user?: string;
+        /**
+         * Custom-dimension (attribute) key to filter on; pair with filterTagValue
+         */
+        filterTagKey?: string;
+        /**
+         * Value for filterTagKey
+         */
+        filterTagValue?: string;
     };
     url: '/analytics/breakdown';
 };
@@ -3093,6 +3129,42 @@ export type AnalyticsLatencyData = {
          * Window end (RFC3339); defaults to now
          */
         until?: string;
+        /**
+         * Filter by event source (e.g. gateway)
+         */
+        source?: string;
+        /**
+         * Filter by request/response model
+         */
+        model?: string;
+        /**
+         * Filter by model provider
+         */
+        provider?: string;
+        /**
+         * Filter by app id
+         */
+        app?: string;
+        /**
+         * Filter by environment id
+         */
+        environment?: string;
+        /**
+         * Filter by API key id
+         */
+        apiKey?: string;
+        /**
+         * Filter by end-user id
+         */
+        user?: string;
+        /**
+         * Custom-dimension (attribute) key to filter on; pair with filterTagValue
+         */
+        filterTagKey?: string;
+        /**
+         * Value for filterTagKey
+         */
+        filterTagValue?: string;
     };
     url: '/analytics/latency';
 };
@@ -3131,6 +3203,42 @@ export type AnalyticsTimeseriesData = {
          * Time bucket granularity (default hour)
          */
         bucket?: 'hour' | 'day';
+        /**
+         * Filter by event source (e.g. gateway)
+         */
+        source?: string;
+        /**
+         * Filter by request/response model
+         */
+        model?: string;
+        /**
+         * Filter by model provider
+         */
+        provider?: string;
+        /**
+         * Filter by app id
+         */
+        app?: string;
+        /**
+         * Filter by environment id
+         */
+        environment?: string;
+        /**
+         * Filter by API key id
+         */
+        apiKey?: string;
+        /**
+         * Filter by end-user id
+         */
+        user?: string;
+        /**
+         * Custom-dimension (attribute) key to filter on; pair with filterTagValue
+         */
+        filterTagKey?: string;
+        /**
+         * Value for filterTagKey
+         */
+        filterTagValue?: string;
     };
     url: '/analytics/timeseries';
 };
