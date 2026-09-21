@@ -167,6 +167,40 @@
         ],
         "type": "object"
       },
+      "AnalyticsCapability": {
+        "additionalProperties": false,
+        "properties": {
+          "breakdownDimensions": {
+            "items": {
+              "type": "string"
+            },
+            "type": [
+              "array",
+              "null"
+            ]
+          },
+          "customDimensions": {
+            "type": "boolean"
+          },
+          "dashboards": {
+            "type": "boolean"
+          },
+          "enabled": {
+            "type": "boolean"
+          },
+          "tagFilter": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "enabled",
+          "breakdownDimensions",
+          "customDimensions",
+          "tagFilter",
+          "dashboards"
+        ],
+        "type": "object"
+      },
       "ApiKeyScope": {
         "additionalProperties": false,
         "properties": {
@@ -329,8 +363,16 @@
             "format": "int64",
             "type": "integer"
           },
+          "inputTokens": {
+            "format": "int64",
+            "type": "integer"
+          },
           "key": {
             "type": "string"
+          },
+          "outputTokens": {
+            "format": "int64",
+            "type": "integer"
           },
           "totalTokens": {
             "format": "int64",
@@ -340,7 +382,12 @@
         "required": [
           "key",
           "eventCount",
-          "costUsd"
+          "errorCount",
+          "inputTokens",
+          "outputTokens",
+          "totalTokens",
+          "costUsd",
+          "avgDurationMs"
         ],
         "type": "object"
       },
@@ -456,6 +503,9 @@
       "Controls": {
         "additionalProperties": false,
         "properties": {
+          "analytics": {
+            "$ref": "#/components/schemas/AnalyticsCapability"
+          },
           "auditTrail": {
             "$ref": "#/components/schemas/AuditCapability"
           },
@@ -469,7 +519,8 @@
         "required": [
           "inlineModeration",
           "spendPolicies",
-          "auditTrail"
+          "auditTrail",
+          "analytics"
         ],
         "type": "object"
       },
@@ -1107,6 +1158,81 @@
         ],
         "type": "object"
       },
+      "DashboardBody": {
+        "additionalProperties": false,
+        "properties": {
+          "$schema": {
+            "description": "A URL to the JSON Schema for this object.",
+            "examples": [
+              "https://example.com/schemas/DashboardBody.json"
+            ],
+            "format": "uri",
+            "readOnly": true,
+            "type": "string"
+          },
+          "description": {
+            "maxLength": 500,
+            "type": "string"
+          },
+          "name": {
+            "maxLength": 120,
+            "minLength": 1,
+            "type": "string"
+          },
+          "spec": {
+            "$ref": "#/components/schemas/Spec",
+            "description": "the widget spec; each widget is a saved analytics query"
+          }
+        },
+        "required": [
+          "name",
+          "spec"
+        ],
+        "type": "object"
+      },
+      "DashboardView": {
+        "additionalProperties": false,
+        "properties": {
+          "$schema": {
+            "description": "A URL to the JSON Schema for this object.",
+            "examples": [
+              "https://example.com/schemas/DashboardView.json"
+            ],
+            "format": "uri",
+            "readOnly": true,
+            "type": "string"
+          },
+          "createdAt": {
+            "type": "string"
+          },
+          "createdBy": {
+            "type": "string"
+          },
+          "dashboardId": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "spec": {
+            "$ref": "#/components/schemas/Spec"
+          },
+          "updatedAt": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "dashboardId",
+          "name",
+          "spec",
+          "createdAt",
+          "updatedAt"
+        ],
+        "type": "object"
+      },
       "DecisionDTO": {
         "additionalProperties": false,
         "properties": {
@@ -1301,6 +1427,97 @@
           "headerKeys",
           "active",
           "createdAt"
+        ],
+        "type": "object"
+      },
+      "DimensionDTO": {
+        "additionalProperties": false,
+        "properties": {
+          "key": {
+            "type": "string"
+          },
+          "lastSeen": {
+            "type": "string"
+          },
+          "source": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "key"
+        ],
+        "type": "object"
+      },
+      "DimensionValueDTO": {
+        "additionalProperties": false,
+        "properties": {
+          "lastSeen": {
+            "type": "string"
+          },
+          "value": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "value"
+        ],
+        "type": "object"
+      },
+      "DimensionValuesOutputBody": {
+        "additionalProperties": false,
+        "properties": {
+          "$schema": {
+            "description": "A URL to the JSON Schema for this object.",
+            "examples": [
+              "https://example.com/schemas/DimensionValuesOutputBody.json"
+            ],
+            "format": "uri",
+            "readOnly": true,
+            "type": "string"
+          },
+          "key": {
+            "type": "string"
+          },
+          "values": {
+            "items": {
+              "$ref": "#/components/schemas/DimensionValueDTO"
+            },
+            "type": [
+              "array",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "key",
+          "values"
+        ],
+        "type": "object"
+      },
+      "DimensionsOutputBody": {
+        "additionalProperties": false,
+        "properties": {
+          "$schema": {
+            "description": "A URL to the JSON Schema for this object.",
+            "examples": [
+              "https://example.com/schemas/DimensionsOutputBody.json"
+            ],
+            "format": "uri",
+            "readOnly": true,
+            "type": "string"
+          },
+          "dimensions": {
+            "items": {
+              "$ref": "#/components/schemas/DimensionDTO"
+            },
+            "type": [
+              "array",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "dimensions"
         ],
         "type": "object"
       },
@@ -1961,6 +2178,190 @@
         ],
         "type": "object"
       },
+      "GovernPolicyBody": {
+        "additionalProperties": false,
+        "properties": {
+          "$schema": {
+            "description": "A URL to the JSON Schema for this object.",
+            "examples": [
+              "https://example.com/schemas/GovernPolicyBody.json"
+            ],
+            "format": "uri",
+            "readOnly": true,
+            "type": "string"
+          },
+          "apiKeyId": {
+            "type": "string"
+          },
+          "appId": {
+            "type": "string"
+          },
+          "enabled": {
+            "type": "boolean"
+          },
+          "enforcement": {
+            "description": "enforce (mutate to comply, default) | block (reject 422) | warn (record only)",
+            "enum": [
+              "enforce",
+              "block",
+              "warn",
+              ""
+            ],
+            "type": "string"
+          },
+          "environmentId": {
+            "type": "string"
+          },
+          "model": {
+            "description": "model prefix; empty = all models",
+            "type": "string"
+          },
+          "name": {
+            "maxLength": 120,
+            "minLength": 1,
+            "type": "string"
+          },
+          "provider": {
+            "description": "openai | anthropic; empty = all providers",
+            "type": "string"
+          },
+          "rules": {
+            "$ref": "#/components/schemas/GovernRules",
+            "description": "the structural rule set"
+          },
+          "userId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "rules"
+        ],
+        "type": "object"
+      },
+      "GovernPolicyView": {
+        "additionalProperties": false,
+        "properties": {
+          "$schema": {
+            "description": "A URL to the JSON Schema for this object.",
+            "examples": [
+              "https://example.com/schemas/GovernPolicyView.json"
+            ],
+            "format": "uri",
+            "readOnly": true,
+            "type": "string"
+          },
+          "apiKeyId": {
+            "type": "string"
+          },
+          "appId": {
+            "type": "string"
+          },
+          "createdAt": {
+            "type": "string"
+          },
+          "enabled": {
+            "type": "boolean"
+          },
+          "enforcement": {
+            "type": "string"
+          },
+          "environmentId": {
+            "type": "string"
+          },
+          "model": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "policyId": {
+            "type": "string"
+          },
+          "provider": {
+            "type": "string"
+          },
+          "rules": {
+            "$ref": "#/components/schemas/GovernRules"
+          },
+          "updatedAt": {
+            "type": "string"
+          },
+          "userId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "policyId",
+          "name",
+          "enabled",
+          "enforcement",
+          "rules",
+          "createdAt",
+          "updatedAt"
+        ],
+        "type": "object"
+      },
+      "GovernRules": {
+        "additionalProperties": false,
+        "properties": {
+          "allowedModels": {
+            "items": {
+              "type": "string"
+            },
+            "type": [
+              "array",
+              "null"
+            ]
+          },
+          "allowedTools": {
+            "items": {
+              "type": "string"
+            },
+            "type": [
+              "array",
+              "null"
+            ]
+          },
+          "defaultModel": {
+            "type": "string"
+          },
+          "deniedTools": {
+            "items": {
+              "type": "string"
+            },
+            "type": [
+              "array",
+              "null"
+            ]
+          },
+          "maxTokens": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "reasoningEffortCap": {
+            "type": "string"
+          },
+          "reasoningTokensCap": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "requireSafetyIdentifier": {
+            "type": "boolean"
+          },
+          "requireStructuredOutput": {
+            "type": "boolean"
+          },
+          "serviceTier": {
+            "type": "string"
+          },
+          "temperatureMax": {
+            "format": "double",
+            "type": "number"
+          }
+        },
+        "type": "object"
+      },
       "HealthOutputBody": {
         "additionalProperties": false,
         "properties": {
@@ -2050,6 +2451,63 @@
           "inviteRole",
           "status",
           "createdAt"
+        ],
+        "type": "object"
+      },
+      "LatencyPercentilesDTO": {
+        "additionalProperties": false,
+        "properties": {
+          "$schema": {
+            "description": "A URL to the JSON Schema for this object.",
+            "examples": [
+              "https://example.com/schemas/LatencyPercentilesDTO.json"
+            ],
+            "format": "uri",
+            "readOnly": true,
+            "type": "string"
+          },
+          "maxDurationMs": {
+            "format": "double",
+            "type": "number"
+          },
+          "maxTtftMs": {
+            "format": "double",
+            "type": "number"
+          },
+          "p50DurationMs": {
+            "format": "double",
+            "type": "number"
+          },
+          "p50TtftMs": {
+            "format": "double",
+            "type": "number"
+          },
+          "p95DurationMs": {
+            "format": "double",
+            "type": "number"
+          },
+          "p95TtftMs": {
+            "format": "double",
+            "type": "number"
+          },
+          "p99DurationMs": {
+            "format": "double",
+            "type": "number"
+          },
+          "p99TtftMs": {
+            "format": "double",
+            "type": "number"
+          }
+        },
+        "required": [
+          "p50DurationMs",
+          "p95DurationMs",
+          "p99DurationMs",
+          "maxDurationMs",
+          "p50TtftMs",
+          "p95TtftMs",
+          "p99TtftMs",
+          "maxTtftMs"
         ],
         "type": "object"
       },
@@ -2470,6 +2928,60 @@
             "readOnly": true,
             "type": "string"
           },
+          "policies": {
+            "items": {
+              "$ref": "#/components/schemas/GovernPolicyView"
+            },
+            "type": [
+              "array",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "policies"
+        ],
+        "type": "object"
+      },
+      "ListOutputBody2": {
+        "additionalProperties": false,
+        "properties": {
+          "$schema": {
+            "description": "A URL to the JSON Schema for this object.",
+            "examples": [
+              "https://example.com/schemas/ListOutputBody2.json"
+            ],
+            "format": "uri",
+            "readOnly": true,
+            "type": "string"
+          },
+          "dashboards": {
+            "items": {
+              "$ref": "#/components/schemas/DashboardView"
+            },
+            "type": [
+              "array",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "dashboards"
+        ],
+        "type": "object"
+      },
+      "ListOutputBody3": {
+        "additionalProperties": false,
+        "properties": {
+          "$schema": {
+            "description": "A URL to the JSON Schema for this object.",
+            "examples": [
+              "https://example.com/schemas/ListOutputBody3.json"
+            ],
+            "format": "uri",
+            "readOnly": true,
+            "type": "string"
+          },
           "data": {
             "items": {
               "$ref": "#/components/schemas/AlertRuleDTO"
@@ -2485,13 +2997,13 @@
         ],
         "type": "object"
       },
-      "ListOutputBody2": {
+      "ListOutputBody4": {
         "additionalProperties": false,
         "properties": {
           "$schema": {
             "description": "A URL to the JSON Schema for this object.",
             "examples": [
-              "https://example.com/schemas/ListOutputBody2.json"
+              "https://example.com/schemas/ListOutputBody4.json"
             ],
             "format": "uri",
             "readOnly": true,
@@ -2512,13 +3024,13 @@
         ],
         "type": "object"
       },
-      "ListOutputBody3": {
+      "ListOutputBody5": {
         "additionalProperties": false,
         "properties": {
           "$schema": {
             "description": "A URL to the JSON Schema for this object.",
             "examples": [
-              "https://example.com/schemas/ListOutputBody3.json"
+              "https://example.com/schemas/ListOutputBody5.json"
             ],
             "format": "uri",
             "readOnly": true,
@@ -3747,6 +4259,24 @@
         ],
         "type": "object"
       },
+      "Spec": {
+        "additionalProperties": false,
+        "properties": {
+          "widgets": {
+            "items": {
+              "$ref": "#/components/schemas/Widget"
+            },
+            "type": [
+              "array",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "widgets"
+        ],
+        "type": "object"
+      },
       "SpendPolicyCapability": {
         "additionalProperties": false,
         "properties": {
@@ -3851,8 +4381,20 @@
             "format": "double",
             "type": "number"
           },
+          "avgTtftMs": {
+            "format": "double",
+            "type": "number"
+          },
           "bucket": {
             "type": "string"
+          },
+          "cacheReadTokens": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "cacheWriteTokens": {
+            "format": "int64",
+            "type": "integer"
           },
           "costUsd": {
             "format": "double",
@@ -3863,6 +4405,18 @@
             "type": "integer"
           },
           "eventCount": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "inputTokens": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "outputTokens": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "reasoningTokens": {
             "format": "int64",
             "type": "integer"
           },
@@ -3880,9 +4434,15 @@
           "eventCount",
           "traceCount",
           "errorCount",
+          "inputTokens",
+          "outputTokens",
+          "cacheReadTokens",
+          "cacheWriteTokens",
+          "reasoningTokens",
           "totalTokens",
           "costUsd",
-          "avgDurationMs"
+          "avgDurationMs",
+          "avgTtftMs"
         ],
         "type": "object"
       },
@@ -4439,6 +4999,75 @@
         "required": [
           "ok"
         ],
+        "type": "object"
+      },
+      "Widget": {
+        "additionalProperties": false,
+        "properties": {
+          "dimension": {
+            "description": "breakdown dimension (model, provider, tag, ...)",
+            "type": "string"
+          },
+          "limit": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "metric": {
+            "description": "kpi/timeseries metric: calls|errors|cost|tokens|latency|ttft",
+            "type": "string"
+          },
+          "scope": {
+            "$ref": "#/components/schemas/WidgetScope"
+          },
+          "tagKey": {
+            "description": "attribute key to group by when dimension=tag",
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "type": {
+            "description": "kpi | timeseries | breakdown | latency",
+            "enum": [
+              "kpi",
+              "timeseries",
+              "breakdown",
+              "latency"
+            ],
+            "type": "string"
+          }
+        },
+        "required": [
+          "type"
+        ],
+        "type": "object"
+      },
+      "WidgetScope": {
+        "additionalProperties": false,
+        "properties": {
+          "app": {
+            "type": "string"
+          },
+          "environment": {
+            "type": "string"
+          },
+          "filterTagKey": {
+            "description": "Scope to a custom-dimension value; pair with filterTagValue",
+            "type": "string"
+          },
+          "filterTagValue": {
+            "type": "string"
+          },
+          "model": {
+            "type": "string"
+          },
+          "provider": {
+            "type": "string"
+          },
+          "source": {
+            "type": "string"
+          }
+        },
         "type": "object"
       }
     }
@@ -5308,9 +5937,28 @@
               "enum": [
                 "model",
                 "provider",
+                "status",
+                "source",
+                "app",
+                "apiKey",
+                "user",
                 "agent",
-                "tool"
+                "tool",
+                "eventType",
+                "finishReason",
+                "semanticKind",
+                "tag"
               ],
+              "type": "string"
+            }
+          },
+          {
+            "description": "Attribute key to group by when dimension=tag",
+            "explode": false,
+            "in": "query",
+            "name": "tagKey",
+            "schema": {
+              "description": "Attribute key to group by when dimension=tag",
               "type": "string"
             }
           },
@@ -5323,6 +5971,96 @@
               "description": "Top-N entries (default 50, max 500)",
               "format": "int64",
               "type": "integer"
+            }
+          },
+          {
+            "description": "Filter by event source (e.g. gateway)",
+            "explode": false,
+            "in": "query",
+            "name": "source",
+            "schema": {
+              "description": "Filter by event source (e.g. gateway)",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Filter by request/response model",
+            "explode": false,
+            "in": "query",
+            "name": "model",
+            "schema": {
+              "description": "Filter by request/response model",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Filter by model provider",
+            "explode": false,
+            "in": "query",
+            "name": "provider",
+            "schema": {
+              "description": "Filter by model provider",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Filter by app id",
+            "explode": false,
+            "in": "query",
+            "name": "app",
+            "schema": {
+              "description": "Filter by app id",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Filter by environment id",
+            "explode": false,
+            "in": "query",
+            "name": "environment",
+            "schema": {
+              "description": "Filter by environment id",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Filter by API key id",
+            "explode": false,
+            "in": "query",
+            "name": "apiKey",
+            "schema": {
+              "description": "Filter by API key id",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Filter by end-user id",
+            "explode": false,
+            "in": "query",
+            "name": "user",
+            "schema": {
+              "description": "Filter by end-user id",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Custom-dimension (attribute) key to filter on; pair with filterTagValue",
+            "explode": false,
+            "in": "query",
+            "name": "filterTagKey",
+            "schema": {
+              "description": "Custom-dimension (attribute) key to filter on; pair with filterTagValue",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Value for filterTagKey",
+            "explode": false,
+            "in": "query",
+            "name": "filterTagValue",
+            "schema": {
+              "description": "Value for filterTagKey",
+              "type": "string"
             }
           }
         ],
@@ -5348,7 +6086,271 @@
             "description": "Error"
           }
         },
-        "summary": "Top-N breakdown by model, provider, agent, or tool",
+        "summary": "Top-N breakdown by model, provider, status, source, app, key, user, agent, tool, or tag",
+        "tags": [
+          "analytics"
+        ]
+      }
+    },
+    "/analytics/dimensions": {
+      "get": {
+        "description": "Start here for custom-dimension analytics: this lists the business attribute keys your app has stamped on its telemetry (e.g. participant_role, tenant, plan). Feed a key into /analytics/breakdown?dimension=tag\u0026tagKey=\u003ckey\u003e to rank it, then into filterTagKey+filterTagValue on /analytics/timeseries and /analytics/latency to trend and get percentiles for one value.",
+        "operationId": "analytics.dimensions",
+        "parameters": [
+          {
+            "description": "Filter to one environment id; empty = all",
+            "explode": false,
+            "in": "query",
+            "name": "environment",
+            "schema": {
+              "description": "Filter to one environment id; empty = all",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Max dimensions (default 50, max 500)",
+            "explode": false,
+            "in": "query",
+            "name": "limit",
+            "schema": {
+              "description": "Max dimensions (default 50, max 500)",
+              "format": "int64",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DimensionsOutputBody"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "summary": "Discover the custom dimensions (span-attribute keys) this org emits",
+        "tags": [
+          "analytics"
+        ]
+      }
+    },
+    "/analytics/dimensions/values": {
+      "get": {
+        "description": "The distinct values seen for a dimension key (from /analytics/dimensions). Use a value with filterTagKey+filterTagValue to scope any analytics read to it.",
+        "operationId": "analytics.dimensionValues",
+        "parameters": [
+          {
+            "description": "Dimension (attribute) key to list values for",
+            "explode": false,
+            "in": "query",
+            "name": "key",
+            "required": true,
+            "schema": {
+              "description": "Dimension (attribute) key to list values for",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Filter to one environment id; empty = all",
+            "explode": false,
+            "in": "query",
+            "name": "environment",
+            "schema": {
+              "description": "Filter to one environment id; empty = all",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Max values (default 50, max 500)",
+            "explode": false,
+            "in": "query",
+            "name": "limit",
+            "schema": {
+              "description": "Max values (default 50, max 500)",
+              "format": "int64",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DimensionValuesOutputBody"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "summary": "List the observed values of one custom dimension",
+        "tags": [
+          "analytics"
+        ]
+      }
+    },
+    "/analytics/latency": {
+      "get": {
+        "operationId": "analytics.latency",
+        "parameters": [
+          {
+            "description": "Window start (RFC3339); defaults to 24h before until",
+            "explode": false,
+            "in": "query",
+            "name": "since",
+            "schema": {
+              "description": "Window start (RFC3339); defaults to 24h before until",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Window end (RFC3339); defaults to now",
+            "explode": false,
+            "in": "query",
+            "name": "until",
+            "schema": {
+              "description": "Window end (RFC3339); defaults to now",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Filter by event source (e.g. gateway)",
+            "explode": false,
+            "in": "query",
+            "name": "source",
+            "schema": {
+              "description": "Filter by event source (e.g. gateway)",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Filter by request/response model",
+            "explode": false,
+            "in": "query",
+            "name": "model",
+            "schema": {
+              "description": "Filter by request/response model",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Filter by model provider",
+            "explode": false,
+            "in": "query",
+            "name": "provider",
+            "schema": {
+              "description": "Filter by model provider",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Filter by app id",
+            "explode": false,
+            "in": "query",
+            "name": "app",
+            "schema": {
+              "description": "Filter by app id",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Filter by environment id",
+            "explode": false,
+            "in": "query",
+            "name": "environment",
+            "schema": {
+              "description": "Filter by environment id",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Filter by API key id",
+            "explode": false,
+            "in": "query",
+            "name": "apiKey",
+            "schema": {
+              "description": "Filter by API key id",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Filter by end-user id",
+            "explode": false,
+            "in": "query",
+            "name": "user",
+            "schema": {
+              "description": "Filter by end-user id",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Custom-dimension (attribute) key to filter on; pair with filterTagValue",
+            "explode": false,
+            "in": "query",
+            "name": "filterTagKey",
+            "schema": {
+              "description": "Custom-dimension (attribute) key to filter on; pair with filterTagValue",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Value for filterTagKey",
+            "explode": false,
+            "in": "query",
+            "name": "filterTagValue",
+            "schema": {
+              "description": "Value for filterTagKey",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LatencyPercentilesDTO"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "summary": "Latency + TTFT percentiles (p50/p95/p99/max) over the window",
         "tags": [
           "analytics"
         ]
@@ -5391,6 +6393,96 @@
               ],
               "type": "string"
             }
+          },
+          {
+            "description": "Filter by event source (e.g. gateway)",
+            "explode": false,
+            "in": "query",
+            "name": "source",
+            "schema": {
+              "description": "Filter by event source (e.g. gateway)",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Filter by request/response model",
+            "explode": false,
+            "in": "query",
+            "name": "model",
+            "schema": {
+              "description": "Filter by request/response model",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Filter by model provider",
+            "explode": false,
+            "in": "query",
+            "name": "provider",
+            "schema": {
+              "description": "Filter by model provider",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Filter by app id",
+            "explode": false,
+            "in": "query",
+            "name": "app",
+            "schema": {
+              "description": "Filter by app id",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Filter by environment id",
+            "explode": false,
+            "in": "query",
+            "name": "environment",
+            "schema": {
+              "description": "Filter by environment id",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Filter by API key id",
+            "explode": false,
+            "in": "query",
+            "name": "apiKey",
+            "schema": {
+              "description": "Filter by API key id",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Filter by end-user id",
+            "explode": false,
+            "in": "query",
+            "name": "user",
+            "schema": {
+              "description": "Filter by end-user id",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Custom-dimension (attribute) key to filter on; pair with filterTagValue",
+            "explode": false,
+            "in": "query",
+            "name": "filterTagKey",
+            "schema": {
+              "description": "Custom-dimension (attribute) key to filter on; pair with filterTagValue",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Value for filterTagKey",
+            "explode": false,
+            "in": "query",
+            "name": "filterTagValue",
+            "schema": {
+              "description": "Value for filterTagKey",
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -5415,7 +6507,7 @@
             "description": "Error"
           }
         },
-        "summary": "Time-bucketed activity (counts, tokens, cost, latency)",
+        "summary": "Time-bucketed traffic (counts, tokens, cost, latency, TTFT)",
         "tags": [
           "analytics"
         ]
@@ -5911,7 +7003,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ListOutputBody3"
+                  "$ref": "#/components/schemas/ListOutputBody5"
                 }
               }
             },
@@ -6222,6 +7314,206 @@
         "summary": "Get deployment capabilities",
         "tags": [
           "capabilities"
+        ]
+      }
+    },
+    "/dashboards": {
+      "get": {
+        "operationId": "dashboards.list",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListOutputBody2"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "summary": "List saved dashboards",
+        "tags": [
+          "dashboards"
+        ]
+      },
+      "post": {
+        "description": "Author a dashboard tailored to this org's business. Discover which custom dimensions exist via /analytics/dimensions, then define widgets that bind to /analytics/breakdown (dimension=tag\u0026tagKey=\u003ckey\u003e), /analytics/timeseries, and /analytics/latency, optionally scoped by filterTagKey+filterTagValue.",
+        "operationId": "dashboards.create",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DashboardBody"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DashboardView"
+                }
+              }
+            },
+            "description": "Created"
+          },
+          "default": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "summary": "Create a saved dashboard from a widget spec",
+        "tags": [
+          "dashboards"
+        ]
+      }
+    },
+    "/dashboards/{dashboardId}": {
+      "delete": {
+        "operationId": "dashboards.delete",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "dashboardId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OkOutputBody"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "summary": "Delete a saved dashboard",
+        "tags": [
+          "dashboards"
+        ]
+      },
+      "get": {
+        "operationId": "dashboards.get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "dashboardId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DashboardView"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "summary": "Get a saved dashboard",
+        "tags": [
+          "dashboards"
+        ]
+      },
+      "put": {
+        "operationId": "dashboards.update",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "dashboardId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DashboardBody"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DashboardView"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "summary": "Update a saved dashboard",
+        "tags": [
+          "dashboards"
         ]
       }
     },
@@ -6719,7 +8011,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ListOutputBody2"
+                  "$ref": "#/components/schemas/ListOutputBody4"
                 }
               }
             },
@@ -7002,6 +8294,166 @@
         "summary": "Submit feedback",
         "tags": [
           "feedback"
+        ]
+      }
+    },
+    "/govern-policies": {
+      "get": {
+        "operationId": "govern-policies.list",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListOutputBody1"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "summary": "List govern policies",
+        "tags": [
+          "govern-policies"
+        ]
+      },
+      "post": {
+        "operationId": "govern-policies.create",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GovernPolicyBody"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GovernPolicyView"
+                }
+              }
+            },
+            "description": "Created"
+          },
+          "default": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "summary": "Create a govern policy",
+        "tags": [
+          "govern-policies"
+        ]
+      }
+    },
+    "/govern-policies/{policyId}": {
+      "delete": {
+        "operationId": "govern-policies.delete",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "policyId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OkOutputBody"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "summary": "Delete a govern policy",
+        "tags": [
+          "govern-policies"
+        ]
+      },
+      "patch": {
+        "operationId": "govern-policies.update",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "policyId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GovernPolicyBody"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GovernPolicyView"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "summary": "Update a govern policy",
+        "tags": [
+          "govern-policies"
         ]
       }
     },
@@ -8345,7 +9797,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ListOutputBody1"
+                  "$ref": "#/components/schemas/ListOutputBody3"
                 }
               }
             },

@@ -67,6 +67,14 @@ export interface EventSearchParams {
   environmentId?: string;
   source?: string;
   status?: string;
+  /** Filter by agent id (tool-call / handoff spans carry one). */
+  agentId?: string;
+  /** Filter by agent name. */
+  agentName?: string;
+  /** Filter by tool name (`gen_ai.tool.name`). */
+  toolName?: string;
+  /** Filter by semantic kind (`agent`, `tool`, `llm`, `retriever`, `db`, `http`, `log`). */
+  semanticKind?: string;
   /** Case-insensitive contains match on search text. */
   q?: string;
   /** JSONB attribute key for equality filter (paired with `attrValue`). */
@@ -153,6 +161,10 @@ export class EventsResource {
       ...(p.source !== undefined ? { source: p.source } : {}),
       ...(p.status !== undefined ? { status: p.status } : {}),
       ...(p.traceId !== undefined ? { traceId: p.traceId } : {}),
+      ...(p.agentId !== undefined ? { agentId: p.agentId } : {}),
+      ...(p.agentName !== undefined ? { agentName: p.agentName } : {}),
+      ...(p.toolName !== undefined ? { toolName: p.toolName } : {}),
+      ...(p.semanticKind !== undefined ? { semanticKind: p.semanticKind } : {}),
       ...(p.q !== undefined ? { q: p.q } : {}),
       ...(p.attrKey !== undefined ? { attrKey: p.attrKey } : {}),
       ...(p.attrValue !== undefined ? { attrValue: p.attrValue } : {}),

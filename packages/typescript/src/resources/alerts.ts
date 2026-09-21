@@ -1,9 +1,9 @@
 import { alertsCreate, alertsDelete, alertsList, alertsUpdate } from "../_internal/api/sdk.gen.js";
 import type {
   AlertRuleDto,
+  AlertsListResponse,
   CreateInputBodyWritable,
   DeleteOutputBody,
-  ListOutputBody,
   UpdateInputBodyWritable,
 } from "../_internal/api/types.gen.js";
 import type { ResourceClient } from "./_client.js";
@@ -16,7 +16,7 @@ export class AlertsResource {
   constructor(private readonly client: ResourceClient) {}
 
   /** List them all. `GET /v2/alerts` */
-  async list(): Promise<ListOutputBody | null> {
+  async list(): Promise<AlertsListResponse | null> {
     return this.client.invoke(alertsList, {});
   }
 

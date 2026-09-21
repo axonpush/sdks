@@ -4,6 +4,25 @@ All notable changes to the axonpush Python SDK are documented here. The
 format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/);
 versioning is [SemVer](https://semver.org/spec/v2.0.0.html).
 
+## [0.0.19]
+
+### Added
+- **Agent and tool observability surface.** `client.analytics.breakdown()` now
+  accepts `dimension="agent"` and `dimension="tool"` (in addition to `model`
+  and `provider`); breakdown rows carry the new `error_count` and
+  `avg_duration_ms` fields.
+- **New event search filters.** `client.events.search()` gained `agent_id`,
+  `agent_name`, `tool_name`, and `semantic_kind` filters, so tool-call and
+  agent-handoff spans can be sliced directly.
+- Tool calls and agent handoffs now surface as spans in traces and event
+  search (event types `agent.tool_call.start` / `agent.tool_call.end` /
+  `agent.handoff`, carrying `gen_ai.tool.name` and `gen_ai.tool.call.id`
+  attributes). The `traces` and `events` DTOs expose these fields (`agent_id`,
+  `agent_name`, `tool_name`, `semantic_kind`) via codegen.
+
+### Changed
+- Regenerated the `_internal.api` client from the updated backend contract.
+
 ## [0.0.18]
 
 ### Changed

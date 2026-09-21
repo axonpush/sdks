@@ -54,6 +54,14 @@ export type AlertRuleDto = {
     updatedAt: string;
 };
 
+export type AnalyticsCapability = {
+    breakdownDimensions: Array<string> | null;
+    customDimensions: boolean;
+    dashboards: boolean;
+    enabled: boolean;
+    tagFilter: boolean;
+};
+
 export type ApiKeyScope = {
     category: string;
     description: string;
@@ -98,12 +106,14 @@ export type BreakdownOutputBody = {
 };
 
 export type BreakdownRowDto = {
-    avgDurationMs?: number;
+    avgDurationMs: number;
     costUsd: number;
-    errorCount?: number;
+    errorCount: number;
     eventCount: number;
+    inputTokens: number;
     key: string;
-    totalTokens?: number;
+    outputTokens: number;
+    totalTokens: number;
 };
 
 export type CapabilitiesOutputBody = {
@@ -147,6 +157,7 @@ export type CheckoutInputBody = {
 };
 
 export type Controls = {
+    analytics: AnalyticsCapability;
     auditTrail: AuditCapability;
     inlineModeration: ModerationCapability;
     spendPolicies: SpendPolicyCapability;
@@ -387,6 +398,33 @@ export type CreateTokenOutputBody = {
     tokenId: string;
 };
 
+export type DashboardBody = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
+    description?: string;
+    name: string;
+    /**
+     * the widget spec; each widget is a saved analytics query
+     */
+    spec: Spec;
+};
+
+export type DashboardView = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
+    createdAt: string;
+    createdBy?: string;
+    dashboardId: string;
+    description?: string;
+    name: string;
+    spec: Spec;
+    updatedAt: string;
+};
+
 export type DecisionDto = {
     appId?: string;
     budgetApproaching?: string;
@@ -441,6 +479,34 @@ export type DestinationDto = {
     serviceName?: string;
     signals: Array<string> | null;
     updatedAt?: string;
+};
+
+export type DimensionDto = {
+    key: string;
+    lastSeen?: string;
+    source?: string;
+};
+
+export type DimensionValueDto = {
+    lastSeen?: string;
+    value: string;
+};
+
+export type DimensionValuesOutputBody = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
+    key: string;
+    values: Array<DimensionValueDto> | null;
+};
+
+export type DimensionsOutputBody = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
+    dimensions: Array<DimensionDto> | null;
 };
 
 export type EfficacyOutputBody = {
@@ -680,6 +746,69 @@ export type GetTraceOutputBody = {
     traceId: string;
 };
 
+export type GovernPolicyBody = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
+    apiKeyId?: string;
+    appId?: string;
+    enabled?: boolean;
+    /**
+     * enforce (mutate to comply, default) | block (reject 422) | warn (record only)
+     */
+    enforcement?: 'enforce' | 'block' | 'warn' | '';
+    environmentId?: string;
+    /**
+     * model prefix; empty = all models
+     */
+    model?: string;
+    name: string;
+    /**
+     * openai | anthropic; empty = all providers
+     */
+    provider?: string;
+    /**
+     * the structural rule set
+     */
+    rules: GovernRules;
+    userId?: string;
+};
+
+export type GovernPolicyView = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
+    apiKeyId?: string;
+    appId?: string;
+    createdAt: string;
+    enabled: boolean;
+    enforcement: string;
+    environmentId?: string;
+    model?: string;
+    name: string;
+    policyId: string;
+    provider?: string;
+    rules: GovernRules;
+    updatedAt: string;
+    userId?: string;
+};
+
+export type GovernRules = {
+    allowedModels?: Array<string> | null;
+    allowedTools?: Array<string> | null;
+    defaultModel?: string;
+    deniedTools?: Array<string> | null;
+    maxTokens?: number;
+    reasoningEffortCap?: string;
+    reasoningTokensCap?: number;
+    requireSafetyIdentifier?: boolean;
+    requireStructuredOutput?: boolean;
+    serviceTier?: string;
+    temperatureMax?: number;
+};
+
 export type HealthOutputBody = {
     /**
      * A URL to the JSON Schema for this object.
@@ -713,6 +842,21 @@ export type InvitationDto = {
     inviterId?: string;
     orgId: string;
     status: string;
+};
+
+export type LatencyPercentilesDto = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
+    maxDurationMs: number;
+    maxTtftMs: number;
+    p50DurationMs: number;
+    p50TtftMs: number;
+    p95DurationMs: number;
+    p95TtftMs: number;
+    p99DurationMs: number;
+    p99TtftMs: number;
 };
 
 export type LicenseOutputBody = {
@@ -842,7 +986,7 @@ export type ListOutputBody1 = {
      * A URL to the JSON Schema for this object.
      */
     readonly $schema?: string;
-    data: Array<AlertRuleDto> | null;
+    policies: Array<GovernPolicyView> | null;
 };
 
 export type ListOutputBody2 = {
@@ -850,10 +994,26 @@ export type ListOutputBody2 = {
      * A URL to the JSON Schema for this object.
      */
     readonly $schema?: string;
-    data: Array<DestinationDto> | null;
+    dashboards: Array<DashboardView> | null;
 };
 
 export type ListOutputBody3 = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
+    data: Array<AlertRuleDto> | null;
+};
+
+export type ListOutputBody4 = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
+    data: Array<DestinationDto> | null;
+};
+
+export type ListOutputBody5 = {
     /**
      * A URL to the JSON Schema for this object.
      */
@@ -1233,6 +1393,10 @@ export type SetTrialInputBody = {
     days: number;
 };
 
+export type Spec = {
+    widgets: Array<Widget> | null;
+};
+
 export type SpendPolicyCapability = {
     actions: Array<string> | null;
     dimensions: Array<string> | null;
@@ -1260,10 +1424,16 @@ export type TimeseriesOutputBody = {
 
 export type TimeseriesPointDto = {
     avgDurationMs: number;
+    avgTtftMs: number;
     bucket: string;
+    cacheReadTokens: number;
+    cacheWriteTokens: number;
     costUsd: number;
     errorCount: number;
     eventCount: number;
+    inputTokens: number;
+    outputTokens: number;
+    reasoningTokens: number;
     totalTokens: number;
     traceCount: number;
 };
@@ -1439,6 +1609,41 @@ export type WebhookOutputBody = {
     deduped?: boolean;
     ok: boolean;
     skipped?: string;
+};
+
+export type Widget = {
+    /**
+     * breakdown dimension (model, provider, tag, ...)
+     */
+    dimension?: string;
+    limit?: number;
+    /**
+     * kpi/timeseries metric: calls|errors|cost|tokens|latency|ttft
+     */
+    metric?: string;
+    scope?: WidgetScope;
+    /**
+     * attribute key to group by when dimension=tag
+     */
+    tagKey?: string;
+    title?: string;
+    /**
+     * kpi | timeseries | breakdown | latency
+     */
+    type: 'kpi' | 'timeseries' | 'breakdown' | 'latency';
+};
+
+export type WidgetScope = {
+    app?: string;
+    environment?: string;
+    /**
+     * Scope to a custom-dimension value; pair with filterTagValue
+     */
+    filterTagKey?: string;
+    filterTagValue?: string;
+    model?: string;
+    provider?: string;
+    source?: string;
 };
 
 export type AlertRuleDtoWritable = {
@@ -1677,6 +1882,25 @@ export type CreateTokenOutputBodyWritable = {
     tokenId: string;
 };
 
+export type DashboardBodyWritable = {
+    description?: string;
+    name: string;
+    /**
+     * the widget spec; each widget is a saved analytics query
+     */
+    spec: Spec;
+};
+
+export type DashboardViewWritable = {
+    createdAt: string;
+    createdBy?: string;
+    dashboardId: string;
+    description?: string;
+    name: string;
+    spec: Spec;
+    updatedAt: string;
+};
+
 export type DeleteOutputBodyWritable = {
     deleted: boolean;
 };
@@ -1694,6 +1918,15 @@ export type DestinationDtoWritable = {
     serviceName?: string;
     signals: Array<string> | null;
     updatedAt?: string;
+};
+
+export type DimensionValuesOutputBodyWritable = {
+    key: string;
+    values: Array<DimensionValueDto> | null;
+};
+
+export type DimensionsOutputBodyWritable = {
+    dimensions: Array<DimensionDto> | null;
 };
 
 export type EfficacyOutputBodyWritable = {
@@ -1801,6 +2034,47 @@ export type GetTraceOutputBodyWritable = {
     traceId: string;
 };
 
+export type GovernPolicyBodyWritable = {
+    apiKeyId?: string;
+    appId?: string;
+    enabled?: boolean;
+    /**
+     * enforce (mutate to comply, default) | block (reject 422) | warn (record only)
+     */
+    enforcement?: 'enforce' | 'block' | 'warn' | '';
+    environmentId?: string;
+    /**
+     * model prefix; empty = all models
+     */
+    model?: string;
+    name: string;
+    /**
+     * openai | anthropic; empty = all providers
+     */
+    provider?: string;
+    /**
+     * the structural rule set
+     */
+    rules: GovernRules;
+    userId?: string;
+};
+
+export type GovernPolicyViewWritable = {
+    apiKeyId?: string;
+    appId?: string;
+    createdAt: string;
+    enabled: boolean;
+    enforcement: string;
+    environmentId?: string;
+    model?: string;
+    name: string;
+    policyId: string;
+    provider?: string;
+    rules: GovernRules;
+    updatedAt: string;
+    userId?: string;
+};
+
 export type HealthOutputBodyWritable = {
     /**
      * Entrypoint name
@@ -1826,6 +2100,17 @@ export type InvitationDtoWritable = {
     inviterId?: string;
     orgId: string;
     status: string;
+};
+
+export type LatencyPercentilesDtoWritable = {
+    maxDurationMs: number;
+    maxTtftMs: number;
+    p50DurationMs: number;
+    p50TtftMs: number;
+    p95DurationMs: number;
+    p95TtftMs: number;
+    p99DurationMs: number;
+    p99TtftMs: number;
 };
 
 export type LicenseOutputBodyWritable = {
@@ -1889,14 +2174,22 @@ export type ListOutputBodyWritable = {
 };
 
 export type ListOutputBody1Writable = {
-    data: Array<AlertRuleDtoWritable> | null;
+    policies: Array<GovernPolicyViewWritable> | null;
 };
 
 export type ListOutputBody2Writable = {
-    data: Array<DestinationDtoWritable> | null;
+    dashboards: Array<DashboardViewWritable> | null;
 };
 
 export type ListOutputBody3Writable = {
+    data: Array<AlertRuleDtoWritable> | null;
+};
+
+export type ListOutputBody4Writable = {
+    data: Array<DestinationDtoWritable> | null;
+};
+
+export type ListOutputBody5Writable = {
     data: Array<LogDto> | null;
 };
 
@@ -2685,11 +2978,51 @@ export type AnalyticsBreakdownData = {
         /**
          * Breakdown dimension (default model)
          */
-        dimension?: 'model' | 'provider' | 'agent' | 'tool';
+        dimension?: 'model' | 'provider' | 'status' | 'source' | 'app' | 'apiKey' | 'user' | 'agent' | 'tool' | 'eventType' | 'finishReason' | 'semanticKind' | 'tag';
+        /**
+         * Attribute key to group by when dimension=tag
+         */
+        tagKey?: string;
         /**
          * Top-N entries (default 50, max 500)
          */
         limit?: number;
+        /**
+         * Filter by event source (e.g. gateway)
+         */
+        source?: string;
+        /**
+         * Filter by request/response model
+         */
+        model?: string;
+        /**
+         * Filter by model provider
+         */
+        provider?: string;
+        /**
+         * Filter by app id
+         */
+        app?: string;
+        /**
+         * Filter by environment id
+         */
+        environment?: string;
+        /**
+         * Filter by API key id
+         */
+        apiKey?: string;
+        /**
+         * Filter by end-user id
+         */
+        user?: string;
+        /**
+         * Custom-dimension (attribute) key to filter on; pair with filterTagValue
+         */
+        filterTagKey?: string;
+        /**
+         * Value for filterTagKey
+         */
+        filterTagValue?: string;
     };
     url: '/analytics/breakdown';
 };
@@ -2712,6 +3045,148 @@ export type AnalyticsBreakdownResponses = {
 
 export type AnalyticsBreakdownResponse = AnalyticsBreakdownResponses[keyof AnalyticsBreakdownResponses];
 
+export type AnalyticsDimensionsData = {
+    body?: never;
+    path?: never;
+    query?: {
+        /**
+         * Filter to one environment id; empty = all
+         */
+        environment?: string;
+        /**
+         * Max dimensions (default 50, max 500)
+         */
+        limit?: number;
+    };
+    url: '/analytics/dimensions';
+};
+
+export type AnalyticsDimensionsErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type AnalyticsDimensionsError = AnalyticsDimensionsErrors[keyof AnalyticsDimensionsErrors];
+
+export type AnalyticsDimensionsResponses = {
+    /**
+     * OK
+     */
+    200: DimensionsOutputBody;
+};
+
+export type AnalyticsDimensionsResponse = AnalyticsDimensionsResponses[keyof AnalyticsDimensionsResponses];
+
+export type AnalyticsDimensionValuesData = {
+    body?: never;
+    path?: never;
+    query: {
+        /**
+         * Dimension (attribute) key to list values for
+         */
+        key: string;
+        /**
+         * Filter to one environment id; empty = all
+         */
+        environment?: string;
+        /**
+         * Max values (default 50, max 500)
+         */
+        limit?: number;
+    };
+    url: '/analytics/dimensions/values';
+};
+
+export type AnalyticsDimensionValuesErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type AnalyticsDimensionValuesError = AnalyticsDimensionValuesErrors[keyof AnalyticsDimensionValuesErrors];
+
+export type AnalyticsDimensionValuesResponses = {
+    /**
+     * OK
+     */
+    200: DimensionValuesOutputBody;
+};
+
+export type AnalyticsDimensionValuesResponse = AnalyticsDimensionValuesResponses[keyof AnalyticsDimensionValuesResponses];
+
+export type AnalyticsLatencyData = {
+    body?: never;
+    path?: never;
+    query?: {
+        /**
+         * Window start (RFC3339); defaults to 24h before until
+         */
+        since?: string;
+        /**
+         * Window end (RFC3339); defaults to now
+         */
+        until?: string;
+        /**
+         * Filter by event source (e.g. gateway)
+         */
+        source?: string;
+        /**
+         * Filter by request/response model
+         */
+        model?: string;
+        /**
+         * Filter by model provider
+         */
+        provider?: string;
+        /**
+         * Filter by app id
+         */
+        app?: string;
+        /**
+         * Filter by environment id
+         */
+        environment?: string;
+        /**
+         * Filter by API key id
+         */
+        apiKey?: string;
+        /**
+         * Filter by end-user id
+         */
+        user?: string;
+        /**
+         * Custom-dimension (attribute) key to filter on; pair with filterTagValue
+         */
+        filterTagKey?: string;
+        /**
+         * Value for filterTagKey
+         */
+        filterTagValue?: string;
+    };
+    url: '/analytics/latency';
+};
+
+export type AnalyticsLatencyErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type AnalyticsLatencyError = AnalyticsLatencyErrors[keyof AnalyticsLatencyErrors];
+
+export type AnalyticsLatencyResponses = {
+    /**
+     * OK
+     */
+    200: LatencyPercentilesDto;
+};
+
+export type AnalyticsLatencyResponse = AnalyticsLatencyResponses[keyof AnalyticsLatencyResponses];
+
 export type AnalyticsTimeseriesData = {
     body?: never;
     path?: never;
@@ -2728,6 +3203,42 @@ export type AnalyticsTimeseriesData = {
          * Time bucket granularity (default hour)
          */
         bucket?: 'hour' | 'day';
+        /**
+         * Filter by event source (e.g. gateway)
+         */
+        source?: string;
+        /**
+         * Filter by request/response model
+         */
+        model?: string;
+        /**
+         * Filter by model provider
+         */
+        provider?: string;
+        /**
+         * Filter by app id
+         */
+        app?: string;
+        /**
+         * Filter by environment id
+         */
+        environment?: string;
+        /**
+         * Filter by API key id
+         */
+        apiKey?: string;
+        /**
+         * Filter by end-user id
+         */
+        user?: string;
+        /**
+         * Custom-dimension (attribute) key to filter on; pair with filterTagValue
+         */
+        filterTagKey?: string;
+        /**
+         * Value for filterTagKey
+         */
+        filterTagValue?: string;
     };
     url: '/analytics/timeseries';
 };
@@ -3047,7 +3558,7 @@ export type AuditListResponses = {
     /**
      * OK
      */
-    200: ListOutputBody3;
+    200: ListOutputBody5;
 };
 
 export type AuditListResponse = AuditListResponses[keyof AuditListResponses];
@@ -3246,6 +3757,137 @@ export type CapabilitiesGetResponses = {
 };
 
 export type CapabilitiesGetResponse = CapabilitiesGetResponses[keyof CapabilitiesGetResponses];
+
+export type DashboardsListData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/dashboards';
+};
+
+export type DashboardsListErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type DashboardsListError = DashboardsListErrors[keyof DashboardsListErrors];
+
+export type DashboardsListResponses = {
+    /**
+     * OK
+     */
+    200: ListOutputBody2;
+};
+
+export type DashboardsListResponse = DashboardsListResponses[keyof DashboardsListResponses];
+
+export type DashboardsCreateData = {
+    body: DashboardBodyWritable;
+    path?: never;
+    query?: never;
+    url: '/dashboards';
+};
+
+export type DashboardsCreateErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type DashboardsCreateError = DashboardsCreateErrors[keyof DashboardsCreateErrors];
+
+export type DashboardsCreateResponses = {
+    /**
+     * Created
+     */
+    201: DashboardView;
+};
+
+export type DashboardsCreateResponse = DashboardsCreateResponses[keyof DashboardsCreateResponses];
+
+export type DashboardsDeleteData = {
+    body?: never;
+    path: {
+        dashboardId: string;
+    };
+    query?: never;
+    url: '/dashboards/{dashboardId}';
+};
+
+export type DashboardsDeleteErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type DashboardsDeleteError = DashboardsDeleteErrors[keyof DashboardsDeleteErrors];
+
+export type DashboardsDeleteResponses = {
+    /**
+     * OK
+     */
+    200: OkOutputBody;
+};
+
+export type DashboardsDeleteResponse = DashboardsDeleteResponses[keyof DashboardsDeleteResponses];
+
+export type DashboardsGetData = {
+    body?: never;
+    path: {
+        dashboardId: string;
+    };
+    query?: never;
+    url: '/dashboards/{dashboardId}';
+};
+
+export type DashboardsGetErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type DashboardsGetError = DashboardsGetErrors[keyof DashboardsGetErrors];
+
+export type DashboardsGetResponses = {
+    /**
+     * OK
+     */
+    200: DashboardView;
+};
+
+export type DashboardsGetResponse = DashboardsGetResponses[keyof DashboardsGetResponses];
+
+export type DashboardsUpdateData = {
+    body: DashboardBodyWritable;
+    path: {
+        dashboardId: string;
+    };
+    query?: never;
+    url: '/dashboards/{dashboardId}';
+};
+
+export type DashboardsUpdateErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type DashboardsUpdateError = DashboardsUpdateErrors[keyof DashboardsUpdateErrors];
+
+export type DashboardsUpdateResponses = {
+    /**
+     * OK
+     */
+    200: DashboardView;
+};
+
+export type DashboardsUpdateResponse = DashboardsUpdateResponses[keyof DashboardsUpdateResponses];
 
 export type EnvironmentsListData = {
     body?: never;
@@ -3525,7 +4167,7 @@ export type ExportListResponses = {
     /**
      * OK
      */
-    200: ListOutputBody2;
+    200: ListOutputBody4;
 };
 
 export type ExportListResponse = ExportListResponses[keyof ExportListResponses];
@@ -3690,6 +4332,110 @@ export type FeedbackCreateResponses = {
 };
 
 export type FeedbackCreateResponse = FeedbackCreateResponses[keyof FeedbackCreateResponses];
+
+export type GovernPoliciesListData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/govern-policies';
+};
+
+export type GovernPoliciesListErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type GovernPoliciesListError = GovernPoliciesListErrors[keyof GovernPoliciesListErrors];
+
+export type GovernPoliciesListResponses = {
+    /**
+     * OK
+     */
+    200: ListOutputBody1;
+};
+
+export type GovernPoliciesListResponse = GovernPoliciesListResponses[keyof GovernPoliciesListResponses];
+
+export type GovernPoliciesCreateData = {
+    body: GovernPolicyBodyWritable;
+    path?: never;
+    query?: never;
+    url: '/govern-policies';
+};
+
+export type GovernPoliciesCreateErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type GovernPoliciesCreateError = GovernPoliciesCreateErrors[keyof GovernPoliciesCreateErrors];
+
+export type GovernPoliciesCreateResponses = {
+    /**
+     * Created
+     */
+    201: GovernPolicyView;
+};
+
+export type GovernPoliciesCreateResponse = GovernPoliciesCreateResponses[keyof GovernPoliciesCreateResponses];
+
+export type GovernPoliciesDeleteData = {
+    body?: never;
+    path: {
+        policyId: string;
+    };
+    query?: never;
+    url: '/govern-policies/{policyId}';
+};
+
+export type GovernPoliciesDeleteErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type GovernPoliciesDeleteError = GovernPoliciesDeleteErrors[keyof GovernPoliciesDeleteErrors];
+
+export type GovernPoliciesDeleteResponses = {
+    /**
+     * OK
+     */
+    200: OkOutputBody;
+};
+
+export type GovernPoliciesDeleteResponse = GovernPoliciesDeleteResponses[keyof GovernPoliciesDeleteResponses];
+
+export type GovernPoliciesUpdateData = {
+    body: GovernPolicyBodyWritable;
+    path: {
+        policyId: string;
+    };
+    query?: never;
+    url: '/govern-policies/{policyId}';
+};
+
+export type GovernPoliciesUpdateErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type GovernPoliciesUpdateError = GovernPoliciesUpdateErrors[keyof GovernPoliciesUpdateErrors];
+
+export type GovernPoliciesUpdateResponses = {
+    /**
+     * OK
+     */
+    200: GovernPolicyView;
+};
+
+export type GovernPoliciesUpdateResponse = GovernPoliciesUpdateResponses[keyof GovernPoliciesUpdateResponses];
 
 export type GetHealthzData = {
     body?: never;
@@ -4575,7 +5321,7 @@ export type AlertsListResponses = {
     /**
      * OK
      */
-    200: ListOutputBody1;
+    200: ListOutputBody3;
 };
 
 export type AlertsListResponse = AlertsListResponses[keyof AlertsListResponses];
