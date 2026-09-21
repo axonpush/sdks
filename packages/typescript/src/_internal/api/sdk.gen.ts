@@ -2,7 +2,7 @@
 
 import type { Client, Options as Options2, TDataShape } from './client/index.js';
 import { client } from './client.gen.js';
-import type { AccessRequestCreateData, AccessRequestCreateErrors, AccessRequestCreateResponses, AdminAbuseFlagsListData, AdminAbuseFlagsListErrors, AdminAbuseFlagsListResponses, AdminAbuseFlagsReviewData, AdminAbuseFlagsReviewErrors, AdminAbuseFlagsReviewResponses, AdminAccessRequestsListData, AdminAccessRequestsListErrors, AdminAccessRequestsListResponses, AdminAccessRequestsSetStatusData, AdminAccessRequestsSetStatusErrors, AdminAccessRequestsSetStatusResponses, AdminBillingEventsListData, AdminBillingEventsListErrors, AdminBillingEventsListResponses, AdminFeedbackListData, AdminFeedbackListErrors, AdminFeedbackListResponses, AdminFeedbackSetStatusData, AdminFeedbackSetStatusErrors, AdminFeedbackSetStatusResponses, AdminOrgsGetData, AdminOrgsGetErrors, AdminOrgsGetResponses, AdminOrgsSearchData, AdminOrgsSearchErrors, AdminOrgsSearchResponses, AdminOrgsSetLimitsData, AdminOrgsSetLimitsErrors, AdminOrgsSetLimitsResponses, AdminOrgsSetPlanData, AdminOrgsSetPlanErrors, AdminOrgsSetPlanResponses, AdminOrgsSetStatusData, AdminOrgsSetStatusErrors, AdminOrgsSetStatusResponses, AdminOrgsSetTrialData, AdminOrgsSetTrialErrors, AdminOrgsSetTrialResponses, AdminOverviewData, AdminOverviewErrors, AdminOverviewResponses, AdminUsersDisableData, AdminUsersDisableErrors, AdminUsersDisableResponses, AdminUsersEnableData, AdminUsersEnableErrors, AdminUsersEnableResponses, AdminUsersSearchData, AdminUsersSearchErrors, AdminUsersSearchResponses, AlertsCreateData, AlertsCreateErrors, AlertsCreateResponses, AlertsDeleteData, AlertsDeleteErrors, AlertsDeleteResponses, AlertsListData, AlertsListErrors, AlertsListResponses, AlertsUpdateData, AlertsUpdateErrors, AlertsUpdateResponses, AnalyticsBreakdownData, AnalyticsBreakdownErrors, AnalyticsBreakdownResponses, AnalyticsTimeseriesData, AnalyticsTimeseriesErrors, AnalyticsTimeseriesResponses, AppsCreateData, AppsCreateErrors, AppsCreateResponses, AppsDeleteData, AppsDeleteErrors, AppsDeleteResponses, AppsGetData, AppsGetErrors, AppsGetResponses, AppsListData, AppsListErrors, AppsListResponses, AppsUpdateData, AppsUpdateErrors, AppsUpdateResponses, AuditListData, AuditListErrors, AuditListResponses, AudittrailGetData, AudittrailGetErrors, AudittrailGetResponses, BillingCheckoutData, BillingCheckoutErrors, BillingCheckoutResponses, BillingPlansData, BillingPlansErrors, BillingPlansResponses, BillingPortalData, BillingPortalErrors, BillingPortalResponses, BillingUsageData, BillingUsageErrors, BillingUsageResponses, BillingWebhookData, BillingWebhookErrors, BillingWebhookResponses, CapabilitiesGetData, CapabilitiesGetErrors, CapabilitiesGetResponses, ChannelsCreateData, ChannelsCreateErrors, ChannelsCreateResponses, ChannelsDeleteData, ChannelsDeleteErrors, ChannelsDeleteResponses, ChannelsGetData, ChannelsGetErrors, ChannelsGetResponses, ChannelsListData, ChannelsListErrors, ChannelsListResponses, ChannelsUpdateData, ChannelsUpdateErrors, ChannelsUpdateResponses, CreateEventData, CreateEventErrors, CreateEventResponses, EnvironmentsCreateData, EnvironmentsCreateErrors, EnvironmentsCreateResponses, EnvironmentsDeleteData, EnvironmentsDeleteErrors, EnvironmentsDeleteResponses, EnvironmentsListData, EnvironmentsListErrors, EnvironmentsListResponses, EnvironmentsPromoteData, EnvironmentsPromoteErrors, EnvironmentsPromoteResponses, EnvironmentsUpdateData, EnvironmentsUpdateErrors, EnvironmentsUpdateResponses, EventsSearchData, EventsSearchErrors, EventsSearchResponses, ExportCreateData, ExportCreateErrors, ExportCreateResponses, ExportDeleteData, ExportDeleteErrors, ExportDeleteResponses, ExportGetData, ExportGetErrors, ExportGetResponses, ExportListData, ExportListErrors, ExportListResponses, ExportUpdateData, ExportUpdateErrors, ExportUpdateResponses, FeatureFlagsMeData, FeatureFlagsMeErrors, FeatureFlagsMeResponses, FeedbackCreateData, FeedbackCreateErrors, FeedbackCreateResponses, GetHealthzData, GetHealthzErrors, GetHealthzResponses, LicenseGetData, LicenseGetErrors, LicenseGetResponses, ModerationEfficacyData, ModerationEfficacyErrors, ModerationEfficacyResponses, ModerationRulesCreateData, ModerationRulesCreateErrors, ModerationRulesCreateResponses, ModerationRulesDeleteData, ModerationRulesDeleteErrors, ModerationRulesDeleteResponses, ModerationRulesListData, ModerationRulesListErrors, ModerationRulesListResponses, ModerationViolationsListData, ModerationViolationsListErrors, ModerationViolationsListResponses, OrganizationDeleteData, OrganizationDeleteErrors, OrganizationDeleteResponses, OrganizationGetData, OrganizationGetErrors, OrganizationGetResponses, OrganizationInvitationsCancelData, OrganizationInvitationsCancelErrors, OrganizationInvitationsCancelResponses, OrganizationInvitationsCreateData, OrganizationInvitationsCreateErrors, OrganizationInvitationsCreateResponses, OrganizationInvitationsListData, OrganizationInvitationsListErrors, OrganizationInvitationsListResponses, OrganizationMembersListData, OrganizationMembersListErrors, OrganizationMembersListResponses, OrganizationMembersRemoveData, OrganizationMembersRemoveErrors, OrganizationMembersRemoveResponses, OrganizationMembersUpdateRoleData, OrganizationMembersUpdateRoleErrors, OrganizationMembersUpdateRoleResponses, OrganizationTelemetryPolicyGetData, OrganizationTelemetryPolicyGetErrors, OrganizationTelemetryPolicyGetResponses, OrganizationTelemetryPolicyUpdateData, OrganizationTelemetryPolicyUpdateErrors, OrganizationTelemetryPolicyUpdateResponses, OrganizationTransferOwnershipData, OrganizationTransferOwnershipErrors, OrganizationTransferOwnershipResponses, OrganizationUpdateData, OrganizationUpdateErrors, OrganizationUpdateResponses, SpendPoliciesCreateData, SpendPoliciesCreateErrors, SpendPoliciesCreateResponses, SpendPoliciesDeleteData, SpendPoliciesDeleteErrors, SpendPoliciesDeleteResponses, SpendPoliciesListData, SpendPoliciesListErrors, SpendPoliciesListResponses, SpendPoliciesUpdateData, SpendPoliciesUpdateErrors, SpendPoliciesUpdateResponses, TokensCreateData, TokensCreateErrors, TokensCreateResponses, TokensListData, TokensListErrors, TokensListResponses, TokensRevokeData, TokensRevokeErrors, TokensRevokeResponses, TracesGetData, TracesGetErrors, TracesGetResponses, TracesListData, TracesListErrors, TracesListResponses, UserMeData, UserMeErrors, UserMeOrganizationsData, UserMeOrganizationsErrors, UserMeOrganizationsResponses, UserMeResponses, UserMeSetActiveOrgData, UserMeSetActiveOrgErrors, UserMeSetActiveOrgResponses, UserMeUpdateData, UserMeUpdateErrors, UserMeUpdateResponses, WebhooksCreateEndpointData, WebhooksCreateEndpointErrors, WebhooksCreateEndpointResponses, WebhooksDeleteEndpointData, WebhooksDeleteEndpointErrors, WebhooksDeleteEndpointResponses, WebhooksListDeliveriesData, WebhooksListDeliveriesErrors, WebhooksListDeliveriesResponses, WebhooksListEndpointsData, WebhooksListEndpointsErrors, WebhooksListEndpointsResponses } from './types.gen.js';
+import type { AccessRequestCreateData, AccessRequestCreateErrors, AccessRequestCreateResponses, AdminAbuseFlagsListData, AdminAbuseFlagsListErrors, AdminAbuseFlagsListResponses, AdminAbuseFlagsReviewData, AdminAbuseFlagsReviewErrors, AdminAbuseFlagsReviewResponses, AdminAccessRequestsListData, AdminAccessRequestsListErrors, AdminAccessRequestsListResponses, AdminAccessRequestsSetStatusData, AdminAccessRequestsSetStatusErrors, AdminAccessRequestsSetStatusResponses, AdminBillingEventsListData, AdminBillingEventsListErrors, AdminBillingEventsListResponses, AdminFeedbackListData, AdminFeedbackListErrors, AdminFeedbackListResponses, AdminFeedbackSetStatusData, AdminFeedbackSetStatusErrors, AdminFeedbackSetStatusResponses, AdminOrgsGetData, AdminOrgsGetErrors, AdminOrgsGetResponses, AdminOrgsSearchData, AdminOrgsSearchErrors, AdminOrgsSearchResponses, AdminOrgsSetLimitsData, AdminOrgsSetLimitsErrors, AdminOrgsSetLimitsResponses, AdminOrgsSetPlanData, AdminOrgsSetPlanErrors, AdminOrgsSetPlanResponses, AdminOrgsSetStatusData, AdminOrgsSetStatusErrors, AdminOrgsSetStatusResponses, AdminOrgsSetTrialData, AdminOrgsSetTrialErrors, AdminOrgsSetTrialResponses, AdminOverviewData, AdminOverviewErrors, AdminOverviewResponses, AdminUsersDisableData, AdminUsersDisableErrors, AdminUsersDisableResponses, AdminUsersEnableData, AdminUsersEnableErrors, AdminUsersEnableResponses, AdminUsersSearchData, AdminUsersSearchErrors, AdminUsersSearchResponses, AlertsCreateData, AlertsCreateErrors, AlertsCreateResponses, AlertsDeleteData, AlertsDeleteErrors, AlertsDeleteResponses, AlertsListData, AlertsListErrors, AlertsListResponses, AlertsUpdateData, AlertsUpdateErrors, AlertsUpdateResponses, AnalyticsBreakdownData, AnalyticsBreakdownErrors, AnalyticsBreakdownResponses, AnalyticsDimensionsData, AnalyticsDimensionsErrors, AnalyticsDimensionsResponses, AnalyticsDimensionValuesData, AnalyticsDimensionValuesErrors, AnalyticsDimensionValuesResponses, AnalyticsLatencyData, AnalyticsLatencyErrors, AnalyticsLatencyResponses, AnalyticsTimeseriesData, AnalyticsTimeseriesErrors, AnalyticsTimeseriesResponses, AppsCreateData, AppsCreateErrors, AppsCreateResponses, AppsDeleteData, AppsDeleteErrors, AppsDeleteResponses, AppsGetData, AppsGetErrors, AppsGetResponses, AppsListData, AppsListErrors, AppsListResponses, AppsUpdateData, AppsUpdateErrors, AppsUpdateResponses, AuditListData, AuditListErrors, AuditListResponses, AudittrailGetData, AudittrailGetErrors, AudittrailGetResponses, BillingCheckoutData, BillingCheckoutErrors, BillingCheckoutResponses, BillingPlansData, BillingPlansErrors, BillingPlansResponses, BillingPortalData, BillingPortalErrors, BillingPortalResponses, BillingUsageData, BillingUsageErrors, BillingUsageResponses, BillingWebhookData, BillingWebhookErrors, BillingWebhookResponses, CapabilitiesGetData, CapabilitiesGetErrors, CapabilitiesGetResponses, ChannelsCreateData, ChannelsCreateErrors, ChannelsCreateResponses, ChannelsDeleteData, ChannelsDeleteErrors, ChannelsDeleteResponses, ChannelsGetData, ChannelsGetErrors, ChannelsGetResponses, ChannelsListData, ChannelsListErrors, ChannelsListResponses, ChannelsUpdateData, ChannelsUpdateErrors, ChannelsUpdateResponses, CreateEventData, CreateEventErrors, CreateEventResponses, DashboardsCreateData, DashboardsCreateErrors, DashboardsCreateResponses, DashboardsDeleteData, DashboardsDeleteErrors, DashboardsDeleteResponses, DashboardsGetData, DashboardsGetErrors, DashboardsGetResponses, DashboardsListData, DashboardsListErrors, DashboardsListResponses, DashboardsUpdateData, DashboardsUpdateErrors, DashboardsUpdateResponses, EnvironmentsCreateData, EnvironmentsCreateErrors, EnvironmentsCreateResponses, EnvironmentsDeleteData, EnvironmentsDeleteErrors, EnvironmentsDeleteResponses, EnvironmentsListData, EnvironmentsListErrors, EnvironmentsListResponses, EnvironmentsPromoteData, EnvironmentsPromoteErrors, EnvironmentsPromoteResponses, EnvironmentsUpdateData, EnvironmentsUpdateErrors, EnvironmentsUpdateResponses, EventsSearchData, EventsSearchErrors, EventsSearchResponses, ExportCreateData, ExportCreateErrors, ExportCreateResponses, ExportDeleteData, ExportDeleteErrors, ExportDeleteResponses, ExportGetData, ExportGetErrors, ExportGetResponses, ExportListData, ExportListErrors, ExportListResponses, ExportUpdateData, ExportUpdateErrors, ExportUpdateResponses, FeatureFlagsMeData, FeatureFlagsMeErrors, FeatureFlagsMeResponses, FeedbackCreateData, FeedbackCreateErrors, FeedbackCreateResponses, GetHealthzData, GetHealthzErrors, GetHealthzResponses, GovernPoliciesCreateData, GovernPoliciesCreateErrors, GovernPoliciesCreateResponses, GovernPoliciesDeleteData, GovernPoliciesDeleteErrors, GovernPoliciesDeleteResponses, GovernPoliciesListData, GovernPoliciesListErrors, GovernPoliciesListResponses, GovernPoliciesUpdateData, GovernPoliciesUpdateErrors, GovernPoliciesUpdateResponses, LicenseGetData, LicenseGetErrors, LicenseGetResponses, ModerationEfficacyData, ModerationEfficacyErrors, ModerationEfficacyResponses, ModerationRulesCreateData, ModerationRulesCreateErrors, ModerationRulesCreateResponses, ModerationRulesDeleteData, ModerationRulesDeleteErrors, ModerationRulesDeleteResponses, ModerationRulesListData, ModerationRulesListErrors, ModerationRulesListResponses, ModerationViolationsListData, ModerationViolationsListErrors, ModerationViolationsListResponses, OrganizationDeleteData, OrganizationDeleteErrors, OrganizationDeleteResponses, OrganizationGetData, OrganizationGetErrors, OrganizationGetResponses, OrganizationInvitationsCancelData, OrganizationInvitationsCancelErrors, OrganizationInvitationsCancelResponses, OrganizationInvitationsCreateData, OrganizationInvitationsCreateErrors, OrganizationInvitationsCreateResponses, OrganizationInvitationsListData, OrganizationInvitationsListErrors, OrganizationInvitationsListResponses, OrganizationMembersListData, OrganizationMembersListErrors, OrganizationMembersListResponses, OrganizationMembersRemoveData, OrganizationMembersRemoveErrors, OrganizationMembersRemoveResponses, OrganizationMembersUpdateRoleData, OrganizationMembersUpdateRoleErrors, OrganizationMembersUpdateRoleResponses, OrganizationTelemetryPolicyGetData, OrganizationTelemetryPolicyGetErrors, OrganizationTelemetryPolicyGetResponses, OrganizationTelemetryPolicyUpdateData, OrganizationTelemetryPolicyUpdateErrors, OrganizationTelemetryPolicyUpdateResponses, OrganizationTransferOwnershipData, OrganizationTransferOwnershipErrors, OrganizationTransferOwnershipResponses, OrganizationUpdateData, OrganizationUpdateErrors, OrganizationUpdateResponses, SpendPoliciesCreateData, SpendPoliciesCreateErrors, SpendPoliciesCreateResponses, SpendPoliciesDeleteData, SpendPoliciesDeleteErrors, SpendPoliciesDeleteResponses, SpendPoliciesListData, SpendPoliciesListErrors, SpendPoliciesListResponses, SpendPoliciesUpdateData, SpendPoliciesUpdateErrors, SpendPoliciesUpdateResponses, TokensCreateData, TokensCreateErrors, TokensCreateResponses, TokensListData, TokensListErrors, TokensListResponses, TokensRevokeData, TokensRevokeErrors, TokensRevokeResponses, TracesGetData, TracesGetErrors, TracesGetResponses, TracesListData, TracesListErrors, TracesListResponses, UserMeData, UserMeErrors, UserMeOrganizationsData, UserMeOrganizationsErrors, UserMeOrganizationsResponses, UserMeResponses, UserMeSetActiveOrgData, UserMeSetActiveOrgErrors, UserMeSetActiveOrgResponses, UserMeUpdateData, UserMeUpdateErrors, UserMeUpdateResponses, WebhooksCreateEndpointData, WebhooksCreateEndpointErrors, WebhooksCreateEndpointResponses, WebhooksDeleteEndpointData, WebhooksDeleteEndpointErrors, WebhooksDeleteEndpointResponses, WebhooksListDeliveriesData, WebhooksListDeliveriesErrors, WebhooksListDeliveriesResponses, WebhooksListEndpointsData, WebhooksListEndpointsErrors, WebhooksListEndpointsResponses } from './types.gen.js';
 
 export type Options<TData extends TDataShape = TDataShape, ThrowOnError extends boolean = boolean, TResponse = unknown> = Options2<TData, ThrowOnError, TResponse> & {
     /**
@@ -158,12 +158,31 @@ export const adminUsersDisable = <ThrowOnError extends boolean = false>(options:
 export const adminUsersEnable = <ThrowOnError extends boolean = false>(options: Options<AdminUsersEnableData, ThrowOnError>) => (options.client ?? client).post<AdminUsersEnableResponses, AdminUsersEnableErrors, ThrowOnError>({ url: '/admin/users/{userId}/enable', ...options });
 
 /**
- * Top-N breakdown by model, provider, agent, or tool
+ * Top-N breakdown by model, provider, status, source, app, key, user, agent, tool, or tag
  */
 export const analyticsBreakdown = <ThrowOnError extends boolean = false>(options?: Options<AnalyticsBreakdownData, ThrowOnError>) => (options?.client ?? client).get<AnalyticsBreakdownResponses, AnalyticsBreakdownErrors, ThrowOnError>({ url: '/analytics/breakdown', ...options });
 
 /**
- * Time-bucketed activity (counts, tokens, cost, latency)
+ * Discover the custom dimensions (span-attribute keys) this org emits
+ *
+ * Start here for custom-dimension analytics: this lists the business attribute keys your app has stamped on its telemetry (e.g. participant_role, tenant, plan). Feed a key into /analytics/breakdown?dimension=tag&tagKey=<key> to rank it, then into filterTagKey+filterTagValue on /analytics/timeseries and /analytics/latency to trend and get percentiles for one value.
+ */
+export const analyticsDimensions = <ThrowOnError extends boolean = false>(options?: Options<AnalyticsDimensionsData, ThrowOnError>) => (options?.client ?? client).get<AnalyticsDimensionsResponses, AnalyticsDimensionsErrors, ThrowOnError>({ url: '/analytics/dimensions', ...options });
+
+/**
+ * List the observed values of one custom dimension
+ *
+ * The distinct values seen for a dimension key (from /analytics/dimensions). Use a value with filterTagKey+filterTagValue to scope any analytics read to it.
+ */
+export const analyticsDimensionValues = <ThrowOnError extends boolean = false>(options: Options<AnalyticsDimensionValuesData, ThrowOnError>) => (options.client ?? client).get<AnalyticsDimensionValuesResponses, AnalyticsDimensionValuesErrors, ThrowOnError>({ url: '/analytics/dimensions/values', ...options });
+
+/**
+ * Latency + TTFT percentiles (p50/p95/p99/max) over the window
+ */
+export const analyticsLatency = <ThrowOnError extends boolean = false>(options?: Options<AnalyticsLatencyData, ThrowOnError>) => (options?.client ?? client).get<AnalyticsLatencyResponses, AnalyticsLatencyErrors, ThrowOnError>({ url: '/analytics/latency', ...options });
+
+/**
+ * Time-bucketed traffic (counts, tokens, cost, latency, TTFT)
  */
 export const analyticsTimeseries = <ThrowOnError extends boolean = false>(options?: Options<AnalyticsTimeseriesData, ThrowOnError>) => (options?.client ?? client).get<AnalyticsTimeseriesResponses, AnalyticsTimeseriesErrors, ThrowOnError>({ url: '/analytics/timeseries', ...options });
 
@@ -301,6 +320,47 @@ export const billingWebhook = <ThrowOnError extends boolean = false>(options: Op
 export const capabilitiesGet = <ThrowOnError extends boolean = false>(options?: Options<CapabilitiesGetData, ThrowOnError>) => (options?.client ?? client).get<CapabilitiesGetResponses, CapabilitiesGetErrors, ThrowOnError>({ url: '/capabilities', ...options });
 
 /**
+ * List saved dashboards
+ */
+export const dashboardsList = <ThrowOnError extends boolean = false>(options?: Options<DashboardsListData, ThrowOnError>) => (options?.client ?? client).get<DashboardsListResponses, DashboardsListErrors, ThrowOnError>({ url: '/dashboards', ...options });
+
+/**
+ * Create a saved dashboard from a widget spec
+ *
+ * Author a dashboard tailored to this org's business. Discover which custom dimensions exist via /analytics/dimensions, then define widgets that bind to /analytics/breakdown (dimension=tag&tagKey=<key>), /analytics/timeseries, and /analytics/latency, optionally scoped by filterTagKey+filterTagValue.
+ */
+export const dashboardsCreate = <ThrowOnError extends boolean = false>(options: Options<DashboardsCreateData, ThrowOnError>) => (options.client ?? client).post<DashboardsCreateResponses, DashboardsCreateErrors, ThrowOnError>({
+    url: '/dashboards',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * Delete a saved dashboard
+ */
+export const dashboardsDelete = <ThrowOnError extends boolean = false>(options: Options<DashboardsDeleteData, ThrowOnError>) => (options.client ?? client).delete<DashboardsDeleteResponses, DashboardsDeleteErrors, ThrowOnError>({ url: '/dashboards/{dashboardId}', ...options });
+
+/**
+ * Get a saved dashboard
+ */
+export const dashboardsGet = <ThrowOnError extends boolean = false>(options: Options<DashboardsGetData, ThrowOnError>) => (options.client ?? client).get<DashboardsGetResponses, DashboardsGetErrors, ThrowOnError>({ url: '/dashboards/{dashboardId}', ...options });
+
+/**
+ * Update a saved dashboard
+ */
+export const dashboardsUpdate = <ThrowOnError extends boolean = false>(options: Options<DashboardsUpdateData, ThrowOnError>) => (options.client ?? client).put<DashboardsUpdateResponses, DashboardsUpdateErrors, ThrowOnError>({
+    url: '/dashboards/{dashboardId}',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
  * List environments
  */
 export const environmentsList = <ThrowOnError extends boolean = false>(options?: Options<EnvironmentsListData, ThrowOnError>) => (options?.client ?? client).get<EnvironmentsListResponses, EnvironmentsListErrors, ThrowOnError>({ url: '/environments', ...options });
@@ -405,6 +465,40 @@ export const featureFlagsMe = <ThrowOnError extends boolean = false>(options?: O
  */
 export const feedbackCreate = <ThrowOnError extends boolean = false>(options: Options<FeedbackCreateData, ThrowOnError>) => (options.client ?? client).post<FeedbackCreateResponses, FeedbackCreateErrors, ThrowOnError>({
     url: '/feedback',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * List govern policies
+ */
+export const governPoliciesList = <ThrowOnError extends boolean = false>(options?: Options<GovernPoliciesListData, ThrowOnError>) => (options?.client ?? client).get<GovernPoliciesListResponses, GovernPoliciesListErrors, ThrowOnError>({ url: '/govern-policies', ...options });
+
+/**
+ * Create a govern policy
+ */
+export const governPoliciesCreate = <ThrowOnError extends boolean = false>(options: Options<GovernPoliciesCreateData, ThrowOnError>) => (options.client ?? client).post<GovernPoliciesCreateResponses, GovernPoliciesCreateErrors, ThrowOnError>({
+    url: '/govern-policies',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * Delete a govern policy
+ */
+export const governPoliciesDelete = <ThrowOnError extends boolean = false>(options: Options<GovernPoliciesDeleteData, ThrowOnError>) => (options.client ?? client).delete<GovernPoliciesDeleteResponses, GovernPoliciesDeleteErrors, ThrowOnError>({ url: '/govern-policies/{policyId}', ...options });
+
+/**
+ * Update a govern policy
+ */
+export const governPoliciesUpdate = <ThrowOnError extends boolean = false>(options: Options<GovernPoliciesUpdateData, ThrowOnError>) => (options.client ?? client).patch<GovernPoliciesUpdateResponses, GovernPoliciesUpdateErrors, ThrowOnError>({
+    url: '/govern-policies/{policyId}',
     ...options,
     headers: {
         'Content-Type': 'application/json',
