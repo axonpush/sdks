@@ -35,7 +35,9 @@ def test_logging_handler_round_trip(client, channel):
     logger.handlers.clear()
     logger.setLevel(logging.DEBUG)
     logger.propagate = False
-    handler = AxonPushLoggingHandler(client=client, channel_id=channel.channel_id, service_name="e2e-svc")
+    handler = AxonPushLoggingHandler(
+        client=client, channel_id=channel.channel_id, service_name="e2e-svc"
+    )
     logger.addHandler(handler)
     try:
         logger.error("connection refused", extra={"user_id": 42})
@@ -140,7 +142,9 @@ def test_otel_span_exporter_round_trip(client, channel):
     provider = TracerProvider()
     provider.add_span_processor(
         SimpleSpanProcessor(
-            AxonPushSpanExporter(client=client, channel_id=channel.channel_id, service_name="otel-e2e")
+            AxonPushSpanExporter(
+                client=client, channel_id=channel.channel_id, service_name="otel-e2e"
+            )
         )
     )
     tracer = provider.get_tracer(__name__)

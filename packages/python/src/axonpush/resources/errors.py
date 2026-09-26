@@ -99,9 +99,7 @@ class Errors:
         until: str | None = None,
     ) -> IssueDetailDTO | None:
         """Fetch one issue by fingerprint. ``GET /errors/{fingerprint}``"""
-        kwargs = {
-            k: v for k, v in {"since": since, "until": until}.items() if v is not None
-        }
+        kwargs = {k: v for k, v in {"since": since, "until": until}.items() if v is not None}
         return self._client._invoke(_get_op, fingerprint=fingerprint, **kwargs)
 
     def events(
@@ -167,9 +165,7 @@ class AsyncErrors:
         until: str | None = None,
     ) -> IssueDetailDTO | None:
         """See :meth:`Errors.get`."""
-        kwargs = {
-            k: v for k, v in {"since": since, "until": until}.items() if v is not None
-        }
+        kwargs = {k: v for k, v in {"since": since, "until": until}.items() if v is not None}
         return await self._client._invoke(_get_op, fingerprint=fingerprint, **kwargs)
 
     async def events(
@@ -190,8 +186,6 @@ class AsyncErrors:
             _events_op, _coerce=_unwrap_events, fingerprint=fingerprint, **kwargs
         )
 
-    async def triage(
-        self, fingerprint: str, body: PatchErrorInputBody
-    ) -> IssueTriageDTO | None:
+    async def triage(self, fingerprint: str, body: PatchErrorInputBody) -> IssueTriageDTO | None:
         """See :meth:`Errors.triage`."""
         return await self._client._invoke(_triage_op, fingerprint=fingerprint, body=body)

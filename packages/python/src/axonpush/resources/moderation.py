@@ -47,7 +47,9 @@ def _build_rule_dto(
     pattern: str | None,
 ) -> CreateRuleInputBody:
     resolved = (
-        action if isinstance(action, CreateRuleInputBodyAction) else CreateRuleInputBodyAction(action)
+        action
+        if isinstance(action, CreateRuleInputBodyAction)
+        else CreateRuleInputBodyAction(action)
     )
     return CreateRuleInputBody(
         name=name,
@@ -95,9 +97,7 @@ class Moderation:
         until: str | None = None,
     ) -> EfficacyOutputBody | None:
         """Rule efficacy metrics. ``GET /moderation/efficacy``"""
-        kwargs = {
-            k: v for k, v in {"since": since, "until": until}.items() if v is not None
-        }
+        kwargs = {k: v for k, v in {"since": since, "until": until}.items() if v is not None}
         return self._client._invoke(_efficacy_op, **kwargs)
 
 
@@ -139,7 +139,5 @@ class AsyncModeration:
         until: str | None = None,
     ) -> EfficacyOutputBody | None:
         """See :meth:`Moderation.efficacy`."""
-        kwargs = {
-            k: v for k, v in {"since": since, "until": until}.items() if v is not None
-        }
+        kwargs = {k: v for k, v in {"since": since, "until": until}.items() if v is not None}
         return await self._client._invoke(_efficacy_op, **kwargs)

@@ -106,9 +106,7 @@ class Organizations:
 
     def cancel_invitation(self, org_id: str, invitation_id: str) -> OkOutputBody | None:
         """Cancel a pending invitation."""
-        return self._client._invoke(
-            _delete_invite_op, org_id=org_id, invitation_id=invitation_id
-        )
+        return self._client._invoke(_delete_invite_op, org_id=org_id, invitation_id=invitation_id)
 
     def remove_member(self, org_id: str, user_id: str) -> OkOutputBody | None:
         """Remove a member from an organization."""

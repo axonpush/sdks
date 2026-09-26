@@ -64,9 +64,7 @@ class AsyncGovernPolicies:
         """See :meth:`GovernPolicies.create`."""
         return await self._client._invoke(_create_op, body=body)
 
-    async def update(
-        self, policy_id: str, body: GovernPolicyBody
-    ) -> GovernPolicyView | None:
+    async def update(self, policy_id: str, body: GovernPolicyBody) -> GovernPolicyView | None:
         """See :meth:`GovernPolicies.update`."""
         return await self._client._invoke(_update_op, policy_id=policy_id, body=body)
 
