@@ -26,6 +26,9 @@ class MeDTO:
         roles (list[str] | None):
         schema (str | Unset): A URL to the JSON Schema for this object.
         email (str | Unset):
+        first_name (str | Unset):
+        last_name (str | Unset):
+        name (str | Unset):
         user_id (str | Unset):
     """
 
@@ -36,6 +39,9 @@ class MeDTO:
     roles: list[str] | None
     schema: str | Unset = UNSET
     email: str | Unset = UNSET
+    first_name: str | Unset = UNSET
+    last_name: str | Unset = UNSET
+    name: str | Unset = UNSET
     user_id: str | Unset = UNSET
 
     def to_dict(self) -> dict[str, Any]:
@@ -68,6 +74,12 @@ class MeDTO:
 
         email = self.email
 
+        first_name = self.first_name
+
+        last_name = self.last_name
+
+        name = self.name
+
         user_id = self.user_id
 
         field_dict: dict[str, Any] = {}
@@ -85,6 +97,12 @@ class MeDTO:
             field_dict["$schema"] = schema
         if email is not UNSET:
             field_dict["email"] = email
+        if first_name is not UNSET:
+            field_dict["firstName"] = first_name
+        if last_name is not UNSET:
+            field_dict["lastName"] = last_name
+        if name is not UNSET:
+            field_dict["name"] = name
         if user_id is not UNSET:
             field_dict["userId"] = user_id
 
@@ -140,6 +158,12 @@ class MeDTO:
 
         email = d.pop("email", UNSET)
 
+        first_name = d.pop("firstName", UNSET)
+
+        last_name = d.pop("lastName", UNSET)
+
+        name = d.pop("name", UNSET)
+
         user_id = d.pop("userId", UNSET)
 
         me_dto = cls(
@@ -150,6 +174,9 @@ class MeDTO:
             roles=roles,
             schema=schema,
             email=email,
+            first_name=first_name,
+            last_name=last_name,
+            name=name,
             user_id=user_id,
         )
 

@@ -865,6 +865,7 @@ export type FeatureFlags = {
     readonly $schema?: string;
     analyticsV2: boolean;
     asyncIngest: boolean;
+    billing: boolean;
     environments: boolean;
     mcpServer: boolean;
     sentryIngest: boolean;
@@ -1342,7 +1343,10 @@ export type MeDto = {
     authMethod: string;
     email?: string;
     emailVerified: boolean;
+    firstName?: string;
+    lastName?: string;
     memberships: Array<MembershipDto> | null;
+    name?: string;
     orgId: string;
     roles: Array<string> | null;
     userId?: string;
@@ -2487,6 +2491,7 @@ export type EventOutputBodyWritable = {
 export type FeatureFlagsWritable = {
     analyticsV2: boolean;
     asyncIngest: boolean;
+    billing: boolean;
     environments: boolean;
     mcpServer: boolean;
     sentryIngest: boolean;
@@ -2736,7 +2741,10 @@ export type MeDtoWritable = {
     authMethod: string;
     email?: string;
     emailVerified: boolean;
+    firstName?: string;
+    lastName?: string;
     memberships: Array<MembershipDto> | null;
+    name?: string;
     orgId: string;
     roles: Array<string> | null;
     userId?: string;
