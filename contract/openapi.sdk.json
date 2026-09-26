@@ -2495,6 +2495,9 @@
           "asyncIngest": {
             "type": "boolean"
           },
+          "billing": {
+            "type": "boolean"
+          },
           "environments": {
             "type": "boolean"
           },
@@ -2506,6 +2509,7 @@
           }
         },
         "required": [
+          "billing",
           "environments",
           "sentryIngest",
           "asyncIngest",
@@ -4093,6 +4097,12 @@
           "emailVerified": {
             "type": "boolean"
           },
+          "firstName": {
+            "type": "string"
+          },
+          "lastName": {
+            "type": "string"
+          },
           "memberships": {
             "items": {
               "$ref": "#/components/schemas/MembershipDTO"
@@ -4101,6 +4111,9 @@
               "array",
               "null"
             ]
+          },
+          "name": {
+            "type": "string"
           },
           "orgId": {
             "type": "string"
