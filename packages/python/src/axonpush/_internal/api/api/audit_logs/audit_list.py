@@ -7,7 +7,7 @@ import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
 from ...models.error_model import ErrorModel
-from ...models.list_output_body_3 import ListOutputBody3
+from ...models.list_output_body_5 import ListOutputBody5
 from ...types import UNSET, Response, Unset
 
 
@@ -15,6 +15,7 @@ def _get_kwargs(
     *,
     action: str | Unset = UNSET,
     resource_type: str | Unset = UNSET,
+    source: str | Unset = UNSET,
     before: str | Unset = UNSET,
     limit: int | Unset = 50,
 ) -> dict[str, Any]:
@@ -24,6 +25,8 @@ def _get_kwargs(
     params["action"] = action
 
     params["resourceType"] = resource_type
+
+    params["source"] = source
 
     params["before"] = before
 
@@ -42,9 +45,9 @@ def _get_kwargs(
 
 def _parse_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> ErrorModel | ListOutputBody3:
+) -> ErrorModel | ListOutputBody5:
     if response.status_code == 200:
-        response_200 = ListOutputBody3.from_dict(response.json())
+        response_200 = ListOutputBody5.from_dict(response.json())
 
         return response_200
 
@@ -55,7 +58,7 @@ def _parse_response(
 
 def _build_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> Response[ErrorModel | ListOutputBody3]:
+) -> Response[ErrorModel | ListOutputBody5]:
     return Response(
         status_code=HTTPStatus(response.status_code),
         content=response.content,
@@ -69,14 +72,16 @@ def sync_detailed(
     client: AuthenticatedClient | Client,
     action: str | Unset = UNSET,
     resource_type: str | Unset = UNSET,
+    source: str | Unset = UNSET,
     before: str | Unset = UNSET,
     limit: int | Unset = 50,
-) -> Response[ErrorModel | ListOutputBody3]:
+) -> Response[ErrorModel | ListOutputBody5]:
     """List audit log entries
 
     Args:
         action (str | Unset):
         resource_type (str | Unset):
+        source (str | Unset): Filter by origin: dashboard, apikey, or mcp
         before (str | Unset): RFC3339 upper bound (exclusive); defaults to now
         limit (int | Unset):  Default: 50.
 
@@ -85,12 +90,13 @@ def sync_detailed(
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[ErrorModel | ListOutputBody3]
+        Response[ErrorModel | ListOutputBody5]
     """
 
     kwargs = _get_kwargs(
         action=action,
         resource_type=resource_type,
+        source=source,
         before=before,
         limit=limit,
     )
@@ -107,14 +113,16 @@ def sync(
     client: AuthenticatedClient | Client,
     action: str | Unset = UNSET,
     resource_type: str | Unset = UNSET,
+    source: str | Unset = UNSET,
     before: str | Unset = UNSET,
     limit: int | Unset = 50,
-) -> ErrorModel | ListOutputBody3 | None:
+) -> ErrorModel | ListOutputBody5 | None:
     """List audit log entries
 
     Args:
         action (str | Unset):
         resource_type (str | Unset):
+        source (str | Unset): Filter by origin: dashboard, apikey, or mcp
         before (str | Unset): RFC3339 upper bound (exclusive); defaults to now
         limit (int | Unset):  Default: 50.
 
@@ -123,13 +131,14 @@ def sync(
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        ErrorModel | ListOutputBody3
+        ErrorModel | ListOutputBody5
     """
 
     return sync_detailed(
         client=client,
         action=action,
         resource_type=resource_type,
+        source=source,
         before=before,
         limit=limit,
     ).parsed
@@ -140,14 +149,16 @@ async def asyncio_detailed(
     client: AuthenticatedClient | Client,
     action: str | Unset = UNSET,
     resource_type: str | Unset = UNSET,
+    source: str | Unset = UNSET,
     before: str | Unset = UNSET,
     limit: int | Unset = 50,
-) -> Response[ErrorModel | ListOutputBody3]:
+) -> Response[ErrorModel | ListOutputBody5]:
     """List audit log entries
 
     Args:
         action (str | Unset):
         resource_type (str | Unset):
+        source (str | Unset): Filter by origin: dashboard, apikey, or mcp
         before (str | Unset): RFC3339 upper bound (exclusive); defaults to now
         limit (int | Unset):  Default: 50.
 
@@ -156,12 +167,13 @@ async def asyncio_detailed(
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[ErrorModel | ListOutputBody3]
+        Response[ErrorModel | ListOutputBody5]
     """
 
     kwargs = _get_kwargs(
         action=action,
         resource_type=resource_type,
+        source=source,
         before=before,
         limit=limit,
     )
@@ -176,14 +188,16 @@ async def asyncio(
     client: AuthenticatedClient | Client,
     action: str | Unset = UNSET,
     resource_type: str | Unset = UNSET,
+    source: str | Unset = UNSET,
     before: str | Unset = UNSET,
     limit: int | Unset = 50,
-) -> ErrorModel | ListOutputBody3 | None:
+) -> ErrorModel | ListOutputBody5 | None:
     """List audit log entries
 
     Args:
         action (str | Unset):
         resource_type (str | Unset):
+        source (str | Unset): Filter by origin: dashboard, apikey, or mcp
         before (str | Unset): RFC3339 upper bound (exclusive); defaults to now
         limit (int | Unset):  Default: 50.
 
@@ -192,7 +206,7 @@ async def asyncio(
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        ErrorModel | ListOutputBody3
+        ErrorModel | ListOutputBody5
     """
 
     return (
@@ -200,6 +214,7 @@ async def asyncio(
             client=client,
             action=action,
             resource_type=resource_type,
+            source=source,
             before=before,
             limit=limit,
         )

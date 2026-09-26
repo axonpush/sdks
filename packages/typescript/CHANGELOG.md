@@ -3,6 +3,13 @@
 ## [0.0.12]
 
 ### Added
+- **New resource surfaces.** `dashboards` (list/get/create/update/delete),
+  `errors` (list/get/events/triage), `governPolicies` and `spendPolicies`
+  (list/create/update/delete) are now first-class resources on the client.
+- **More analytics and governance reads.** `analytics` gained `overview`,
+  `heatmap`, `diff`, and `ingestionStatus`; `alerts` gained `occurrences`;
+  `moderation` gained `efficacy`; `organizations` gained `leave` and
+  `acceptInvitation`.
 - **Agent and tool observability surface.** `analytics.breakdown()` now accepts
   `dimension: "agent"` and `dimension: "tool"` (in addition to `model` and
   `provider`); breakdown rows carry the new `errorCount` and `avgDurationMs`
@@ -18,6 +25,9 @@
 
 ### Changed
 - Regenerated the `_internal/api` client from the updated backend contract.
+- Multi-value trace filters (`service`, `model`, `provider`, ...) now serialize
+  as repeated query params (explode), matching the server, so passing more than
+  one value per filter applies all of them.
 
 ## [0.0.11]
 

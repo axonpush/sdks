@@ -1,14 +1,18 @@
 import {
   organizationDelete,
   organizationGet,
+  organizationInvitationsAccept,
   organizationInvitationsCancel,
   organizationInvitationsCreate,
+  organizationLeave,
   organizationMembersRemove,
   organizationTransferOwnership,
   organizationUpdate,
   userMeOrganizations,
 } from "../_internal/api/sdk.gen.js";
 import type {
+  AcceptInvitationInputBodyWritable,
+  AcceptInvitationOutputBody,
   CreateInvitationInputBodyWritable,
   InvitationDto,
   OkOutputBody,
@@ -22,6 +26,9 @@ export type OrganizationUpdateFields = UpdateOrganizationInputBodyWritable;
 
 /** Invitation roles accepted by {@link OrganizationsResource.invite}. */
 export type InvitationRole = CreateInvitationInputBodyWritable["role"];
+
+/** Invitation acceptance payload accepted by {@link OrganizationsResource.acceptInvitation}. */
+export type AcceptInvitationInput = AcceptInvitationInputBodyWritable;
 
 /**
  * Read and manage organizations, invitations, and ownership transfers.
@@ -131,5 +138,26 @@ export class OrganizationsResource {
       path: { orgId },
       body: { userId: targetUserId },
     });
+  }
+
+  /**
+   * Leave an organization the caller is a member of.
+   * `POST /organizations/{orgId}/leave`
+   *
+   * @param orgId - Organization id.
+   * @returns Server ack, or `null` on fail-open error.
+   */
+  async leave(orgId: string): Promise<OkOutputBody | null> {
+    return this.client.invoke(organizationLeave, { path: { orgId } });
+  }
+
+  /**
+   * Accept an invitation using its code. `POST /invitations/accept`
+   *
+   * @param body - Invitation acceptance payload (`code`).
+   * @returns The accepted-invitation result, or `null` on fail-open error.
+   */
+  async acceptInvitation(body: AcceptInvitationInput): Promise<AcceptInvitationOutputBody | null> {
+    return this.client.invoke(organizationInvitationsAccept, { body });
   }
 }

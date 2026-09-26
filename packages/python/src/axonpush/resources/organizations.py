@@ -7,8 +7,10 @@ from typing import TYPE_CHECKING, List
 from axonpush._internal.api.api.organization import (
     organization_delete as _delete_op,
     organization_get as _get_op,
+    organization_invitations_accept as _accept_invite_op,
     organization_invitations_cancel as _delete_invite_op,
     organization_invitations_create as _invite_op,
+    organization_leave as _leave_op,
     organization_members_remove as _remove_member_op,
     organization_transfer_ownership as _transfer_op,
     organization_update as _update_op,
@@ -17,6 +19,8 @@ from axonpush._internal.api.api.user import (
     user_me_organizations as _list_op,
 )
 from axonpush._internal.api.models import (
+    AcceptInvitationInputBody,
+    AcceptInvitationOutputBody,
     CreateInvitationInputBody,
     CreateInvitationInputBodyRole,
     InvitationDTO,
@@ -118,6 +122,16 @@ class Organizations:
             body=TransferOwnershipInputBody(user_id=target_user_id),
         )
 
+    def leave(self, org_id: str) -> OkOutputBody | None:
+        """Leave an organization. ``POST /organizations/{orgId}/leave``"""
+        return self._client._invoke(_leave_op, org_id=org_id)
+
+    def accept_invitation(
+        self, body: AcceptInvitationInputBody
+    ) -> AcceptInvitationOutputBody | None:
+        """Accept a pending invitation. ``POST /invitations/accept``"""
+        return self._client._invoke(_accept_invite_op, body=body)
+
 
 class AsyncOrganizations:
     """Async sibling of :class:`Organizations`."""
@@ -177,3 +191,13 @@ class AsyncOrganizations:
             org_id=org_id,
             body=TransferOwnershipInputBody(user_id=target_user_id),
         )
+
+    async def leave(self, org_id: str) -> OkOutputBody | None:
+        """See :meth:`Organizations.leave`."""
+        return await self._client._invoke(_leave_op, org_id=org_id)
+
+    async def accept_invitation(
+        self, body: AcceptInvitationInputBody
+    ) -> AcceptInvitationOutputBody | None:
+        """See :meth:`Organizations.accept_invitation`."""
+        return await self._client._invoke(_accept_invite_op, body=body)

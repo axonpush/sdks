@@ -1,4 +1,5 @@
 import {
+  moderationEfficacy,
   moderationRulesCreate,
   moderationRulesDelete,
   moderationRulesList,
@@ -6,6 +7,8 @@ import {
 } from "../_internal/api/sdk.gen.js";
 import type {
   CreateRuleInputBodyWritable,
+  EfficacyOutputBody,
+  ModerationEfficacyData,
   OkOutputBody,
   RuleDto,
   ViolationDto,
@@ -13,6 +16,7 @@ import type {
 import type { ResourceClient } from "./_client.js";
 
 export type ModerationRuleCreateInput = CreateRuleInputBodyWritable;
+export type ModerationEfficacyParams = NonNullable<ModerationEfficacyData["query"]>;
 
 /** Content-moderation rules and the violations they produce. */
 export class ModerationResource {
@@ -38,5 +42,10 @@ export class ModerationResource {
   async listViolations(query: { limit?: number } = {}): Promise<ViolationDto[] | null> {
     const res = await this.client.invoke(moderationViolationsList, { query });
     return res?.violations ?? null;
+  }
+
+  /** Moderation efficacy over a window. `GET /moderation/efficacy` */
+  async efficacy(query: ModerationEfficacyParams = {}): Promise<EfficacyOutputBody | null> {
+    return this.client.invoke(moderationEfficacy, { query });
   }
 }

@@ -8,13 +8,16 @@ from axonpush._internal.api.api.alerts import (
     alerts_create as _create_op,
     alerts_delete as _remove_op,
     alerts_list as _list_op,
+    alerts_occurrences as _occurrences_op,
     alerts_update as _update_op,
 )
 from axonpush._internal.api.models import (
+    AlertOccurrenceDTO,
     AlertRuleDTO,
     CreateInputBody,
     DeleteOutputBody,
-    ListOutputBody1,
+    ListOutputBody3,
+    OccurrencesOutputBody,
     UpdateInputBody,
 )
 
@@ -22,7 +25,15 @@ if TYPE_CHECKING:
     from axonpush.resources._base import AsyncClientProtocol, SyncClientProtocol
 
 
-def _unwrap(result: ListOutputBody1 | None) -> List[AlertRuleDTO] | None:
+def _unwrap(result: ListOutputBody3 | None) -> List[AlertRuleDTO] | None:
+    if result is None:
+        return None
+    return list(result.data or [])
+
+
+def _unwrap_occurrences(
+    result: OccurrencesOutputBody | None,
+) -> List[AlertOccurrenceDTO] | None:
     if result is None:
         return None
     return list(result.data or [])
@@ -50,6 +61,24 @@ class Alerts:
         """Update one. ``PATCH /v2/alerts/{alertRuleId}``"""
         return self._client._invoke(_update_op, alert_rule_id=alert_rule_id, body=body)
 
+    def occurrences(
+        self,
+        alert_rule_id: str,
+        *,
+        limit: int | None = None,
+    ) -> List[AlertOccurrenceDTO] | None:
+        """List an alert rule's occurrences (envelope unwrapped).
+
+        ``GET /v2/alerts/{alertRuleId}/occurrences``
+        """
+        kwargs = {} if limit is None else {"limit": limit}
+        return self._client._invoke(
+            _occurrences_op,
+            _coerce=_unwrap_occurrences,
+            alert_rule_id=alert_rule_id,
+            **kwargs,
+        )
+
 
 class AsyncAlerts:
     """Async sibling of :class:`Alerts`."""
@@ -72,3 +101,18 @@ class AsyncAlerts:
     async def update(self, alert_rule_id: str, body: UpdateInputBody) -> AlertRuleDTO | None:
         """See :meth:`Alerts.update`."""
         return await self._client._invoke(_update_op, alert_rule_id=alert_rule_id, body=body)
+
+    async def occurrences(
+        self,
+        alert_rule_id: str,
+        *,
+        limit: int | None = None,
+    ) -> List[AlertOccurrenceDTO] | None:
+        """See :meth:`Alerts.occurrences`."""
+        kwargs = {} if limit is None else {"limit": limit}
+        return await self._client._invoke(
+            _occurrences_op,
+            _coerce=_unwrap_occurrences,
+            alert_rule_id=alert_rule_id,
+            **kwargs,
+        )

@@ -25,6 +25,10 @@ class LogDTO:
         resource_id (str):
         resource_type (str):
         actor_email (str | Unset):
+        entry_hash (str | Unset):
+        prev_hash (str | Unset):
+        seq (int | Unset):
+        source (str | Unset):
     """
 
     action: str
@@ -37,6 +41,10 @@ class LogDTO:
     resource_id: str
     resource_type: str
     actor_email: str | Unset = UNSET
+    entry_hash: str | Unset = UNSET
+    prev_hash: str | Unset = UNSET
+    seq: int | Unset = UNSET
+    source: str | Unset = UNSET
 
     def to_dict(self) -> dict[str, Any]:
         action = self.action
@@ -61,6 +69,14 @@ class LogDTO:
 
         actor_email = self.actor_email
 
+        entry_hash = self.entry_hash
+
+        prev_hash = self.prev_hash
+
+        seq = self.seq
+
+        source = self.source
+
         field_dict: dict[str, Any] = {}
 
         field_dict.update(
@@ -78,6 +94,14 @@ class LogDTO:
         )
         if actor_email is not UNSET:
             field_dict["actorEmail"] = actor_email
+        if entry_hash is not UNSET:
+            field_dict["entryHash"] = entry_hash
+        if prev_hash is not UNSET:
+            field_dict["prevHash"] = prev_hash
+        if seq is not UNSET:
+            field_dict["seq"] = seq
+        if source is not UNSET:
+            field_dict["source"] = source
 
         return field_dict
 
@@ -114,6 +138,14 @@ class LogDTO:
 
         actor_email = d.pop("actorEmail", UNSET)
 
+        entry_hash = d.pop("entryHash", UNSET)
+
+        prev_hash = d.pop("prevHash", UNSET)
+
+        seq = d.pop("seq", UNSET)
+
+        source = d.pop("source", UNSET)
+
         log_dto = cls(
             action=action,
             actor_id=actor_id,
@@ -125,6 +157,10 @@ class LogDTO:
             resource_id=resource_id,
             resource_type=resource_type,
             actor_email=actor_email,
+            entry_hash=entry_hash,
+            prev_hash=prev_hash,
+            seq=seq,
+            source=source,
         )
 
         return log_dto

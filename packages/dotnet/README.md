@@ -54,6 +54,50 @@ That single `AddAxonPushTelemetry` call:
 
 Call `AddAxonPushTelemetry(..., enableSensitiveData: true)` to also forward prompts and completions as span events. The default is off so PII does not leave the process without an explicit opt-in.
 
+## Zero-instrumentation: the LLM gateway
+
+The fastest self-serve path to full observability is the axonpush gateway: no SDK, exporter, or framework wrapper. Point an existing OpenAI client at the gateway `Endpoint` and add the `x-axonpush-api-key` header. Every call, tool call, cost, token count, and latency is captured, and any moderation / govern / spend policy runs inline, with zero code changes. It works alongside the Semantic Kernel and OpenTelemetry paths above.
+
+The official `OpenAI` NuGet client injects a custom header through a pipeline policy:
+
+```csharp
+using System.ClientModel;
+using System.ClientModel.Primitives;
+using OpenAI;
+using OpenAI.Chat;
+
+var options = new OpenAIClientOptions
+{
+    Endpoint = new Uri("https://api.axonpush.xyz/gw/openai"),
+};
+options.AddPolicy(
+    new AxonPushHeaderPolicy(Environment.GetEnvironmentVariable("AXONPUSH_API_KEY")!),
+    PipelinePosition.PerCall);
+
+// apiKey still reads OPENAI_API_KEY; the gateway forwards it upstream.
+var chat = new ChatClient(
+    "gpt-4o",
+    new ApiKeyCredential(Environment.GetEnvironmentVariable("OPENAI_API_KEY")!),
+    options);
+
+sealed class AxonPushHeaderPolicy(string apiKey) : PipelinePolicy
+{
+    public override void Process(PipelineMessage message, IReadOnlyList<PipelinePolicy> pipeline, int index)
+    {
+        message.Request.Headers.Set("x-axonpush-api-key", apiKey);
+        ProcessNext(message, pipeline, index);
+    }
+
+    public override ValueTask ProcessAsync(PipelineMessage message, IReadOnlyList<PipelinePolicy> pipeline, int index)
+    {
+        message.Request.Headers.Set("x-axonpush-api-key", apiKey);
+        return ProcessNextAsync(message, pipeline, index);
+    }
+}
+```
+
+The path segment (`/gw/openai` or `/gw/anthropic`) selects the wire shape. Add `x-axonpush-target: openrouter|anthropic|groq|together|vercel|openai` to route to a different upstream provider, with that provider's key in the standard `Authorization: Bearer <provider_key>` header.
+
 ## Authentication
 
 `ApiKey` accepts two ingest credentials. The client routes them to the right header by prefix:

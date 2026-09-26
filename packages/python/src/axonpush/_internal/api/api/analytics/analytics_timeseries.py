@@ -17,6 +17,19 @@ def _get_kwargs(
     since: str | Unset = UNSET,
     until: str | Unset = UNSET,
     bucket: AnalyticsTimeseriesBucket | Unset = UNSET,
+    source: str | Unset = UNSET,
+    model: str | Unset = UNSET,
+    provider: str | Unset = UNSET,
+    app: str | Unset = UNSET,
+    channel: str | Unset = UNSET,
+    environment: str | Unset = UNSET,
+    api_key: str | Unset = UNSET,
+    user: str | Unset = UNSET,
+    filter_tag_key: str | Unset = UNSET,
+    filter_tag_value: str | Unset = UNSET,
+    service: str | Unset = UNSET,
+    operation: str | Unset = UNSET,
+    error_type: str | Unset = UNSET,
 ) -> dict[str, Any]:
 
     params: dict[str, Any] = {}
@@ -30,6 +43,32 @@ def _get_kwargs(
         json_bucket = bucket.value
 
     params["bucket"] = json_bucket
+
+    params["source"] = source
+
+    params["model"] = model
+
+    params["provider"] = provider
+
+    params["app"] = app
+
+    params["channel"] = channel
+
+    params["environment"] = environment
+
+    params["apiKey"] = api_key
+
+    params["user"] = user
+
+    params["filterTagKey"] = filter_tag_key
+
+    params["filterTagValue"] = filter_tag_value
+
+    params["service"] = service
+
+    params["operation"] = operation
+
+    params["errorType"] = error_type
 
     params = {k: v for k, v in params.items() if v is not UNSET and v is not None}
 
@@ -72,13 +111,40 @@ def sync_detailed(
     since: str | Unset = UNSET,
     until: str | Unset = UNSET,
     bucket: AnalyticsTimeseriesBucket | Unset = UNSET,
+    source: str | Unset = UNSET,
+    model: str | Unset = UNSET,
+    provider: str | Unset = UNSET,
+    app: str | Unset = UNSET,
+    channel: str | Unset = UNSET,
+    environment: str | Unset = UNSET,
+    api_key: str | Unset = UNSET,
+    user: str | Unset = UNSET,
+    filter_tag_key: str | Unset = UNSET,
+    filter_tag_value: str | Unset = UNSET,
+    service: str | Unset = UNSET,
+    operation: str | Unset = UNSET,
+    error_type: str | Unset = UNSET,
 ) -> Response[ErrorModel | TimeseriesOutputBody]:
-    """Time-bucketed activity (counts, tokens, cost, latency)
+    """Time-bucketed traffic (counts, tokens, cost, latency, TTFT)
 
     Args:
         since (str | Unset): Window start (RFC3339); defaults to 24h before until
         until (str | Unset): Window end (RFC3339); defaults to now
         bucket (AnalyticsTimeseriesBucket | Unset): Time bucket granularity (default hour)
+        source (str | Unset): Filter by event source (e.g. gateway)
+        model (str | Unset): Filter by request/response model
+        provider (str | Unset): Filter by model provider
+        app (str | Unset): Filter by app id
+        channel (str | Unset): Filter by channel id
+        environment (str | Unset): Filter by environment id or slug
+        api_key (str | Unset): Filter by API key id
+        user (str | Unset): Filter by end-user id
+        filter_tag_key (str | Unset): Custom-dimension (attribute) key to filter on; pair with
+            filterTagValue
+        filter_tag_value (str | Unset): Value for filterTagKey
+        service (str | Unset): Filter by service (resource service.name)
+        operation (str | Unset): Filter by operation / span name
+        error_type (str | Unset): Filter by error type
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -92,6 +158,19 @@ def sync_detailed(
         since=since,
         until=until,
         bucket=bucket,
+        source=source,
+        model=model,
+        provider=provider,
+        app=app,
+        channel=channel,
+        environment=environment,
+        api_key=api_key,
+        user=user,
+        filter_tag_key=filter_tag_key,
+        filter_tag_value=filter_tag_value,
+        service=service,
+        operation=operation,
+        error_type=error_type,
     )
 
     response = client.get_httpx_client().request(
@@ -107,13 +186,40 @@ def sync(
     since: str | Unset = UNSET,
     until: str | Unset = UNSET,
     bucket: AnalyticsTimeseriesBucket | Unset = UNSET,
+    source: str | Unset = UNSET,
+    model: str | Unset = UNSET,
+    provider: str | Unset = UNSET,
+    app: str | Unset = UNSET,
+    channel: str | Unset = UNSET,
+    environment: str | Unset = UNSET,
+    api_key: str | Unset = UNSET,
+    user: str | Unset = UNSET,
+    filter_tag_key: str | Unset = UNSET,
+    filter_tag_value: str | Unset = UNSET,
+    service: str | Unset = UNSET,
+    operation: str | Unset = UNSET,
+    error_type: str | Unset = UNSET,
 ) -> ErrorModel | TimeseriesOutputBody | None:
-    """Time-bucketed activity (counts, tokens, cost, latency)
+    """Time-bucketed traffic (counts, tokens, cost, latency, TTFT)
 
     Args:
         since (str | Unset): Window start (RFC3339); defaults to 24h before until
         until (str | Unset): Window end (RFC3339); defaults to now
         bucket (AnalyticsTimeseriesBucket | Unset): Time bucket granularity (default hour)
+        source (str | Unset): Filter by event source (e.g. gateway)
+        model (str | Unset): Filter by request/response model
+        provider (str | Unset): Filter by model provider
+        app (str | Unset): Filter by app id
+        channel (str | Unset): Filter by channel id
+        environment (str | Unset): Filter by environment id or slug
+        api_key (str | Unset): Filter by API key id
+        user (str | Unset): Filter by end-user id
+        filter_tag_key (str | Unset): Custom-dimension (attribute) key to filter on; pair with
+            filterTagValue
+        filter_tag_value (str | Unset): Value for filterTagKey
+        service (str | Unset): Filter by service (resource service.name)
+        operation (str | Unset): Filter by operation / span name
+        error_type (str | Unset): Filter by error type
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -128,6 +234,19 @@ def sync(
         since=since,
         until=until,
         bucket=bucket,
+        source=source,
+        model=model,
+        provider=provider,
+        app=app,
+        channel=channel,
+        environment=environment,
+        api_key=api_key,
+        user=user,
+        filter_tag_key=filter_tag_key,
+        filter_tag_value=filter_tag_value,
+        service=service,
+        operation=operation,
+        error_type=error_type,
     ).parsed
 
 
@@ -137,13 +256,40 @@ async def asyncio_detailed(
     since: str | Unset = UNSET,
     until: str | Unset = UNSET,
     bucket: AnalyticsTimeseriesBucket | Unset = UNSET,
+    source: str | Unset = UNSET,
+    model: str | Unset = UNSET,
+    provider: str | Unset = UNSET,
+    app: str | Unset = UNSET,
+    channel: str | Unset = UNSET,
+    environment: str | Unset = UNSET,
+    api_key: str | Unset = UNSET,
+    user: str | Unset = UNSET,
+    filter_tag_key: str | Unset = UNSET,
+    filter_tag_value: str | Unset = UNSET,
+    service: str | Unset = UNSET,
+    operation: str | Unset = UNSET,
+    error_type: str | Unset = UNSET,
 ) -> Response[ErrorModel | TimeseriesOutputBody]:
-    """Time-bucketed activity (counts, tokens, cost, latency)
+    """Time-bucketed traffic (counts, tokens, cost, latency, TTFT)
 
     Args:
         since (str | Unset): Window start (RFC3339); defaults to 24h before until
         until (str | Unset): Window end (RFC3339); defaults to now
         bucket (AnalyticsTimeseriesBucket | Unset): Time bucket granularity (default hour)
+        source (str | Unset): Filter by event source (e.g. gateway)
+        model (str | Unset): Filter by request/response model
+        provider (str | Unset): Filter by model provider
+        app (str | Unset): Filter by app id
+        channel (str | Unset): Filter by channel id
+        environment (str | Unset): Filter by environment id or slug
+        api_key (str | Unset): Filter by API key id
+        user (str | Unset): Filter by end-user id
+        filter_tag_key (str | Unset): Custom-dimension (attribute) key to filter on; pair with
+            filterTagValue
+        filter_tag_value (str | Unset): Value for filterTagKey
+        service (str | Unset): Filter by service (resource service.name)
+        operation (str | Unset): Filter by operation / span name
+        error_type (str | Unset): Filter by error type
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -157,6 +303,19 @@ async def asyncio_detailed(
         since=since,
         until=until,
         bucket=bucket,
+        source=source,
+        model=model,
+        provider=provider,
+        app=app,
+        channel=channel,
+        environment=environment,
+        api_key=api_key,
+        user=user,
+        filter_tag_key=filter_tag_key,
+        filter_tag_value=filter_tag_value,
+        service=service,
+        operation=operation,
+        error_type=error_type,
     )
 
     response = await client.get_async_httpx_client().request(**kwargs)
@@ -170,13 +329,40 @@ async def asyncio(
     since: str | Unset = UNSET,
     until: str | Unset = UNSET,
     bucket: AnalyticsTimeseriesBucket | Unset = UNSET,
+    source: str | Unset = UNSET,
+    model: str | Unset = UNSET,
+    provider: str | Unset = UNSET,
+    app: str | Unset = UNSET,
+    channel: str | Unset = UNSET,
+    environment: str | Unset = UNSET,
+    api_key: str | Unset = UNSET,
+    user: str | Unset = UNSET,
+    filter_tag_key: str | Unset = UNSET,
+    filter_tag_value: str | Unset = UNSET,
+    service: str | Unset = UNSET,
+    operation: str | Unset = UNSET,
+    error_type: str | Unset = UNSET,
 ) -> ErrorModel | TimeseriesOutputBody | None:
-    """Time-bucketed activity (counts, tokens, cost, latency)
+    """Time-bucketed traffic (counts, tokens, cost, latency, TTFT)
 
     Args:
         since (str | Unset): Window start (RFC3339); defaults to 24h before until
         until (str | Unset): Window end (RFC3339); defaults to now
         bucket (AnalyticsTimeseriesBucket | Unset): Time bucket granularity (default hour)
+        source (str | Unset): Filter by event source (e.g. gateway)
+        model (str | Unset): Filter by request/response model
+        provider (str | Unset): Filter by model provider
+        app (str | Unset): Filter by app id
+        channel (str | Unset): Filter by channel id
+        environment (str | Unset): Filter by environment id or slug
+        api_key (str | Unset): Filter by API key id
+        user (str | Unset): Filter by end-user id
+        filter_tag_key (str | Unset): Custom-dimension (attribute) key to filter on; pair with
+            filterTagValue
+        filter_tag_value (str | Unset): Value for filterTagKey
+        service (str | Unset): Filter by service (resource service.name)
+        operation (str | Unset): Filter by operation / span name
+        error_type (str | Unset): Filter by error type
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -192,5 +378,18 @@ async def asyncio(
             since=since,
             until=until,
             bucket=bucket,
+            source=source,
+            model=model,
+            provider=provider,
+            app=app,
+            channel=channel,
+            environment=environment,
+            api_key=api_key,
+            user=user,
+            filter_tag_key=filter_tag_key,
+            filter_tag_value=filter_tag_value,
+            service=service,
+            operation=operation,
+            error_type=error_type,
         )
     ).parsed

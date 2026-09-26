@@ -278,6 +278,26 @@ class AxonPush:
         """Deprecated alias for :attr:`traces`. Lazy import."""
         return self._resource("traces", "Traces")
 
+    @property
+    def dashboards(self) -> Any:
+        """Saved analytics dashboards. Lazy import."""
+        return self._resource("dashboards", "Dashboards")
+
+    @property
+    def errors(self) -> Any:
+        """Error issues and triage. Lazy import."""
+        return self._resource("errors", "Errors")
+
+    @property
+    def govern_policies(self) -> Any:
+        """Request-mutation govern policies. Lazy import."""
+        return self._resource("govern_policies", "GovernPolicies")
+
+    @property
+    def spend_policies(self) -> Any:
+        """Budget and rate spend policies. Lazy import."""
+        return self._resource("spend_policies", "SpendPolicies")
+
 
 class AsyncAxonPush:
     """Asynchronous AxonPush client.
@@ -498,6 +518,26 @@ class AsyncAxonPush:
     def traces_v2(self) -> Any:
         """Deprecated alias for :attr:`traces`. Lazy import."""
         return self._resource("traces", "AsyncTraces")
+
+    @property
+    def dashboards(self) -> Any:
+        """Saved analytics dashboards. Lazy import."""
+        return self._resource("dashboards", "AsyncDashboards")
+
+    @property
+    def errors(self) -> Any:
+        """Error issues and triage. Lazy import."""
+        return self._resource("errors", "AsyncErrors")
+
+    @property
+    def govern_policies(self) -> Any:
+        """Request-mutation govern policies. Lazy import."""
+        return self._resource("govern_policies", "AsyncGovernPolicies")
+
+    @property
+    def spend_policies(self) -> Any:
+        """Budget and rate spend policies. Lazy import."""
+        return self._resource("spend_policies", "AsyncSpendPolicies")
 
 
 __all__ = ["AsyncAxonPush", "AxonPush"]

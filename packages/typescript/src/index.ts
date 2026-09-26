@@ -103,10 +103,14 @@ export { AnalyticsResource } from "./resources/analytics.js";
 export { AppsResource } from "./resources/apps.js";
 export { CapabilitiesResource } from "./resources/capabilities.js";
 export { ChannelsResource } from "./resources/channels.js";
+export { DashboardsResource } from "./resources/dashboards.js";
 export { EnvironmentsResource } from "./resources/environments.js";
+export { ErrorsResource } from "./resources/errors.js";
 export { EventsResource } from "./resources/events.js";
+export { GovernPoliciesResource } from "./resources/govern-policies.js";
 export { ModerationResource } from "./resources/moderation.js";
 export { OrganizationsResource } from "./resources/organizations.js";
+export { SpendPoliciesResource } from "./resources/spend-policies.js";
 // TracesV2Resource is a back-compat alias for TracesResource.
 export { TracesResource, TracesV2Resource } from "./resources/traces.js";
 export { WebhooksResource } from "./resources/webhooks.js";

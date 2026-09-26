@@ -27,6 +27,9 @@ def _get_kwargs(
     agent_name: str | Unset = UNSET,
     tool_name: str | Unset = UNSET,
     semantic_kind: str | Unset = UNSET,
+    service_name: str | Unset = UNSET,
+    operation_name: str | Unset = UNSET,
+    error_type: str | Unset = UNSET,
     q: str | Unset = UNSET,
     attr_key: str | Unset = UNSET,
     attr_value: str | Unset = UNSET,
@@ -61,6 +64,12 @@ def _get_kwargs(
     params["toolName"] = tool_name
 
     params["semanticKind"] = semantic_kind
+
+    params["serviceName"] = service_name
+
+    params["operationName"] = operation_name
+
+    params["errorType"] = error_type
 
     params["q"] = q
 
@@ -120,6 +129,9 @@ def sync_detailed(
     agent_name: str | Unset = UNSET,
     tool_name: str | Unset = UNSET,
     semantic_kind: str | Unset = UNSET,
+    service_name: str | Unset = UNSET,
+    operation_name: str | Unset = UNSET,
+    error_type: str | Unset = UNSET,
     q: str | Unset = UNSET,
     attr_key: str | Unset = UNSET,
     attr_value: str | Unset = UNSET,
@@ -142,6 +154,9 @@ def sync_detailed(
         tool_name (str | Unset): Filter by tool name
         semantic_kind (str | Unset): Filter by semantic kind (agent, tool, llm, retriever, db,
             http, log)
+        service_name (str | Unset): Filter by service (resource service.name)
+        operation_name (str | Unset): Filter by operation / span name
+        error_type (str | Unset): Filter by error type
         q (str | Unset): Case-insensitive contains match on search text
         attr_key (str | Unset): JSONB attribute key for equality filter (paired with attrValue)
         attr_value (str | Unset): JSONB attribute value for equality filter (paired with attrKey)
@@ -169,6 +184,9 @@ def sync_detailed(
         agent_name=agent_name,
         tool_name=tool_name,
         semantic_kind=semantic_kind,
+        service_name=service_name,
+        operation_name=operation_name,
+        error_type=error_type,
         q=q,
         attr_key=attr_key,
         attr_value=attr_value,
@@ -198,6 +216,9 @@ def sync(
     agent_name: str | Unset = UNSET,
     tool_name: str | Unset = UNSET,
     semantic_kind: str | Unset = UNSET,
+    service_name: str | Unset = UNSET,
+    operation_name: str | Unset = UNSET,
+    error_type: str | Unset = UNSET,
     q: str | Unset = UNSET,
     attr_key: str | Unset = UNSET,
     attr_value: str | Unset = UNSET,
@@ -220,6 +241,9 @@ def sync(
         tool_name (str | Unset): Filter by tool name
         semantic_kind (str | Unset): Filter by semantic kind (agent, tool, llm, retriever, db,
             http, log)
+        service_name (str | Unset): Filter by service (resource service.name)
+        operation_name (str | Unset): Filter by operation / span name
+        error_type (str | Unset): Filter by error type
         q (str | Unset): Case-insensitive contains match on search text
         attr_key (str | Unset): JSONB attribute key for equality filter (paired with attrValue)
         attr_value (str | Unset): JSONB attribute value for equality filter (paired with attrKey)
@@ -248,6 +272,9 @@ def sync(
         agent_name=agent_name,
         tool_name=tool_name,
         semantic_kind=semantic_kind,
+        service_name=service_name,
+        operation_name=operation_name,
+        error_type=error_type,
         q=q,
         attr_key=attr_key,
         attr_value=attr_value,
@@ -271,6 +298,9 @@ async def asyncio_detailed(
     agent_name: str | Unset = UNSET,
     tool_name: str | Unset = UNSET,
     semantic_kind: str | Unset = UNSET,
+    service_name: str | Unset = UNSET,
+    operation_name: str | Unset = UNSET,
+    error_type: str | Unset = UNSET,
     q: str | Unset = UNSET,
     attr_key: str | Unset = UNSET,
     attr_value: str | Unset = UNSET,
@@ -293,6 +323,9 @@ async def asyncio_detailed(
         tool_name (str | Unset): Filter by tool name
         semantic_kind (str | Unset): Filter by semantic kind (agent, tool, llm, retriever, db,
             http, log)
+        service_name (str | Unset): Filter by service (resource service.name)
+        operation_name (str | Unset): Filter by operation / span name
+        error_type (str | Unset): Filter by error type
         q (str | Unset): Case-insensitive contains match on search text
         attr_key (str | Unset): JSONB attribute key for equality filter (paired with attrValue)
         attr_value (str | Unset): JSONB attribute value for equality filter (paired with attrKey)
@@ -320,6 +353,9 @@ async def asyncio_detailed(
         agent_name=agent_name,
         tool_name=tool_name,
         semantic_kind=semantic_kind,
+        service_name=service_name,
+        operation_name=operation_name,
+        error_type=error_type,
         q=q,
         attr_key=attr_key,
         attr_value=attr_value,
@@ -347,6 +383,9 @@ async def asyncio(
     agent_name: str | Unset = UNSET,
     tool_name: str | Unset = UNSET,
     semantic_kind: str | Unset = UNSET,
+    service_name: str | Unset = UNSET,
+    operation_name: str | Unset = UNSET,
+    error_type: str | Unset = UNSET,
     q: str | Unset = UNSET,
     attr_key: str | Unset = UNSET,
     attr_value: str | Unset = UNSET,
@@ -369,6 +408,9 @@ async def asyncio(
         tool_name (str | Unset): Filter by tool name
         semantic_kind (str | Unset): Filter by semantic kind (agent, tool, llm, retriever, db,
             http, log)
+        service_name (str | Unset): Filter by service (resource service.name)
+        operation_name (str | Unset): Filter by operation / span name
+        error_type (str | Unset): Filter by error type
         q (str | Unset): Case-insensitive contains match on search text
         attr_key (str | Unset): JSONB attribute key for equality filter (paired with attrValue)
         attr_value (str | Unset): JSONB attribute value for equality filter (paired with attrKey)
@@ -398,6 +440,9 @@ async def asyncio(
             agent_name=agent_name,
             tool_name=tool_name,
             semantic_kind=semantic_kind,
+            service_name=service_name,
+            operation_name=operation_name,
+            error_type=error_type,
             q=q,
             attr_key=attr_key,
             attr_value=attr_value,

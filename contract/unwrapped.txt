@@ -1,37 +1,74 @@
 # Operations with no hand-written resource method, and why.
-# check-contract.ts fails on anything published but neither wrapped nor listed
-# here, so a new server endpoint forces a decision instead of arriving unusable.
-
-# Ingest surfaces. Called by a wire protocol, an exporter or another vendor's
-# SDK, never by an axonpush resource method.
-EventController_createEventBatch
-OtlpController_ingestLogs
-OtlpController_ingestTraces
-SentryController_ingestEnvelope
-SentryController_ingestMinidump
-SentryController_ingestSecurity
-SentryController_ingestStore
-WebhookController_ingestWebhook
+# Every published operation is either reachable from a resource method or listed
+# here with a reason, so a new server endpoint forces a decision instead of
+# arriving unusable. operationIds are the dotted Go/Huma form.
 
 # Infrastructure the client reaches through its own code paths, not a resource.
-HealthController_check
-IotCredentialsController_getCredentials
+get-healthz
 
-# Not wrapped yet. Each is a real gap; wrap it or delete the endpoint.
-CapabilitiesController_getCapabilities
-ExportController_create
-ExportController_get
-ExportController_list
-ExportController_remove
-ExportController_update
-IntelligenceController_get
-IntelligenceController_list
-IntelligenceController_run
-IotTokenController_create
-IotTokenController_list
-IotTokenController_revoke
-OrganizationController_getTelemetryPolicy
-OrganizationController_updateTelemetryPolicy
-PublicIngestTokenController_create
-PublicIngestTokenController_list
-PublicIngestTokenController_revoke
+# Ingest surfaces. Driven by a wire protocol, an exporter, or another vendor's
+# SDK (the transport layer), never by an axonpush resource method.
+featureFlags.me
+
+# Console / admin surfaces. These back the hosted admin app, not a programmatic
+# client, so they are intentionally not part of the public SDK.
+accessRequest.create
+admin.abuseFlags.list
+admin.abuseFlags.review
+admin.abuseFlags.suspend
+admin.accessRequests.list
+admin.accessRequests.setStatus
+admin.billingEvents.list
+admin.feedback.list
+admin.feedback.setStatus
+admin.orgs.disable
+admin.orgs.enable
+admin.orgs.get
+admin.orgs.search
+admin.orgs.setBilling
+admin.orgs.setLimits
+admin.orgs.setPlan
+admin.orgs.setStatus
+admin.orgs.setTrial
+admin.overview
+admin.users.disable
+admin.users.enable
+admin.users.search
+
+# Billing surfaces. Checkout / portal / webhook are the hosted billing flow, and
+# usage/plans are read in the dashboard; not modelled in the SDK.
+billing.checkout
+billing.plans
+billing.portal
+billing.usage
+billing.webhook
+
+# Account surfaces. The active user's own identity and org switching are handled
+# by the dashboard session, not a programmatic client.
+user.me
+user.me.setActiveOrg
+user.me.update
+
+# Not wrapped yet. Each is a real gap: wrap it (add a resource method) or delete
+# the endpoint. Deferred from the current refresh, which covered the observability
+# and governance data plane (dashboards, errors, analytics, govern/spend policies).
+audit.list
+audit.verify
+audittrail.get
+export.create
+export.delete
+export.get
+export.list
+export.listDeliveries
+export.test
+export.update
+feedback.create
+license.get
+organization.invitations.list
+organization.members.list
+organization.members.updateRole
+organization.telemetryPolicy.get
+organization.telemetryPolicy.update
+tokens.create
+tokens.list
+tokens.revoke

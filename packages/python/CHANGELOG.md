@@ -7,6 +7,15 @@ versioning is [SemVer](https://semver.org/spec/v2.0.0.html).
 ## [0.0.19]
 
 ### Added
+- **New resource surfaces.** `client.dashboards` (list/get/create/update/delete),
+  `client.errors` (list/get/events/triage), `client.govern_policies` and
+  `client.spend_policies` (list/create/update/delete) are now first-class
+  resources, with sync and async siblings.
+- **More analytics and governance reads.** `analytics` gained `overview`,
+  `heatmap`, `diff`, `ingestion_status`, `dimensions`, `dimension_values`, and
+  `latency` (the last three reaching parity with the TypeScript SDK); `alerts`
+  gained `occurrences`; `moderation` gained `efficacy`; `organizations` gained
+  `leave` and `accept_invitation`.
 - **Agent and tool observability surface.** `client.analytics.breakdown()` now
   accepts `dimension="agent"` and `dimension="tool"` (in addition to `model`
   and `provider`); breakdown rows carry the new `error_count` and
@@ -22,6 +31,9 @@ versioning is [SemVer](https://semver.org/spec/v2.0.0.html).
 
 ### Changed
 - Regenerated the `_internal.api` client from the updated backend contract.
+- Multi-value trace filters (`service`, `model`, `provider`, ...) now serialize
+  as repeated query params (explode), matching the server, so passing more than
+  one value per filter applies all of them.
 
 ## [0.0.18]
 

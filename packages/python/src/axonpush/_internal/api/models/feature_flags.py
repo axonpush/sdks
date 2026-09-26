@@ -15,6 +15,7 @@ T = TypeVar("T", bound="FeatureFlags")
 class FeatureFlags:
     """
     Attributes:
+        analytics_v2 (bool):
         async_ingest (bool):
         environments (bool):
         mcp_server (bool):
@@ -22,6 +23,7 @@ class FeatureFlags:
         schema (str | Unset): A URL to the JSON Schema for this object.
     """
 
+    analytics_v2: bool
     async_ingest: bool
     environments: bool
     mcp_server: bool
@@ -29,6 +31,8 @@ class FeatureFlags:
     schema: str | Unset = UNSET
 
     def to_dict(self) -> dict[str, Any]:
+        analytics_v2 = self.analytics_v2
+
         async_ingest = self.async_ingest
 
         environments = self.environments
@@ -43,6 +47,7 @@ class FeatureFlags:
 
         field_dict.update(
             {
+                "analyticsV2": analytics_v2,
                 "asyncIngest": async_ingest,
                 "environments": environments,
                 "mcpServer": mcp_server,
@@ -57,6 +62,8 @@ class FeatureFlags:
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         d = dict(src_dict)
+        analytics_v2 = d.pop("analyticsV2")
+
         async_ingest = d.pop("asyncIngest")
 
         environments = d.pop("environments")
@@ -68,6 +75,7 @@ class FeatureFlags:
         schema = d.pop("$schema", UNSET)
 
         feature_flags = cls(
+            analytics_v2=analytics_v2,
             async_ingest=async_ingest,
             environments=environments,
             mcp_server=mcp_server,

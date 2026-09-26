@@ -42,10 +42,14 @@ from axonpush.resources.analytics import Analytics, AsyncAnalytics
 from axonpush.resources.apps import Apps, AsyncApps
 from axonpush.resources.capabilities import AsyncCapabilities, Capabilities
 from axonpush.resources.channels import AsyncChannels, Channels
+from axonpush.resources.dashboards import AsyncDashboards, Dashboards
 from axonpush.resources.environments import AsyncEnvironments, Environments
+from axonpush.resources.errors import AsyncErrors, Errors
 from axonpush.resources.events import AsyncEvents, Events
+from axonpush.resources.govern_policies import AsyncGovernPolicies, GovernPolicies
 from axonpush.resources.moderation import AsyncModeration, Moderation
 from axonpush.resources.organizations import AsyncOrganizations, Organizations
+from axonpush.resources.spend_policies import AsyncSpendPolicies, SpendPolicies
 from axonpush.resources.traces import AsyncTraces, Traces
 from axonpush.resources.traces_v2 import AsyncTracesV2, TracesV2
 from axonpush.resources.webhooks import AsyncWebhooks, Webhooks
@@ -80,10 +84,14 @@ __all__ = [
     "AsyncAxonPush",
     "AsyncCapabilities",
     "AsyncChannels",
+    "AsyncDashboards",
     "AsyncEnvironments",
+    "AsyncErrors",
     "AsyncEvents",
+    "AsyncGovernPolicies",
     "AsyncModeration",
     "AsyncOrganizations",
+    "AsyncSpendPolicies",
     "AsyncTraces",
     "AsyncTracesV2",
     "AsyncWebhooks",
@@ -93,14 +101,17 @@ __all__ = [
     "Capabilities",
     "Channel",
     "Channels",
+    "Dashboards",
     "Environment",
     "Environments",
+    "Errors",
     "Event",
     "EventBody",
     "EventDetails",
     "EventType",
     "Events",
     "ForbiddenError",
+    "GovernPolicies",
     "Moderation",
     "NotFoundError",
     "Organization",
@@ -109,6 +120,7 @@ __all__ = [
     "RetryableError",
     "ServerError",
     "Settings",
+    "SpendPolicies",
     "TraceContext",
     "TraceSummary",
     "Traces",

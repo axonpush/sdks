@@ -6,7 +6,6 @@ class CreateInputBodyMetric(str, Enum):
     ERROR_COUNT = "error_count"
     ERROR_RATE = "error_rate"
     LATENCY_MS = "latency_ms"
-    SCORE = "score"
 
     def __str__(self) -> str:
         return str(self.value)

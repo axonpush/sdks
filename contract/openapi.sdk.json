@@ -40,6 +40,57 @@
         ],
         "type": "object"
       },
+      "AcceptInvitationInputBody": {
+        "additionalProperties": false,
+        "properties": {
+          "$schema": {
+            "description": "A URL to the JSON Schema for this object.",
+            "examples": [
+              "https://example.com/schemas/AcceptInvitationInputBody.json"
+            ],
+            "format": "uri",
+            "readOnly": true,
+            "type": "string"
+          },
+          "code": {
+            "description": "Invitation code from the invite link",
+            "type": "string"
+          }
+        },
+        "required": [
+          "code"
+        ],
+        "type": "object"
+      },
+      "AcceptInvitationOutputBody": {
+        "additionalProperties": false,
+        "properties": {
+          "$schema": {
+            "description": "A URL to the JSON Schema for this object.",
+            "examples": [
+              "https://example.com/schemas/AcceptInvitationOutputBody.json"
+            ],
+            "format": "uri",
+            "readOnly": true,
+            "type": "string"
+          },
+          "orgId": {
+            "type": "string"
+          },
+          "orgName": {
+            "type": "string"
+          },
+          "role": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "orgId",
+          "orgName",
+          "role"
+        ],
+        "type": "object"
+      },
       "AccessRequestDTO": {
         "additionalProperties": false,
         "properties": {
@@ -87,6 +138,43 @@
           "useCase",
           "status",
           "createdAt"
+        ],
+        "type": "object"
+      },
+      "AlertOccurrenceDTO": {
+        "additionalProperties": false,
+        "properties": {
+          "firedAt": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          },
+          "metric": {
+            "type": "string"
+          },
+          "occurrenceId": {
+            "type": "string"
+          },
+          "state": {
+            "type": "string"
+          },
+          "threshold": {
+            "format": "double",
+            "type": "number"
+          },
+          "value": {
+            "format": "double",
+            "type": "number"
+          }
+        },
+        "required": [
+          "occurrenceId",
+          "metric",
+          "value",
+          "threshold",
+          "state",
+          "firedAt"
         ],
         "type": "object"
       },
@@ -201,6 +289,41 @@
         ],
         "type": "object"
       },
+      "AnalyticsOverviewOutputBody": {
+        "additionalProperties": false,
+        "properties": {
+          "$schema": {
+            "description": "A URL to the JSON Schema for this object.",
+            "examples": [
+              "https://example.com/schemas/AnalyticsOverviewOutputBody.json"
+            ],
+            "format": "uri",
+            "readOnly": true,
+            "type": "string"
+          },
+          "breakdowns": {
+            "items": {
+              "$ref": "#/components/schemas/OverviewBreakdownDTO"
+            },
+            "type": [
+              "array",
+              "null"
+            ]
+          },
+          "latency": {
+            "$ref": "#/components/schemas/LatencyPercentilesDTO"
+          },
+          "timeseries": {
+            "$ref": "#/components/schemas/OverviewTimeseriesDTO"
+          }
+        },
+        "required": [
+          "timeseries",
+          "latency",
+          "breakdowns"
+        ],
+        "type": "object"
+      },
       "ApiKeyScope": {
         "additionalProperties": false,
         "properties": {
@@ -242,10 +365,16 @@
           "creatorUserId": {
             "type": "string"
           },
+          "defaultBranch": {
+            "type": "string"
+          },
           "name": {
             "type": "string"
           },
           "orgId": {
+            "type": "string"
+          },
+          "repoUrl": {
             "type": "string"
           },
           "updatedAt": {
@@ -310,6 +439,33 @@
           "externalId",
           "eventName",
           "createdAt"
+        ],
+        "type": "object"
+      },
+      "BreadcrumbDTO": {
+        "additionalProperties": false,
+        "properties": {
+          "category": {
+            "type": "string"
+          },
+          "level": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          },
+          "synthesized": {
+            "type": "boolean"
+          },
+          "timestamp": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "synthesized"
         ],
         "type": "object"
       },
@@ -752,8 +908,7 @@
               "error_count",
               "error_rate",
               "latency_ms",
-              "cost_usd",
-              "score"
+              "cost_usd"
             ],
             "type": "string"
           },
@@ -1430,6 +1585,206 @@
         ],
         "type": "object"
       },
+      "DiffAttributeDTO": {
+        "additionalProperties": false,
+        "properties": {
+          "key": {
+            "type": "string"
+          },
+          "score": {
+            "format": "double",
+            "type": "number"
+          },
+          "values": {
+            "items": {
+              "$ref": "#/components/schemas/DiffValueDTO"
+            },
+            "type": [
+              "array",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "key",
+          "score",
+          "values"
+        ],
+        "type": "object"
+      },
+      "DiffCohortDTO": {
+        "additionalProperties": false,
+        "properties": {
+          "apiKey": {
+            "type": "string"
+          },
+          "app": {
+            "type": "string"
+          },
+          "channel": {
+            "type": "string"
+          },
+          "environment": {
+            "type": "string"
+          },
+          "errorType": {
+            "type": "string"
+          },
+          "errorsOnly": {
+            "description": "Keep only error events in this cohort",
+            "type": "boolean"
+          },
+          "filterTagKey": {
+            "type": "string"
+          },
+          "filterTagValue": {
+            "type": "string"
+          },
+          "maxDurationMs": {
+            "description": "Keep only events at most this many ms (\u003c=0 disables)",
+            "format": "double",
+            "type": "number"
+          },
+          "minDurationMs": {
+            "description": "Keep only events at least this many ms (\u003c=0 disables)",
+            "format": "double",
+            "type": "number"
+          },
+          "model": {
+            "type": "string"
+          },
+          "operation": {
+            "type": "string"
+          },
+          "provider": {
+            "type": "string"
+          },
+          "service": {
+            "type": "string"
+          },
+          "since": {
+            "description": "Window start (RFC3339); defaults to 24h before until",
+            "type": "string"
+          },
+          "source": {
+            "type": "string"
+          },
+          "until": {
+            "description": "Window end (RFC3339); defaults to now",
+            "type": "string"
+          },
+          "user": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "DiffInputBody": {
+        "additionalProperties": false,
+        "properties": {
+          "$schema": {
+            "description": "A URL to the JSON Schema for this object.",
+            "examples": [
+              "https://example.com/schemas/DiffInputBody.json"
+            ],
+            "format": "uri",
+            "readOnly": true,
+            "type": "string"
+          },
+          "baseline": {
+            "$ref": "#/components/schemas/DiffCohortDTO",
+            "description": "The cohort to compare against (e.g. all traffic in the window)"
+          },
+          "keys": {
+            "description": "Attribute keys to diff; defaults to the top cataloged keys (capped)",
+            "items": {
+              "type": "string"
+            },
+            "type": [
+              "array",
+              "null"
+            ]
+          },
+          "limit": {
+            "description": "Max ranked attributes to return (default and max 20)",
+            "format": "int64",
+            "type": "integer"
+          },
+          "selection": {
+            "$ref": "#/components/schemas/DiffCohortDTO",
+            "description": "The cohort under investigation (e.g. the slow or error slice)"
+          }
+        },
+        "required": [
+          "selection",
+          "baseline"
+        ],
+        "type": "object"
+      },
+      "DiffOutputBody": {
+        "additionalProperties": false,
+        "properties": {
+          "$schema": {
+            "description": "A URL to the JSON Schema for this object.",
+            "examples": [
+              "https://example.com/schemas/DiffOutputBody.json"
+            ],
+            "format": "uri",
+            "readOnly": true,
+            "type": "string"
+          },
+          "attributes": {
+            "items": {
+              "$ref": "#/components/schemas/DiffAttributeDTO"
+            },
+            "type": [
+              "array",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "attributes"
+        ],
+        "type": "object"
+      },
+      "DiffValueDTO": {
+        "additionalProperties": false,
+        "properties": {
+          "baselineCount": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "baselineFraction": {
+            "format": "double",
+            "type": "number"
+          },
+          "delta": {
+            "format": "double",
+            "type": "number"
+          },
+          "selectionCount": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "selectionFraction": {
+            "format": "double",
+            "type": "number"
+          },
+          "value": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "value",
+          "selectionCount",
+          "selectionFraction",
+          "baselineCount",
+          "baselineFraction",
+          "delta"
+        ],
+        "type": "object"
+      },
       "DimensionDTO": {
         "additionalProperties": false,
         "properties": {
@@ -1710,6 +2065,86 @@
         },
         "type": "object"
       },
+      "ErrorIssueDTO": {
+        "additionalProperties": false,
+        "properties": {
+          "assignee": {
+            "type": "string"
+          },
+          "count": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "culprit": {
+            "type": "string"
+          },
+          "errorType": {
+            "type": "string"
+          },
+          "fingerprint": {
+            "type": "string"
+          },
+          "firstSeen": {
+            "type": "string"
+          },
+          "lastSeen": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          },
+          "operation": {
+            "type": "string"
+          },
+          "regressed": {
+            "type": "boolean"
+          },
+          "serviceName": {
+            "type": "string"
+          },
+          "sparkline": {
+            "items": {
+              "$ref": "#/components/schemas/IssueBucketDTO"
+            },
+            "type": [
+              "array",
+              "null"
+            ]
+          },
+          "status": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "traceCount": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "userCount": {
+            "format": "int64",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "fingerprint",
+          "title",
+          "culprit",
+          "errorType",
+          "message",
+          "serviceName",
+          "operation",
+          "count",
+          "traceCount",
+          "userCount",
+          "firstSeen",
+          "lastSeen",
+          "status",
+          "regressed",
+          "sparkline"
+        ],
+        "type": "object"
+      },
       "ErrorModel": {
         "additionalProperties": false,
         "properties": {
@@ -1790,7 +2225,7 @@
             "type": "string"
           },
           "channel_id": {
-            "description": "Target channel id",
+            "description": "Target channel id; when omitted, the org's default channel is used",
             "type": "string"
           },
           "dedupKey": {
@@ -1829,8 +2264,7 @@
         },
         "required": [
           "identifier",
-          "payload",
-          "channel_id"
+          "payload"
         ],
         "type": "object"
       },
@@ -2003,6 +2437,46 @@
         ],
         "type": "object"
       },
+      "ExportDeliveryDTO": {
+        "additionalProperties": false,
+        "properties": {
+          "attempts": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "createdAt": {
+            "type": "string"
+          },
+          "deliveryId": {
+            "type": "string"
+          },
+          "error": {
+            "type": "string"
+          },
+          "eventId": {
+            "type": "string"
+          },
+          "signal": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          },
+          "statusCode": {
+            "format": "int32",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "deliveryId",
+          "eventId",
+          "signal",
+          "status",
+          "attempts",
+          "createdAt"
+        ],
+        "type": "object"
+      },
       "FeatureFlags": {
         "additionalProperties": false,
         "properties": {
@@ -2014,6 +2488,9 @@
             "format": "uri",
             "readOnly": true,
             "type": "string"
+          },
+          "analyticsV2": {
+            "type": "boolean"
           },
           "asyncIngest": {
             "type": "boolean"
@@ -2032,7 +2509,8 @@
           "environments",
           "sentryIngest",
           "asyncIngest",
-          "mcpServer"
+          "mcpServer",
+          "analyticsV2"
         ],
         "type": "object"
       },
@@ -2403,6 +2881,138 @@
         ],
         "type": "object"
       },
+      "HeatmapBandDTO": {
+        "additionalProperties": false,
+        "properties": {
+          "hiMs": {
+            "format": "double",
+            "type": "number"
+          },
+          "loMs": {
+            "format": "double",
+            "type": "number"
+          }
+        },
+        "required": [
+          "loMs",
+          "hiMs"
+        ],
+        "type": "object"
+      },
+      "HeatmapCellDTO": {
+        "additionalProperties": false,
+        "properties": {
+          "band": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "count": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "t": {
+            "format": "int64",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "t",
+          "band",
+          "count"
+        ],
+        "type": "object"
+      },
+      "HeatmapOutputBody": {
+        "additionalProperties": false,
+        "properties": {
+          "$schema": {
+            "description": "A URL to the JSON Schema for this object.",
+            "examples": [
+              "https://example.com/schemas/HeatmapOutputBody.json"
+            ],
+            "format": "uri",
+            "readOnly": true,
+            "type": "string"
+          },
+          "bucket": {
+            "type": "string"
+          },
+          "cells": {
+            "items": {
+              "$ref": "#/components/schemas/HeatmapCellDTO"
+            },
+            "type": [
+              "array",
+              "null"
+            ]
+          },
+          "durationBands": {
+            "items": {
+              "$ref": "#/components/schemas/HeatmapBandDTO"
+            },
+            "type": [
+              "array",
+              "null"
+            ]
+          },
+          "maxDurationMs": {
+            "format": "double",
+            "type": "number"
+          },
+          "minDurationMs": {
+            "format": "double",
+            "type": "number"
+          },
+          "sampleCount": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "scale": {
+            "type": "string"
+          },
+          "timeBuckets": {
+            "items": {
+              "type": "string"
+            },
+            "type": [
+              "array",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "bucket",
+          "scale",
+          "minDurationMs",
+          "maxDurationMs",
+          "sampleCount",
+          "timeBuckets",
+          "durationBands",
+          "cells"
+        ],
+        "type": "object"
+      },
+      "IngestionStatusOutputBody": {
+        "additionalProperties": false,
+        "properties": {
+          "$schema": {
+            "description": "A URL to the JSON Schema for this object.",
+            "examples": [
+              "https://example.com/schemas/IngestionStatusOutputBody.json"
+            ],
+            "format": "uri",
+            "readOnly": true,
+            "type": "string"
+          },
+          "everIngested": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "everIngested"
+        ],
+        "type": "object"
+      },
       "InvitationDTO": {
         "additionalProperties": false,
         "properties": {
@@ -2451,6 +3061,164 @@
           "inviteRole",
           "status",
           "createdAt"
+        ],
+        "type": "object"
+      },
+      "IssueBucketDTO": {
+        "additionalProperties": false,
+        "properties": {
+          "bucket": {
+            "type": "string"
+          },
+          "count": {
+            "format": "int64",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "bucket",
+          "count"
+        ],
+        "type": "object"
+      },
+      "IssueDetailDTO": {
+        "additionalProperties": false,
+        "properties": {
+          "$schema": {
+            "description": "A URL to the JSON Schema for this object.",
+            "examples": [
+              "https://example.com/schemas/IssueDetailDTO.json"
+            ],
+            "format": "uri",
+            "readOnly": true,
+            "type": "string"
+          },
+          "affectedTraceIds": {
+            "items": {
+              "type": "string"
+            },
+            "type": [
+              "array",
+              "null"
+            ]
+          },
+          "breadcrumbs": {
+            "items": {
+              "$ref": "#/components/schemas/BreadcrumbDTO"
+            },
+            "type": [
+              "array",
+              "null"
+            ]
+          },
+          "issue": {
+            "$ref": "#/components/schemas/ErrorIssueDTO"
+          },
+          "occurrences": {
+            "items": {
+              "$ref": "#/components/schemas/IssueBucketDTO"
+            },
+            "type": [
+              "array",
+              "null"
+            ]
+          },
+          "resolvedAt": {
+            "type": "string"
+          },
+          "resolvedInRelease": {
+            "type": "string"
+          },
+          "sampleEvent": {
+            "$ref": "#/components/schemas/EventDTO"
+          },
+          "snoozeUntil": {
+            "type": "string"
+          },
+          "stack": {
+            "items": {
+              "$ref": "#/components/schemas/StackFrameDTO"
+            },
+            "type": [
+              "array",
+              "null"
+            ]
+          },
+          "tags": {
+            "items": {
+              "$ref": "#/components/schemas/TagDistributionDTO"
+            },
+            "type": [
+              "array",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "issue",
+          "stack",
+          "breadcrumbs",
+          "tags",
+          "affectedTraceIds",
+          "occurrences"
+        ],
+        "type": "object"
+      },
+      "IssueTriageDTO": {
+        "additionalProperties": false,
+        "properties": {
+          "$schema": {
+            "description": "A URL to the JSON Schema for this object.",
+            "examples": [
+              "https://example.com/schemas/IssueTriageDTO.json"
+            ],
+            "format": "uri",
+            "readOnly": true,
+            "type": "string"
+          },
+          "assignee": {
+            "type": "string"
+          },
+          "fingerprint": {
+            "type": "string"
+          },
+          "regressed": {
+            "type": "boolean"
+          },
+          "resolvedAt": {
+            "type": "string"
+          },
+          "resolvedInRelease": {
+            "type": "string"
+          },
+          "snoozeUntil": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "fingerprint",
+          "status",
+          "regressed"
+        ],
+        "type": "object"
+      },
+      "KeyCount": {
+        "additionalProperties": false,
+        "properties": {
+          "count": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "key": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "key",
+          "count"
         ],
         "type": "object"
       },
@@ -2754,6 +3522,33 @@
         ],
         "type": "object"
       },
+      "ListDeliveriesOutputBody1": {
+        "additionalProperties": false,
+        "properties": {
+          "$schema": {
+            "description": "A URL to the JSON Schema for this object.",
+            "examples": [
+              "https://example.com/schemas/ListDeliveriesOutputBody1.json"
+            ],
+            "format": "uri",
+            "readOnly": true,
+            "type": "string"
+          },
+          "deliveries": {
+            "items": {
+              "$ref": "#/components/schemas/ExportDeliveryDTO"
+            },
+            "type": [
+              "array",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "deliveries"
+        ],
+        "type": "object"
+      },
       "ListEndpointsOutputBody": {
         "additionalProperties": false,
         "properties": {
@@ -2805,6 +3600,60 @@
         },
         "required": [
           "environments"
+        ],
+        "type": "object"
+      },
+      "ListErrorEventsOutputBody": {
+        "additionalProperties": false,
+        "properties": {
+          "$schema": {
+            "description": "A URL to the JSON Schema for this object.",
+            "examples": [
+              "https://example.com/schemas/ListErrorEventsOutputBody.json"
+            ],
+            "format": "uri",
+            "readOnly": true,
+            "type": "string"
+          },
+          "events": {
+            "items": {
+              "$ref": "#/components/schemas/EventDTO"
+            },
+            "type": [
+              "array",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "events"
+        ],
+        "type": "object"
+      },
+      "ListErrorsOutputBody": {
+        "additionalProperties": false,
+        "properties": {
+          "$schema": {
+            "description": "A URL to the JSON Schema for this object.",
+            "examples": [
+              "https://example.com/schemas/ListErrorsOutputBody.json"
+            ],
+            "format": "uri",
+            "readOnly": true,
+            "type": "string"
+          },
+          "issues": {
+            "items": {
+              "$ref": "#/components/schemas/ErrorIssueDTO"
+            },
+            "type": [
+              "array",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "issues"
         ],
         "type": "object"
       },
@@ -3177,6 +4026,9 @@
           "createdAt": {
             "type": "string"
           },
+          "entryHash": {
+            "type": "string"
+          },
           "id": {
             "type": "string"
           },
@@ -3190,10 +4042,20 @@
           "organizationId": {
             "type": "string"
           },
+          "prevHash": {
+            "type": "string"
+          },
           "resourceId": {
             "type": "string"
           },
           "resourceType": {
+            "type": "string"
+          },
+          "seq": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "source": {
             "type": "string"
           }
         },
@@ -3372,6 +4234,33 @@
           "targets",
           "detectors",
           "actions"
+        ],
+        "type": "object"
+      },
+      "OccurrencesOutputBody": {
+        "additionalProperties": false,
+        "properties": {
+          "$schema": {
+            "description": "A URL to the JSON Schema for this object.",
+            "examples": [
+              "https://example.com/schemas/OccurrencesOutputBody.json"
+            ],
+            "format": "uri",
+            "readOnly": true,
+            "type": "string"
+          },
+          "data": {
+            "items": {
+              "$ref": "#/components/schemas/AlertOccurrenceDTO"
+            },
+            "type": [
+              "array",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "data"
         ],
         "type": "object"
       },
@@ -3581,25 +4470,243 @@
         ],
         "type": "object"
       },
-      "OverviewOutputBody": {
+      "OverviewBody": {
         "additionalProperties": false,
         "properties": {
           "$schema": {
             "description": "A URL to the JSON Schema for this object.",
             "examples": [
-              "https://example.com/schemas/OverviewOutputBody.json"
+              "https://example.com/schemas/OverviewBody.json"
             ],
             "format": "uri",
             "readOnly": true,
             "type": "string"
           },
-          "organizations": {
+          "events": {
+            "$ref": "#/components/schemas/OverviewBodyEventsStruct"
+          },
+          "managedLlm": {
+            "$ref": "#/components/schemas/OverviewBodyManagedLlmStruct"
+          },
+          "mrr": {
+            "$ref": "#/components/schemas/OverviewBodyMrrStruct"
+          },
+          "planDistribution": {
+            "items": {
+              "$ref": "#/components/schemas/KeyCount"
+            },
+            "type": [
+              "array",
+              "null"
+            ]
+          },
+          "subscriptionStatusDistribution": {
+            "items": {
+              "$ref": "#/components/schemas/KeyCount"
+            },
+            "type": [
+              "array",
+              "null"
+            ]
+          },
+          "totals": {
+            "$ref": "#/components/schemas/OverviewBodyTotalsStruct"
+          }
+        },
+        "required": [
+          "totals",
+          "events",
+          "planDistribution",
+          "subscriptionStatusDistribution",
+          "mrr",
+          "managedLlm"
+        ],
+        "type": "object"
+      },
+      "OverviewBodyEventsStruct": {
+        "additionalProperties": false,
+        "properties": {
+          "thisCycle": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "today": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "total": {
             "format": "int64",
             "type": "integer"
           }
         },
         "required": [
-          "organizations"
+          "total",
+          "today",
+          "thisCycle"
+        ],
+        "type": "object"
+      },
+      "OverviewBodyManagedLlmStruct": {
+        "additionalProperties": false,
+        "properties": {
+          "costUsdThisMonth": {
+            "format": "double",
+            "type": "number"
+          },
+          "tokensThisMonth": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "tracesThisMonth": {
+            "format": "int64",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "costUsdThisMonth",
+          "tokensThisMonth",
+          "tracesThisMonth"
+        ],
+        "type": "object"
+      },
+      "OverviewBodyMrrStruct": {
+        "additionalProperties": false,
+        "properties": {
+          "byPlan": {
+            "items": {
+              "$ref": "#/components/schemas/PlanMrr"
+            },
+            "type": [
+              "array",
+              "null"
+            ]
+          },
+          "estimateUsd": {
+            "format": "double",
+            "type": "number"
+          },
+          "payingOrgs": {
+            "format": "int64",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "estimateUsd",
+          "payingOrgs",
+          "byPlan"
+        ],
+        "type": "object"
+      },
+      "OverviewBodyTotalsStruct": {
+        "additionalProperties": false,
+        "properties": {
+          "orgs": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "users": {
+            "format": "int64",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "orgs",
+          "users"
+        ],
+        "type": "object"
+      },
+      "OverviewBreakdownDTO": {
+        "additionalProperties": false,
+        "properties": {
+          "dimension": {
+            "type": "string"
+          },
+          "rows": {
+            "items": {
+              "$ref": "#/components/schemas/BreakdownRowDTO"
+            },
+            "type": [
+              "array",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "dimension",
+          "rows"
+        ],
+        "type": "object"
+      },
+      "OverviewTimeseriesDTO": {
+        "additionalProperties": false,
+        "properties": {
+          "bucket": {
+            "type": "string"
+          },
+          "points": {
+            "items": {
+              "$ref": "#/components/schemas/TimeseriesPointDTO"
+            },
+            "type": [
+              "array",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "bucket",
+          "points"
+        ],
+        "type": "object"
+      },
+      "PatchErrorInputBody": {
+        "additionalProperties": false,
+        "properties": {
+          "$schema": {
+            "description": "A URL to the JSON Schema for this object.",
+            "examples": [
+              "https://example.com/schemas/PatchErrorInputBody.json"
+            ],
+            "format": "uri",
+            "readOnly": true,
+            "type": "string"
+          },
+          "action": {
+            "description": "Triage action to apply",
+            "enum": [
+              "resolve",
+              "unresolve",
+              "ignore",
+              "mute",
+              "assign"
+            ],
+            "type": "string"
+          },
+          "assignee": {
+            "description": "User id to assign (for action=assign)",
+            "type": "string"
+          },
+          "resolvedInRelease": {
+            "description": "Release the fix ships in (for action=resolve)",
+            "type": "string"
+          },
+          "snoozeUntil": {
+            "description": "RFC3339 time to auto-unmute (for action=mute)",
+            "type": "string"
+          },
+          "snoozeUntilCount": {
+            "description": "Re-alert after this many new occurrences (for action=mute)",
+            "format": "int64",
+            "type": "integer"
+          },
+          "snoozeUntilUsers": {
+            "description": "Re-alert after this many affected users (for action=mute)",
+            "format": "int64",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "action"
         ],
         "type": "object"
       },
@@ -3684,6 +4791,28 @@
           "priceMonthlyUsd",
           "priceAnnualUsd",
           "features"
+        ],
+        "type": "object"
+      },
+      "PlanMrr": {
+        "additionalProperties": false,
+        "properties": {
+          "count": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "mrrUsd": {
+            "format": "double",
+            "type": "number"
+          },
+          "plan": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "plan",
+          "count",
+          "mrrUsd"
         ],
         "type": "object"
       },
@@ -4142,6 +5271,33 @@
         ],
         "type": "object"
       },
+      "SetBillingInputBody": {
+        "additionalProperties": false,
+        "properties": {
+          "$schema": {
+            "description": "A URL to the JSON Schema for this object.",
+            "examples": [
+              "https://example.com/schemas/SetBillingInputBody.json"
+            ],
+            "format": "uri",
+            "readOnly": true,
+            "type": "string"
+          },
+          "billingMonthlyAmountUsd": {
+            "description": "Negotiated monthly amount in USD",
+            "format": "double",
+            "type": "number"
+          },
+          "billingNotes": {
+            "description": "Free-form commercial notes",
+            "type": "string"
+          }
+        },
+        "required": [
+          "billingMonthlyAmountUsd"
+        ],
+        "type": "object"
+      },
       "SetFeedbackStatusInputBody": {
         "additionalProperties": false,
         "properties": {
@@ -4319,6 +5475,88 @@
         ],
         "type": "object"
       },
+      "StackFrameDTO": {
+        "additionalProperties": false,
+        "properties": {
+          "contextLine": {
+            "type": "string"
+          },
+          "file": {
+            "type": "string"
+          },
+          "function": {
+            "type": "string"
+          },
+          "inApp": {
+            "type": "boolean"
+          },
+          "line": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "postContext": {
+            "items": {
+              "type": "string"
+            },
+            "type": [
+              "array",
+              "null"
+            ]
+          },
+          "preContext": {
+            "items": {
+              "type": "string"
+            },
+            "type": [
+              "array",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "inApp"
+        ],
+        "type": "object"
+      },
+      "TagDistributionDTO": {
+        "additionalProperties": false,
+        "properties": {
+          "key": {
+            "type": "string"
+          },
+          "values": {
+            "items": {
+              "$ref": "#/components/schemas/TagValueCountDTO"
+            },
+            "type": [
+              "array",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "key",
+          "values"
+        ],
+        "type": "object"
+      },
+      "TagValueCountDTO": {
+        "additionalProperties": false,
+        "properties": {
+          "count": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "value": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "value",
+          "count"
+        ],
+        "type": "object"
+      },
       "TelemetryPolicyOutputBody": {
         "additionalProperties": false,
         "properties": {
@@ -4340,6 +5578,31 @@
         "required": [
           "policy",
           "version"
+        ],
+        "type": "object"
+      },
+      "TestOutputBody": {
+        "additionalProperties": false,
+        "properties": {
+          "$schema": {
+            "description": "A URL to the JSON Schema for this object.",
+            "examples": [
+              "https://example.com/schemas/TestOutputBody.json"
+            ],
+            "format": "uri",
+            "readOnly": true,
+            "type": "string"
+          },
+          "deliveryId": {
+            "type": "string"
+          },
+          "signal": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "deliveryId",
+          "signal"
         ],
         "type": "object"
       },
@@ -4453,6 +5716,9 @@
             "format": "double",
             "type": "number"
           },
+          "customer": {
+            "type": "string"
+          },
           "durationMs": {
             "format": "double",
             "type": "number"
@@ -4460,9 +5726,15 @@
           "endedAt": {
             "type": "string"
           },
+          "environment": {
+            "type": "string"
+          },
           "errorCount": {
             "format": "int64",
             "type": "integer"
+          },
+          "firstErrorType": {
+            "type": "string"
           },
           "models": {
             "items": {
@@ -4473,6 +5745,9 @@
               "null"
             ]
           },
+          "outcome": {
+            "type": "string"
+          },
           "providers": {
             "items": {
               "type": "string"
@@ -4481,6 +5756,18 @@
               "array",
               "null"
             ]
+          },
+          "release": {
+            "type": "string"
+          },
+          "rootSpanName": {
+            "type": "string"
+          },
+          "serviceName": {
+            "type": "string"
+          },
+          "sessionId": {
+            "type": "string"
           },
           "spanCount": {
             "format": "int64",
@@ -4495,6 +5782,9 @@
           },
           "traceId": {
             "type": "string"
+          },
+          "workflow": {
+            "type": "string"
           }
         },
         "required": [
@@ -4507,7 +5797,16 @@
           "costUsd",
           "durationMs",
           "providers",
-          "models"
+          "models",
+          "rootSpanName",
+          "serviceName",
+          "environment",
+          "release",
+          "sessionId",
+          "customer",
+          "workflow",
+          "outcome",
+          "firstErrorType"
         ],
         "type": "object"
       },
@@ -4545,9 +5844,17 @@
             "readOnly": true,
             "type": "string"
           },
+          "defaultBranch": {
+            "description": "Default branch (omit to leave unchanged)",
+            "type": "string"
+          },
           "name": {
             "maxLength": 120,
             "minLength": 1,
+            "type": "string"
+          },
+          "repoUrl": {
+            "description": "Source repository URL for the coding-agent handoff (omit to leave unchanged)",
             "type": "string"
           }
         },
@@ -4633,8 +5940,7 @@
               "error_count",
               "error_rate",
               "latency_ms",
-              "cost_usd",
-              "score"
+              "cost_usd"
             ],
             "type": "string"
           },
@@ -4922,6 +6228,42 @@
         ],
         "type": "object"
       },
+      "VerifyResult": {
+        "additionalProperties": false,
+        "properties": {
+          "$schema": {
+            "description": "A URL to the JSON Schema for this object.",
+            "examples": [
+              "https://example.com/schemas/VerifyResult.json"
+            ],
+            "format": "uri",
+            "readOnly": true,
+            "type": "string"
+          },
+          "actual": {
+            "type": "string"
+          },
+          "brokenAtSeq": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "count": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "expected": {
+            "type": "string"
+          },
+          "ok": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "ok",
+          "count"
+        ],
+        "type": "object"
+      },
       "ViolationDTO": {
         "additionalProperties": false,
         "properties": {
@@ -5046,6 +6388,10 @@
         "additionalProperties": false,
         "properties": {
           "app": {
+            "type": "string"
+          },
+          "channel": {
+            "description": "Scope to a channel id",
             "type": "string"
           },
           "environment": {
@@ -5235,6 +6581,47 @@
           }
         },
         "summary": "Dismiss an abuse flag",
+        "tags": [
+          "admin"
+        ]
+      }
+    },
+    "/admin/abuse-flags/{flagId}/suspend": {
+      "post": {
+        "operationId": "admin.abuseFlags.suspend",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "flagId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OkOutputBody"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "summary": "Suspend the flagged organization and mark the flag actioned",
         "tags": [
           "admin"
         ]
@@ -5543,6 +6930,139 @@
         ]
       }
     },
+    "/admin/orgs/{orgId}/billing": {
+      "post": {
+        "operationId": "admin.orgs.setBilling",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "orgId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SetBillingInputBody"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OkOutputBody"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "summary": "Set organization commercial terms (monthly amount + notes)",
+        "tags": [
+          "admin"
+        ]
+      }
+    },
+    "/admin/orgs/{orgId}/disable": {
+      "post": {
+        "operationId": "admin.orgs.disable",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "orgId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OkOutputBody"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "summary": "Disable an organization (pauses ingest)",
+        "tags": [
+          "admin"
+        ]
+      }
+    },
+    "/admin/orgs/{orgId}/enable": {
+      "post": {
+        "operationId": "admin.orgs.enable",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "orgId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OkOutputBody"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "summary": "Re-enable a disabled organization",
+        "tags": [
+          "admin"
+        ]
+      }
+    },
     "/admin/orgs/{orgId}/limits": {
       "post": {
         "operationId": "admin.orgs.setLimits",
@@ -5755,7 +7275,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/OverviewOutputBody"
+                  "$ref": "#/components/schemas/OverviewBody"
                 }
               }
             },
@@ -5940,6 +7460,7 @@
                 "status",
                 "source",
                 "app",
+                "channel",
                 "apiKey",
                 "user",
                 "agent",
@@ -5947,6 +7468,9 @@
                 "eventType",
                 "finishReason",
                 "semanticKind",
+                "service",
+                "operation",
+                "errorType",
                 "tag"
               ],
               "type": "string"
@@ -6014,12 +7538,22 @@
             }
           },
           {
-            "description": "Filter by environment id",
+            "description": "Filter by channel id",
+            "explode": false,
+            "in": "query",
+            "name": "channel",
+            "schema": {
+              "description": "Filter by channel id",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Filter by environment id or slug",
             "explode": false,
             "in": "query",
             "name": "environment",
             "schema": {
-              "description": "Filter by environment id",
+              "description": "Filter by environment id or slug",
               "type": "string"
             }
           },
@@ -6062,6 +7596,36 @@
               "description": "Value for filterTagKey",
               "type": "string"
             }
+          },
+          {
+            "description": "Filter by service (resource service.name)",
+            "explode": false,
+            "in": "query",
+            "name": "service",
+            "schema": {
+              "description": "Filter by service (resource service.name)",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Filter by operation / span name",
+            "explode": false,
+            "in": "query",
+            "name": "operation",
+            "schema": {
+              "description": "Filter by operation / span name",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Filter by error type",
+            "explode": false,
+            "in": "query",
+            "name": "errorType",
+            "schema": {
+              "description": "Filter by error type",
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -6092,18 +7656,60 @@
         ]
       }
     },
+    "/analytics/diff": {
+      "post": {
+        "description": "Honeycomb-style BubbleUp. Give a selection cohort and a baseline cohort (each the same filter shape as the other analytics reads, plus errorsOnly / minDurationMs so the selection can be the slow-or-error slice). For each cataloged attribute key it computes the value distribution in both cohorts and ranks keys by how over-represented a value is in the selection. Restrict the diffed keys with 'keys' (else the top cataloged keys are used, capped).",
+        "operationId": "analytics.diff",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DiffInputBody"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DiffOutputBody"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "summary": "BubbleUp attribute-diff: rank attributes by how differently their values appear in a selection vs a baseline cohort",
+        "tags": [
+          "analytics"
+        ]
+      }
+    },
     "/analytics/dimensions": {
       "get": {
         "description": "Start here for custom-dimension analytics: this lists the business attribute keys your app has stamped on its telemetry (e.g. participant_role, tenant, plan). Feed a key into /analytics/breakdown?dimension=tag\u0026tagKey=\u003ckey\u003e to rank it, then into filterTagKey+filterTagValue on /analytics/timeseries and /analytics/latency to trend and get percentiles for one value.",
         "operationId": "analytics.dimensions",
         "parameters": [
           {
-            "description": "Filter to one environment id; empty = all",
+            "description": "Filter to one environment id or slug; empty = all",
             "explode": false,
             "in": "query",
             "name": "environment",
             "schema": {
-              "description": "Filter to one environment id; empty = all",
+              "description": "Filter to one environment id or slug; empty = all",
               "type": "string"
             }
           },
@@ -6164,12 +7770,12 @@
             }
           },
           {
-            "description": "Filter to one environment id; empty = all",
+            "description": "Filter to one environment id or slug; empty = all",
             "explode": false,
             "in": "query",
             "name": "environment",
             "schema": {
-              "description": "Filter to one environment id; empty = all",
+              "description": "Filter to one environment id or slug; empty = all",
               "type": "string"
             }
           },
@@ -6208,6 +7814,274 @@
           }
         },
         "summary": "List the observed values of one custom dimension",
+        "tags": [
+          "analytics"
+        ]
+      }
+    },
+    "/analytics/heatmap": {
+      "get": {
+        "description": "Duration-band by time-bucket counts over request duration_ms, for a Honeycomb-style latency heatmap. Bands are log-scaled by default (linear on request); the response carries the time buckets, the band edges (loMs/hiMs), the cells ({t, band, count}) and the min/max duration for axis labels.",
+        "operationId": "analytics.heatmap",
+        "parameters": [
+          {
+            "description": "Window start (RFC3339); defaults to 24h before until",
+            "explode": false,
+            "in": "query",
+            "name": "since",
+            "schema": {
+              "description": "Window start (RFC3339); defaults to 24h before until",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Window end (RFC3339); defaults to now",
+            "explode": false,
+            "in": "query",
+            "name": "until",
+            "schema": {
+              "description": "Window end (RFC3339); defaults to now",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Time bucket granularity (default hour)",
+            "explode": false,
+            "in": "query",
+            "name": "bucket",
+            "schema": {
+              "description": "Time bucket granularity (default hour)",
+              "enum": [
+                "minute",
+                "hour",
+                "day"
+              ],
+              "type": "string"
+            }
+          },
+          {
+            "description": "Number of duration bands (default 25, max 100)",
+            "explode": false,
+            "in": "query",
+            "name": "buckets",
+            "schema": {
+              "description": "Number of duration bands (default 25, max 100)",
+              "format": "int64",
+              "type": "integer"
+            }
+          },
+          {
+            "description": "Duration band scale (default log)",
+            "explode": false,
+            "in": "query",
+            "name": "scale",
+            "schema": {
+              "description": "Duration band scale (default log)",
+              "enum": [
+                "log",
+                "linear"
+              ],
+              "type": "string"
+            }
+          },
+          {
+            "description": "Filter by event source (e.g. gateway)",
+            "explode": false,
+            "in": "query",
+            "name": "source",
+            "schema": {
+              "description": "Filter by event source (e.g. gateway)",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Filter by request/response model",
+            "explode": false,
+            "in": "query",
+            "name": "model",
+            "schema": {
+              "description": "Filter by request/response model",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Filter by model provider",
+            "explode": false,
+            "in": "query",
+            "name": "provider",
+            "schema": {
+              "description": "Filter by model provider",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Filter by app id",
+            "explode": false,
+            "in": "query",
+            "name": "app",
+            "schema": {
+              "description": "Filter by app id",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Filter by channel id",
+            "explode": false,
+            "in": "query",
+            "name": "channel",
+            "schema": {
+              "description": "Filter by channel id",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Filter by environment id or slug",
+            "explode": false,
+            "in": "query",
+            "name": "environment",
+            "schema": {
+              "description": "Filter by environment id or slug",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Filter by API key id",
+            "explode": false,
+            "in": "query",
+            "name": "apiKey",
+            "schema": {
+              "description": "Filter by API key id",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Filter by end-user id",
+            "explode": false,
+            "in": "query",
+            "name": "user",
+            "schema": {
+              "description": "Filter by end-user id",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Custom-dimension (attribute) key to filter on; pair with filterTagValue",
+            "explode": false,
+            "in": "query",
+            "name": "filterTagKey",
+            "schema": {
+              "description": "Custom-dimension (attribute) key to filter on; pair with filterTagValue",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Value for filterTagKey",
+            "explode": false,
+            "in": "query",
+            "name": "filterTagValue",
+            "schema": {
+              "description": "Value for filterTagKey",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Filter by service (resource service.name)",
+            "explode": false,
+            "in": "query",
+            "name": "service",
+            "schema": {
+              "description": "Filter by service (resource service.name)",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Filter by operation / span name",
+            "explode": false,
+            "in": "query",
+            "name": "operation",
+            "schema": {
+              "description": "Filter by operation / span name",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Filter by error type",
+            "explode": false,
+            "in": "query",
+            "name": "errorType",
+            "schema": {
+              "description": "Filter by error type",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HeatmapOutputBody"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "summary": "Latency heatmap: duration-band x time-bucket request counts for drag-select",
+        "tags": [
+          "analytics"
+        ]
+      }
+    },
+    "/analytics/ingestion-status": {
+      "get": {
+        "description": "A cheap connection signal for onboarding, distinct from recent activity: everIngested is true once any event has ever landed for the org (optionally scoped to one environment). A minted API key is NOT proof of instrumentation; observed ingestion is.",
+        "operationId": "analytics.ingestionStatus",
+        "parameters": [
+          {
+            "description": "Environment slug or id to scope the check to (omit for org-wide)",
+            "explode": false,
+            "in": "query",
+            "name": "environment",
+            "schema": {
+              "description": "Environment slug or id to scope the check to (omit for org-wide)",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IngestionStatusOutputBody"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "summary": "Whether this workspace has ever ingested an event (onboarding signal)",
         "tags": [
           "analytics"
         ]
@@ -6278,12 +8152,22 @@
             }
           },
           {
-            "description": "Filter by environment id",
+            "description": "Filter by channel id",
+            "explode": false,
+            "in": "query",
+            "name": "channel",
+            "schema": {
+              "description": "Filter by channel id",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Filter by environment id or slug",
             "explode": false,
             "in": "query",
             "name": "environment",
             "schema": {
-              "description": "Filter by environment id",
+              "description": "Filter by environment id or slug",
               "type": "string"
             }
           },
@@ -6326,6 +8210,36 @@
               "description": "Value for filterTagKey",
               "type": "string"
             }
+          },
+          {
+            "description": "Filter by service (resource service.name)",
+            "explode": false,
+            "in": "query",
+            "name": "service",
+            "schema": {
+              "description": "Filter by service (resource service.name)",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Filter by operation / span name",
+            "explode": false,
+            "in": "query",
+            "name": "operation",
+            "schema": {
+              "description": "Filter by operation / span name",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Filter by error type",
+            "explode": false,
+            "in": "query",
+            "name": "errorType",
+            "schema": {
+              "description": "Filter by error type",
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -6351,6 +8265,234 @@
           }
         },
         "summary": "Latency + TTFT percentiles (p50/p95/p99/max) over the window",
+        "tags": [
+          "analytics"
+        ]
+      }
+    },
+    "/analytics/overview": {
+      "get": {
+        "operationId": "analytics.overview",
+        "parameters": [
+          {
+            "description": "Window start (RFC3339); defaults to 24h before until",
+            "explode": false,
+            "in": "query",
+            "name": "since",
+            "schema": {
+              "description": "Window start (RFC3339); defaults to 24h before until",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Window end (RFC3339); defaults to now",
+            "explode": false,
+            "in": "query",
+            "name": "until",
+            "schema": {
+              "description": "Window end (RFC3339); defaults to now",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Time bucket granularity (default hour)",
+            "explode": false,
+            "in": "query",
+            "name": "bucket",
+            "schema": {
+              "description": "Time bucket granularity (default hour)",
+              "enum": [
+                "hour",
+                "day"
+              ],
+              "type": "string"
+            }
+          },
+          {
+            "description": "Comma-separated breakdown dimensions (default model,provider,status); each must be a supported breakdown dimension",
+            "explode": false,
+            "in": "query",
+            "name": "dimensions",
+            "schema": {
+              "description": "Comma-separated breakdown dimensions (default model,provider,status); each must be a supported breakdown dimension",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Attribute key to group by for a tag dimension",
+            "explode": false,
+            "in": "query",
+            "name": "tagKey",
+            "schema": {
+              "description": "Attribute key to group by for a tag dimension",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Top-N entries per breakdown (default 50, max 500)",
+            "explode": false,
+            "in": "query",
+            "name": "limit",
+            "schema": {
+              "description": "Top-N entries per breakdown (default 50, max 500)",
+              "format": "int64",
+              "type": "integer"
+            }
+          },
+          {
+            "description": "Filter by event source (e.g. gateway)",
+            "explode": false,
+            "in": "query",
+            "name": "source",
+            "schema": {
+              "description": "Filter by event source (e.g. gateway)",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Filter by request/response model",
+            "explode": false,
+            "in": "query",
+            "name": "model",
+            "schema": {
+              "description": "Filter by request/response model",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Filter by model provider",
+            "explode": false,
+            "in": "query",
+            "name": "provider",
+            "schema": {
+              "description": "Filter by model provider",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Filter by app id",
+            "explode": false,
+            "in": "query",
+            "name": "app",
+            "schema": {
+              "description": "Filter by app id",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Filter by channel id",
+            "explode": false,
+            "in": "query",
+            "name": "channel",
+            "schema": {
+              "description": "Filter by channel id",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Filter by environment id or slug",
+            "explode": false,
+            "in": "query",
+            "name": "environment",
+            "schema": {
+              "description": "Filter by environment id or slug",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Filter by API key id",
+            "explode": false,
+            "in": "query",
+            "name": "apiKey",
+            "schema": {
+              "description": "Filter by API key id",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Filter by end-user id",
+            "explode": false,
+            "in": "query",
+            "name": "user",
+            "schema": {
+              "description": "Filter by end-user id",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Custom-dimension (attribute) key to filter on; pair with filterTagValue",
+            "explode": false,
+            "in": "query",
+            "name": "filterTagKey",
+            "schema": {
+              "description": "Custom-dimension (attribute) key to filter on; pair with filterTagValue",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Value for filterTagKey",
+            "explode": false,
+            "in": "query",
+            "name": "filterTagValue",
+            "schema": {
+              "description": "Value for filterTagKey",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Filter by service (resource service.name)",
+            "explode": false,
+            "in": "query",
+            "name": "service",
+            "schema": {
+              "description": "Filter by service (resource service.name)",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Filter by operation / span name",
+            "explode": false,
+            "in": "query",
+            "name": "operation",
+            "schema": {
+              "description": "Filter by operation / span name",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Filter by error type",
+            "explode": false,
+            "in": "query",
+            "name": "errorType",
+            "schema": {
+              "description": "Filter by error type",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AnalyticsOverviewOutputBody"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "summary": "Aggregate observability view (timeseries + latency + per-dimension breakdowns) in one call",
         "tags": [
           "analytics"
         ]
@@ -6435,12 +8577,22 @@
             }
           },
           {
-            "description": "Filter by environment id",
+            "description": "Filter by channel id",
+            "explode": false,
+            "in": "query",
+            "name": "channel",
+            "schema": {
+              "description": "Filter by channel id",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Filter by environment id or slug",
             "explode": false,
             "in": "query",
             "name": "environment",
             "schema": {
-              "description": "Filter by environment id",
+              "description": "Filter by environment id or slug",
               "type": "string"
             }
           },
@@ -6481,6 +8633,36 @@
             "name": "filterTagValue",
             "schema": {
               "description": "Value for filterTagKey",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Filter by service (resource service.name)",
+            "explode": false,
+            "in": "query",
+            "name": "service",
+            "schema": {
+              "description": "Filter by service (resource service.name)",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Filter by operation / span name",
+            "explode": false,
+            "in": "query",
+            "name": "operation",
+            "schema": {
+              "description": "Filter by operation / span name",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Filter by error type",
+            "explode": false,
+            "in": "query",
+            "name": "errorType",
+            "schema": {
+              "description": "Filter by error type",
               "type": "string"
             }
           }
@@ -6976,6 +9158,16 @@
             }
           },
           {
+            "description": "Filter by origin: dashboard, apikey, or mcp",
+            "explode": false,
+            "in": "query",
+            "name": "source",
+            "schema": {
+              "description": "Filter by origin: dashboard, apikey, or mcp",
+              "type": "string"
+            }
+          },
+          {
             "description": "RFC3339 upper bound (exclusive); defaults to now",
             "explode": false,
             "in": "query",
@@ -7021,6 +9213,37 @@
           }
         },
         "summary": "List audit log entries",
+        "tags": [
+          "audit-logs"
+        ]
+      }
+    },
+    "/audit-logs/verify": {
+      "get": {
+        "operationId": "audit.verify",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VerifyResult"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "summary": "Verify the tamper-evident audit hash chain",
         "tags": [
           "audit-logs"
         ]
@@ -7348,7 +9571,7 @@
         ]
       },
       "post": {
-        "description": "Author a dashboard tailored to this org's business. Discover which custom dimensions exist via /analytics/dimensions, then define widgets that bind to /analytics/breakdown (dimension=tag\u0026tagKey=\u003ckey\u003e), /analytics/timeseries, and /analytics/latency, optionally scoped by filterTagKey+filterTagValue.",
+        "description": "Author a dashboard tailored to this org's business. Discover which custom dimensions exist via /analytics/dimensions, then define widgets that bind to /analytics/breakdown (dimension=tag\u0026tagKey=\u003ckey\u003e, or dimension=channel to compare channels), /analytics/timeseries, and /analytics/latency, optionally scoped by filterTagKey+filterTagValue or by a channel id (scope.channel). List channels via /apps and /apps/{appId}/channels.",
         "operationId": "dashboards.create",
         "requestBody": {
           "content": {
@@ -7718,6 +9941,300 @@
         ]
       }
     },
+    "/errors": {
+      "get": {
+        "operationId": "errors.list",
+        "parameters": [
+          {
+            "description": "Window start (RFC3339); defaults to 24h before until",
+            "explode": false,
+            "in": "query",
+            "name": "since",
+            "schema": {
+              "description": "Window start (RFC3339); defaults to 24h before until",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Window end (RFC3339); defaults to now",
+            "explode": false,
+            "in": "query",
+            "name": "until",
+            "schema": {
+              "description": "Window end (RFC3339); defaults to now",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Triage status filter (default unresolved)",
+            "explode": false,
+            "in": "query",
+            "name": "status",
+            "schema": {
+              "description": "Triage status filter (default unresolved)",
+              "enum": [
+                "unresolved",
+                "resolved",
+                "ignored",
+                "muted",
+                "all"
+              ],
+              "type": "string"
+            }
+          },
+          {
+            "description": "Filter by service (resource service.name)",
+            "explode": false,
+            "in": "query",
+            "name": "service",
+            "schema": {
+              "description": "Filter by service (resource service.name)",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Filter by assignee user id",
+            "explode": false,
+            "in": "query",
+            "name": "assignee",
+            "schema": {
+              "description": "Filter by assignee user id",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Case-insensitive contains match on the error text",
+            "explode": false,
+            "in": "query",
+            "name": "q",
+            "schema": {
+              "description": "Case-insensitive contains match on the error text",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Max issues (default 50, max 500)",
+            "explode": false,
+            "in": "query",
+            "name": "limit",
+            "schema": {
+              "description": "Max issues (default 50, max 500)",
+              "format": "int64",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListErrorsOutputBody"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "summary": "List error Issues (grouped by fingerprint) with triage state",
+        "tags": [
+          "errors"
+        ]
+      }
+    },
+    "/errors/{fingerprint}": {
+      "get": {
+        "description": "Returns a self-contained debug bundle for one Issue: the recommended sample event fully hydrated, parsed stack frames (file:line:function + in-app), breadcrumbs (from Sentry, or synthesized from the trace), tag value distribution, affected trace ids, and occurrences over time.",
+        "operationId": "errors.get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "fingerprint",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "Occurrence-bucket window start (RFC3339); defaults to firstSeen",
+            "explode": false,
+            "in": "query",
+            "name": "since",
+            "schema": {
+              "description": "Occurrence-bucket window start (RFC3339); defaults to firstSeen",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Occurrence-bucket window end (RFC3339); defaults to now",
+            "explode": false,
+            "in": "query",
+            "name": "until",
+            "schema": {
+              "description": "Occurrence-bucket window end (RFC3339); defaults to now",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IssueDetailDTO"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "summary": "Get an error Issue: sample event, stack, breadcrumbs, tags, affected traces",
+        "tags": [
+          "errors"
+        ]
+      },
+      "patch": {
+        "operationId": "errors.triage",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "fingerprint",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PatchErrorInputBody"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IssueTriageDTO"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "summary": "Triage an error Issue (resolve, unresolve, ignore, mute, assign)",
+        "tags": [
+          "errors"
+        ]
+      }
+    },
+    "/errors/{fingerprint}/events": {
+      "get": {
+        "operationId": "errors.events",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "fingerprint",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "Keyset upper bound (RFC3339, exclusive) for older occurrences",
+            "explode": false,
+            "in": "query",
+            "name": "before",
+            "schema": {
+              "description": "Keyset upper bound (RFC3339, exclusive) for older occurrences",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Keyset lower bound (RFC3339, exclusive) for newer occurrences",
+            "explode": false,
+            "in": "query",
+            "name": "after",
+            "schema": {
+              "description": "Keyset lower bound (RFC3339, exclusive) for newer occurrences",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Max occurrences (default 50, max 500)",
+            "explode": false,
+            "in": "query",
+            "name": "limit",
+            "schema": {
+              "description": "Max occurrences (default 50, max 500)",
+              "format": "int64",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListErrorEventsOutputBody"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "summary": "List occurrences of one error Issue (older/newer paging)",
+        "tags": [
+          "errors"
+        ]
+      }
+    },
     "/event": {
       "post": {
         "operationId": "createEvent",
@@ -7931,6 +10448,36 @@
             "name": "semanticKind",
             "schema": {
               "description": "Filter by semantic kind (agent, tool, llm, retriever, db, http, log)",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Filter by service (resource service.name)",
+            "explode": false,
+            "in": "query",
+            "name": "serviceName",
+            "schema": {
+              "description": "Filter by service (resource service.name)",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Filter by operation / span name",
+            "explode": false,
+            "in": "query",
+            "name": "operationName",
+            "schema": {
+              "description": "Filter by operation / span name",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Filter by error type",
+            "explode": false,
+            "in": "query",
+            "name": "errorType",
+            "schema": {
+              "description": "Filter by error type",
               "type": "string"
             }
           },
@@ -8197,6 +10744,88 @@
           }
         },
         "summary": "Update an export destination",
+        "tags": [
+          "export-destinations"
+        ]
+      }
+    },
+    "/export-destinations/{destinationId}/deliveries": {
+      "get": {
+        "operationId": "export.listDeliveries",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "destinationId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListDeliveriesOutputBody1"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "summary": "List recent export deliveries",
+        "tags": [
+          "export-destinations"
+        ]
+      }
+    },
+    "/export-destinations/{destinationId}/test": {
+      "post": {
+        "operationId": "export.test",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "destinationId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "202": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TestOutputBody"
+                }
+              }
+            },
+            "description": "Accepted"
+          },
+          "default": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "summary": "Send a synthetic test event to an export destination",
         "tags": [
           "export-destinations"
         ]
@@ -8483,6 +11112,47 @@
           }
         },
         "summary": "Get healthz"
+      }
+    },
+    "/invitations/accept": {
+      "post": {
+        "operationId": "organization.invitations.accept",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AcceptInvitationInputBody"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AcceptInvitationOutputBody"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "summary": "Accept an organization invitation by code",
+        "tags": [
+          "organization"
+        ]
       }
     },
     "/license": {
@@ -8964,6 +11634,47 @@
           }
         },
         "summary": "Cancel an organization invitation",
+        "tags": [
+          "organization"
+        ]
+      }
+    },
+    "/organizations/{orgId}/leave": {
+      "post": {
+        "operationId": "organization.leave",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "orgId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OkOutputBody"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "summary": "Leave an organization",
         "tags": [
           "organization"
         ]
@@ -9574,6 +12285,294 @@
               "minimum": 0,
               "type": "integer"
             }
+          },
+          {
+            "description": "Free-text search over span content/metadata",
+            "explode": false,
+            "in": "query",
+            "name": "q",
+            "schema": {
+              "description": "Free-text search over span content/metadata",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Keep traces with a span from any of these services",
+            "explode": true,
+            "in": "query",
+            "name": "service",
+            "schema": {
+              "description": "Keep traces with a span from any of these services",
+              "items": {
+                "type": "string"
+              },
+              "type": [
+                "array",
+                "null"
+              ]
+            }
+          },
+          {
+            "description": "Keep traces with a span with any of these operations / span names",
+            "explode": true,
+            "in": "query",
+            "name": "operation",
+            "schema": {
+              "description": "Keep traces with a span with any of these operations / span names",
+              "items": {
+                "type": "string"
+              },
+              "type": [
+                "array",
+                "null"
+              ]
+            }
+          },
+          {
+            "description": "Keep traces with a span using any of these models (request or response)",
+            "explode": true,
+            "in": "query",
+            "name": "model",
+            "schema": {
+              "description": "Keep traces with a span using any of these models (request or response)",
+              "items": {
+                "type": "string"
+              },
+              "type": [
+                "array",
+                "null"
+              ]
+            }
+          },
+          {
+            "description": "Keep traces with a span from any of these model providers",
+            "explode": true,
+            "in": "query",
+            "name": "provider",
+            "schema": {
+              "description": "Keep traces with a span from any of these model providers",
+              "items": {
+                "type": "string"
+              },
+              "type": [
+                "array",
+                "null"
+              ]
+            }
+          },
+          {
+            "description": "Keep traces with a span from any of these agents",
+            "explode": true,
+            "in": "query",
+            "name": "agent",
+            "schema": {
+              "description": "Keep traces with a span from any of these agents",
+              "items": {
+                "type": "string"
+              },
+              "type": [
+                "array",
+                "null"
+              ]
+            }
+          },
+          {
+            "description": "Keep traces with a span invoking any of these tools",
+            "explode": true,
+            "in": "query",
+            "name": "tool",
+            "schema": {
+              "description": "Keep traces with a span invoking any of these tools",
+              "items": {
+                "type": "string"
+              },
+              "type": [
+                "array",
+                "null"
+              ]
+            }
+          },
+          {
+            "description": "Keep traces with a span from any of these ingest sources",
+            "explode": true,
+            "in": "query",
+            "name": "source",
+            "schema": {
+              "description": "Keep traces with a span from any of these ingest sources",
+              "items": {
+                "type": "string"
+              },
+              "type": [
+                "array",
+                "null"
+              ]
+            }
+          },
+          {
+            "description": "Keep traces with a span from any of these application ids",
+            "explode": true,
+            "in": "query",
+            "name": "app",
+            "schema": {
+              "description": "Keep traces with a span from any of these application ids",
+              "items": {
+                "type": "string"
+              },
+              "type": [
+                "array",
+                "null"
+              ]
+            }
+          },
+          {
+            "description": "Keep traces with a span from any of these environments (slug or id)",
+            "explode": true,
+            "in": "query",
+            "name": "environment",
+            "schema": {
+              "description": "Keep traces with a span from any of these environments (slug or id)",
+              "items": {
+                "type": "string"
+              },
+              "type": [
+                "array",
+                "null"
+              ]
+            }
+          },
+          {
+            "description": "Keep traces with a span from any of these API key ids",
+            "explode": true,
+            "in": "query",
+            "name": "apiKey",
+            "schema": {
+              "description": "Keep traces with a span from any of these API key ids",
+              "items": {
+                "type": "string"
+              },
+              "type": [
+                "array",
+                "null"
+              ]
+            }
+          },
+          {
+            "description": "Keep traces with a span from any of these release/build tags",
+            "explode": true,
+            "in": "query",
+            "name": "release",
+            "schema": {
+              "description": "Keep traces with a span from any of these release/build tags",
+              "items": {
+                "type": "string"
+              },
+              "type": [
+                "array",
+                "null"
+              ]
+            }
+          },
+          {
+            "description": "Keep traces with a span of any of these statuses (e.g. ok/error)",
+            "explode": true,
+            "in": "query",
+            "name": "status",
+            "schema": {
+              "description": "Keep traces with a span of any of these statuses (e.g. ok/error)",
+              "items": {
+                "type": "string"
+              },
+              "type": [
+                "array",
+                "null"
+              ]
+            }
+          },
+          {
+            "description": "Keep traces with a span from any of these session ids",
+            "explode": true,
+            "in": "query",
+            "name": "session",
+            "schema": {
+              "description": "Keep traces with a span from any of these session ids",
+              "items": {
+                "type": "string"
+              },
+              "type": [
+                "array",
+                "null"
+              ]
+            }
+          },
+          {
+            "description": "Keep traces with a span from any of these end-user ids",
+            "explode": true,
+            "in": "query",
+            "name": "user",
+            "schema": {
+              "description": "Keep traces with a span from any of these end-user ids",
+              "items": {
+                "type": "string"
+              },
+              "type": [
+                "array",
+                "null"
+              ]
+            }
+          },
+          {
+            "description": "Keep traces with a span of any of these semantic kinds (e.g. llm)",
+            "explode": true,
+            "in": "query",
+            "name": "semanticKind",
+            "schema": {
+              "description": "Keep traces with a span of any of these semantic kinds (e.g. llm)",
+              "items": {
+                "type": "string"
+              },
+              "type": [
+                "array",
+                "null"
+              ]
+            }
+          },
+          {
+            "description": "Keep only traces containing an error span",
+            "explode": false,
+            "in": "query",
+            "name": "errorsOnly",
+            "schema": {
+              "description": "Keep only traces containing an error span",
+              "type": "boolean"
+            }
+          },
+          {
+            "description": "Keep only traces at least this many ms long",
+            "explode": false,
+            "in": "query",
+            "name": "minDurationMs",
+            "schema": {
+              "description": "Keep only traces at least this many ms long",
+              "format": "double",
+              "type": "number"
+            }
+          },
+          {
+            "description": "Row ordering: last_seen_desc (default), last_seen_asc, duration_desc, cost_desc, tokens_desc",
+            "explode": false,
+            "in": "query",
+            "name": "sort",
+            "schema": {
+              "description": "Row ordering: last_seen_desc (default), last_seen_asc, duration_desc, cost_desc, tokens_desc",
+              "enum": [
+                "last_seen_desc",
+                "last_seen_asc",
+                "duration_desc",
+                "cost_desc",
+                "tokens_desc"
+              ],
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -9944,6 +12943,61 @@
           }
         },
         "summary": "Update an alert rule",
+        "tags": [
+          "alerts"
+        ]
+      }
+    },
+    "/v2/alerts/{alertRuleId}/occurrences": {
+      "get": {
+        "operationId": "alerts.occurrences",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "alertRuleId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "Max occurrences to return, most recent first",
+            "explode": false,
+            "in": "query",
+            "name": "limit",
+            "schema": {
+              "default": 50,
+              "description": "Max occurrences to return, most recent first",
+              "format": "int32",
+              "maximum": 200,
+              "minimum": 1,
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OccurrencesOutputBody"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "summary": "List an alert rule's firing history",
         "tags": [
           "alerts"
         ]

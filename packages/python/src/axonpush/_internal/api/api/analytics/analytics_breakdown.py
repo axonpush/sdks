@@ -17,7 +17,21 @@ def _get_kwargs(
     since: str | Unset = UNSET,
     until: str | Unset = UNSET,
     dimension: AnalyticsBreakdownDimension | Unset = UNSET,
+    tag_key: str | Unset = UNSET,
     limit: int | Unset = UNSET,
+    source: str | Unset = UNSET,
+    model: str | Unset = UNSET,
+    provider: str | Unset = UNSET,
+    app: str | Unset = UNSET,
+    channel: str | Unset = UNSET,
+    environment: str | Unset = UNSET,
+    api_key: str | Unset = UNSET,
+    user: str | Unset = UNSET,
+    filter_tag_key: str | Unset = UNSET,
+    filter_tag_value: str | Unset = UNSET,
+    service: str | Unset = UNSET,
+    operation: str | Unset = UNSET,
+    error_type: str | Unset = UNSET,
 ) -> dict[str, Any]:
 
     params: dict[str, Any] = {}
@@ -32,7 +46,35 @@ def _get_kwargs(
 
     params["dimension"] = json_dimension
 
+    params["tagKey"] = tag_key
+
     params["limit"] = limit
+
+    params["source"] = source
+
+    params["model"] = model
+
+    params["provider"] = provider
+
+    params["app"] = app
+
+    params["channel"] = channel
+
+    params["environment"] = environment
+
+    params["apiKey"] = api_key
+
+    params["user"] = user
+
+    params["filterTagKey"] = filter_tag_key
+
+    params["filterTagValue"] = filter_tag_value
+
+    params["service"] = service
+
+    params["operation"] = operation
+
+    params["errorType"] = error_type
 
     params = {k: v for k, v in params.items() if v is not UNSET and v is not None}
 
@@ -75,15 +117,44 @@ def sync_detailed(
     since: str | Unset = UNSET,
     until: str | Unset = UNSET,
     dimension: AnalyticsBreakdownDimension | Unset = UNSET,
+    tag_key: str | Unset = UNSET,
     limit: int | Unset = UNSET,
+    source: str | Unset = UNSET,
+    model: str | Unset = UNSET,
+    provider: str | Unset = UNSET,
+    app: str | Unset = UNSET,
+    channel: str | Unset = UNSET,
+    environment: str | Unset = UNSET,
+    api_key: str | Unset = UNSET,
+    user: str | Unset = UNSET,
+    filter_tag_key: str | Unset = UNSET,
+    filter_tag_value: str | Unset = UNSET,
+    service: str | Unset = UNSET,
+    operation: str | Unset = UNSET,
+    error_type: str | Unset = UNSET,
 ) -> Response[BreakdownOutputBody | ErrorModel]:
-    """Top-N breakdown by model, provider, agent, or tool
+    """Top-N breakdown by model, provider, status, source, app, key, user, agent, tool, or tag
 
     Args:
         since (str | Unset): Window start (RFC3339); defaults to 24h before until
         until (str | Unset): Window end (RFC3339); defaults to now
         dimension (AnalyticsBreakdownDimension | Unset): Breakdown dimension (default model)
+        tag_key (str | Unset): Attribute key to group by when dimension=tag
         limit (int | Unset): Top-N entries (default 50, max 500)
+        source (str | Unset): Filter by event source (e.g. gateway)
+        model (str | Unset): Filter by request/response model
+        provider (str | Unset): Filter by model provider
+        app (str | Unset): Filter by app id
+        channel (str | Unset): Filter by channel id
+        environment (str | Unset): Filter by environment id or slug
+        api_key (str | Unset): Filter by API key id
+        user (str | Unset): Filter by end-user id
+        filter_tag_key (str | Unset): Custom-dimension (attribute) key to filter on; pair with
+            filterTagValue
+        filter_tag_value (str | Unset): Value for filterTagKey
+        service (str | Unset): Filter by service (resource service.name)
+        operation (str | Unset): Filter by operation / span name
+        error_type (str | Unset): Filter by error type
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -97,7 +168,21 @@ def sync_detailed(
         since=since,
         until=until,
         dimension=dimension,
+        tag_key=tag_key,
         limit=limit,
+        source=source,
+        model=model,
+        provider=provider,
+        app=app,
+        channel=channel,
+        environment=environment,
+        api_key=api_key,
+        user=user,
+        filter_tag_key=filter_tag_key,
+        filter_tag_value=filter_tag_value,
+        service=service,
+        operation=operation,
+        error_type=error_type,
     )
 
     response = client.get_httpx_client().request(
@@ -113,15 +198,44 @@ def sync(
     since: str | Unset = UNSET,
     until: str | Unset = UNSET,
     dimension: AnalyticsBreakdownDimension | Unset = UNSET,
+    tag_key: str | Unset = UNSET,
     limit: int | Unset = UNSET,
+    source: str | Unset = UNSET,
+    model: str | Unset = UNSET,
+    provider: str | Unset = UNSET,
+    app: str | Unset = UNSET,
+    channel: str | Unset = UNSET,
+    environment: str | Unset = UNSET,
+    api_key: str | Unset = UNSET,
+    user: str | Unset = UNSET,
+    filter_tag_key: str | Unset = UNSET,
+    filter_tag_value: str | Unset = UNSET,
+    service: str | Unset = UNSET,
+    operation: str | Unset = UNSET,
+    error_type: str | Unset = UNSET,
 ) -> BreakdownOutputBody | ErrorModel | None:
-    """Top-N breakdown by model, provider, agent, or tool
+    """Top-N breakdown by model, provider, status, source, app, key, user, agent, tool, or tag
 
     Args:
         since (str | Unset): Window start (RFC3339); defaults to 24h before until
         until (str | Unset): Window end (RFC3339); defaults to now
         dimension (AnalyticsBreakdownDimension | Unset): Breakdown dimension (default model)
+        tag_key (str | Unset): Attribute key to group by when dimension=tag
         limit (int | Unset): Top-N entries (default 50, max 500)
+        source (str | Unset): Filter by event source (e.g. gateway)
+        model (str | Unset): Filter by request/response model
+        provider (str | Unset): Filter by model provider
+        app (str | Unset): Filter by app id
+        channel (str | Unset): Filter by channel id
+        environment (str | Unset): Filter by environment id or slug
+        api_key (str | Unset): Filter by API key id
+        user (str | Unset): Filter by end-user id
+        filter_tag_key (str | Unset): Custom-dimension (attribute) key to filter on; pair with
+            filterTagValue
+        filter_tag_value (str | Unset): Value for filterTagKey
+        service (str | Unset): Filter by service (resource service.name)
+        operation (str | Unset): Filter by operation / span name
+        error_type (str | Unset): Filter by error type
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -136,7 +250,21 @@ def sync(
         since=since,
         until=until,
         dimension=dimension,
+        tag_key=tag_key,
         limit=limit,
+        source=source,
+        model=model,
+        provider=provider,
+        app=app,
+        channel=channel,
+        environment=environment,
+        api_key=api_key,
+        user=user,
+        filter_tag_key=filter_tag_key,
+        filter_tag_value=filter_tag_value,
+        service=service,
+        operation=operation,
+        error_type=error_type,
     ).parsed
 
 
@@ -146,15 +274,44 @@ async def asyncio_detailed(
     since: str | Unset = UNSET,
     until: str | Unset = UNSET,
     dimension: AnalyticsBreakdownDimension | Unset = UNSET,
+    tag_key: str | Unset = UNSET,
     limit: int | Unset = UNSET,
+    source: str | Unset = UNSET,
+    model: str | Unset = UNSET,
+    provider: str | Unset = UNSET,
+    app: str | Unset = UNSET,
+    channel: str | Unset = UNSET,
+    environment: str | Unset = UNSET,
+    api_key: str | Unset = UNSET,
+    user: str | Unset = UNSET,
+    filter_tag_key: str | Unset = UNSET,
+    filter_tag_value: str | Unset = UNSET,
+    service: str | Unset = UNSET,
+    operation: str | Unset = UNSET,
+    error_type: str | Unset = UNSET,
 ) -> Response[BreakdownOutputBody | ErrorModel]:
-    """Top-N breakdown by model, provider, agent, or tool
+    """Top-N breakdown by model, provider, status, source, app, key, user, agent, tool, or tag
 
     Args:
         since (str | Unset): Window start (RFC3339); defaults to 24h before until
         until (str | Unset): Window end (RFC3339); defaults to now
         dimension (AnalyticsBreakdownDimension | Unset): Breakdown dimension (default model)
+        tag_key (str | Unset): Attribute key to group by when dimension=tag
         limit (int | Unset): Top-N entries (default 50, max 500)
+        source (str | Unset): Filter by event source (e.g. gateway)
+        model (str | Unset): Filter by request/response model
+        provider (str | Unset): Filter by model provider
+        app (str | Unset): Filter by app id
+        channel (str | Unset): Filter by channel id
+        environment (str | Unset): Filter by environment id or slug
+        api_key (str | Unset): Filter by API key id
+        user (str | Unset): Filter by end-user id
+        filter_tag_key (str | Unset): Custom-dimension (attribute) key to filter on; pair with
+            filterTagValue
+        filter_tag_value (str | Unset): Value for filterTagKey
+        service (str | Unset): Filter by service (resource service.name)
+        operation (str | Unset): Filter by operation / span name
+        error_type (str | Unset): Filter by error type
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -168,7 +325,21 @@ async def asyncio_detailed(
         since=since,
         until=until,
         dimension=dimension,
+        tag_key=tag_key,
         limit=limit,
+        source=source,
+        model=model,
+        provider=provider,
+        app=app,
+        channel=channel,
+        environment=environment,
+        api_key=api_key,
+        user=user,
+        filter_tag_key=filter_tag_key,
+        filter_tag_value=filter_tag_value,
+        service=service,
+        operation=operation,
+        error_type=error_type,
     )
 
     response = await client.get_async_httpx_client().request(**kwargs)
@@ -182,15 +353,44 @@ async def asyncio(
     since: str | Unset = UNSET,
     until: str | Unset = UNSET,
     dimension: AnalyticsBreakdownDimension | Unset = UNSET,
+    tag_key: str | Unset = UNSET,
     limit: int | Unset = UNSET,
+    source: str | Unset = UNSET,
+    model: str | Unset = UNSET,
+    provider: str | Unset = UNSET,
+    app: str | Unset = UNSET,
+    channel: str | Unset = UNSET,
+    environment: str | Unset = UNSET,
+    api_key: str | Unset = UNSET,
+    user: str | Unset = UNSET,
+    filter_tag_key: str | Unset = UNSET,
+    filter_tag_value: str | Unset = UNSET,
+    service: str | Unset = UNSET,
+    operation: str | Unset = UNSET,
+    error_type: str | Unset = UNSET,
 ) -> BreakdownOutputBody | ErrorModel | None:
-    """Top-N breakdown by model, provider, agent, or tool
+    """Top-N breakdown by model, provider, status, source, app, key, user, agent, tool, or tag
 
     Args:
         since (str | Unset): Window start (RFC3339); defaults to 24h before until
         until (str | Unset): Window end (RFC3339); defaults to now
         dimension (AnalyticsBreakdownDimension | Unset): Breakdown dimension (default model)
+        tag_key (str | Unset): Attribute key to group by when dimension=tag
         limit (int | Unset): Top-N entries (default 50, max 500)
+        source (str | Unset): Filter by event source (e.g. gateway)
+        model (str | Unset): Filter by request/response model
+        provider (str | Unset): Filter by model provider
+        app (str | Unset): Filter by app id
+        channel (str | Unset): Filter by channel id
+        environment (str | Unset): Filter by environment id or slug
+        api_key (str | Unset): Filter by API key id
+        user (str | Unset): Filter by end-user id
+        filter_tag_key (str | Unset): Custom-dimension (attribute) key to filter on; pair with
+            filterTagValue
+        filter_tag_value (str | Unset): Value for filterTagKey
+        service (str | Unset): Filter by service (resource service.name)
+        operation (str | Unset): Filter by operation / span name
+        error_type (str | Unset): Filter by error type
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -206,6 +406,20 @@ async def asyncio(
             since=since,
             until=until,
             dimension=dimension,
+            tag_key=tag_key,
             limit=limit,
+            source=source,
+            model=model,
+            provider=provider,
+            app=app,
+            channel=channel,
+            environment=environment,
+            api_key=api_key,
+            user=user,
+            filter_tag_key=filter_tag_key,
+            filter_tag_value=filter_tag_value,
+            service=service,
+            operation=operation,
+            error_type=error_type,
         )
     ).parsed

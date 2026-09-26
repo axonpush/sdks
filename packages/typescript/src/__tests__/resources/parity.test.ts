@@ -5,10 +5,14 @@ import { AnalyticsResource } from "../../resources/analytics.js";
 import { AppsResource } from "../../resources/apps.js";
 import { CapabilitiesResource } from "../../resources/capabilities.js";
 import { ChannelsResource } from "../../resources/channels.js";
+import { DashboardsResource } from "../../resources/dashboards.js";
 import { EnvironmentsResource } from "../../resources/environments.js";
+import { ErrorsResource } from "../../resources/errors.js";
 import { EventsResource } from "../../resources/events.js";
+import { GovernPoliciesResource } from "../../resources/govern-policies.js";
 import { ModerationResource } from "../../resources/moderation.js";
 import { OrganizationsResource } from "../../resources/organizations.js";
+import { SpendPoliciesResource } from "../../resources/spend-policies.js";
 import { TracesResource, TracesV2Resource } from "../../resources/traces.js";
 import { WebhooksResource } from "../../resources/webhooks.js";
 
@@ -59,17 +63,37 @@ const expectations: Array<{ name: string; instance: object; methods: string[] }>
   {
     name: "AlertsResource",
     instance: new AlertsResource(stubClient),
-    methods: ["list", "create", "update", "delete"],
+    methods: ["list", "create", "update", "delete", "occurrences"],
   },
   {
     name: "AnalyticsResource",
     instance: new AnalyticsResource(stubClient),
-    methods: ["breakdown", "timeseries"],
+    methods: ["breakdown", "timeseries", "overview", "heatmap", "diff", "ingestionStatus"],
   },
   {
     name: "ModerationResource",
     instance: new ModerationResource(stubClient),
-    methods: ["listRules", "createRule", "deleteRule", "listViolations"],
+    methods: ["listRules", "createRule", "deleteRule", "listViolations", "efficacy"],
+  },
+  {
+    name: "DashboardsResource",
+    instance: new DashboardsResource(stubClient),
+    methods: ["list", "get", "create", "update", "delete"],
+  },
+  {
+    name: "ErrorsResource",
+    instance: new ErrorsResource(stubClient),
+    methods: ["list", "get", "events", "triage"],
+  },
+  {
+    name: "GovernPoliciesResource",
+    instance: new GovernPoliciesResource(stubClient),
+    methods: ["list", "create", "update", "delete"],
+  },
+  {
+    name: "SpendPoliciesResource",
+    instance: new SpendPoliciesResource(stubClient),
+    methods: ["list", "create", "update", "delete"],
   },
   {
     name: "CapabilitiesResource",
@@ -88,6 +112,8 @@ const expectations: Array<{ name: string; instance: object; methods: string[] }>
       "cancelInvitation",
       "removeMember",
       "transferOwnership",
+      "leave",
+      "acceptInvitation",
     ],
   },
 ];

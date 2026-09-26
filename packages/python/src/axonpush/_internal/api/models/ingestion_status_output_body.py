@@ -8,22 +8,22 @@ from attrs import field as _attrs_field
 
 from ..types import UNSET, Unset
 
-T = TypeVar("T", bound="OverviewOutputBody")
+T = TypeVar("T", bound="IngestionStatusOutputBody")
 
 
 @_attrs_define
-class OverviewOutputBody:
+class IngestionStatusOutputBody:
     """
     Attributes:
-        organizations (int):
+        ever_ingested (bool):
         schema (str | Unset): A URL to the JSON Schema for this object.
     """
 
-    organizations: int
+    ever_ingested: bool
     schema: str | Unset = UNSET
 
     def to_dict(self) -> dict[str, Any]:
-        organizations = self.organizations
+        ever_ingested = self.ever_ingested
 
         schema = self.schema
 
@@ -31,7 +31,7 @@ class OverviewOutputBody:
 
         field_dict.update(
             {
-                "organizations": organizations,
+                "everIngested": ever_ingested,
             }
         )
         if schema is not UNSET:
@@ -42,13 +42,13 @@ class OverviewOutputBody:
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         d = dict(src_dict)
-        organizations = d.pop("organizations")
+        ever_ingested = d.pop("everIngested")
 
         schema = d.pop("$schema", UNSET)
 
-        overview_output_body = cls(
-            organizations=organizations,
+        ingestion_status_output_body = cls(
+            ever_ingested=ever_ingested,
             schema=schema,
         )
 
-        return overview_output_body
+        return ingestion_status_output_body

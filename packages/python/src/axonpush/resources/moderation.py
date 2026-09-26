@@ -5,6 +5,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, List
 
 from axonpush._internal.api.api.moderation import (
+    moderation_efficacy as _efficacy_op,
     moderation_rules_create as _create_op,
     moderation_rules_delete as _delete_op,
     moderation_rules_list as _list_op,
@@ -13,6 +14,7 @@ from axonpush._internal.api.api.moderation import (
 from axonpush._internal.api.models import (
     CreateRuleInputBody,
     CreateRuleInputBodyAction,
+    EfficacyOutputBody,
     ListRulesOutputBody,
     ListViolationsOutputBody,
     OkOutputBody,
@@ -86,6 +88,18 @@ class Moderation:
         kwargs = {} if limit is None else {"limit": limit}
         return self._client._invoke(_violations_op, _coerce=_unwrap_violations, **kwargs)
 
+    def efficacy(
+        self,
+        *,
+        since: str | None = None,
+        until: str | None = None,
+    ) -> EfficacyOutputBody | None:
+        """Rule efficacy metrics. ``GET /moderation/efficacy``"""
+        kwargs = {
+            k: v for k, v in {"since": since, "until": until}.items() if v is not None
+        }
+        return self._client._invoke(_efficacy_op, **kwargs)
+
 
 class AsyncModeration:
     """Async sibling of :class:`Moderation`."""
@@ -117,3 +131,15 @@ class AsyncModeration:
         """See :meth:`Moderation.list_violations`."""
         kwargs = {} if limit is None else {"limit": limit}
         return await self._client._invoke(_violations_op, _coerce=_unwrap_violations, **kwargs)
+
+    async def efficacy(
+        self,
+        *,
+        since: str | None = None,
+        until: str | None = None,
+    ) -> EfficacyOutputBody | None:
+        """See :meth:`Moderation.efficacy`."""
+        kwargs = {
+            k: v for k, v in {"since": since, "until": until}.items() if v is not None
+        }
+        return await self._client._invoke(_efficacy_op, **kwargs)

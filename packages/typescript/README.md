@@ -53,6 +53,30 @@ client.close();
 `new AxonPush()` resolves credentials from `AXONPUSH_*` env vars (see
 [Configuration](#configuration)). Pass an options bag to override.
 
+## Zero-instrumentation: the LLM gateway
+
+The fastest self-serve path to full observability is the axonpush gateway: no
+SDK, callback handler, or framework wrapper. Point an existing OpenAI (or
+Anthropic) client's `baseURL` at the gateway and add the `x-axonpush-api-key`
+default header. Every call, tool call, cost, token count, and latency is
+captured, and any moderation / govern / spend policy runs inline, with zero code
+changes. It works alongside the framework integrations below.
+
+```ts
+import OpenAI from "openai";
+
+const client = new OpenAI({
+  baseURL: "https://api.axonpush.xyz/gw/openai",
+  defaultHeaders: { "x-axonpush-api-key": process.env.AXONPUSH_API_KEY! },
+  // apiKey still reads OPENAI_API_KEY; the gateway forwards it upstream.
+});
+```
+
+The path segment (`/gw/openai` or `/gw/anthropic`) selects the wire shape. Add
+`x-axonpush-target: openrouter|anthropic|groq|together|vercel|openai` to route to
+a different upstream provider, with that provider's key in the standard
+`Authorization: Bearer <provider_key>` header.
+
 ## Configuration
 
 | Field | Env var | Default | Notes |

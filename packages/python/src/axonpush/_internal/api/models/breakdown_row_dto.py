@@ -15,31 +15,39 @@ T = TypeVar("T", bound="BreakdownRowDTO")
 class BreakdownRowDTO:
     """
     Attributes:
+        avg_duration_ms (float):
         cost_usd (float):
+        error_count (int):
         event_count (int):
+        input_tokens (int):
         key (str):
-        avg_duration_ms (float | Unset):
-        error_count (int | Unset):
-        total_tokens (int | Unset):
+        output_tokens (int):
+        total_tokens (int):
     """
 
+    avg_duration_ms: float
     cost_usd: float
+    error_count: int
     event_count: int
+    input_tokens: int
     key: str
-    avg_duration_ms: float | Unset = UNSET
-    error_count: int | Unset = UNSET
-    total_tokens: int | Unset = UNSET
+    output_tokens: int
+    total_tokens: int
 
     def to_dict(self) -> dict[str, Any]:
+        avg_duration_ms = self.avg_duration_ms
+
         cost_usd = self.cost_usd
+
+        error_count = self.error_count
 
         event_count = self.event_count
 
+        input_tokens = self.input_tokens
+
         key = self.key
 
-        avg_duration_ms = self.avg_duration_ms
-
-        error_count = self.error_count
+        output_tokens = self.output_tokens
 
         total_tokens = self.total_tokens
 
@@ -47,41 +55,46 @@ class BreakdownRowDTO:
 
         field_dict.update(
             {
+                "avgDurationMs": avg_duration_ms,
                 "costUsd": cost_usd,
+                "errorCount": error_count,
                 "eventCount": event_count,
+                "inputTokens": input_tokens,
                 "key": key,
+                "outputTokens": output_tokens,
+                "totalTokens": total_tokens,
             }
         )
-        if avg_duration_ms is not UNSET:
-            field_dict["avgDurationMs"] = avg_duration_ms
-        if error_count is not UNSET:
-            field_dict["errorCount"] = error_count
-        if total_tokens is not UNSET:
-            field_dict["totalTokens"] = total_tokens
 
         return field_dict
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         d = dict(src_dict)
+        avg_duration_ms = d.pop("avgDurationMs")
+
         cost_usd = d.pop("costUsd")
+
+        error_count = d.pop("errorCount")
 
         event_count = d.pop("eventCount")
 
+        input_tokens = d.pop("inputTokens")
+
         key = d.pop("key")
 
-        avg_duration_ms = d.pop("avgDurationMs", UNSET)
+        output_tokens = d.pop("outputTokens")
 
-        error_count = d.pop("errorCount", UNSET)
-
-        total_tokens = d.pop("totalTokens", UNSET)
+        total_tokens = d.pop("totalTokens")
 
         breakdown_row_dto = cls(
-            cost_usd=cost_usd,
-            event_count=event_count,
-            key=key,
             avg_duration_ms=avg_duration_ms,
+            cost_usd=cost_usd,
             error_count=error_count,
+            event_count=event_count,
+            input_tokens=input_tokens,
+            key=key,
+            output_tokens=output_tokens,
             total_tokens=total_tokens,
         )
 

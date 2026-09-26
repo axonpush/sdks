@@ -1,7 +1,15 @@
-import { alertsCreate, alertsDelete, alertsList, alertsUpdate } from "../_internal/api/sdk.gen.js";
+import {
+  alertsCreate,
+  alertsDelete,
+  alertsList,
+  alertsOccurrences,
+  alertsUpdate,
+} from "../_internal/api/sdk.gen.js";
 import type {
+  AlertOccurrenceDto,
   AlertRuleDto,
   AlertsListResponse,
+  AlertsOccurrencesData,
   CreateInputBodyWritable,
   DeleteOutputBody,
   UpdateInputBodyWritable,
@@ -10,6 +18,7 @@ import type { ResourceClient } from "./_client.js";
 
 export type CreateAlertRuleInput = CreateInputBodyWritable;
 export type UpdateAlertRuleInput = UpdateInputBodyWritable;
+export type AlertOccurrencesParams = NonNullable<AlertsOccurrencesData["query"]>;
 
 /** Alert rules over metric thresholds. */
 export class AlertsResource {
@@ -33,5 +42,14 @@ export class AlertsResource {
   /** Update one. `PATCH /v2/alerts/{alertRuleId}` */
   async update(alertRuleId: string, body: UpdateAlertRuleInput): Promise<AlertRuleDto | null> {
     return this.client.invoke(alertsUpdate, { path: { alertRuleId }, body });
+  }
+
+  /** Recent firings of one rule. `GET /v2/alerts/{alertRuleId}/occurrences` */
+  async occurrences(
+    alertRuleId: string,
+    query: AlertOccurrencesParams = {},
+  ): Promise<AlertOccurrenceDto[] | null> {
+    const res = await this.client.invoke(alertsOccurrences, { path: { alertRuleId }, query });
+    return res?.data ?? null;
   }
 }

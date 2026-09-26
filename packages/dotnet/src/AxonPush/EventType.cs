@@ -16,4 +16,5 @@ public static class EventType
     public const string AgentLog = "agent.log";
     public const string AgentToolCallStart = "agent.tool_call.start";
     public const string AgentToolCallEnd = "agent.tool_call.end";
+    public const string UserFeedback = "user.feedback";
 }

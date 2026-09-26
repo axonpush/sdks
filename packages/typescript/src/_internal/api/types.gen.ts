@@ -16,6 +16,27 @@ export type AbuseFlagDto = {
     status: string;
 };
 
+export type AcceptInvitationInputBody = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
+    /**
+     * Invitation code from the invite link
+     */
+    code: string;
+};
+
+export type AcceptInvitationOutputBody = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
+    orgId: string;
+    orgName: string;
+    role: string;
+};
+
 export type AccessRequestDto = {
     company: string;
     country?: string;
@@ -29,6 +50,16 @@ export type AccessRequestDto = {
     reviewedAt?: string;
     status: string;
     useCase: string;
+};
+
+export type AlertOccurrenceDto = {
+    firedAt: string;
+    message?: string;
+    metric: string;
+    occurrenceId: string;
+    state: string;
+    threshold: number;
+    value: number;
 };
 
 export type AlertRuleDto = {
@@ -62,6 +93,16 @@ export type AnalyticsCapability = {
     tagFilter: boolean;
 };
 
+export type AnalyticsOverviewOutputBody = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
+    breakdowns: Array<OverviewBreakdownDto> | null;
+    latency: LatencyPercentilesDto;
+    timeseries: OverviewTimeseriesDto;
+};
+
 export type ApiKeyScope = {
     category: string;
     description: string;
@@ -76,8 +117,10 @@ export type AppDto = {
     appId: string;
     createdAt: string;
     creatorUserId?: string;
+    defaultBranch?: string;
     name: string;
     orgId: string;
+    repoUrl?: string;
     updatedAt?: string;
 };
 
@@ -94,6 +137,15 @@ export type BillingEventDto = {
     orgId: string;
     payload?: unknown;
     processedAt?: string;
+};
+
+export type BreadcrumbDto = {
+    category?: string;
+    level?: string;
+    message?: string;
+    synthesized: boolean;
+    timestamp?: string;
+    type?: string;
 };
 
 export type BreakdownOutputBody = {
@@ -248,7 +300,7 @@ export type CreateInputBody = {
     destinationType: 'email' | 'webhook';
     enabled?: boolean;
     environmentId?: string;
-    metric: 'error_count' | 'error_rate' | 'latency_ms' | 'cost_usd' | 'score';
+    metric: 'error_count' | 'error_rate' | 'latency_ms' | 'cost_usd';
     model?: string;
     /**
      * Alert rule display name
@@ -481,6 +533,88 @@ export type DestinationDto = {
     updatedAt?: string;
 };
 
+export type DiffAttributeDto = {
+    key: string;
+    score: number;
+    values: Array<DiffValueDto> | null;
+};
+
+export type DiffCohortDto = {
+    apiKey?: string;
+    app?: string;
+    channel?: string;
+    environment?: string;
+    errorType?: string;
+    /**
+     * Keep only error events in this cohort
+     */
+    errorsOnly?: boolean;
+    filterTagKey?: string;
+    filterTagValue?: string;
+    /**
+     * Keep only events at most this many ms (<=0 disables)
+     */
+    maxDurationMs?: number;
+    /**
+     * Keep only events at least this many ms (<=0 disables)
+     */
+    minDurationMs?: number;
+    model?: string;
+    operation?: string;
+    provider?: string;
+    service?: string;
+    /**
+     * Window start (RFC3339); defaults to 24h before until
+     */
+    since?: string;
+    source?: string;
+    /**
+     * Window end (RFC3339); defaults to now
+     */
+    until?: string;
+    user?: string;
+};
+
+export type DiffInputBody = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
+    /**
+     * The cohort to compare against (e.g. all traffic in the window)
+     */
+    baseline: DiffCohortDto;
+    /**
+     * Attribute keys to diff; defaults to the top cataloged keys (capped)
+     */
+    keys?: Array<string> | null;
+    /**
+     * Max ranked attributes to return (default and max 20)
+     */
+    limit?: number;
+    /**
+     * The cohort under investigation (e.g. the slow or error slice)
+     */
+    selection: DiffCohortDto;
+};
+
+export type DiffOutputBody = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
+    attributes: Array<DiffAttributeDto> | null;
+};
+
+export type DiffValueDto = {
+    baselineCount: number;
+    baselineFraction: number;
+    delta: number;
+    selectionCount: number;
+    selectionFraction: number;
+    value: string;
+};
+
 export type DimensionDto = {
     key: string;
     lastSeen?: string;
@@ -572,6 +706,25 @@ export type ErrorDetail = {
     value?: unknown;
 };
 
+export type ErrorIssueDto = {
+    assignee?: string;
+    count: number;
+    culprit: string;
+    errorType: string;
+    fingerprint: string;
+    firstSeen: string;
+    lastSeen: string;
+    message: string;
+    operation: string;
+    regressed: boolean;
+    serviceName: string;
+    sparkline: Array<IssueBucketDto> | null;
+    status: string;
+    title: string;
+    traceCount: number;
+    userCount: number;
+};
+
 export type ErrorModel = {
     /**
      * A URL to the JSON Schema for this object.
@@ -610,9 +763,9 @@ export type EventBody = {
     readonly $schema?: string;
     agentId?: string;
     /**
-     * Target channel id
+     * Target channel id; when omitted, the org's default channel is used
      */
-    channel_id: string;
+    channel_id?: string;
     dedupKey?: string;
     /**
      * Canonical event type; defaults to custom
@@ -694,11 +847,23 @@ export type EventOutputBody = {
     status: string;
 };
 
+export type ExportDeliveryDto = {
+    attempts: number;
+    createdAt: string;
+    deliveryId: string;
+    error?: string;
+    eventId: string;
+    signal: string;
+    status: string;
+    statusCode?: number;
+};
+
 export type FeatureFlags = {
     /**
      * A URL to the JSON Schema for this object.
      */
     readonly $schema?: string;
+    analyticsV2: boolean;
     asyncIngest: boolean;
     environments: boolean;
     mcpServer: boolean;
@@ -828,6 +993,40 @@ export type HealthOutputBody = {
     version: string;
 };
 
+export type HeatmapBandDto = {
+    hiMs: number;
+    loMs: number;
+};
+
+export type HeatmapCellDto = {
+    band: number;
+    count: number;
+    t: number;
+};
+
+export type HeatmapOutputBody = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
+    bucket: string;
+    cells: Array<HeatmapCellDto> | null;
+    durationBands: Array<HeatmapBandDto> | null;
+    maxDurationMs: number;
+    minDurationMs: number;
+    sampleCount: number;
+    scale: string;
+    timeBuckets: Array<string> | null;
+};
+
+export type IngestionStatusOutputBody = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
+    everIngested: boolean;
+};
+
 export type InvitationDto = {
     /**
      * A URL to the JSON Schema for this object.
@@ -842,6 +1041,47 @@ export type InvitationDto = {
     inviterId?: string;
     orgId: string;
     status: string;
+};
+
+export type IssueBucketDto = {
+    bucket: string;
+    count: number;
+};
+
+export type IssueDetailDto = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
+    affectedTraceIds: Array<string> | null;
+    breadcrumbs: Array<BreadcrumbDto> | null;
+    issue: ErrorIssueDto;
+    occurrences: Array<IssueBucketDto> | null;
+    resolvedAt?: string;
+    resolvedInRelease?: string;
+    sampleEvent?: EventDto;
+    snoozeUntil?: string;
+    stack: Array<StackFrameDto> | null;
+    tags: Array<TagDistributionDto> | null;
+};
+
+export type IssueTriageDto = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
+    assignee?: string;
+    fingerprint: string;
+    regressed: boolean;
+    resolvedAt?: string;
+    resolvedInRelease?: string;
+    snoozeUntil?: string;
+    status: string;
+};
+
+export type KeyCount = {
+    count: number;
+    key: string;
 };
 
 export type LatencyPercentilesDto = {
@@ -933,6 +1173,14 @@ export type ListDeliveriesOutputBody = {
     data: Array<DeliveryDto> | null;
 };
 
+export type ListDeliveriesOutputBody1 = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
+    deliveries: Array<ExportDeliveryDto> | null;
+};
+
 export type ListEndpointsOutputBody = {
     /**
      * A URL to the JSON Schema for this object.
@@ -947,6 +1195,22 @@ export type ListEnvironmentsOutputBody = {
      */
     readonly $schema?: string;
     environments: Array<EnvironmentDto> | null;
+};
+
+export type ListErrorEventsOutputBody = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
+    events: Array<EventDto> | null;
+};
+
+export type ListErrorsOutputBody = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
+    issues: Array<ErrorIssueDto> | null;
 };
 
 export type ListFeedbackOutputBody = {
@@ -1058,12 +1322,16 @@ export type LogDto = {
     actorEmail?: string;
     actorId: string | null;
     createdAt: string;
+    entryHash?: string;
     id: string;
     ipAddress: string | null;
     metadata: unknown;
     organizationId: string;
+    prevHash?: string;
     resourceId: string;
     resourceType: string;
+    seq?: number;
+    source?: string;
 };
 
 export type MeDto = {
@@ -1107,6 +1375,14 @@ export type ModerationCapability = {
     detectors: Array<string> | null;
     enabled: boolean;
     targets: Array<string> | null;
+};
+
+export type OccurrencesOutputBody = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
+    data: Array<AlertOccurrenceDto> | null;
 };
 
 export type OkOutputBody = {
@@ -1170,12 +1446,81 @@ export type OrganizationDto = {
     updatedAt?: string;
 };
 
-export type OverviewOutputBody = {
+export type OverviewBody = {
     /**
      * A URL to the JSON Schema for this object.
      */
     readonly $schema?: string;
-    organizations: number;
+    events: OverviewBodyEventsStruct;
+    managedLlm: OverviewBodyManagedLlmStruct;
+    mrr: OverviewBodyMrrStruct;
+    planDistribution: Array<KeyCount> | null;
+    subscriptionStatusDistribution: Array<KeyCount> | null;
+    totals: OverviewBodyTotalsStruct;
+};
+
+export type OverviewBodyEventsStruct = {
+    thisCycle: number;
+    today: number;
+    total: number;
+};
+
+export type OverviewBodyManagedLlmStruct = {
+    costUsdThisMonth: number;
+    tokensThisMonth: number;
+    tracesThisMonth: number;
+};
+
+export type OverviewBodyMrrStruct = {
+    byPlan: Array<PlanMrr> | null;
+    estimateUsd: number;
+    payingOrgs: number;
+};
+
+export type OverviewBodyTotalsStruct = {
+    orgs: number;
+    users: number;
+};
+
+export type OverviewBreakdownDto = {
+    dimension: string;
+    rows: Array<BreakdownRowDto> | null;
+};
+
+export type OverviewTimeseriesDto = {
+    bucket: string;
+    points: Array<TimeseriesPointDto> | null;
+};
+
+export type PatchErrorInputBody = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
+    /**
+     * Triage action to apply
+     */
+    action: 'resolve' | 'unresolve' | 'ignore' | 'mute' | 'assign';
+    /**
+     * User id to assign (for action=assign)
+     */
+    assignee?: string;
+    /**
+     * Release the fix ships in (for action=resolve)
+     */
+    resolvedInRelease?: string;
+    /**
+     * RFC3339 time to auto-unmute (for action=mute)
+     */
+    snoozeUntil?: string;
+    /**
+     * Re-alert after this many new occurrences (for action=mute)
+     */
+    snoozeUntilCount?: number;
+    /**
+     * Re-alert after this many affected users (for action=mute)
+     */
+    snoozeUntilUsers?: number;
 };
 
 export type PlanFeatures = {
@@ -1196,6 +1541,12 @@ export type PlanLimits = {
     priceMonthlyUsd: number | null;
     retentionDays: number | null;
     seats: number | null;
+};
+
+export type PlanMrr = {
+    count: number;
+    mrrUsd: number;
+    plan: string;
 };
 
 export type PlansOutputBody = {
@@ -1345,6 +1696,21 @@ export type SetActiveOrgInputBody = {
     orgId: string;
 };
 
+export type SetBillingInputBody = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
+    /**
+     * Negotiated monthly amount in USD
+     */
+    billingMonthlyAmountUsd: number;
+    /**
+     * Free-form commercial notes
+     */
+    billingNotes?: string;
+};
+
 export type SetFeedbackStatusInputBody = {
     /**
      * A URL to the JSON Schema for this object.
@@ -1404,6 +1770,26 @@ export type SpendPolicyCapability = {
     windows: Array<string> | null;
 };
 
+export type StackFrameDto = {
+    contextLine?: string;
+    file?: string;
+    function?: string;
+    inApp: boolean;
+    line?: number;
+    postContext?: Array<string> | null;
+    preContext?: Array<string> | null;
+};
+
+export type TagDistributionDto = {
+    key: string;
+    values: Array<TagValueCountDto> | null;
+};
+
+export type TagValueCountDto = {
+    count: number;
+    value: string;
+};
+
 export type TelemetryPolicyOutputBody = {
     /**
      * A URL to the JSON Schema for this object.
@@ -1411,6 +1797,15 @@ export type TelemetryPolicyOutputBody = {
     readonly $schema?: string;
     policy: unknown;
     version: number;
+};
+
+export type TestOutputBody = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
+    deliveryId: string;
+    signal: string;
 };
 
 export type TimeseriesOutputBody = {
@@ -1440,15 +1835,24 @@ export type TimeseriesPointDto = {
 
 export type TraceSummaryDto = {
     costUsd: number;
+    customer: string;
     durationMs: number;
     endedAt: string;
+    environment: string;
     errorCount: number;
+    firstErrorType: string;
     models: Array<string> | null;
+    outcome: string;
     providers: Array<string> | null;
+    release: string;
+    rootSpanName: string;
+    serviceName: string;
+    sessionId: string;
     spanCount: number;
     startedAt: string;
     totalTokens: number;
     traceId: string;
+    workflow: string;
 };
 
 export type TransferOwnershipInputBody = {
@@ -1467,7 +1871,15 @@ export type UpdateAppInputBody = {
      * A URL to the JSON Schema for this object.
      */
     readonly $schema?: string;
+    /**
+     * Default branch (omit to leave unchanged)
+     */
+    defaultBranch?: string;
     name: string;
+    /**
+     * Source repository URL for the coding-agent handoff (omit to leave unchanged)
+     */
+    repoUrl?: string;
 };
 
 export type UpdateChannelInputBody = {
@@ -1496,7 +1908,7 @@ export type UpdateInputBody = {
     destination?: string;
     destinationType?: 'email' | 'webhook';
     enabled?: boolean;
-    metric?: 'error_count' | 'error_rate' | 'latency_ms' | 'cost_usd' | 'score';
+    metric?: 'error_count' | 'error_rate' | 'latency_ms' | 'cost_usd';
     name?: string;
     operator?: 'gt' | 'gte' | 'lt' | 'lte';
     threshold?: number;
@@ -1586,6 +1998,18 @@ export type UserOrgsOutputBody = {
     organizations: Array<UserOrgDto> | null;
 };
 
+export type VerifyResult = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
+    actual?: string;
+    brokenAtSeq?: number;
+    count: number;
+    expected?: string;
+    ok: boolean;
+};
+
 export type ViolationDto = {
     action: string;
     appId?: string;
@@ -1635,6 +2059,10 @@ export type Widget = {
 
 export type WidgetScope = {
     app?: string;
+    /**
+     * Scope to a channel id
+     */
+    channel?: string;
     environment?: string;
     /**
      * Scope to a custom-dimension value; pair with filterTagValue
@@ -1644,6 +2072,19 @@ export type WidgetScope = {
     model?: string;
     provider?: string;
     source?: string;
+};
+
+export type AcceptInvitationInputBodyWritable = {
+    /**
+     * Invitation code from the invite link
+     */
+    code: string;
+};
+
+export type AcceptInvitationOutputBodyWritable = {
+    orgId: string;
+    orgName: string;
+    role: string;
 };
 
 export type AlertRuleDtoWritable = {
@@ -1665,12 +2106,20 @@ export type AlertRuleDtoWritable = {
     updatedAt: string;
 };
 
+export type AnalyticsOverviewOutputBodyWritable = {
+    breakdowns: Array<OverviewBreakdownDto> | null;
+    latency: LatencyPercentilesDtoWritable;
+    timeseries: OverviewTimeseriesDto;
+};
+
 export type AppDtoWritable = {
     appId: string;
     createdAt: string;
     creatorUserId?: string;
+    defaultBranch?: string;
     name: string;
     orgId: string;
+    repoUrl?: string;
     updatedAt?: string;
 };
 
@@ -1768,7 +2217,7 @@ export type CreateInputBodyWritable = {
     destinationType: 'email' | 'webhook';
     enabled?: boolean;
     environmentId?: string;
-    metric: 'error_count' | 'error_rate' | 'latency_ms' | 'cost_usd' | 'score';
+    metric: 'error_count' | 'error_rate' | 'latency_ms' | 'cost_usd';
     model?: string;
     /**
      * Alert rule display name
@@ -1920,6 +2369,29 @@ export type DestinationDtoWritable = {
     updatedAt?: string;
 };
 
+export type DiffInputBodyWritable = {
+    /**
+     * The cohort to compare against (e.g. all traffic in the window)
+     */
+    baseline: DiffCohortDto;
+    /**
+     * Attribute keys to diff; defaults to the top cataloged keys (capped)
+     */
+    keys?: Array<string> | null;
+    /**
+     * Max ranked attributes to return (default and max 20)
+     */
+    limit?: number;
+    /**
+     * The cohort under investigation (e.g. the slow or error slice)
+     */
+    selection: DiffCohortDto;
+};
+
+export type DiffOutputBodyWritable = {
+    attributes: Array<DiffAttributeDto> | null;
+};
+
 export type DimensionValuesOutputBodyWritable = {
     key: string;
     values: Array<DimensionValueDto> | null;
@@ -1977,9 +2449,9 @@ export type ErrorModelWritable = {
 export type EventBodyWritable = {
     agentId?: string;
     /**
-     * Target channel id
+     * Target channel id; when omitted, the org's default channel is used
      */
-    channel_id: string;
+    channel_id?: string;
     dedupKey?: string;
     /**
      * Canonical event type; defaults to custom
@@ -2013,6 +2485,7 @@ export type EventOutputBodyWritable = {
 };
 
 export type FeatureFlagsWritable = {
+    analyticsV2: boolean;
     asyncIngest: boolean;
     environments: boolean;
     mcpServer: boolean;
@@ -2090,6 +2563,21 @@ export type HealthOutputBodyWritable = {
     version: string;
 };
 
+export type HeatmapOutputBodyWritable = {
+    bucket: string;
+    cells: Array<HeatmapCellDto> | null;
+    durationBands: Array<HeatmapBandDto> | null;
+    maxDurationMs: number;
+    minDurationMs: number;
+    sampleCount: number;
+    scale: string;
+    timeBuckets: Array<string> | null;
+};
+
+export type IngestionStatusOutputBodyWritable = {
+    everIngested: boolean;
+};
+
 export type InvitationDtoWritable = {
     code: string;
     createdAt: string;
@@ -2099,6 +2587,29 @@ export type InvitationDtoWritable = {
     invitedEmail: string;
     inviterId?: string;
     orgId: string;
+    status: string;
+};
+
+export type IssueDetailDtoWritable = {
+    affectedTraceIds: Array<string> | null;
+    breadcrumbs: Array<BreadcrumbDto> | null;
+    issue: ErrorIssueDto;
+    occurrences: Array<IssueBucketDto> | null;
+    resolvedAt?: string;
+    resolvedInRelease?: string;
+    sampleEvent?: EventDto;
+    snoozeUntil?: string;
+    stack: Array<StackFrameDto> | null;
+    tags: Array<TagDistributionDto> | null;
+};
+
+export type IssueTriageDtoWritable = {
+    assignee?: string;
+    fingerprint: string;
+    regressed: boolean;
+    resolvedAt?: string;
+    resolvedInRelease?: string;
+    snoozeUntil?: string;
     status: string;
 };
 
@@ -2149,12 +2660,24 @@ export type ListDeliveriesOutputBodyWritable = {
     data: Array<DeliveryDto> | null;
 };
 
+export type ListDeliveriesOutputBody1Writable = {
+    deliveries: Array<ExportDeliveryDto> | null;
+};
+
 export type ListEndpointsOutputBodyWritable = {
     data: Array<EndpointDto> | null;
 };
 
 export type ListEnvironmentsOutputBodyWritable = {
     environments: Array<EnvironmentDtoWritable> | null;
+};
+
+export type ListErrorEventsOutputBodyWritable = {
+    events: Array<EventDto> | null;
+};
+
+export type ListErrorsOutputBodyWritable = {
+    issues: Array<ErrorIssueDto> | null;
 };
 
 export type ListFeedbackOutputBodyWritable = {
@@ -2223,6 +2746,10 @@ export type MessageOutputBodyWritable = {
     message: string;
 };
 
+export type OccurrencesOutputBodyWritable = {
+    data: Array<AlertOccurrenceDto> | null;
+};
+
 export type OkOutputBodyWritable = {
     ok: boolean;
 };
@@ -2241,8 +2768,40 @@ export type OrganizationDtoWritable = {
     updatedAt?: string;
 };
 
-export type OverviewOutputBodyWritable = {
-    organizations: number;
+export type OverviewBodyWritable = {
+    events: OverviewBodyEventsStruct;
+    managedLlm: OverviewBodyManagedLlmStruct;
+    mrr: OverviewBodyMrrStruct;
+    planDistribution: Array<KeyCount> | null;
+    subscriptionStatusDistribution: Array<KeyCount> | null;
+    totals: OverviewBodyTotalsStruct;
+};
+
+export type PatchErrorInputBodyWritable = {
+    /**
+     * Triage action to apply
+     */
+    action: 'resolve' | 'unresolve' | 'ignore' | 'mute' | 'assign';
+    /**
+     * User id to assign (for action=assign)
+     */
+    assignee?: string;
+    /**
+     * Release the fix ships in (for action=resolve)
+     */
+    resolvedInRelease?: string;
+    /**
+     * RFC3339 time to auto-unmute (for action=mute)
+     */
+    snoozeUntil?: string;
+    /**
+     * Re-alert after this many new occurrences (for action=mute)
+     */
+    snoozeUntilCount?: number;
+    /**
+     * Re-alert after this many affected users (for action=mute)
+     */
+    snoozeUntilUsers?: number;
 };
 
 export type PlansOutputBodyWritable = {
@@ -2336,6 +2895,17 @@ export type SetActiveOrgInputBodyWritable = {
     orgId: string;
 };
 
+export type SetBillingInputBodyWritable = {
+    /**
+     * Negotiated monthly amount in USD
+     */
+    billingMonthlyAmountUsd: number;
+    /**
+     * Free-form commercial notes
+     */
+    billingNotes?: string;
+};
+
 export type SetFeedbackStatusInputBodyWritable = {
     status: string;
 };
@@ -2369,6 +2939,11 @@ export type TelemetryPolicyOutputBodyWritable = {
     version: number;
 };
 
+export type TestOutputBodyWritable = {
+    deliveryId: string;
+    signal: string;
+};
+
 export type TimeseriesOutputBodyWritable = {
     bucket: string;
     points: Array<TimeseriesPointDto> | null;
@@ -2382,7 +2957,15 @@ export type TransferOwnershipInputBodyWritable = {
 };
 
 export type UpdateAppInputBodyWritable = {
+    /**
+     * Default branch (omit to leave unchanged)
+     */
+    defaultBranch?: string;
     name: string;
+    /**
+     * Source repository URL for the coding-agent handoff (omit to leave unchanged)
+     */
+    repoUrl?: string;
 };
 
 export type UpdateChannelInputBodyWritable = {
@@ -2399,7 +2982,7 @@ export type UpdateInputBodyWritable = {
     destination?: string;
     destinationType?: 'email' | 'webhook';
     enabled?: boolean;
-    metric?: 'error_count' | 'error_rate' | 'latency_ms' | 'cost_usd' | 'score';
+    metric?: 'error_count' | 'error_rate' | 'latency_ms' | 'cost_usd';
     name?: string;
     operator?: 'gt' | 'gte' | 'lt' | 'lte';
     threshold?: number;
@@ -2453,6 +3036,14 @@ export type UserOrgDtoWritable = {
 
 export type UserOrgsOutputBodyWritable = {
     organizations: Array<UserOrgDtoWritable> | null;
+};
+
+export type VerifyResultWritable = {
+    actual?: string;
+    brokenAtSeq?: number;
+    count: number;
+    expected?: string;
+    ok: boolean;
 };
 
 export type WebhookOutputBodyWritable = {
@@ -2549,6 +3140,33 @@ export type AdminAbuseFlagsReviewResponses = {
 };
 
 export type AdminAbuseFlagsReviewResponse = AdminAbuseFlagsReviewResponses[keyof AdminAbuseFlagsReviewResponses];
+
+export type AdminAbuseFlagsSuspendData = {
+    body?: never;
+    path: {
+        flagId: string;
+    };
+    query?: never;
+    url: '/admin/abuse-flags/{flagId}/suspend';
+};
+
+export type AdminAbuseFlagsSuspendErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type AdminAbuseFlagsSuspendError = AdminAbuseFlagsSuspendErrors[keyof AdminAbuseFlagsSuspendErrors];
+
+export type AdminAbuseFlagsSuspendResponses = {
+    /**
+     * OK
+     */
+    200: OkOutputBody;
+};
+
+export type AdminAbuseFlagsSuspendResponse = AdminAbuseFlagsSuspendResponses[keyof AdminAbuseFlagsSuspendResponses];
 
 export type AdminAccessRequestsListData = {
     body?: never;
@@ -2746,6 +3364,87 @@ export type AdminOrgsGetResponses = {
 
 export type AdminOrgsGetResponse = AdminOrgsGetResponses[keyof AdminOrgsGetResponses];
 
+export type AdminOrgsSetBillingData = {
+    body: SetBillingInputBodyWritable;
+    path: {
+        orgId: string;
+    };
+    query?: never;
+    url: '/admin/orgs/{orgId}/billing';
+};
+
+export type AdminOrgsSetBillingErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type AdminOrgsSetBillingError = AdminOrgsSetBillingErrors[keyof AdminOrgsSetBillingErrors];
+
+export type AdminOrgsSetBillingResponses = {
+    /**
+     * OK
+     */
+    200: OkOutputBody;
+};
+
+export type AdminOrgsSetBillingResponse = AdminOrgsSetBillingResponses[keyof AdminOrgsSetBillingResponses];
+
+export type AdminOrgsDisableData = {
+    body?: never;
+    path: {
+        orgId: string;
+    };
+    query?: never;
+    url: '/admin/orgs/{orgId}/disable';
+};
+
+export type AdminOrgsDisableErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type AdminOrgsDisableError = AdminOrgsDisableErrors[keyof AdminOrgsDisableErrors];
+
+export type AdminOrgsDisableResponses = {
+    /**
+     * OK
+     */
+    200: OkOutputBody;
+};
+
+export type AdminOrgsDisableResponse = AdminOrgsDisableResponses[keyof AdminOrgsDisableResponses];
+
+export type AdminOrgsEnableData = {
+    body?: never;
+    path: {
+        orgId: string;
+    };
+    query?: never;
+    url: '/admin/orgs/{orgId}/enable';
+};
+
+export type AdminOrgsEnableErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type AdminOrgsEnableError = AdminOrgsEnableErrors[keyof AdminOrgsEnableErrors];
+
+export type AdminOrgsEnableResponses = {
+    /**
+     * OK
+     */
+    200: OkOutputBody;
+};
+
+export type AdminOrgsEnableResponse = AdminOrgsEnableResponses[keyof AdminOrgsEnableResponses];
+
 export type AdminOrgsSetLimitsData = {
     body: SetLimitsInputBodyWritable;
     path: {
@@ -2874,7 +3573,7 @@ export type AdminOverviewResponses = {
     /**
      * OK
      */
-    200: OverviewOutputBody;
+    200: OverviewBody;
 };
 
 export type AdminOverviewResponse = AdminOverviewResponses[keyof AdminOverviewResponses];
@@ -2978,7 +3677,7 @@ export type AnalyticsBreakdownData = {
         /**
          * Breakdown dimension (default model)
          */
-        dimension?: 'model' | 'provider' | 'status' | 'source' | 'app' | 'apiKey' | 'user' | 'agent' | 'tool' | 'eventType' | 'finishReason' | 'semanticKind' | 'tag';
+        dimension?: 'model' | 'provider' | 'status' | 'source' | 'app' | 'channel' | 'apiKey' | 'user' | 'agent' | 'tool' | 'eventType' | 'finishReason' | 'semanticKind' | 'service' | 'operation' | 'errorType' | 'tag';
         /**
          * Attribute key to group by when dimension=tag
          */
@@ -3004,7 +3703,11 @@ export type AnalyticsBreakdownData = {
          */
         app?: string;
         /**
-         * Filter by environment id
+         * Filter by channel id
+         */
+        channel?: string;
+        /**
+         * Filter by environment id or slug
          */
         environment?: string;
         /**
@@ -3023,6 +3726,18 @@ export type AnalyticsBreakdownData = {
          * Value for filterTagKey
          */
         filterTagValue?: string;
+        /**
+         * Filter by service (resource service.name)
+         */
+        service?: string;
+        /**
+         * Filter by operation / span name
+         */
+        operation?: string;
+        /**
+         * Filter by error type
+         */
+        errorType?: string;
     };
     url: '/analytics/breakdown';
 };
@@ -3045,12 +3760,37 @@ export type AnalyticsBreakdownResponses = {
 
 export type AnalyticsBreakdownResponse = AnalyticsBreakdownResponses[keyof AnalyticsBreakdownResponses];
 
+export type AnalyticsDiffData = {
+    body: DiffInputBodyWritable;
+    path?: never;
+    query?: never;
+    url: '/analytics/diff';
+};
+
+export type AnalyticsDiffErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type AnalyticsDiffError = AnalyticsDiffErrors[keyof AnalyticsDiffErrors];
+
+export type AnalyticsDiffResponses = {
+    /**
+     * OK
+     */
+    200: DiffOutputBody;
+};
+
+export type AnalyticsDiffResponse = AnalyticsDiffResponses[keyof AnalyticsDiffResponses];
+
 export type AnalyticsDimensionsData = {
     body?: never;
     path?: never;
     query?: {
         /**
-         * Filter to one environment id; empty = all
+         * Filter to one environment id or slug; empty = all
          */
         environment?: string;
         /**
@@ -3088,7 +3828,7 @@ export type AnalyticsDimensionValuesData = {
          */
         key: string;
         /**
-         * Filter to one environment id; empty = all
+         * Filter to one environment id or slug; empty = all
          */
         environment?: string;
         /**
@@ -3116,6 +3856,134 @@ export type AnalyticsDimensionValuesResponses = {
 };
 
 export type AnalyticsDimensionValuesResponse = AnalyticsDimensionValuesResponses[keyof AnalyticsDimensionValuesResponses];
+
+export type AnalyticsHeatmapData = {
+    body?: never;
+    path?: never;
+    query?: {
+        /**
+         * Window start (RFC3339); defaults to 24h before until
+         */
+        since?: string;
+        /**
+         * Window end (RFC3339); defaults to now
+         */
+        until?: string;
+        /**
+         * Time bucket granularity (default hour)
+         */
+        bucket?: 'minute' | 'hour' | 'day';
+        /**
+         * Number of duration bands (default 25, max 100)
+         */
+        buckets?: number;
+        /**
+         * Duration band scale (default log)
+         */
+        scale?: 'log' | 'linear';
+        /**
+         * Filter by event source (e.g. gateway)
+         */
+        source?: string;
+        /**
+         * Filter by request/response model
+         */
+        model?: string;
+        /**
+         * Filter by model provider
+         */
+        provider?: string;
+        /**
+         * Filter by app id
+         */
+        app?: string;
+        /**
+         * Filter by channel id
+         */
+        channel?: string;
+        /**
+         * Filter by environment id or slug
+         */
+        environment?: string;
+        /**
+         * Filter by API key id
+         */
+        apiKey?: string;
+        /**
+         * Filter by end-user id
+         */
+        user?: string;
+        /**
+         * Custom-dimension (attribute) key to filter on; pair with filterTagValue
+         */
+        filterTagKey?: string;
+        /**
+         * Value for filterTagKey
+         */
+        filterTagValue?: string;
+        /**
+         * Filter by service (resource service.name)
+         */
+        service?: string;
+        /**
+         * Filter by operation / span name
+         */
+        operation?: string;
+        /**
+         * Filter by error type
+         */
+        errorType?: string;
+    };
+    url: '/analytics/heatmap';
+};
+
+export type AnalyticsHeatmapErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type AnalyticsHeatmapError = AnalyticsHeatmapErrors[keyof AnalyticsHeatmapErrors];
+
+export type AnalyticsHeatmapResponses = {
+    /**
+     * OK
+     */
+    200: HeatmapOutputBody;
+};
+
+export type AnalyticsHeatmapResponse = AnalyticsHeatmapResponses[keyof AnalyticsHeatmapResponses];
+
+export type AnalyticsIngestionStatusData = {
+    body?: never;
+    path?: never;
+    query?: {
+        /**
+         * Environment slug or id to scope the check to (omit for org-wide)
+         */
+        environment?: string;
+    };
+    url: '/analytics/ingestion-status';
+};
+
+export type AnalyticsIngestionStatusErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type AnalyticsIngestionStatusError = AnalyticsIngestionStatusErrors[keyof AnalyticsIngestionStatusErrors];
+
+export type AnalyticsIngestionStatusResponses = {
+    /**
+     * OK
+     */
+    200: IngestionStatusOutputBody;
+};
+
+export type AnalyticsIngestionStatusResponse = AnalyticsIngestionStatusResponses[keyof AnalyticsIngestionStatusResponses];
 
 export type AnalyticsLatencyData = {
     body?: never;
@@ -3146,7 +4014,11 @@ export type AnalyticsLatencyData = {
          */
         app?: string;
         /**
-         * Filter by environment id
+         * Filter by channel id
+         */
+        channel?: string;
+        /**
+         * Filter by environment id or slug
          */
         environment?: string;
         /**
@@ -3165,6 +4037,18 @@ export type AnalyticsLatencyData = {
          * Value for filterTagKey
          */
         filterTagValue?: string;
+        /**
+         * Filter by service (resource service.name)
+         */
+        service?: string;
+        /**
+         * Filter by operation / span name
+         */
+        operation?: string;
+        /**
+         * Filter by error type
+         */
+        errorType?: string;
     };
     url: '/analytics/latency';
 };
@@ -3186,6 +4070,108 @@ export type AnalyticsLatencyResponses = {
 };
 
 export type AnalyticsLatencyResponse = AnalyticsLatencyResponses[keyof AnalyticsLatencyResponses];
+
+export type AnalyticsOverviewData = {
+    body?: never;
+    path?: never;
+    query?: {
+        /**
+         * Window start (RFC3339); defaults to 24h before until
+         */
+        since?: string;
+        /**
+         * Window end (RFC3339); defaults to now
+         */
+        until?: string;
+        /**
+         * Time bucket granularity (default hour)
+         */
+        bucket?: 'hour' | 'day';
+        /**
+         * Comma-separated breakdown dimensions (default model,provider,status); each must be a supported breakdown dimension
+         */
+        dimensions?: string;
+        /**
+         * Attribute key to group by for a tag dimension
+         */
+        tagKey?: string;
+        /**
+         * Top-N entries per breakdown (default 50, max 500)
+         */
+        limit?: number;
+        /**
+         * Filter by event source (e.g. gateway)
+         */
+        source?: string;
+        /**
+         * Filter by request/response model
+         */
+        model?: string;
+        /**
+         * Filter by model provider
+         */
+        provider?: string;
+        /**
+         * Filter by app id
+         */
+        app?: string;
+        /**
+         * Filter by channel id
+         */
+        channel?: string;
+        /**
+         * Filter by environment id or slug
+         */
+        environment?: string;
+        /**
+         * Filter by API key id
+         */
+        apiKey?: string;
+        /**
+         * Filter by end-user id
+         */
+        user?: string;
+        /**
+         * Custom-dimension (attribute) key to filter on; pair with filterTagValue
+         */
+        filterTagKey?: string;
+        /**
+         * Value for filterTagKey
+         */
+        filterTagValue?: string;
+        /**
+         * Filter by service (resource service.name)
+         */
+        service?: string;
+        /**
+         * Filter by operation / span name
+         */
+        operation?: string;
+        /**
+         * Filter by error type
+         */
+        errorType?: string;
+    };
+    url: '/analytics/overview';
+};
+
+export type AnalyticsOverviewErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type AnalyticsOverviewError = AnalyticsOverviewErrors[keyof AnalyticsOverviewErrors];
+
+export type AnalyticsOverviewResponses = {
+    /**
+     * OK
+     */
+    200: AnalyticsOverviewOutputBody;
+};
+
+export type AnalyticsOverviewResponse = AnalyticsOverviewResponses[keyof AnalyticsOverviewResponses];
 
 export type AnalyticsTimeseriesData = {
     body?: never;
@@ -3220,7 +4206,11 @@ export type AnalyticsTimeseriesData = {
          */
         app?: string;
         /**
-         * Filter by environment id
+         * Filter by channel id
+         */
+        channel?: string;
+        /**
+         * Filter by environment id or slug
          */
         environment?: string;
         /**
@@ -3239,6 +4229,18 @@ export type AnalyticsTimeseriesData = {
          * Value for filterTagKey
          */
         filterTagValue?: string;
+        /**
+         * Filter by service (resource service.name)
+         */
+        service?: string;
+        /**
+         * Filter by operation / span name
+         */
+        operation?: string;
+        /**
+         * Filter by error type
+         */
+        errorType?: string;
     };
     url: '/analytics/timeseries';
 };
@@ -3537,6 +4539,10 @@ export type AuditListData = {
         action?: string;
         resourceType?: string;
         /**
+         * Filter by origin: dashboard, apikey, or mcp
+         */
+        source?: string;
+        /**
          * RFC3339 upper bound (exclusive); defaults to now
          */
         before?: string;
@@ -3562,6 +4568,31 @@ export type AuditListResponses = {
 };
 
 export type AuditListResponse = AuditListResponses[keyof AuditListResponses];
+
+export type AuditVerifyData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/audit-logs/verify';
+};
+
+export type AuditVerifyErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type AuditVerifyError = AuditVerifyErrors[keyof AuditVerifyErrors];
+
+export type AuditVerifyResponses = {
+    /**
+     * OK
+     */
+    200: VerifyResult;
+};
+
+export type AuditVerifyResponse = AuditVerifyResponses[keyof AuditVerifyResponses];
 
 export type AudittrailGetData = {
     body?: never;
@@ -4020,6 +5051,163 @@ export type EnvironmentsPromoteResponses = {
 
 export type EnvironmentsPromoteResponse = EnvironmentsPromoteResponses[keyof EnvironmentsPromoteResponses];
 
+export type ErrorsListData = {
+    body?: never;
+    path?: never;
+    query?: {
+        /**
+         * Window start (RFC3339); defaults to 24h before until
+         */
+        since?: string;
+        /**
+         * Window end (RFC3339); defaults to now
+         */
+        until?: string;
+        /**
+         * Triage status filter (default unresolved)
+         */
+        status?: 'unresolved' | 'resolved' | 'ignored' | 'muted' | 'all';
+        /**
+         * Filter by service (resource service.name)
+         */
+        service?: string;
+        /**
+         * Filter by assignee user id
+         */
+        assignee?: string;
+        /**
+         * Case-insensitive contains match on the error text
+         */
+        q?: string;
+        /**
+         * Max issues (default 50, max 500)
+         */
+        limit?: number;
+    };
+    url: '/errors';
+};
+
+export type ErrorsListErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type ErrorsListError = ErrorsListErrors[keyof ErrorsListErrors];
+
+export type ErrorsListResponses = {
+    /**
+     * OK
+     */
+    200: ListErrorsOutputBody;
+};
+
+export type ErrorsListResponse = ErrorsListResponses[keyof ErrorsListResponses];
+
+export type ErrorsGetData = {
+    body?: never;
+    path: {
+        fingerprint: string;
+    };
+    query?: {
+        /**
+         * Occurrence-bucket window start (RFC3339); defaults to firstSeen
+         */
+        since?: string;
+        /**
+         * Occurrence-bucket window end (RFC3339); defaults to now
+         */
+        until?: string;
+    };
+    url: '/errors/{fingerprint}';
+};
+
+export type ErrorsGetErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type ErrorsGetError = ErrorsGetErrors[keyof ErrorsGetErrors];
+
+export type ErrorsGetResponses = {
+    /**
+     * OK
+     */
+    200: IssueDetailDto;
+};
+
+export type ErrorsGetResponse = ErrorsGetResponses[keyof ErrorsGetResponses];
+
+export type ErrorsTriageData = {
+    body: PatchErrorInputBodyWritable;
+    path: {
+        fingerprint: string;
+    };
+    query?: never;
+    url: '/errors/{fingerprint}';
+};
+
+export type ErrorsTriageErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type ErrorsTriageError = ErrorsTriageErrors[keyof ErrorsTriageErrors];
+
+export type ErrorsTriageResponses = {
+    /**
+     * OK
+     */
+    200: IssueTriageDto;
+};
+
+export type ErrorsTriageResponse = ErrorsTriageResponses[keyof ErrorsTriageResponses];
+
+export type ErrorsEventsData = {
+    body?: never;
+    path: {
+        fingerprint: string;
+    };
+    query?: {
+        /**
+         * Keyset upper bound (RFC3339, exclusive) for older occurrences
+         */
+        before?: string;
+        /**
+         * Keyset lower bound (RFC3339, exclusive) for newer occurrences
+         */
+        after?: string;
+        /**
+         * Max occurrences (default 50, max 500)
+         */
+        limit?: number;
+    };
+    url: '/errors/{fingerprint}/events';
+};
+
+export type ErrorsEventsErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type ErrorsEventsError = ErrorsEventsErrors[keyof ErrorsEventsErrors];
+
+export type ErrorsEventsResponses = {
+    /**
+     * OK
+     */
+    200: ListErrorEventsOutputBody;
+};
+
+export type ErrorsEventsResponse = ErrorsEventsResponses[keyof ErrorsEventsResponses];
+
 export type CreateEventData = {
     body: EventBodyWritable;
     headers?: {
@@ -4111,6 +5299,18 @@ export type EventsSearchData = {
          * Filter by semantic kind (agent, tool, llm, retriever, db, http, log)
          */
         semanticKind?: string;
+        /**
+         * Filter by service (resource service.name)
+         */
+        serviceName?: string;
+        /**
+         * Filter by operation / span name
+         */
+        operationName?: string;
+        /**
+         * Filter by error type
+         */
+        errorType?: string;
         /**
          * Case-insensitive contains match on search text
          */
@@ -4277,6 +5477,60 @@ export type ExportUpdateResponses = {
 };
 
 export type ExportUpdateResponse = ExportUpdateResponses[keyof ExportUpdateResponses];
+
+export type ExportListDeliveriesData = {
+    body?: never;
+    path: {
+        destinationId: string;
+    };
+    query?: never;
+    url: '/export-destinations/{destinationId}/deliveries';
+};
+
+export type ExportListDeliveriesErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type ExportListDeliveriesError = ExportListDeliveriesErrors[keyof ExportListDeliveriesErrors];
+
+export type ExportListDeliveriesResponses = {
+    /**
+     * OK
+     */
+    200: ListDeliveriesOutputBody1;
+};
+
+export type ExportListDeliveriesResponse = ExportListDeliveriesResponses[keyof ExportListDeliveriesResponses];
+
+export type ExportTestData = {
+    body?: never;
+    path: {
+        destinationId: string;
+    };
+    query?: never;
+    url: '/export-destinations/{destinationId}/test';
+};
+
+export type ExportTestErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type ExportTestError = ExportTestErrors[keyof ExportTestErrors];
+
+export type ExportTestResponses = {
+    /**
+     * Accepted
+     */
+    202: TestOutputBody;
+};
+
+export type ExportTestResponse = ExportTestResponses[keyof ExportTestResponses];
 
 export type FeatureFlagsMeData = {
     body?: never;
@@ -4461,6 +5715,31 @@ export type GetHealthzResponses = {
 };
 
 export type GetHealthzResponse = GetHealthzResponses[keyof GetHealthzResponses];
+
+export type OrganizationInvitationsAcceptData = {
+    body: AcceptInvitationInputBodyWritable;
+    path?: never;
+    query?: never;
+    url: '/invitations/accept';
+};
+
+export type OrganizationInvitationsAcceptErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type OrganizationInvitationsAcceptError = OrganizationInvitationsAcceptErrors[keyof OrganizationInvitationsAcceptErrors];
+
+export type OrganizationInvitationsAcceptResponses = {
+    /**
+     * OK
+     */
+    200: AcceptInvitationOutputBody;
+};
+
+export type OrganizationInvitationsAcceptResponse = OrganizationInvitationsAcceptResponses[keyof OrganizationInvitationsAcceptResponses];
 
 export type LicenseGetData = {
     body?: never;
@@ -4783,6 +6062,33 @@ export type OrganizationInvitationsCancelResponses = {
 };
 
 export type OrganizationInvitationsCancelResponse = OrganizationInvitationsCancelResponses[keyof OrganizationInvitationsCancelResponses];
+
+export type OrganizationLeaveData = {
+    body?: never;
+    path: {
+        orgId: string;
+    };
+    query?: never;
+    url: '/organizations/{orgId}/leave';
+};
+
+export type OrganizationLeaveErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type OrganizationLeaveError = OrganizationLeaveErrors[keyof OrganizationLeaveErrors];
+
+export type OrganizationLeaveResponses = {
+    /**
+     * OK
+     */
+    200: OkOutputBody;
+};
+
+export type OrganizationLeaveResponse = OrganizationLeaveResponses[keyof OrganizationLeaveResponses];
 
 export type OrganizationMembersListData = {
     body?: never;
@@ -5152,6 +6458,82 @@ export type TracesListData = {
          * Rows to skip for paging
          */
         offset?: number;
+        /**
+         * Free-text search over span content/metadata
+         */
+        q?: string;
+        /**
+         * Keep traces with a span from any of these services
+         */
+        service?: Array<string> | null;
+        /**
+         * Keep traces with a span with any of these operations / span names
+         */
+        operation?: Array<string> | null;
+        /**
+         * Keep traces with a span using any of these models (request or response)
+         */
+        model?: Array<string> | null;
+        /**
+         * Keep traces with a span from any of these model providers
+         */
+        provider?: Array<string> | null;
+        /**
+         * Keep traces with a span from any of these agents
+         */
+        agent?: Array<string> | null;
+        /**
+         * Keep traces with a span invoking any of these tools
+         */
+        tool?: Array<string> | null;
+        /**
+         * Keep traces with a span from any of these ingest sources
+         */
+        source?: Array<string> | null;
+        /**
+         * Keep traces with a span from any of these application ids
+         */
+        app?: Array<string> | null;
+        /**
+         * Keep traces with a span from any of these environments (slug or id)
+         */
+        environment?: Array<string> | null;
+        /**
+         * Keep traces with a span from any of these API key ids
+         */
+        apiKey?: Array<string> | null;
+        /**
+         * Keep traces with a span from any of these release/build tags
+         */
+        release?: Array<string> | null;
+        /**
+         * Keep traces with a span of any of these statuses (e.g. ok/error)
+         */
+        status?: Array<string> | null;
+        /**
+         * Keep traces with a span from any of these session ids
+         */
+        session?: Array<string> | null;
+        /**
+         * Keep traces with a span from any of these end-user ids
+         */
+        user?: Array<string> | null;
+        /**
+         * Keep traces with a span of any of these semantic kinds (e.g. llm)
+         */
+        semanticKind?: Array<string> | null;
+        /**
+         * Keep only traces containing an error span
+         */
+        errorsOnly?: boolean;
+        /**
+         * Keep only traces at least this many ms long
+         */
+        minDurationMs?: number;
+        /**
+         * Row ordering: last_seen_desc (default), last_seen_asc, duration_desc, cost_desc, tokens_desc
+         */
+        sort?: 'last_seen_desc' | 'last_seen_asc' | 'duration_desc' | 'cost_desc' | 'tokens_desc';
     };
     url: '/traces';
 };
@@ -5404,6 +6786,38 @@ export type AlertsUpdateResponses = {
 };
 
 export type AlertsUpdateResponse = AlertsUpdateResponses[keyof AlertsUpdateResponses];
+
+export type AlertsOccurrencesData = {
+    body?: never;
+    path: {
+        alertRuleId: string;
+    };
+    query?: {
+        /**
+         * Max occurrences to return, most recent first
+         */
+        limit?: number;
+    };
+    url: '/v2/alerts/{alertRuleId}/occurrences';
+};
+
+export type AlertsOccurrencesErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type AlertsOccurrencesError = AlertsOccurrencesErrors[keyof AlertsOccurrencesErrors];
+
+export type AlertsOccurrencesResponses = {
+    /**
+     * OK
+     */
+    200: OccurrencesOutputBody;
+};
+
+export type AlertsOccurrencesResponse = AlertsOccurrencesResponses[keyof AlertsOccurrencesResponses];
 
 export type WebhooksListDeliveriesData = {
     body?: never;

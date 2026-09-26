@@ -21,6 +21,8 @@ class AppDTO:
         org_id (str):
         schema (str | Unset): A URL to the JSON Schema for this object.
         creator_user_id (str | Unset):
+        default_branch (str | Unset):
+        repo_url (str | Unset):
         updated_at (str | Unset):
     """
 
@@ -30,6 +32,8 @@ class AppDTO:
     org_id: str
     schema: str | Unset = UNSET
     creator_user_id: str | Unset = UNSET
+    default_branch: str | Unset = UNSET
+    repo_url: str | Unset = UNSET
     updated_at: str | Unset = UNSET
 
     def to_dict(self) -> dict[str, Any]:
@@ -44,6 +48,10 @@ class AppDTO:
         schema = self.schema
 
         creator_user_id = self.creator_user_id
+
+        default_branch = self.default_branch
+
+        repo_url = self.repo_url
 
         updated_at = self.updated_at
 
@@ -61,6 +69,10 @@ class AppDTO:
             field_dict["$schema"] = schema
         if creator_user_id is not UNSET:
             field_dict["creatorUserId"] = creator_user_id
+        if default_branch is not UNSET:
+            field_dict["defaultBranch"] = default_branch
+        if repo_url is not UNSET:
+            field_dict["repoUrl"] = repo_url
         if updated_at is not UNSET:
             field_dict["updatedAt"] = updated_at
 
@@ -81,6 +93,10 @@ class AppDTO:
 
         creator_user_id = d.pop("creatorUserId", UNSET)
 
+        default_branch = d.pop("defaultBranch", UNSET)
+
+        repo_url = d.pop("repoUrl", UNSET)
+
         updated_at = d.pop("updatedAt", UNSET)
 
         app_dto = cls(
@@ -90,6 +106,8 @@ class AppDTO:
             org_id=org_id,
             schema=schema,
             creator_user_id=creator_user_id,
+            default_branch=default_branch,
+            repo_url=repo_url,
             updated_at=updated_at,
         )
 

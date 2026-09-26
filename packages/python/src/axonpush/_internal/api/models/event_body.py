@@ -20,11 +20,11 @@ T = TypeVar("T", bound="EventBody")
 class EventBody:
     """
     Attributes:
-        channel_id (str): Target channel id
         identifier (str): Event identifier / operation name
         payload (EventBodyPayload): Event payload
         schema (str | Unset): A URL to the JSON Schema for this object.
         agent_id (str | Unset):
+        channel_id (str | Unset): Target channel id; when omitted, the org's default channel is used
         dedup_key (str | Unset):
         event_type (str | Unset): Canonical event type; defaults to custom
         metadata (EventBodyMetadata | Unset):
@@ -34,11 +34,11 @@ class EventBody:
         trace_id (str | Unset):
     """
 
-    channel_id: str
     identifier: str
     payload: EventBodyPayload
     schema: str | Unset = UNSET
     agent_id: str | Unset = UNSET
+    channel_id: str | Unset = UNSET
     dedup_key: str | Unset = UNSET
     event_type: str | Unset = UNSET
     metadata: EventBodyMetadata | Unset = UNSET
@@ -51,8 +51,6 @@ class EventBody:
         from ..models.event_body_metadata import EventBodyMetadata
         from ..models.event_body_payload import EventBodyPayload
 
-        channel_id = self.channel_id
-
         identifier = self.identifier
 
         payload = self.payload.to_dict()
@@ -60,6 +58,8 @@ class EventBody:
         schema = self.schema
 
         agent_id = self.agent_id
+
+        channel_id = self.channel_id
 
         dedup_key = self.dedup_key
 
@@ -81,7 +81,6 @@ class EventBody:
 
         field_dict.update(
             {
-                "channel_id": channel_id,
                 "identifier": identifier,
                 "payload": payload,
             }
@@ -90,6 +89,8 @@ class EventBody:
             field_dict["$schema"] = schema
         if agent_id is not UNSET:
             field_dict["agentId"] = agent_id
+        if channel_id is not UNSET:
+            field_dict["channel_id"] = channel_id
         if dedup_key is not UNSET:
             field_dict["dedupKey"] = dedup_key
         if event_type is not UNSET:
@@ -113,8 +114,6 @@ class EventBody:
         from ..models.event_body_payload import EventBodyPayload
 
         d = dict(src_dict)
-        channel_id = d.pop("channel_id")
-
         identifier = d.pop("identifier")
 
         payload = EventBodyPayload.from_dict(d.pop("payload"))
@@ -122,6 +121,8 @@ class EventBody:
         schema = d.pop("$schema", UNSET)
 
         agent_id = d.pop("agentId", UNSET)
+
+        channel_id = d.pop("channel_id", UNSET)
 
         dedup_key = d.pop("dedupKey", UNSET)
 
@@ -143,11 +144,11 @@ class EventBody:
         trace_id = d.pop("traceId", UNSET)
 
         event_body = cls(
-            channel_id=channel_id,
             identifier=identifier,
             payload=payload,
             schema=schema,
             agent_id=agent_id,
+            channel_id=channel_id,
             dedup_key=dedup_key,
             event_type=event_type,
             metadata=metadata,

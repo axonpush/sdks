@@ -15,6 +15,9 @@ versioning is [SemVer](https://semver.org/spec/v2.0.0.html).
 ## [0.0.6]
 
 ### Added
+- **`user.feedback` event type.** `EventType.UserFeedback` maps to the backend's
+  Sentry-compatible user-feedback ingest, so feedback events carry a stable
+  well-known type.
 - **Agent and tool observability event types.** `EventType` now exposes the
   full agent-lifecycle vocabulary (`AgentStart`, `AgentEnd`, `AgentError`,
   `AgentMessage`, `AgentHandoff`, `AgentLlmToken`) alongside the existing
