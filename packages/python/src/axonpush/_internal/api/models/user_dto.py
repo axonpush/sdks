@@ -15,8 +15,11 @@ T = TypeVar("T", bound="UserDTO")
 class UserDTO:
     """
     Attributes:
+        created_at (str):
         email (str):
+        email_verified (bool):
         id (str):
+        deleted_at (str | Unset):
         disabled_at (str | Unset):
         first_name (str | Unset):
         last_name (str | Unset):
@@ -24,8 +27,11 @@ class UserDTO:
         username (str | Unset):
     """
 
+    created_at: str
     email: str
+    email_verified: bool
     id: str
+    deleted_at: str | Unset = UNSET
     disabled_at: str | Unset = UNSET
     first_name: str | Unset = UNSET
     last_name: str | Unset = UNSET
@@ -33,9 +39,15 @@ class UserDTO:
     username: str | Unset = UNSET
 
     def to_dict(self) -> dict[str, Any]:
+        created_at = self.created_at
+
         email = self.email
 
+        email_verified = self.email_verified
+
         id = self.id
+
+        deleted_at = self.deleted_at
 
         disabled_at = self.disabled_at
 
@@ -51,10 +63,14 @@ class UserDTO:
 
         field_dict.update(
             {
+                "createdAt": created_at,
                 "email": email,
+                "emailVerified": email_verified,
                 "id": id,
             }
         )
+        if deleted_at is not UNSET:
+            field_dict["deletedAt"] = deleted_at
         if disabled_at is not UNSET:
             field_dict["disabledAt"] = disabled_at
         if first_name is not UNSET:
@@ -71,9 +87,15 @@ class UserDTO:
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         d = dict(src_dict)
+        created_at = d.pop("createdAt")
+
         email = d.pop("email")
 
+        email_verified = d.pop("emailVerified")
+
         id = d.pop("id")
+
+        deleted_at = d.pop("deletedAt", UNSET)
 
         disabled_at = d.pop("disabledAt", UNSET)
 
@@ -86,8 +108,11 @@ class UserDTO:
         username = d.pop("username", UNSET)
 
         user_dto = cls(
+            created_at=created_at,
             email=email,
+            email_verified=email_verified,
             id=id,
+            deleted_at=deleted_at,
             disabled_at=disabled_at,
             first_name=first_name,
             last_name=last_name,

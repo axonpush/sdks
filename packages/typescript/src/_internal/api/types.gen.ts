@@ -865,6 +865,7 @@ export type FeatureFlags = {
     readonly $schema?: string;
     analyticsV2: boolean;
     asyncIngest: boolean;
+    billing: boolean;
     environments: boolean;
     mcpServer: boolean;
     sentryIngest: boolean;
@@ -1342,7 +1343,10 @@ export type MeDto = {
     authMethod: string;
     email?: string;
     emailVerified: boolean;
+    firstName?: string;
+    lastName?: string;
     memberships: Array<MembershipDto> | null;
+    name?: string;
     orgId: string;
     roles: Array<string> | null;
     userId?: string;
@@ -1976,8 +1980,11 @@ export type UsageOutputBody = {
 };
 
 export type UserDto = {
+    createdAt: string;
+    deletedAt?: string;
     disabledAt?: string;
     email: string;
+    emailVerified: boolean;
     firstName?: string;
     id: string;
     lastName?: string;
@@ -2487,6 +2494,7 @@ export type EventOutputBodyWritable = {
 export type FeatureFlagsWritable = {
     analyticsV2: boolean;
     asyncIngest: boolean;
+    billing: boolean;
     environments: boolean;
     mcpServer: boolean;
     sentryIngest: boolean;
@@ -2736,7 +2744,10 @@ export type MeDtoWritable = {
     authMethod: string;
     email?: string;
     emailVerified: boolean;
+    firstName?: string;
+    lastName?: string;
     memberships: Array<MembershipDto> | null;
+    name?: string;
     orgId: string;
     roles: Array<string> | null;
     userId?: string;
@@ -3391,6 +3402,33 @@ export type AdminOrgsSetBillingResponses = {
 
 export type AdminOrgsSetBillingResponse = AdminOrgsSetBillingResponses[keyof AdminOrgsSetBillingResponses];
 
+export type AdminOrgsDeleteData = {
+    body?: never;
+    path: {
+        orgId: string;
+    };
+    query?: never;
+    url: '/admin/orgs/{orgId}/delete';
+};
+
+export type AdminOrgsDeleteErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type AdminOrgsDeleteError = AdminOrgsDeleteErrors[keyof AdminOrgsDeleteErrors];
+
+export type AdminOrgsDeleteResponses = {
+    /**
+     * OK
+     */
+    200: OkOutputBody;
+};
+
+export type AdminOrgsDeleteResponse = AdminOrgsDeleteResponses[keyof AdminOrgsDeleteResponses];
+
 export type AdminOrgsDisableData = {
     body?: never;
     path: {
@@ -3586,6 +3624,10 @@ export type AdminUsersSearchData = {
          * Filter by email or username
          */
         q?: string;
+        /**
+         * Include soft-deleted users
+         */
+        includeDeleted?: boolean;
     };
     url: '/admin/users';
 };
@@ -3607,6 +3649,33 @@ export type AdminUsersSearchResponses = {
 };
 
 export type AdminUsersSearchResponse = AdminUsersSearchResponses[keyof AdminUsersSearchResponses];
+
+export type AdminUsersDeleteData = {
+    body?: never;
+    path: {
+        userId: string;
+    };
+    query?: never;
+    url: '/admin/users/{userId}/delete';
+};
+
+export type AdminUsersDeleteErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type AdminUsersDeleteError = AdminUsersDeleteErrors[keyof AdminUsersDeleteErrors];
+
+export type AdminUsersDeleteResponses = {
+    /**
+     * OK
+     */
+    200: OkOutputBody;
+};
+
+export type AdminUsersDeleteResponse = AdminUsersDeleteResponses[keyof AdminUsersDeleteResponses];
 
 export type AdminUsersDisableData = {
     body?: never;
@@ -3661,6 +3730,33 @@ export type AdminUsersEnableResponses = {
 };
 
 export type AdminUsersEnableResponse = AdminUsersEnableResponses[keyof AdminUsersEnableResponses];
+
+export type AdminUsersRestoreData = {
+    body?: never;
+    path: {
+        userId: string;
+    };
+    query?: never;
+    url: '/admin/users/{userId}/restore';
+};
+
+export type AdminUsersRestoreErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type AdminUsersRestoreError = AdminUsersRestoreErrors[keyof AdminUsersRestoreErrors];
+
+export type AdminUsersRestoreResponses = {
+    /**
+     * OK
+     */
+    200: OkOutputBody;
+};
+
+export type AdminUsersRestoreResponse = AdminUsersRestoreResponses[keyof AdminUsersRestoreResponses];
 
 export type AnalyticsBreakdownData = {
     body?: never;

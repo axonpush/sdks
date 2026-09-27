@@ -7,28 +7,19 @@ import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
 from ...models.error_model import ErrorModel
-from ...models.search_users_output_body import SearchUsersOutputBody
-from ...types import UNSET, Response, Unset
+from ...models.ok_output_body import OkOutputBody
+from ...types import UNSET, Response
 
 
 def _get_kwargs(
-    *,
-    q: str | Unset = UNSET,
-    include_deleted: bool | Unset = UNSET,
+    user_id: str,
 ) -> dict[str, Any]:
 
-    params: dict[str, Any] = {}
-
-    params["q"] = q
-
-    params["includeDeleted"] = include_deleted
-
-    params = {k: v for k, v in params.items() if v is not UNSET and v is not None}
-
     _kwargs: dict[str, Any] = {
-        "method": "get",
-        "url": "/admin/users",
-        "params": params,
+        "method": "post",
+        "url": "/admin/users/{user_id}/delete".format(
+            user_id=quote(str(user_id), safe=""),
+        ),
     }
 
     return _kwargs
@@ -36,9 +27,9 @@ def _get_kwargs(
 
 def _parse_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> ErrorModel | SearchUsersOutputBody:
+) -> ErrorModel | OkOutputBody:
     if response.status_code == 200:
-        response_200 = SearchUsersOutputBody.from_dict(response.json())
+        response_200 = OkOutputBody.from_dict(response.json())
 
         return response_200
 
@@ -49,7 +40,7 @@ def _parse_response(
 
 def _build_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> Response[ErrorModel | SearchUsersOutputBody]:
+) -> Response[ErrorModel | OkOutputBody]:
     return Response(
         status_code=HTTPStatus(response.status_code),
         content=response.content,
@@ -59,28 +50,25 @@ def _build_response(
 
 
 def sync_detailed(
+    user_id: str,
     *,
     client: AuthenticatedClient | Client,
-    q: str | Unset = UNSET,
-    include_deleted: bool | Unset = UNSET,
-) -> Response[ErrorModel | SearchUsersOutputBody]:
-    """Search users
+) -> Response[ErrorModel | OkOutputBody]:
+    """Soft-delete a user (hidden from lists and counts, sign-in blocked)
 
     Args:
-        q (str | Unset): Filter by email or username
-        include_deleted (bool | Unset): Include soft-deleted users
+        user_id (str):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[ErrorModel | SearchUsersOutputBody]
+        Response[ErrorModel | OkOutputBody]
     """
 
     kwargs = _get_kwargs(
-        q=q,
-        include_deleted=include_deleted,
+        user_id=user_id,
     )
 
     response = client.get_httpx_client().request(
@@ -91,55 +79,49 @@ def sync_detailed(
 
 
 def sync(
+    user_id: str,
     *,
     client: AuthenticatedClient | Client,
-    q: str | Unset = UNSET,
-    include_deleted: bool | Unset = UNSET,
-) -> ErrorModel | SearchUsersOutputBody | None:
-    """Search users
+) -> ErrorModel | OkOutputBody | None:
+    """Soft-delete a user (hidden from lists and counts, sign-in blocked)
 
     Args:
-        q (str | Unset): Filter by email or username
-        include_deleted (bool | Unset): Include soft-deleted users
+        user_id (str):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        ErrorModel | SearchUsersOutputBody
+        ErrorModel | OkOutputBody
     """
 
     return sync_detailed(
+        user_id=user_id,
         client=client,
-        q=q,
-        include_deleted=include_deleted,
     ).parsed
 
 
 async def asyncio_detailed(
+    user_id: str,
     *,
     client: AuthenticatedClient | Client,
-    q: str | Unset = UNSET,
-    include_deleted: bool | Unset = UNSET,
-) -> Response[ErrorModel | SearchUsersOutputBody]:
-    """Search users
+) -> Response[ErrorModel | OkOutputBody]:
+    """Soft-delete a user (hidden from lists and counts, sign-in blocked)
 
     Args:
-        q (str | Unset): Filter by email or username
-        include_deleted (bool | Unset): Include soft-deleted users
+        user_id (str):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[ErrorModel | SearchUsersOutputBody]
+        Response[ErrorModel | OkOutputBody]
     """
 
     kwargs = _get_kwargs(
-        q=q,
-        include_deleted=include_deleted,
+        user_id=user_id,
     )
 
     response = await client.get_async_httpx_client().request(**kwargs)
@@ -148,29 +130,26 @@ async def asyncio_detailed(
 
 
 async def asyncio(
+    user_id: str,
     *,
     client: AuthenticatedClient | Client,
-    q: str | Unset = UNSET,
-    include_deleted: bool | Unset = UNSET,
-) -> ErrorModel | SearchUsersOutputBody | None:
-    """Search users
+) -> ErrorModel | OkOutputBody | None:
+    """Soft-delete a user (hidden from lists and counts, sign-in blocked)
 
     Args:
-        q (str | Unset): Filter by email or username
-        include_deleted (bool | Unset): Include soft-deleted users
+        user_id (str):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        ErrorModel | SearchUsersOutputBody
+        ErrorModel | OkOutputBody
     """
 
     return (
         await asyncio_detailed(
+            user_id=user_id,
             client=client,
-            q=q,
-            include_deleted=include_deleted,
         )
     ).parsed

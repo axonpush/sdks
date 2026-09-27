@@ -7,6 +7,7 @@ admin.accessRequests.setStatus
 admin.billingEvents.list
 admin.feedback.list
 admin.feedback.setStatus
+admin.orgs.delete
 admin.orgs.disable
 admin.orgs.enable
 admin.orgs.get
@@ -17,8 +18,10 @@ admin.orgs.setPlan
 admin.orgs.setStatus
 admin.orgs.setTrial
 admin.overview
+admin.users.delete
 admin.users.disable
 admin.users.enable
+admin.users.restore
 admin.users.search
 alerts.create
 alerts.delete
