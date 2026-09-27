@@ -2495,6 +2495,9 @@
           "asyncIngest": {
             "type": "boolean"
           },
+          "billing": {
+            "type": "boolean"
+          },
           "environments": {
             "type": "boolean"
           },
@@ -2506,6 +2509,7 @@
           }
         },
         "required": [
+          "billing",
           "environments",
           "sentryIngest",
           "asyncIngest",
@@ -4093,6 +4097,12 @@
           "emailVerified": {
             "type": "boolean"
           },
+          "firstName": {
+            "type": "string"
+          },
+          "lastName": {
+            "type": "string"
+          },
           "memberships": {
             "items": {
               "$ref": "#/components/schemas/MembershipDTO"
@@ -4101,6 +4111,9 @@
               "array",
               "null"
             ]
+          },
+          "name": {
+            "type": "string"
           },
           "orgId": {
             "type": "string"
@@ -6157,11 +6170,20 @@
       "UserDTO": {
         "additionalProperties": false,
         "properties": {
+          "createdAt": {
+            "type": "string"
+          },
+          "deletedAt": {
+            "type": "string"
+          },
           "disabledAt": {
             "type": "string"
           },
           "email": {
             "type": "string"
+          },
+          "emailVerified": {
+            "type": "boolean"
           },
           "firstName": {
             "type": "string"
@@ -6181,7 +6203,9 @@
         },
         "required": [
           "id",
-          "email"
+          "email",
+          "emailVerified",
+          "createdAt"
         ],
         "type": "object"
       },
@@ -6981,6 +7005,47 @@
         ]
       }
     },
+    "/admin/orgs/{orgId}/delete": {
+      "post": {
+        "operationId": "admin.orgs.delete",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "orgId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OkOutputBody"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "summary": "Soft-delete an organization (hidden from lists and counts)",
+        "tags": [
+          "admin"
+        ]
+      }
+    },
     "/admin/orgs/{orgId}/disable": {
       "post": {
         "operationId": "admin.orgs.disable",
@@ -7311,6 +7376,16 @@
               "description": "Filter by email or username",
               "type": "string"
             }
+          },
+          {
+            "description": "Include soft-deleted users",
+            "explode": false,
+            "in": "query",
+            "name": "includeDeleted",
+            "schema": {
+              "description": "Include soft-deleted users",
+              "type": "boolean"
+            }
           }
         ],
         "responses": {
@@ -7336,6 +7411,47 @@
           }
         },
         "summary": "Search users",
+        "tags": [
+          "admin"
+        ]
+      }
+    },
+    "/admin/users/{userId}/delete": {
+      "post": {
+        "operationId": "admin.users.delete",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "userId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OkOutputBody"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "summary": "Soft-delete a user (hidden from lists and counts, sign-in blocked)",
         "tags": [
           "admin"
         ]
@@ -7418,6 +7534,47 @@
           }
         },
         "summary": "Enable a user",
+        "tags": [
+          "admin"
+        ]
+      }
+    },
+    "/admin/users/{userId}/restore": {
+      "post": {
+        "operationId": "admin.users.restore",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "userId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OkOutputBody"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "summary": "Restore a soft-deleted user",
         "tags": [
           "admin"
         ]
