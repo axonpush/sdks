@@ -17,6 +17,7 @@ class FeatureFlags:
     Attributes:
         analytics_v2 (bool):
         async_ingest (bool):
+        billing (bool):
         environments (bool):
         mcp_server (bool):
         sentry_ingest (bool):
@@ -25,6 +26,7 @@ class FeatureFlags:
 
     analytics_v2: bool
     async_ingest: bool
+    billing: bool
     environments: bool
     mcp_server: bool
     sentry_ingest: bool
@@ -34,6 +36,8 @@ class FeatureFlags:
         analytics_v2 = self.analytics_v2
 
         async_ingest = self.async_ingest
+
+        billing = self.billing
 
         environments = self.environments
 
@@ -49,6 +53,7 @@ class FeatureFlags:
             {
                 "analyticsV2": analytics_v2,
                 "asyncIngest": async_ingest,
+                "billing": billing,
                 "environments": environments,
                 "mcpServer": mcp_server,
                 "sentryIngest": sentry_ingest,
@@ -66,6 +71,8 @@ class FeatureFlags:
 
         async_ingest = d.pop("asyncIngest")
 
+        billing = d.pop("billing")
+
         environments = d.pop("environments")
 
         mcp_server = d.pop("mcpServer")
@@ -77,6 +84,7 @@ class FeatureFlags:
         feature_flags = cls(
             analytics_v2=analytics_v2,
             async_ingest=async_ingest,
+            billing=billing,
             environments=environments,
             mcp_server=mcp_server,
             sentry_ingest=sentry_ingest,
