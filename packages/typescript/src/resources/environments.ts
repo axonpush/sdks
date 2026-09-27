@@ -67,7 +67,12 @@ export class EnvironmentsResource {
    * @param slug - Environment slug.
    * @returns The promoted environment, or `null` on fail-open error.
    */
-  async promoteToDefault(slug: string): Promise<Environment | null> {
+  async promote(slug: string): Promise<Environment | null> {
     return this.client.invoke(environmentsPromote, { path: { slug } });
+  }
+
+  /** @deprecated Use {@link EnvironmentsResource.promote}. */
+  async promoteToDefault(slug: string): Promise<Environment | null> {
+    return this.promote(slug);
   }
 }

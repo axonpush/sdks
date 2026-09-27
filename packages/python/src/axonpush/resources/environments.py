@@ -117,8 +117,9 @@ class Environments:
         """Promote an environment (by slug) to the org-wide default."""
         return self._client._invoke(_promote_op, slug=slug)
 
-    # Back-compat alias for the pre-rewrite method name.
-    promote_to_default = promote
+    def promote_to_default(self, slug: str) -> Environment | None:
+        """Deprecated alias for :meth:`promote`."""
+        return self.promote(slug)
 
 
 class AsyncEnvironments:
@@ -170,4 +171,6 @@ class AsyncEnvironments:
         """See :meth:`Environments.promote`."""
         return await self._client._invoke(_promote_op, slug=slug)
 
-    promote_to_default = promote
+    async def promote_to_default(self, slug: str) -> Environment | None:
+        """Deprecated alias for :meth:`Environments.promote`."""
+        return await self.promote(slug)
