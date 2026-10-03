@@ -53,6 +53,34 @@ public sealed class WorkspacesResource
         return _transport.SendAsync<ActivityWorkspace>(HttpMethod.Get, path, null, cancellationToken);
     }
 
+    /// <summary>List scoped data-access grants for members and API keys.</summary>
+    public Task<GrantListOutputBody?> ListAccessGrantsAsync(string workspaceId, CancellationToken cancellationToken = default)
+    {
+        var path = $"workspaces/{Uri.EscapeDataString(workspaceId)}/access-grants";
+        return _transport.SendAsync<GrantListOutputBody>(HttpMethod.Get, path, null, cancellationToken);
+    }
+
+    /// <summary>Grant a member or API key access to records with the given scoping values (replaces that principal's values for the key).</summary>
+    public Task<ActivityGrant?> CreateAccessGrantAsync(string workspaceId, GrantInputBody body, CancellationToken cancellationToken = default)
+    {
+        var path = $"workspaces/{Uri.EscapeDataString(workspaceId)}/access-grants";
+        return _transport.SendAsync<ActivityGrant>(HttpMethod.Post, path, body, cancellationToken);
+    }
+
+    /// <summary>Remove a grant; a principal left with no grants in the organization is unscoped again.</summary>
+    public Task<WorkspaceStatusOutputBody?> DeleteAccessGrantAsync(string workspaceId, string grantId, CancellationToken cancellationToken = default)
+    {
+        var path = $"workspaces/{Uri.EscapeDataString(workspaceId)}/access-grants/{Uri.EscapeDataString(grantId)}";
+        return _transport.SendAsync<WorkspaceStatusOutputBody>(HttpMethod.Delete, path, null, cancellationToken);
+    }
+
+    /// <summary>Replace a grant's allowed values.</summary>
+    public Task<ActivityGrant?> UpdateAccessGrantAsync(string workspaceId, string grantId, GrantUpdateInputBody body, CancellationToken cancellationToken = default)
+    {
+        var path = $"workspaces/{Uri.EscapeDataString(workspaceId)}/access-grants/{Uri.EscapeDataString(grantId)}";
+        return _transport.SendAsync<ActivityGrant>(HttpMethod.Patch, path, body, cancellationToken);
+    }
+
     /// <summary>Build a revision before activation; use a previous revision for rollback.</summary>
     public Task<WorkspaceStatusOutputBody?> ActivateAsync(string workspaceId, ActivateInputBody body, CancellationToken cancellationToken = default)
     {

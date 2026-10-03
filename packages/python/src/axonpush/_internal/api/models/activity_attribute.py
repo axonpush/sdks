@@ -19,8 +19,13 @@ class ActivityAttribute:
     Attributes:
         key (str): Stable attribute key sent in observation attributes and stored on entities
         type_ (ActivityAttributeType): duration is milliseconds; time is RFC 3339; ref is an opaque identifier
+        cancelled (list[str] | None | Unset): Outcome values that mean the work was cancelled; default cancelled and
+            canceled
         description (str | Unset):
         entity (str | Unset): For a ref: the entity type it points at (used for linking and erasure)
+        expected (list[str] | None | Unset): Values that mean an expected unsuccessful result, such as a validation
+            error or an expected denial. On the outcome attribute, or on the reason attribute of a rate view; rate views
+            report them apart from unexpected failures
         failure (list[str] | None | Unset): Outcome values that count as failures
         label (str | Unset):
         max_length (int | Unset): For text: maximum length, default 200
@@ -29,13 +34,17 @@ class ActivityAttribute:
         personal (bool | Unset): Personal data: masked unless the caller is an owner/admin or holds profiles:read
         role (ActivityAttributeRole | Unset): Product meaning that generic views, analytics and alerts read through.
             expected_duration is in seconds.
+        scope (bool | Unset): A scoping key: access grants may restrict members and API keys to records carrying listed
+            values of this attribute (for example a company ref)
         values (list[str] | None | Unset): Allowed values for an enum
     """
 
     key: str
     type_: ActivityAttributeType
+    cancelled: list[str] | None | Unset = UNSET
     description: str | Unset = UNSET
     entity: str | Unset = UNSET
+    expected: list[str] | None | Unset = UNSET
     failure: list[str] | None | Unset = UNSET
     label: str | Unset = UNSET
     max_length: int | Unset = UNSET
@@ -43,6 +52,7 @@ class ActivityAttribute:
     pending: list[str] | None | Unset = UNSET
     personal: bool | Unset = UNSET
     role: ActivityAttributeRole | Unset = UNSET
+    scope: bool | Unset = UNSET
     values: list[str] | None | Unset = UNSET
 
     def to_dict(self) -> dict[str, Any]:
@@ -50,9 +60,27 @@ class ActivityAttribute:
 
         type_ = self.type_.value
 
+        cancelled: list[str] | None | Unset
+        if isinstance(self.cancelled, Unset):
+            cancelled = UNSET
+        elif isinstance(self.cancelled, list):
+            cancelled = self.cancelled
+
+        else:
+            cancelled = self.cancelled
+
         description = self.description
 
         entity = self.entity
+
+        expected: list[str] | None | Unset
+        if isinstance(self.expected, Unset):
+            expected = UNSET
+        elif isinstance(self.expected, list):
+            expected = self.expected
+
+        else:
+            expected = self.expected
 
         failure: list[str] | None | Unset
         if isinstance(self.failure, Unset):
@@ -84,6 +112,8 @@ class ActivityAttribute:
         if not isinstance(self.role, Unset):
             role = self.role.value
 
+        scope = self.scope
+
         values: list[str] | None | Unset
         if isinstance(self.values, Unset):
             values = UNSET
@@ -101,10 +131,14 @@ class ActivityAttribute:
                 "type": type_,
             }
         )
+        if cancelled is not UNSET:
+            field_dict["cancelled"] = cancelled
         if description is not UNSET:
             field_dict["description"] = description
         if entity is not UNSET:
             field_dict["entity"] = entity
+        if expected is not UNSET:
+            field_dict["expected"] = expected
         if failure is not UNSET:
             field_dict["failure"] = failure
         if label is not UNSET:
@@ -119,6 +153,8 @@ class ActivityAttribute:
             field_dict["personal"] = personal
         if role is not UNSET:
             field_dict["role"] = role
+        if scope is not UNSET:
+            field_dict["scope"] = scope
         if values is not UNSET:
             field_dict["values"] = values
 
@@ -131,9 +167,43 @@ class ActivityAttribute:
 
         type_ = ActivityAttributeType(d.pop("type"))
 
+        def _parse_cancelled(data: object) -> list[str] | None | Unset:
+            if data is None:
+                return data
+            if isinstance(data, Unset):
+                return data
+            try:
+                if not isinstance(data, list):
+                    raise TypeError()
+                cancelled_type_0 = cast(list[str], data)
+
+                return cancelled_type_0
+            except (TypeError, ValueError, AttributeError, KeyError):
+                pass
+            return cast(list[str] | None | Unset, data)
+
+        cancelled = _parse_cancelled(d.pop("cancelled", UNSET))
+
         description = d.pop("description", UNSET)
 
         entity = d.pop("entity", UNSET)
+
+        def _parse_expected(data: object) -> list[str] | None | Unset:
+            if data is None:
+                return data
+            if isinstance(data, Unset):
+                return data
+            try:
+                if not isinstance(data, list):
+                    raise TypeError()
+                expected_type_0 = cast(list[str], data)
+
+                return expected_type_0
+            except (TypeError, ValueError, AttributeError, KeyError):
+                pass
+            return cast(list[str] | None | Unset, data)
+
+        expected = _parse_expected(d.pop("expected", UNSET))
 
         def _parse_failure(data: object) -> list[str] | None | Unset:
             if data is None:
@@ -184,6 +254,8 @@ class ActivityAttribute:
         else:
             role = ActivityAttributeRole(_role)
 
+        scope = d.pop("scope", UNSET)
+
         def _parse_values(data: object) -> list[str] | None | Unset:
             if data is None:
                 return data
@@ -204,8 +276,10 @@ class ActivityAttribute:
         activity_attribute = cls(
             key=key,
             type_=type_,
+            cancelled=cancelled,
             description=description,
             entity=entity,
+            expected=expected,
             failure=failure,
             label=label,
             max_length=max_length,
@@ -213,6 +287,7 @@ class ActivityAttribute:
             pending=pending,
             personal=personal,
             role=role,
+            scope=scope,
             values=values,
         )
 

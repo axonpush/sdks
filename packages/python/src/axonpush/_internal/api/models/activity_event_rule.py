@@ -21,6 +21,8 @@ class ActivityEventRule:
     Attributes:
         match (str): Exact event name, or a prefix ending in * (the most specific matching rule wins)
         erase (bool | Unset): The event erases the referenced entity, everything linked to it, and its profile
+        label (str | Unset): Plain-language title shown for this event in timelines, e.g. Requested guidance on a
+            compensation proposal
         only (list[str] | None | Unset): Restrict which entity fields this event updates from attributes
         passive (bool | Unset): The event updates the entity but does not count as activity
         set_ (ActivityEventRuleSet | Unset): Literal field values assigned when the rule matches
@@ -28,6 +30,7 @@ class ActivityEventRule:
 
     match: str
     erase: bool | Unset = UNSET
+    label: str | Unset = UNSET
     only: list[str] | None | Unset = UNSET
     passive: bool | Unset = UNSET
     set_: ActivityEventRuleSet | Unset = UNSET
@@ -38,6 +41,8 @@ class ActivityEventRule:
         match = self.match
 
         erase = self.erase
+
+        label = self.label
 
         only: list[str] | None | Unset
         if isinstance(self.only, Unset):
@@ -63,6 +68,8 @@ class ActivityEventRule:
         )
         if erase is not UNSET:
             field_dict["erase"] = erase
+        if label is not UNSET:
+            field_dict["label"] = label
         if only is not UNSET:
             field_dict["only"] = only
         if passive is not UNSET:
@@ -80,6 +87,8 @@ class ActivityEventRule:
         match = d.pop("match")
 
         erase = d.pop("erase", UNSET)
+
+        label = d.pop("label", UNSET)
 
         def _parse_only(data: object) -> list[str] | None | Unset:
             if data is None:
@@ -110,6 +119,7 @@ class ActivityEventRule:
         activity_event_rule = cls(
             match=match,
             erase=erase,
+            label=label,
             only=only,
             passive=passive,
             set_=set_,

@@ -269,6 +269,10 @@
             "format": "double",
             "type": "number"
           },
+          "smallCohort": {
+            "description": "Fewer eligible entities than the minimum cohort: do not rank on this rate",
+            "type": "boolean"
+          },
           "to": {
             "type": "string"
           },
@@ -322,12 +326,23 @@
             "minimum": 60,
             "type": "integer"
           },
+          "cooldownSeconds": {
+            "description": "After a notification, a reopened incident with the same deduplication key stays quiet this long; default 3600",
+            "format": "int64",
+            "maximum": 604800,
+            "minimum": 0,
+            "type": "integer"
+          },
           "entity": {
             "maxLength": 120,
             "type": "string"
           },
+          "filter": {
+            "$ref": "#/components/schemas/ActivityViewFilter",
+            "description": "Only entities whose role or key holds one of these values, e.g. a wait_reason, so each workflow wait gets its own afterSeconds"
+          },
           "minCount": {
-            "description": "Fire only when at least this many entities are affected",
+            "description": "Minimum sample: fire only when at least this many entities are affected",
             "format": "int64",
             "maximum": 100000,
             "minimum": 0,
@@ -338,7 +353,12 @@
             "minLength": 1,
             "type": "string"
           },
+          "silent": {
+            "description": "Record the incident without notifying owners, admins or alert webhooks",
+            "type": "boolean"
+          },
           "state": {
+            "description": "State that counts; may be empty when a filter is given, meaning any open state",
             "maxLength": 120,
             "type": "string"
           },
@@ -393,6 +413,14 @@
               "null"
             ]
           },
+          "source": {
+            "description": "rollup: 90-day de-identified daily aggregates; stage counts then sum entities per stage per day, and linkage, activation and splits are not available",
+            "enum": [
+              "projection",
+              "rollup"
+            ],
+            "type": "string"
+          },
           "splits": {
             "items": {
               "$ref": "#/components/schemas/ActivityFunnelSplit"
@@ -419,6 +447,17 @@
       "ActivityAttribute": {
         "additionalProperties": false,
         "properties": {
+          "cancelled": {
+            "description": "Outcome values that mean the work was cancelled; default cancelled and canceled",
+            "items": {
+              "type": "string"
+            },
+            "maxItems": 20,
+            "type": [
+              "array",
+              "null"
+            ]
+          },
           "description": {
             "maxLength": 500,
             "type": "string"
@@ -427,6 +466,17 @@
             "description": "For a ref: the entity type it points at (used for linking and erasure)",
             "maxLength": 120,
             "type": "string"
+          },
+          "expected": {
+            "description": "Values that mean an expected unsuccessful result, such as a validation error or an expected denial. On the outcome attribute, or on the reason attribute of a rate view; rate views report them apart from unexpected failures",
+            "items": {
+              "type": "string"
+            },
+            "maxItems": 50,
+            "type": [
+              "array",
+              "null"
+            ]
           },
           "failure": {
             "description": "Outcome values that count as failures",
@@ -493,6 +543,10 @@
               "avatar"
             ],
             "type": "string"
+          },
+          "scope": {
+            "description": "A scoping key: access grants may restrict members and API keys to records carrying listed values of this attribute (for example a company ref)",
+            "type": "boolean"
           },
           "type": {
             "description": "duration is milliseconds; time is RFC 3339; ref is an opaque identifier",
@@ -1301,12 +1355,32 @@
         ],
         "type": "object"
       },
+      "ActivityEventMatch": {
+        "additionalProperties": false,
+        "properties": {
+          "event": {
+            "description": "Exact event name, or a prefix ending in *",
+            "maxLength": 121,
+            "minLength": 1,
+            "type": "string"
+          }
+        },
+        "required": [
+          "event"
+        ],
+        "type": "object"
+      },
       "ActivityEventRule": {
         "additionalProperties": false,
         "properties": {
           "erase": {
             "description": "The event erases the referenced entity, everything linked to it, and its profile",
             "type": "boolean"
+          },
+          "label": {
+            "description": "Plain-language title shown for this event in timelines, e.g. Requested guidance on a compensation proposal",
+            "maxLength": 120,
+            "type": "string"
           },
           "match": {
             "description": "Exact event name, or a prefix ending in * (the most specific matching rule wins)",
@@ -1548,6 +1622,157 @@
         ],
         "type": "object"
       },
+      "ActivityGrant": {
+        "additionalProperties": false,
+        "properties": {
+          "$schema": {
+            "description": "A URL to the JSON Schema for this object.",
+            "examples": [
+              "https://example.com/schemas/ActivityGrant.json"
+            ],
+            "format": "uri",
+            "readOnly": true,
+            "type": "string"
+          },
+          "createdAt": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "createdBy": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string"
+          },
+          "key": {
+            "description": "Scoping attribute (declared with scope: true)",
+            "type": "string"
+          },
+          "principalId": {
+            "type": "string"
+          },
+          "principalType": {
+            "enum": [
+              "user",
+              "apikey"
+            ],
+            "type": "string"
+          },
+          "updatedAt": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "values": {
+            "items": {
+              "type": "string"
+            },
+            "type": [
+              "array",
+              "null"
+            ]
+          },
+          "workspaceId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "workspaceId",
+          "principalType",
+          "principalId",
+          "key",
+          "values",
+          "createdBy",
+          "createdAt",
+          "updatedAt"
+        ],
+        "type": "object"
+      },
+      "ActivityGraphEdge": {
+        "additionalProperties": false,
+        "properties": {
+          "from": {
+            "description": "type:id of the entity holding the reference",
+            "type": "string"
+          },
+          "to": {
+            "description": "type:id it references",
+            "type": "string"
+          }
+        },
+        "required": [
+          "from",
+          "to"
+        ],
+        "type": "object"
+      },
+      "ActivityGraphNode": {
+        "additionalProperties": false,
+        "properties": {
+          "client": {
+            "type": "string"
+          },
+          "entityId": {
+            "type": "string"
+          },
+          "id": {
+            "description": "type:id",
+            "type": "string"
+          },
+          "lastActivityAt": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "side": {
+            "type": "string"
+          },
+          "state": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "type",
+          "entityId"
+        ],
+        "type": "object"
+      },
+      "ActivityGraphResult": {
+        "additionalProperties": false,
+        "properties": {
+          "edges": {
+            "items": {
+              "$ref": "#/components/schemas/ActivityGraphEdge"
+            },
+            "type": [
+              "array",
+              "null"
+            ]
+          },
+          "nodes": {
+            "items": {
+              "$ref": "#/components/schemas/ActivityGraphNode"
+            },
+            "type": [
+              "array",
+              "null"
+            ]
+          },
+          "truncated": {
+            "description": "More entities matched than the view's limit",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "nodes",
+          "edges",
+          "truncated"
+        ],
+        "type": "object"
+      },
       "ActivityHealth": {
         "additionalProperties": false,
         "properties": {
@@ -1714,6 +1939,53 @@
         ],
         "type": "object"
       },
+      "ActivityIntervalResult": {
+        "additionalProperties": false,
+        "properties": {
+          "cohort": {
+            "description": "From events inside the window",
+            "format": "int64",
+            "type": "integer"
+          },
+          "completed": {
+            "description": "Of those, how many reached To",
+            "format": "int64",
+            "type": "integer"
+          },
+          "from": {
+            "type": "string"
+          },
+          "open": {
+            "description": "Still waiting for To",
+            "format": "int64",
+            "type": "integer"
+          },
+          "p50Seconds": {
+            "format": "double",
+            "type": "number"
+          },
+          "p95Seconds": {
+            "format": "double",
+            "type": "number"
+          },
+          "smallSample": {
+            "description": "Fewer completed intervals than the view's minCohort",
+            "type": "boolean"
+          },
+          "to": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "from",
+          "to",
+          "cohort",
+          "completed",
+          "open",
+          "smallSample"
+        ],
+        "type": "object"
+      },
       "ActivityIssue": {
         "additionalProperties": false,
         "properties": {
@@ -1874,6 +2146,38 @@
         ],
         "type": "object"
       },
+      "ActivityOutcomeCount": {
+        "additionalProperties": false,
+        "properties": {
+          "class": {
+            "enum": [
+              "success",
+              "expected",
+              "cancelled",
+              "failed",
+              "pending",
+              "unknown"
+            ],
+            "type": "string"
+          },
+          "count": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "outcome": {
+            "type": "string"
+          },
+          "reason": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "outcome",
+          "class",
+          "count"
+        ],
+        "type": "object"
+      },
       "ActivityProfile": {
         "additionalProperties": false,
         "properties": {
@@ -1906,6 +2210,91 @@
           "id",
           "traits",
           "updatedAt"
+        ],
+        "type": "object"
+      },
+      "ActivityRateResult": {
+        "additionalProperties": false,
+        "properties": {
+          "cancelled": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "denominator": {
+            "description": "success + failed",
+            "format": "int64",
+            "type": "integer"
+          },
+          "expected": {
+            "description": "Unsuccessful in an expected way: validation errors, expected denials",
+            "format": "int64",
+            "type": "integer"
+          },
+          "failed": {
+            "description": "Unexpected failures",
+            "format": "int64",
+            "type": "integer"
+          },
+          "numerator": {
+            "description": "success",
+            "format": "int64",
+            "type": "integer"
+          },
+          "pending": {
+            "description": "Still running; not counted",
+            "format": "int64",
+            "type": "integer"
+          },
+          "rate": {
+            "description": "numerator / denominator",
+            "format": "double",
+            "type": "number"
+          },
+          "smallSample": {
+            "description": "The denominator is below the view's minCohort",
+            "type": "boolean"
+          },
+          "success": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "terminal": {
+            "description": "success + expected + cancelled + failed",
+            "format": "int64",
+            "type": "integer"
+          },
+          "terminalRate": {
+            "description": "success / terminal",
+            "format": "double",
+            "type": "number"
+          },
+          "unknown": {
+            "description": "No outcome observed; not counted",
+            "format": "int64",
+            "type": "integer"
+          },
+          "values": {
+            "items": {
+              "$ref": "#/components/schemas/ActivityOutcomeCount"
+            },
+            "type": [
+              "array",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "success",
+          "expected",
+          "cancelled",
+          "failed",
+          "pending",
+          "unknown",
+          "numerator",
+          "denominator",
+          "terminal",
+          "values",
+          "smallSample"
         ],
         "type": "object"
       },
@@ -1950,6 +2339,10 @@
       "ActivityRecord": {
         "additionalProperties": false,
         "properties": {
+          "label": {
+            "description": "Plain-language title from the matching event rule's label",
+            "type": "string"
+          },
           "masked": {
             "items": {
               "type": "string"
@@ -2233,12 +2626,38 @@
       "ActivityView": {
         "additionalProperties": false,
         "properties": {
+          "entities": {
+            "description": "Graph: entity types drawn as nodes; default every declared entity",
+            "items": {
+              "type": "string"
+            },
+            "maxItems": 10,
+            "type": [
+              "array",
+              "null"
+            ]
+          },
           "entity": {
             "maxLength": 120,
             "type": "string"
           },
+          "exclude": {
+            "description": "Leave out entities matching any of these, e.g. discovery-only attempts",
+            "items": {
+              "$ref": "#/components/schemas/ActivityViewFilter"
+            },
+            "maxItems": 5,
+            "type": [
+              "array",
+              "null"
+            ]
+          },
           "filter": {
             "$ref": "#/components/schemas/ActivityViewFilter"
+          },
+          "from": {
+            "$ref": "#/components/schemas/ActivityEventMatch",
+            "description": "Interval: the event that starts the wait"
           },
           "funnel": {
             "maxLength": 120,
@@ -2250,9 +2669,23 @@
             "type": "string"
           },
           "key": {
-            "description": "Attribute key to group or measure by, when no role fits",
+            "description": "Attribute key to group or measure by, when no role fits. For a rate view: the reason attribute whose expected values classify an unsuccessful result as expected",
             "maxLength": 64,
             "type": "string"
+          },
+          "limit": {
+            "description": "Graph: maximum nodes, most recently active first; default 200",
+            "format": "int64",
+            "maximum": 500,
+            "minimum": 0,
+            "type": "integer"
+          },
+          "minCohort": {
+            "description": "Splits or samples smaller than this are flagged smallCohort; default 10",
+            "format": "int64",
+            "maximum": 100000,
+            "minimum": 0,
+            "type": "integer"
           },
           "open": {
             "description": "Only entities not in a terminal state",
@@ -2262,6 +2695,17 @@
             "description": "Attribute role to group or measure by",
             "maxLength": 40,
             "type": "string"
+          },
+          "splitBy": {
+            "description": "Funnel: roles or attribute keys to split stages and activation by (e.g. client, actor_side). Timeseries: one role or key to split daily counts by",
+            "items": {
+              "type": "string"
+            },
+            "maxItems": 3,
+            "type": [
+              "array",
+              "null"
+            ]
           },
           "state": {
             "description": "Only entities in these states",
@@ -2278,6 +2722,10 @@
             "maxLength": 120,
             "type": "string"
           },
+          "to": {
+            "$ref": "#/components/schemas/ActivityEventMatch",
+            "description": "Interval: the first later event on the same entity that ends it"
+          },
           "type": {
             "enum": [
               "kpi",
@@ -2286,12 +2734,15 @@
               "funnel",
               "latency",
               "directory",
-              "health"
+              "health",
+              "rate",
+              "interval",
+              "graph"
             ],
             "type": "string"
           },
           "window": {
-            "description": "Only entities with activity inside the window",
+            "description": "Only entities with activity inside the window; for funnel, rate, interval and graph views the period measured",
             "enum": [
               "15m",
               "1h",
@@ -2361,11 +2812,20 @@
       "ActivityViewResult": {
         "additionalProperties": false,
         "properties": {
+          "activation": {
+            "$ref": "#/components/schemas/ActivityActivationResult"
+          },
           "entity": {
             "type": "string"
           },
+          "graph": {
+            "$ref": "#/components/schemas/ActivityGraphResult"
+          },
           "id": {
             "type": "string"
+          },
+          "interval": {
+            "$ref": "#/components/schemas/ActivityIntervalResult"
           },
           "key": {
             "description": "Attribute key the view resolved its role to",
@@ -2380,9 +2840,40 @@
               "null"
             ]
           },
+          "rate": {
+            "$ref": "#/components/schemas/ActivityRateResult"
+          },
           "reason": {
             "description": "Why the view is empty, e.g. a role the dictionary does not declare",
             "type": "string"
+          },
+          "series": {
+            "items": {
+              "$ref": "#/components/schemas/ActivityViewSeries"
+            },
+            "type": [
+              "array",
+              "null"
+            ]
+          },
+          "splitKeys": {
+            "description": "Attribute keys the splits resolved to",
+            "items": {
+              "type": "string"
+            },
+            "type": [
+              "array",
+              "null"
+            ]
+          },
+          "splits": {
+            "items": {
+              "$ref": "#/components/schemas/ActivityViewSplit"
+            },
+            "type": [
+              "array",
+              "null"
+            ]
           },
           "title": {
             "type": "string"
@@ -2394,6 +2885,11 @@
             "description": "KPI count",
             "format": "int64",
             "type": "integer"
+          },
+          "windowSeconds": {
+            "description": "The period measured, when the view has one",
+            "format": "int64",
+            "type": "integer"
           }
         },
         "required": [
@@ -2401,6 +2897,74 @@
           "type",
           "title",
           "points"
+        ],
+        "type": "object"
+      },
+      "ActivityViewSeries": {
+        "additionalProperties": false,
+        "properties": {
+          "key": {
+            "description": "Split value",
+            "type": "string"
+          },
+          "points": {
+            "description": "One point per UTC day, zero-filled",
+            "items": {
+              "$ref": "#/components/schemas/ActivityViewPoint"
+            },
+            "type": [
+              "array",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "key",
+          "points"
+        ],
+        "type": "object"
+      },
+      "ActivityViewSplit": {
+        "additionalProperties": false,
+        "properties": {
+          "activation": {
+            "$ref": "#/components/schemas/ActivityActivationResult"
+          },
+          "completion": {
+            "description": "Entities reaching the last stage / entities reaching the first",
+            "format": "double",
+            "type": "number"
+          },
+          "entities": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "smallCohort": {
+            "description": "Fewer entities than the view's minCohort: do not rank on it",
+            "type": "boolean"
+          },
+          "stages": {
+            "items": {
+              "$ref": "#/components/schemas/ActivityStageCount"
+            },
+            "type": [
+              "array",
+              "null"
+            ]
+          },
+          "values": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "description": "Split key to value; unknown when the entity has none",
+            "type": "object"
+          }
+        },
+        "required": [
+          "values",
+          "entities",
+          "stages",
+          "smallCohort"
         ],
         "type": "object"
       },
@@ -2520,6 +3084,14 @@
               "null"
             ]
           },
+          "source": {
+            "description": "rollup: de-identified daily aggregates (90d window); the funnel metric then counts entities reaching each stage per day rather than furthest stage",
+            "enum": [
+              "projection",
+              "rollup"
+            ],
+            "type": "string"
+          },
           "to": {
             "format": "date-time",
             "type": "string"
@@ -2528,7 +3100,9 @@
             "enum": [
               "1h",
               "24h",
-              "7d"
+              "7d",
+              "30d",
+              "90d"
             ],
             "type": "string"
           }
@@ -3270,11 +3844,15 @@
           },
           "auditTrail": {
             "$ref": "#/components/schemas/AuditCapability"
+          },
+          "dataAccess": {
+            "$ref": "#/components/schemas/DataAccessCapability"
           }
         },
         "required": [
           "auditTrail",
-          "analytics"
+          "analytics",
+          "dataAccess"
         ],
         "type": "object"
       },
@@ -3884,6 +4462,42 @@
           "environmentId",
           "active",
           "createdAt"
+        ],
+        "type": "object"
+      },
+      "DataAccessCapability": {
+        "additionalProperties": false,
+        "properties": {
+          "aggregateRetentionDays": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "description": {
+            "type": "string"
+          },
+          "identifiableRetentionDays": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "refusedForScoped": {
+            "items": {
+              "type": "string"
+            },
+            "type": [
+              "array",
+              "null"
+            ]
+          },
+          "scopedGrants": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "scopedGrants",
+          "description",
+          "refusedForScoped",
+          "identifiableRetentionDays",
+          "aggregateRetentionDays"
         ],
         "type": "object"
       },
@@ -5099,6 +5713,113 @@
         "required": [
           "traceId",
           "spans"
+        ],
+        "type": "object"
+      },
+      "GrantInputBody": {
+        "additionalProperties": false,
+        "properties": {
+          "$schema": {
+            "description": "A URL to the JSON Schema for this object.",
+            "examples": [
+              "https://example.com/schemas/GrantInputBody.json"
+            ],
+            "format": "uri",
+            "readOnly": true,
+            "type": "string"
+          },
+          "key": {
+            "description": "Attribute declared with scope: true",
+            "maxLength": 64,
+            "minLength": 1,
+            "type": "string"
+          },
+          "principalId": {
+            "description": "Member user id or API key id",
+            "maxLength": 160,
+            "minLength": 1,
+            "type": "string"
+          },
+          "principalType": {
+            "enum": [
+              "user",
+              "apikey"
+            ],
+            "type": "string"
+          },
+          "values": {
+            "items": {
+              "type": "string"
+            },
+            "maxItems": 100,
+            "minItems": 1,
+            "type": [
+              "array",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "principalType",
+          "principalId",
+          "key",
+          "values"
+        ],
+        "type": "object"
+      },
+      "GrantListOutputBody": {
+        "additionalProperties": false,
+        "properties": {
+          "$schema": {
+            "description": "A URL to the JSON Schema for this object.",
+            "examples": [
+              "https://example.com/schemas/GrantListOutputBody.json"
+            ],
+            "format": "uri",
+            "readOnly": true,
+            "type": "string"
+          },
+          "grants": {
+            "items": {
+              "$ref": "#/components/schemas/ActivityGrant"
+            },
+            "type": [
+              "array",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "grants"
+        ],
+        "type": "object"
+      },
+      "GrantUpdateInputBody": {
+        "additionalProperties": false,
+        "properties": {
+          "$schema": {
+            "description": "A URL to the JSON Schema for this object.",
+            "examples": [
+              "https://example.com/schemas/GrantUpdateInputBody.json"
+            ],
+            "format": "uri",
+            "readOnly": true,
+            "type": "string"
+          },
+          "values": {
+            "items": {
+              "type": "string"
+            },
+            "maxItems": 100,
+            "minItems": 1,
+            "type": [
+              "array",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "values"
         ],
         "type": "object"
       },
@@ -14633,6 +15354,217 @@
         ]
       }
     },
+    "/workspaces/{workspaceId}/access-grants": {
+      "get": {
+        "description": "A member or API key with any grant sees only records carrying a granted value of a scoping attribute, on every read: activity, timeline, catalog, views, series, analytics, summary, health, incidents, traces and MCP. Organization-wide telemetry reads are refused for them. Owners and admins are never scoped.",
+        "operationId": "workspaces.listAccessGrants",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "workspaceId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GrantListOutputBody"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "summary": "List scoped data-access grants for members and API keys",
+        "tags": [
+          "workspaces"
+        ],
+        "x-axonpush-scopes": [
+          "workspaces:manage"
+        ]
+      },
+      "post": {
+        "operationId": "workspaces.createAccessGrant",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "workspaceId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GrantInputBody"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ActivityGrant"
+                }
+              }
+            },
+            "description": "Created"
+          },
+          "default": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "summary": "Grant a member or API key access to records with the given scoping values (replaces that principal's values for the key)",
+        "tags": [
+          "workspaces"
+        ],
+        "x-axonpush-scopes": [
+          "workspaces:manage"
+        ]
+      }
+    },
+    "/workspaces/{workspaceId}/access-grants/{grantId}": {
+      "delete": {
+        "operationId": "workspaces.deleteAccessGrant",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "workspaceId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "grantId",
+            "required": true,
+            "schema": {
+              "maxLength": 80,
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WorkspaceStatusOutputBody"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "summary": "Remove a grant; a principal left with no grants in the organization is unscoped again",
+        "tags": [
+          "workspaces"
+        ],
+        "x-axonpush-scopes": [
+          "workspaces:manage"
+        ]
+      },
+      "patch": {
+        "operationId": "workspaces.updateAccessGrant",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "workspaceId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "grantId",
+            "required": true,
+            "schema": {
+              "maxLength": 80,
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GrantUpdateInputBody"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ActivityGrant"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "summary": "Replace a grant's allowed values",
+        "tags": [
+          "workspaces"
+        ],
+        "x-axonpush-scopes": [
+          "workspaces:manage"
+        ]
+      }
+    },
     "/workspaces/{workspaceId}/activate": {
       "post": {
         "operationId": "workspaces.activate",
@@ -14879,120 +15811,18 @@
             }
           },
           {
-            "description": "Entity type",
+            "description": "90d reads de-identified daily rollups and is refused for scoped access",
             "explode": false,
             "in": "query",
-            "name": "entity",
+            "name": "window",
             "schema": {
-              "description": "Entity type",
-              "maxLength": 120,
-              "type": "string"
-            }
-          },
-          {
-            "explode": false,
-            "in": "query",
-            "name": "entityId",
-            "schema": {
-              "maxLength": 160,
-              "type": "string"
-            }
-          },
-          {
-            "description": "type:id; entities that are, or link to, this entity. Timeline: observations that reference it",
-            "explode": false,
-            "in": "query",
-            "name": "ref",
-            "schema": {
-              "description": "type:id; entities that are, or link to, this entity. Timeline: observations that reference it",
-              "maxLength": 300,
-              "type": "string"
-            }
-          },
-          {
-            "description": "Filter by the actor_side role",
-            "explode": false,
-            "in": "query",
-            "name": "side",
-            "schema": {
-              "description": "Filter by the actor_side role",
-              "maxLength": 60,
-              "type": "string"
-            }
-          },
-          {
-            "description": "Filter by the client role",
-            "explode": false,
-            "in": "query",
-            "name": "client",
-            "schema": {
-              "description": "Filter by the client role",
-              "maxLength": 80,
-              "type": "string"
-            }
-          },
-          {
-            "description": "Filter by the outcome role",
-            "explode": false,
-            "in": "query",
-            "name": "outcome",
-            "schema": {
-              "description": "Filter by the outcome role",
-              "maxLength": 60,
-              "type": "string"
-            }
-          },
-          {
-            "explode": false,
-            "in": "query",
-            "name": "state",
-            "schema": {
-              "maxLength": 120,
-              "type": "string"
-            }
-          },
-          {
-            "explode": false,
-            "in": "query",
-            "name": "freshness",
-            "schema": {
+              "default": "30d",
+              "description": "90d reads de-identified daily rollups and is refused for scoped access",
               "enum": [
-                "fresh",
-                "stale"
+                "30d",
+                "90d"
               ],
               "type": "string"
-            }
-          },
-          {
-            "description": "Matches the entity id and non-personal text fields and profile traits",
-            "explode": false,
-            "in": "query",
-            "name": "q",
-            "schema": {
-              "description": "Matches the entity id and non-personal text fields and profile traits",
-              "maxLength": 160,
-              "type": "string"
-            }
-          },
-          {
-            "explode": false,
-            "in": "query",
-            "name": "cursor",
-            "schema": {
-              "maxLength": 300,
-              "type": "string"
-            }
-          },
-          {
-            "explode": false,
-            "in": "query",
-            "name": "limit",
-            "schema": {
-              "default": 100,
-              "format": "int64",
-              "maximum": 200,
-              "minimum": 1,
-              "type": "integer"
             }
           }
         ],
@@ -16204,26 +17034,30 @@
             }
           },
           {
+            "description": "90d reads de-identified daily rollups",
             "explode": false,
             "in": "query",
             "name": "window",
             "schema": {
               "default": "24h",
+              "description": "90d reads de-identified daily rollups",
               "enum": [
                 "1h",
                 "24h",
-                "7d"
+                "7d",
+                "30d",
+                "90d"
               ],
               "type": "string"
             }
           },
           {
-            "description": "Defaults per window: 1h→5m, 24h→1h, 7d→1h. Allowed: 1h:5m, 24h:5m|1h, 7d:1h|1d",
+            "description": "Defaults per window: 1h→5m, 24h→1h, 7d→1h, 30d→1d, 90d→1d. Allowed: 1h:5m, 24h:5m|1h, 7d:1h|1d, 30d:1d, 90d:1d",
             "explode": false,
             "in": "query",
             "name": "bucket",
             "schema": {
-              "description": "Defaults per window: 1h→5m, 24h→1h, 7d→1h. Allowed: 1h:5m, 24h:5m|1h, 7d:1h|1d",
+              "description": "Defaults per window: 1h→5m, 24h→1h, 7d→1h, 30d→1d, 90d→1d. Allowed: 1h:5m, 24h:5m|1h, 7d:1h|1d, 30d:1d, 90d:1d",
               "enum": [
                 "5m",
                 "1h",

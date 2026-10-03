@@ -6,17 +6,21 @@ import {
   workspacesCatalog,
   workspacesConnect,
   workspacesCreate,
+  workspacesCreateAccessGrant,
+  workspacesDeleteAccessGrant,
   workspacesDescribe,
   workspacesDiscardDraft,
   workspacesDraft,
   workspacesDraftChanges,
   workspacesGet,
   workspacesList,
+  workspacesListAccessGrants,
   workspacesPreview,
   workspacesReplaceDraft,
   workspacesRevisions,
   workspacesSaveRevision,
   workspacesSchema,
+  workspacesUpdateAccessGrant,
   workspacesValidate,
 } from "../_internal/api/sdk.gen.js";
 import type {
@@ -27,12 +31,16 @@ import type {
   ActivityConnectResult,
   ActivityDescription,
   ActivityDraftView,
+  ActivityGrant,
   ActivityRevision,
   ActivityWorkspace,
   ActivityWorkspaceSpec,
   ChangesOutputBody,
   ConnectInputBody,
   CreateInputBody,
+  GrantInputBody,
+  GrantListOutputBody,
+  GrantUpdateInputBody,
   OpsInputBody,
   ReplaceInputBody,
   RevisionListOutputBody,
@@ -76,6 +84,39 @@ export class WorkspacesResource {
   /** Read workspace activation and rebuild state. `GET /workspaces/{workspaceId}` */
   async get(workspaceId: string): Promise<ActivityWorkspace | null> {
     return this.client.invoke(workspacesGet, { path: { workspaceId } });
+  }
+
+  /** List scoped data-access grants for members and API keys. `GET /workspaces/{workspaceId}/access-grants` */
+  async listAccessGrants(workspaceId: string): Promise<GrantListOutputBody | null> {
+    return this.client.invoke(workspacesListAccessGrants, { path: { workspaceId } });
+  }
+
+  /** Grant a member or API key access to records with the given scoping values (replaces that principal's values for the key). `POST /workspaces/{workspaceId}/access-grants` */
+  async createAccessGrant(
+    workspaceId: string,
+    body: GrantInputBody,
+  ): Promise<ActivityGrant | null> {
+    return this.client.invoke(workspacesCreateAccessGrant, { path: { workspaceId }, body });
+  }
+
+  /** Remove a grant; a principal left with no grants in the organization is unscoped again. `DELETE /workspaces/{workspaceId}/access-grants/{grantId}` */
+  async deleteAccessGrant(
+    workspaceId: string,
+    grantId: string,
+  ): Promise<WorkspaceStatusOutputBody | null> {
+    return this.client.invoke(workspacesDeleteAccessGrant, { path: { workspaceId, grantId } });
+  }
+
+  /** Replace a grant's allowed values. `PATCH /workspaces/{workspaceId}/access-grants/{grantId}` */
+  async updateAccessGrant(
+    workspaceId: string,
+    grantId: string,
+    body: GrantUpdateInputBody,
+  ): Promise<ActivityGrant | null> {
+    return this.client.invoke(workspacesUpdateAccessGrant, {
+      path: { workspaceId, grantId },
+      body,
+    });
   }
 
   /** Build a revision before activation; use a previous revision for rollback. `POST /workspaces/{workspaceId}/activate` */

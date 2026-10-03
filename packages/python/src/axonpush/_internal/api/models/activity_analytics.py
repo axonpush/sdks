@@ -8,6 +8,7 @@ from attrs import define as _attrs_define
 from attrs import field as _attrs_field
 from dateutil.parser import isoparse
 
+from ..models.activity_analytics_source import ActivityAnalyticsSource
 from ..types import UNSET, Unset
 
 if TYPE_CHECKING:
@@ -30,6 +31,8 @@ class ActivityAnalytics:
         splits (list[ActivityFunnelSplit] | None):
         window_days (int):
         schema (str | Unset): A URL to the JSON Schema for this object.
+        source (ActivityAnalyticsSource | Unset): rollup: 90-day de-identified daily aggregates; stage counts then sum
+            entities per stage per day, and linkage, activation and splits are not available
     """
 
     as_of: datetime.datetime
@@ -38,6 +41,7 @@ class ActivityAnalytics:
     splits: list[ActivityFunnelSplit] | None
     window_days: int
     schema: str | Unset = UNSET
+    source: ActivityAnalyticsSource | Unset = UNSET
 
     def to_dict(self) -> dict[str, Any]:
         from ..models.activity_breakdown import ActivityBreakdown
@@ -80,6 +84,10 @@ class ActivityAnalytics:
 
         schema = self.schema
 
+        source: str | Unset = UNSET
+        if not isinstance(self.source, Unset):
+            source = self.source.value
+
         field_dict: dict[str, Any] = {}
 
         field_dict.update(
@@ -93,6 +101,8 @@ class ActivityAnalytics:
         )
         if schema is not UNSET:
             field_dict["$schema"] = schema
+        if source is not UNSET:
+            field_dict["source"] = source
 
         return field_dict
 
@@ -169,6 +179,13 @@ class ActivityAnalytics:
 
         schema = d.pop("$schema", UNSET)
 
+        _source = d.pop("source", UNSET)
+        source: ActivityAnalyticsSource | Unset
+        if isinstance(_source, Unset):
+            source = UNSET
+        else:
+            source = ActivityAnalyticsSource(_source)
+
         activity_analytics = cls(
             as_of=as_of,
             clients=clients,
@@ -176,6 +193,7 @@ class ActivityAnalytics:
             splits=splits,
             window_days=window_days,
             schema=schema,
+            source=source,
         )
 
         return activity_analytics

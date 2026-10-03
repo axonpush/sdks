@@ -116,9 +116,10 @@ def sync_detailed(
         metric (ActivitySeriesMetric | Unset): outcomes: observations by the outcome role; funnel:
             distinct entities by furthest stage; lag: source-to-view percentiles Default:
             ActivitySeriesMetric.OUTCOMES.
-        window (ActivitySeriesWindow | Unset):  Default: ActivitySeriesWindow.VALUE_1.
-        bucket (ActivitySeriesBucket | Unset): Defaults per window: 1h→5m, 24h→1h, 7d→1h. Allowed:
-            1h:5m, 24h:5m|1h, 7d:1h|1d
+        window (ActivitySeriesWindow | Unset): 90d reads de-identified daily rollups Default:
+            ActivitySeriesWindow.VALUE_1.
+        bucket (ActivitySeriesBucket | Unset): Defaults per window: 1h→5m, 24h→1h, 7d→1h, 30d→1d,
+            90d→1d. Allowed: 1h:5m, 24h:5m|1h, 7d:1h|1d, 30d:1d, 90d:1d
         entity (str | Unset): outcomes: only events that update this entity
         funnel (str | Unset): funnel: funnel name, default the first declared
         side (str | Unset): Filter by the actor_side role
@@ -173,9 +174,10 @@ def sync(
         metric (ActivitySeriesMetric | Unset): outcomes: observations by the outcome role; funnel:
             distinct entities by furthest stage; lag: source-to-view percentiles Default:
             ActivitySeriesMetric.OUTCOMES.
-        window (ActivitySeriesWindow | Unset):  Default: ActivitySeriesWindow.VALUE_1.
-        bucket (ActivitySeriesBucket | Unset): Defaults per window: 1h→5m, 24h→1h, 7d→1h. Allowed:
-            1h:5m, 24h:5m|1h, 7d:1h|1d
+        window (ActivitySeriesWindow | Unset): 90d reads de-identified daily rollups Default:
+            ActivitySeriesWindow.VALUE_1.
+        bucket (ActivitySeriesBucket | Unset): Defaults per window: 1h→5m, 24h→1h, 7d→1h, 30d→1d,
+            90d→1d. Allowed: 1h:5m, 24h:5m|1h, 7d:1h|1d, 30d:1d, 90d:1d
         entity (str | Unset): outcomes: only events that update this entity
         funnel (str | Unset): funnel: funnel name, default the first declared
         side (str | Unset): Filter by the actor_side role
@@ -225,9 +227,10 @@ async def asyncio_detailed(
         metric (ActivitySeriesMetric | Unset): outcomes: observations by the outcome role; funnel:
             distinct entities by furthest stage; lag: source-to-view percentiles Default:
             ActivitySeriesMetric.OUTCOMES.
-        window (ActivitySeriesWindow | Unset):  Default: ActivitySeriesWindow.VALUE_1.
-        bucket (ActivitySeriesBucket | Unset): Defaults per window: 1h→5m, 24h→1h, 7d→1h. Allowed:
-            1h:5m, 24h:5m|1h, 7d:1h|1d
+        window (ActivitySeriesWindow | Unset): 90d reads de-identified daily rollups Default:
+            ActivitySeriesWindow.VALUE_1.
+        bucket (ActivitySeriesBucket | Unset): Defaults per window: 1h→5m, 24h→1h, 7d→1h, 30d→1d,
+            90d→1d. Allowed: 1h:5m, 24h:5m|1h, 7d:1h|1d, 30d:1d, 90d:1d
         entity (str | Unset): outcomes: only events that update this entity
         funnel (str | Unset): funnel: funnel name, default the first declared
         side (str | Unset): Filter by the actor_side role
@@ -280,9 +283,10 @@ async def asyncio(
         metric (ActivitySeriesMetric | Unset): outcomes: observations by the outcome role; funnel:
             distinct entities by furthest stage; lag: source-to-view percentiles Default:
             ActivitySeriesMetric.OUTCOMES.
-        window (ActivitySeriesWindow | Unset):  Default: ActivitySeriesWindow.VALUE_1.
-        bucket (ActivitySeriesBucket | Unset): Defaults per window: 1h→5m, 24h→1h, 7d→1h. Allowed:
-            1h:5m, 24h:5m|1h, 7d:1h|1d
+        window (ActivitySeriesWindow | Unset): 90d reads de-identified daily rollups Default:
+            ActivitySeriesWindow.VALUE_1.
+        bucket (ActivitySeriesBucket | Unset): Defaults per window: 1h→5m, 24h→1h, 7d→1h, 30d→1d,
+            90d→1d. Allowed: 1h:5m, 24h:5m|1h, 7d:1h|1d, 30d:1d, 90d:1d
         entity (str | Unset): outcomes: only events that update this entity
         funnel (str | Unset): funnel: funnel name, default the first declared
         side (str | Unset): Filter by the actor_side role

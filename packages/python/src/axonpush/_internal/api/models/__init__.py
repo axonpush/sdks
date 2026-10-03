@@ -13,7 +13,8 @@ from .activity_aggregates import ActivityAggregates
 from .activity_aggregates_open_by_type import ActivityAggregatesOpenByType
 from .activity_alert import ActivityAlert
 from .activity_analytics import ActivityAnalytics
-from .activity_analytics_freshness import ActivityAnalyticsFreshness
+from .activity_analytics_source import ActivityAnalyticsSource
+from .activity_analytics_window import ActivityAnalyticsWindow
 from .activity_attribute import ActivityAttribute
 from .activity_attribute_role import ActivityAttributeRole
 from .activity_attribute_type import ActivityAttributeType
@@ -40,6 +41,7 @@ from .activity_entity_definition import ActivityEntityDefinition
 from .activity_entity_fields import ActivityEntityFields
 from .activity_entity_profile import ActivityEntityProfile
 from .activity_entity_versions import ActivityEntityVersions
+from .activity_event_match import ActivityEventMatch
 from .activity_event_rule import ActivityEventRule
 from .activity_event_rule_set import ActivityEventRuleSet
 from .activity_failure_count import ActivityFailureCount
@@ -48,12 +50,18 @@ from .activity_field_version import ActivityFieldVersion
 from .activity_funnel import ActivityFunnel
 from .activity_funnel_result import ActivityFunnelResult
 from .activity_funnel_split import ActivityFunnelSplit
+from .activity_grant import ActivityGrant
+from .activity_grant_principal_type import ActivityGrantPrincipalType
+from .activity_graph_edge import ActivityGraphEdge
+from .activity_graph_node import ActivityGraphNode
+from .activity_graph_result import ActivityGraphResult
 from .activity_health import ActivityHealth
 from .activity_health_freshness import ActivityHealthFreshness
 from .activity_health_source import ActivityHealthSource
 from .activity_incident import ActivityIncident
 from .activity_incidents_freshness import ActivityIncidentsFreshness
 from .activity_ingest_report import ActivityIngestReport
+from .activity_interval_result import ActivityIntervalResult
 from .activity_issue import ActivityIssue
 from .activity_issue_severity import ActivityIssueSeverity
 from .activity_linked_count import ActivityLinkedCount
@@ -63,8 +71,11 @@ from .activity_observation_attributes import ActivityObservationAttributes
 from .activity_observation_refs import ActivityObservationRefs
 from .activity_observation_schema_version import ActivityObservationSchemaVersion
 from .activity_op_doc import ActivityOpDoc
+from .activity_outcome_count import ActivityOutcomeCount
+from .activity_outcome_count_class import ActivityOutcomeCountClass
 from .activity_profile import ActivityProfile
 from .activity_profile_traits import ActivityProfileTraits
+from .activity_rate_result import ActivityRateResult
 from .activity_receipt import ActivityReceipt
 from .activity_record import ActivityRecord
 from .activity_revision import ActivityRevision
@@ -86,6 +97,9 @@ from .activity_view import ActivityView
 from .activity_view_filter import ActivityViewFilter
 from .activity_view_point import ActivityViewPoint
 from .activity_view_result import ActivityViewResult
+from .activity_view_series import ActivityViewSeries
+from .activity_view_split import ActivityViewSplit
+from .activity_view_split_values import ActivityViewSplitValues
 from .activity_view_type import ActivityViewType
 from .activity_view_window import ActivityViewWindow
 from .activity_views_freshness import ActivityViewsFreshness
@@ -94,6 +108,7 @@ from .activity_workspace_patch import ActivityWorkspacePatch
 from .activity_workspace_series import ActivityWorkspaceSeries
 from .activity_workspace_series_bucket import ActivityWorkspaceSeriesBucket
 from .activity_workspace_series_metric import ActivityWorkspaceSeriesMetric
+from .activity_workspace_series_source import ActivityWorkspaceSeriesSource
 from .activity_workspace_series_window import ActivityWorkspaceSeriesWindow
 from .activity_workspace_spec import ActivityWorkspaceSpec
 from .alert_occurrence_dto import AlertOccurrenceDTO
@@ -141,6 +156,7 @@ from .create_output_body import CreateOutputBody
 from .create_output_body_1 import CreateOutputBody1
 from .create_token_input_body import CreateTokenInputBody
 from .create_token_output_body import CreateTokenOutputBody
+from .data_access_capability import DataAccessCapability
 from .decision_dto import DecisionDTO
 from .delete_output_body import DeleteOutputBody
 from .delivery_dto import DeliveryDTO
@@ -171,6 +187,10 @@ from .feedback_dto import FeedbackDTO
 from .get_org_output_body import GetOrgOutputBody
 from .get_output_body import GetOutputBody
 from .get_trace_output_body import GetTraceOutputBody
+from .grant_input_body import GrantInputBody
+from .grant_input_body_principal_type import GrantInputBodyPrincipalType
+from .grant_list_output_body import GrantListOutputBody
+from .grant_update_input_body import GrantUpdateInputBody
 from .health_output_body import HealthOutputBody
 from .heatmap_band_dto import HeatmapBandDTO
 from .heatmap_cell_dto import HeatmapCellDTO
@@ -297,7 +317,8 @@ __all__ = (
     "ActivityAggregatesOpenByType",
     "ActivityAlert",
     "ActivityAnalytics",
-    "ActivityAnalyticsFreshness",
+    "ActivityAnalyticsSource",
+    "ActivityAnalyticsWindow",
     "ActivityAttribute",
     "ActivityAttributeRole",
     "ActivityAttributeType",
@@ -324,6 +345,7 @@ __all__ = (
     "ActivityEntityFields",
     "ActivityEntityProfile",
     "ActivityEntityVersions",
+    "ActivityEventMatch",
     "ActivityEventRule",
     "ActivityEventRuleSet",
     "ActivityFailureCount",
@@ -332,12 +354,18 @@ __all__ = (
     "ActivityFunnel",
     "ActivityFunnelResult",
     "ActivityFunnelSplit",
+    "ActivityGrant",
+    "ActivityGrantPrincipalType",
+    "ActivityGraphEdge",
+    "ActivityGraphNode",
+    "ActivityGraphResult",
     "ActivityHealth",
     "ActivityHealthFreshness",
     "ActivityHealthSource",
     "ActivityIncident",
     "ActivityIncidentsFreshness",
     "ActivityIngestReport",
+    "ActivityIntervalResult",
     "ActivityIssue",
     "ActivityIssueSeverity",
     "ActivityLinkedCount",
@@ -347,8 +375,11 @@ __all__ = (
     "ActivityObservationRefs",
     "ActivityObservationSchemaVersion",
     "ActivityOpDoc",
+    "ActivityOutcomeCount",
+    "ActivityOutcomeCountClass",
     "ActivityProfile",
     "ActivityProfileTraits",
+    "ActivityRateResult",
     "ActivityReceipt",
     "ActivityRecord",
     "ActivityRevision",
@@ -370,7 +401,10 @@ __all__ = (
     "ActivityViewFilter",
     "ActivityViewPoint",
     "ActivityViewResult",
+    "ActivityViewSeries",
     "ActivityViewsFreshness",
+    "ActivityViewSplit",
+    "ActivityViewSplitValues",
     "ActivityViewType",
     "ActivityViewWindow",
     "ActivityWorkspace",
@@ -378,6 +412,7 @@ __all__ = (
     "ActivityWorkspaceSeries",
     "ActivityWorkspaceSeriesBucket",
     "ActivityWorkspaceSeriesMetric",
+    "ActivityWorkspaceSeriesSource",
     "ActivityWorkspaceSeriesWindow",
     "ActivityWorkspaceSpec",
     "AlertOccurrenceDTO",
@@ -425,6 +460,7 @@ __all__ = (
     "CreateOutputBody1",
     "CreateTokenInputBody",
     "CreateTokenOutputBody",
+    "DataAccessCapability",
     "DecisionDTO",
     "DeleteOutputBody",
     "DeliveryDTO",
@@ -455,6 +491,10 @@ __all__ = (
     "GetOrgOutputBody",
     "GetOutputBody",
     "GetTraceOutputBody",
+    "GrantInputBody",
+    "GrantInputBodyPrincipalType",
+    "GrantListOutputBody",
+    "GrantUpdateInputBody",
     "HealthOutputBody",
     "HeatmapBandDTO",
     "HeatmapCellDTO",

@@ -11,12 +11,16 @@ from axonpush._internal.api.models import (
     ActivityConnectResult,
     ActivityDescription,
     ActivityDraftView,
+    ActivityGrant,
     ActivityRevision,
     ActivityWorkspace,
     ActivityWorkspaceSpec,
     ChangesOutputBody,
     ConnectInputBody,
     CreateInputBody,
+    GrantInputBody,
+    GrantListOutputBody,
+    GrantUpdateInputBody,
     OpsInputBody,
     ReplaceInputBody,
     RevisionListOutputBody,
@@ -36,6 +40,18 @@ from axonpush._internal.api.api.workspaces import workspaces_preview as _preview
 from axonpush._internal.api.api.workspaces import workspaces_schema as _schema_op
 from axonpush._internal.api.api.workspaces import workspaces_validate as _validate_op
 from axonpush._internal.api.api.workspaces import workspaces_get as _get_op
+from axonpush._internal.api.api.workspaces import (
+    workspaces_list_access_grants as _list_access_grants_op,
+)
+from axonpush._internal.api.api.workspaces import (
+    workspaces_create_access_grant as _create_access_grant_op,
+)
+from axonpush._internal.api.api.workspaces import (
+    workspaces_delete_access_grant as _delete_access_grant_op,
+)
+from axonpush._internal.api.api.workspaces import (
+    workspaces_update_access_grant as _update_access_grant_op,
+)
 from axonpush._internal.api.api.workspaces import workspaces_activate as _activate_op
 from axonpush._internal.api.api.workspaces import workspaces_catalog as _catalog_op
 from axonpush._internal.api.api.workspaces import workspaces_connect as _connect_op
@@ -77,6 +93,30 @@ class Workspaces:
     def get(self, workspace_id: str) -> ActivityWorkspace | None:
         """Read workspace activation and rebuild state."""
         return self._client._invoke(_get_op, workspace_id=workspace_id)
+
+    def list_access_grants(self, workspace_id: str) -> GrantListOutputBody | None:
+        """List scoped data-access grants for members and API keys."""
+        return self._client._invoke(_list_access_grants_op, workspace_id=workspace_id)
+
+    def create_access_grant(self, workspace_id: str, body: GrantInputBody) -> ActivityGrant | None:
+        """Grant a member or API key access to records with the given scoping values (replaces that principal's values for the key)."""
+        return self._client._invoke(_create_access_grant_op, workspace_id=workspace_id, body=body)
+
+    def delete_access_grant(
+        self, workspace_id: str, grant_id: str
+    ) -> WorkspaceStatusOutputBody | None:
+        """Remove a grant; a principal left with no grants in the organization is unscoped again."""
+        return self._client._invoke(
+            _delete_access_grant_op, workspace_id=workspace_id, grant_id=grant_id
+        )
+
+    def update_access_grant(
+        self, workspace_id: str, grant_id: str, body: GrantUpdateInputBody
+    ) -> ActivityGrant | None:
+        """Replace a grant's allowed values."""
+        return self._client._invoke(
+            _update_access_grant_op, workspace_id=workspace_id, grant_id=grant_id, body=body
+        )
 
     def activate(
         self, workspace_id: str, body: ActivateInputBody
@@ -166,6 +206,34 @@ class AsyncWorkspaces:
     async def get(self, workspace_id: str) -> ActivityWorkspace | None:
         """Read workspace activation and rebuild state."""
         return await self._client._invoke(_get_op, workspace_id=workspace_id)
+
+    async def list_access_grants(self, workspace_id: str) -> GrantListOutputBody | None:
+        """List scoped data-access grants for members and API keys."""
+        return await self._client._invoke(_list_access_grants_op, workspace_id=workspace_id)
+
+    async def create_access_grant(
+        self, workspace_id: str, body: GrantInputBody
+    ) -> ActivityGrant | None:
+        """Grant a member or API key access to records with the given scoping values (replaces that principal's values for the key)."""
+        return await self._client._invoke(
+            _create_access_grant_op, workspace_id=workspace_id, body=body
+        )
+
+    async def delete_access_grant(
+        self, workspace_id: str, grant_id: str
+    ) -> WorkspaceStatusOutputBody | None:
+        """Remove a grant; a principal left with no grants in the organization is unscoped again."""
+        return await self._client._invoke(
+            _delete_access_grant_op, workspace_id=workspace_id, grant_id=grant_id
+        )
+
+    async def update_access_grant(
+        self, workspace_id: str, grant_id: str, body: GrantUpdateInputBody
+    ) -> ActivityGrant | None:
+        """Replace a grant's allowed values."""
+        return await self._client._invoke(
+            _update_access_grant_op, workspace_id=workspace_id, grant_id=grant_id, body=body
+        )
 
     async def activate(
         self, workspace_id: str, body: ActivateInputBody

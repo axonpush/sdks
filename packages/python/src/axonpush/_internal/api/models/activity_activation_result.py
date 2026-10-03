@@ -23,6 +23,7 @@ class ActivityActivationResult:
         to (str):
         within_seconds (int):
         rate (float | Unset): activated / eligible; absent with no eligible entities
+        small_cohort (bool | Unset): Fewer eligible entities than the minimum cohort: do not rank on this rate
     """
 
     activated: int
@@ -33,6 +34,7 @@ class ActivityActivationResult:
     to: str
     within_seconds: int
     rate: float | Unset = UNSET
+    small_cohort: bool | Unset = UNSET
 
     def to_dict(self) -> dict[str, Any]:
         activated = self.activated
@@ -51,6 +53,8 @@ class ActivityActivationResult:
 
         rate = self.rate
 
+        small_cohort = self.small_cohort
+
         field_dict: dict[str, Any] = {}
 
         field_dict.update(
@@ -66,6 +70,8 @@ class ActivityActivationResult:
         )
         if rate is not UNSET:
             field_dict["rate"] = rate
+        if small_cohort is not UNSET:
+            field_dict["smallCohort"] = small_cohort
 
         return field_dict
 
@@ -88,6 +94,8 @@ class ActivityActivationResult:
 
         rate = d.pop("rate", UNSET)
 
+        small_cohort = d.pop("smallCohort", UNSET)
+
         activity_activation_result = cls(
             activated=activated,
             cohort=cohort,
@@ -97,6 +105,7 @@ class ActivityActivationResult:
             to=to,
             within_seconds=within_seconds,
             rate=rate,
+            small_cohort=small_cohort,
         )
 
         return activity_activation_result

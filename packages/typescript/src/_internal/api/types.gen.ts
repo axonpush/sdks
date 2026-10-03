@@ -109,6 +109,10 @@ export type ActivityActivationResult = {
      * activated / eligible; absent with no eligible entities
      */
     rate?: number;
+    /**
+     * Fewer eligible entities than the minimum cohort: do not rank on this rate
+     */
+    smallCohort?: boolean;
     to: string;
     withinSeconds: number;
 };
@@ -132,12 +136,27 @@ export type ActivityAggregates = {
 
 export type ActivityAlert = {
     afterSeconds: number;
+    /**
+     * After a notification, a reopened incident with the same deduplication key stays quiet this long; default 3600
+     */
+    cooldownSeconds?: number;
     entity: string;
     /**
-     * Fire only when at least this many entities are affected
+     * Only entities whose role or key holds one of these values, e.g. a wait_reason, so each workflow wait gets its own afterSeconds
+     */
+    filter?: ActivityViewFilter;
+    /**
+     * Minimum sample: fire only when at least this many entities are affected
      */
     minCount?: number;
     name: string;
+    /**
+     * Record the incident without notifying owners, admins or alert webhooks
+     */
+    silent?: boolean;
+    /**
+     * State that counts; may be empty when a filter is given, meaning any open state
+     */
     state: string;
     /**
      * Only count entities that changed inside this window
@@ -156,16 +175,28 @@ export type ActivityAnalytics = {
      */
     clients: Array<ActivityBreakdown> | null;
     funnels: Array<ActivityFunnelResult> | null;
+    /**
+     * rollup: 90-day de-identified daily aggregates; stage counts then sum entities per stage per day, and linkage, activation and splits are not available
+     */
+    source?: 'projection' | 'rollup';
     splits: Array<ActivityFunnelSplit> | null;
     windowDays: number;
 };
 
 export type ActivityAttribute = {
+    /**
+     * Outcome values that mean the work was cancelled; default cancelled and canceled
+     */
+    cancelled?: Array<string> | null;
     description?: string;
     /**
      * For a ref: the entity type it points at (used for linking and erasure)
      */
     entity?: string;
+    /**
+     * Values that mean an expected unsuccessful result, such as a validation error or an expected denial. On the outcome attribute, or on the reason attribute of a rate view; rate views report them apart from unexpected failures
+     */
+    expected?: Array<string> | null;
     /**
      * Outcome values that count as failures
      */
@@ -195,6 +226,10 @@ export type ActivityAttribute = {
      * Product meaning that generic views, analytics and alerts read through. expected_duration is in seconds.
      */
     role?: 'outcome' | 'state' | 'actor_side' | 'client' | 'client_confidence' | 'duration' | 'expected_duration' | 'wait_reason' | 'next_actor' | 'evidence' | 'display_name' | 'display_subtitle' | 'avatar';
+    /**
+     * A scoping key: access grants may restrict members and API keys to records carrying listed values of this attribute (for example a company ref)
+     */
+    scope?: boolean;
     /**
      * duration is milliseconds; time is RFC 3339; ref is an opaque identifier
      */
@@ -493,11 +528,22 @@ export type ActivityEntityDefinition = {
     type: string;
 };
 
+export type ActivityEventMatch = {
+    /**
+     * Exact event name, or a prefix ending in *
+     */
+    event: string;
+};
+
 export type ActivityEventRule = {
     /**
      * The event erases the referenced entity, everything linked to it, and its profile
      */
     erase?: boolean;
+    /**
+     * Plain-language title shown for this event in timelines, e.g. Requested guidance on a compensation proposal
+     */
+    label?: string;
     /**
      * Exact event name, or a prefix ending in * (the most specific matching rule wins)
      */
@@ -581,6 +627,58 @@ export type ActivityFunnelSplit = {
     value: string;
 };
 
+export type ActivityGrant = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
+    createdAt: string;
+    createdBy: string;
+    id: string;
+    /**
+     * Scoping attribute (declared with scope: true)
+     */
+    key: string;
+    principalId: string;
+    principalType: 'user' | 'apikey';
+    updatedAt: string;
+    values: Array<string> | null;
+    workspaceId: string;
+};
+
+export type ActivityGraphEdge = {
+    /**
+     * type:id of the entity holding the reference
+     */
+    from: string;
+    /**
+     * type:id it references
+     */
+    to: string;
+};
+
+export type ActivityGraphNode = {
+    client?: string;
+    entityId: string;
+    /**
+     * type:id
+     */
+    id: string;
+    lastActivityAt?: string;
+    side?: string;
+    state?: string;
+    type: string;
+};
+
+export type ActivityGraphResult = {
+    edges: Array<ActivityGraphEdge> | null;
+    nodes: Array<ActivityGraphNode> | null;
+    /**
+     * More entities matched than the view's limit
+     */
+    truncated: boolean;
+};
+
 export type ActivityHealth = {
     /**
      * A URL to the JSON Schema for this object.
@@ -629,6 +727,29 @@ export type ActivityIngestReport = {
      */
     dropped?: Array<string> | null;
     receipts: Array<ActivityReceipt> | null;
+};
+
+export type ActivityIntervalResult = {
+    /**
+     * From events inside the window
+     */
+    cohort: number;
+    /**
+     * Of those, how many reached To
+     */
+    completed: number;
+    from: string;
+    /**
+     * Still waiting for To
+     */
+    open: number;
+    p50Seconds?: number;
+    p95Seconds?: number;
+    /**
+     * Fewer completed intervals than the view's minCohort
+     */
+    smallSample: boolean;
+    to: string;
 };
 
 export type ActivityIssue = {
@@ -680,6 +801,13 @@ export type ActivityOpDoc = {
     op: string;
 };
 
+export type ActivityOutcomeCount = {
+    class: 'success' | 'expected' | 'cancelled' | 'failed' | 'pending' | 'unknown';
+    count: number;
+    outcome: string;
+    reason?: string;
+};
+
 export type ActivityProfile = {
     entity: string;
     id: string;
@@ -688,6 +816,52 @@ export type ActivityProfile = {
         [key: string]: unknown;
     };
     updatedAt: string;
+};
+
+export type ActivityRateResult = {
+    cancelled: number;
+    /**
+     * success + failed
+     */
+    denominator: number;
+    /**
+     * Unsuccessful in an expected way: validation errors, expected denials
+     */
+    expected: number;
+    /**
+     * Unexpected failures
+     */
+    failed: number;
+    /**
+     * success
+     */
+    numerator: number;
+    /**
+     * Still running; not counted
+     */
+    pending: number;
+    /**
+     * numerator / denominator
+     */
+    rate?: number;
+    /**
+     * The denominator is below the view's minCohort
+     */
+    smallSample: boolean;
+    success: number;
+    /**
+     * success + expected + cancelled + failed
+     */
+    terminal: number;
+    /**
+     * success / terminal
+     */
+    terminalRate?: number;
+    /**
+     * No outcome observed; not counted
+     */
+    unknown: number;
+    values: Array<ActivityOutcomeCount> | null;
 };
 
 export type ActivityReceipt = {
@@ -702,6 +876,10 @@ export type ActivityReceipt = {
 };
 
 export type ActivityRecord = {
+    /**
+     * Plain-language title from the matching event rule's label
+     */
+    label?: string;
     masked?: Array<string> | null;
     observation: ActivityObservation;
     projectedAt: string | null;
@@ -790,14 +968,34 @@ export type ActivityUndeclared = {
 };
 
 export type ActivityView = {
+    /**
+     * Graph: entity types drawn as nodes; default every declared entity
+     */
+    entities?: Array<string> | null;
     entity?: string;
+    /**
+     * Leave out entities matching any of these, e.g. discovery-only attempts
+     */
+    exclude?: Array<ActivityViewFilter> | null;
     filter?: ActivityViewFilter;
+    /**
+     * Interval: the event that starts the wait
+     */
+    from?: ActivityEventMatch;
     funnel?: string;
     id: string;
     /**
-     * Attribute key to group or measure by, when no role fits
+     * Attribute key to group or measure by, when no role fits. For a rate view: the reason attribute whose expected values classify an unsuccessful result as expected
      */
     key?: string;
+    /**
+     * Graph: maximum nodes, most recently active first; default 200
+     */
+    limit?: number;
+    /**
+     * Splits or samples smaller than this are flagged smallCohort; default 10
+     */
+    minCohort?: number;
     /**
      * Only entities not in a terminal state
      */
@@ -807,13 +1005,21 @@ export type ActivityView = {
      */
     role?: string;
     /**
+     * Funnel: roles or attribute keys to split stages and activation by (e.g. client, actor_side). Timeseries: one role or key to split daily counts by
+     */
+    splitBy?: Array<string> | null;
+    /**
      * Only entities in these states
      */
     state?: Array<string> | null;
     title: string;
-    type: 'kpi' | 'timeseries' | 'breakdown' | 'funnel' | 'latency' | 'directory' | 'health';
     /**
-     * Only entities with activity inside the window
+     * Interval: the first later event on the same entity that ends it
+     */
+    to?: ActivityEventMatch;
+    type: 'kpi' | 'timeseries' | 'breakdown' | 'funnel' | 'latency' | 'directory' | 'health' | 'rate' | 'interval' | 'graph';
+    /**
+     * Only entities with activity inside the window; for funnel, rate, interval and graph views the period measured
      */
     window?: '15m' | '1h' | '24h' | '7d' | '30d';
 };
@@ -831,23 +1037,68 @@ export type ActivityViewPoint = {
 };
 
 export type ActivityViewResult = {
+    activation?: ActivityActivationResult;
     entity?: string;
+    graph?: ActivityGraphResult;
     id: string;
+    interval?: ActivityIntervalResult;
     /**
      * Attribute key the view resolved its role to
      */
     key?: string;
     points: Array<ActivityViewPoint> | null;
+    rate?: ActivityRateResult;
     /**
      * Why the view is empty, e.g. a role the dictionary does not declare
      */
     reason?: string;
+    series?: Array<ActivityViewSeries> | null;
+    /**
+     * Attribute keys the splits resolved to
+     */
+    splitKeys?: Array<string> | null;
+    splits?: Array<ActivityViewSplit> | null;
     title: string;
     type: string;
     /**
      * KPI count
      */
     value?: number;
+    /**
+     * The period measured, when the view has one
+     */
+    windowSeconds?: number;
+};
+
+export type ActivityViewSeries = {
+    /**
+     * Split value
+     */
+    key: string;
+    /**
+     * One point per UTC day, zero-filled
+     */
+    points: Array<ActivityViewPoint> | null;
+};
+
+export type ActivityViewSplit = {
+    activation?: ActivityActivationResult;
+    /**
+     * Entities reaching the last stage / entities reaching the first
+     */
+    completion?: number;
+    entities: number;
+    /**
+     * Fewer entities than the view's minCohort: do not rank on it
+     */
+    smallCohort: boolean;
+    stages: Array<ActivityStageCount> | null;
+    /**
+     * Split key to value; unknown when the entity has none
+     */
+    values: {
+        [key: string]: string;
+    };
 };
 
 export type ActivityWorkspace = {
@@ -883,8 +1134,12 @@ export type ActivityWorkspaceSeries = {
      */
     reason?: string;
     series: Array<ActivityMetricSeries> | null;
+    /**
+     * rollup: de-identified daily aggregates (90d window); the funnel metric then counts entities reaching each stage per day rather than furthest stage
+     */
+    source?: 'projection' | 'rollup';
     to: string;
-    window: '1h' | '24h' | '7d';
+    window: '1h' | '24h' | '7d' | '30d' | '90d';
 };
 
 export type ActivityWorkspaceSpec = {
@@ -1099,6 +1354,7 @@ export type ConnectionsOutputBody = {
 export type Controls = {
     analytics: AnalyticsCapability;
     auditTrail: AuditCapability;
+    dataAccess: DataAccessCapability;
 };
 
 export type CreateAppInputBody = {
@@ -1325,6 +1581,14 @@ export type CreateTokenOutputBody = {
      */
     token: string;
     tokenId: string;
+};
+
+export type DataAccessCapability = {
+    aggregateRetentionDays: number;
+    description: string;
+    identifiableRetentionDays: number;
+    refusedForScoped: Array<string> | null;
+    scopedGrants: boolean;
 };
 
 export type DecisionDto = {
@@ -1747,6 +2011,39 @@ export type GetTraceOutputBody = {
     readonly $schema?: string;
     spans: Array<EventDto> | null;
     traceId: string;
+};
+
+export type GrantInputBody = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
+    /**
+     * Attribute declared with scope: true
+     */
+    key: string;
+    /**
+     * Member user id or API key id
+     */
+    principalId: string;
+    principalType: 'user' | 'apikey';
+    values: Array<string> | null;
+};
+
+export type GrantListOutputBody = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
+    grants: Array<ActivityGrant> | null;
+};
+
+export type GrantUpdateInputBody = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
+    values: Array<string> | null;
 };
 
 export type HealthOutputBody = {
@@ -2791,6 +3088,10 @@ export type ActivityAnalyticsWritable = {
      */
     clients: Array<ActivityBreakdown> | null;
     funnels: Array<ActivityFunnelResult> | null;
+    /**
+     * rollup: 90-day de-identified daily aggregates; stage counts then sum entities per stage per day, and linkage, activation and splits are not available
+     */
+    source?: 'projection' | 'rollup';
     splits: Array<ActivityFunnelSplit> | null;
     windowDays: number;
 };
@@ -2897,6 +3198,21 @@ export type ActivityDraftViewWritable = {
     issues: Array<ActivityIssue> | null;
 };
 
+export type ActivityGrantWritable = {
+    createdAt: string;
+    createdBy: string;
+    id: string;
+    /**
+     * Scoping attribute (declared with scope: true)
+     */
+    key: string;
+    principalId: string;
+    principalType: 'user' | 'apikey';
+    updatedAt: string;
+    values: Array<string> | null;
+    workspaceId: string;
+};
+
 export type ActivityHealthWritable = {
     checkedAt: string;
     lastProjectedAt: string | null;
@@ -2971,8 +3287,12 @@ export type ActivityWorkspaceSeriesWritable = {
      */
     reason?: string;
     series: Array<ActivityMetricSeries> | null;
+    /**
+     * rollup: de-identified daily aggregates (90d window); the funnel metric then counts entities reaching each stage per day rather than furthest stage
+     */
+    source?: 'projection' | 'rollup';
     to: string;
-    window: '1h' | '24h' | '7d';
+    window: '1h' | '24h' | '7d' | '30d' | '90d';
 };
 
 export type ActivityWorkspaceSpecWritable = {
@@ -3397,6 +3717,27 @@ export type GetOutputBodyWritable = {
 export type GetTraceOutputBodyWritable = {
     spans: Array<EventDto> | null;
     traceId: string;
+};
+
+export type GrantInputBodyWritable = {
+    /**
+     * Attribute declared with scope: true
+     */
+    key: string;
+    /**
+     * Member user id or API key id
+     */
+    principalId: string;
+    principalType: 'user' | 'apikey';
+    values: Array<string> | null;
+};
+
+export type GrantListOutputBodyWritable = {
+    grants: Array<ActivityGrantWritable> | null;
+};
+
+export type GrantUpdateInputBodyWritable = {
+    values: Array<string> | null;
 };
 
 export type HealthOutputBodyWritable = {
@@ -7474,6 +7815,116 @@ export type WorkspacesGetResponses = {
 
 export type WorkspacesGetResponse = WorkspacesGetResponses[keyof WorkspacesGetResponses];
 
+export type WorkspacesListAccessGrantsData = {
+    body?: never;
+    path: {
+        workspaceId: string;
+    };
+    query?: never;
+    url: '/workspaces/{workspaceId}/access-grants';
+};
+
+export type WorkspacesListAccessGrantsErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type WorkspacesListAccessGrantsError = WorkspacesListAccessGrantsErrors[keyof WorkspacesListAccessGrantsErrors];
+
+export type WorkspacesListAccessGrantsResponses = {
+    /**
+     * OK
+     */
+    200: GrantListOutputBody;
+};
+
+export type WorkspacesListAccessGrantsResponse = WorkspacesListAccessGrantsResponses[keyof WorkspacesListAccessGrantsResponses];
+
+export type WorkspacesCreateAccessGrantData = {
+    body: GrantInputBodyWritable;
+    path: {
+        workspaceId: string;
+    };
+    query?: never;
+    url: '/workspaces/{workspaceId}/access-grants';
+};
+
+export type WorkspacesCreateAccessGrantErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type WorkspacesCreateAccessGrantError = WorkspacesCreateAccessGrantErrors[keyof WorkspacesCreateAccessGrantErrors];
+
+export type WorkspacesCreateAccessGrantResponses = {
+    /**
+     * Created
+     */
+    201: ActivityGrant;
+};
+
+export type WorkspacesCreateAccessGrantResponse = WorkspacesCreateAccessGrantResponses[keyof WorkspacesCreateAccessGrantResponses];
+
+export type WorkspacesDeleteAccessGrantData = {
+    body?: never;
+    path: {
+        workspaceId: string;
+        grantId: string;
+    };
+    query?: never;
+    url: '/workspaces/{workspaceId}/access-grants/{grantId}';
+};
+
+export type WorkspacesDeleteAccessGrantErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type WorkspacesDeleteAccessGrantError = WorkspacesDeleteAccessGrantErrors[keyof WorkspacesDeleteAccessGrantErrors];
+
+export type WorkspacesDeleteAccessGrantResponses = {
+    /**
+     * OK
+     */
+    200: WorkspaceStatusOutputBody;
+};
+
+export type WorkspacesDeleteAccessGrantResponse = WorkspacesDeleteAccessGrantResponses[keyof WorkspacesDeleteAccessGrantResponses];
+
+export type WorkspacesUpdateAccessGrantData = {
+    body: GrantUpdateInputBodyWritable;
+    path: {
+        workspaceId: string;
+        grantId: string;
+    };
+    query?: never;
+    url: '/workspaces/{workspaceId}/access-grants/{grantId}';
+};
+
+export type WorkspacesUpdateAccessGrantErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type WorkspacesUpdateAccessGrantError = WorkspacesUpdateAccessGrantErrors[keyof WorkspacesUpdateAccessGrantErrors];
+
+export type WorkspacesUpdateAccessGrantResponses = {
+    /**
+     * OK
+     */
+    200: ActivityGrant;
+};
+
+export type WorkspacesUpdateAccessGrantResponse = WorkspacesUpdateAccessGrantResponses[keyof WorkspacesUpdateAccessGrantResponses];
+
 export type WorkspacesActivateData = {
     body: ActivateInputBodyWritable;
     path: {
@@ -7567,34 +8018,9 @@ export type ActivityAnalyticsData = {
     query?: {
         environment?: string;
         /**
-         * Entity type
+         * 90d reads de-identified daily rollups and is refused for scoped access
          */
-        entity?: string;
-        entityId?: string;
-        /**
-         * type:id; entities that are, or link to, this entity. Timeline: observations that reference it
-         */
-        ref?: string;
-        /**
-         * Filter by the actor_side role
-         */
-        side?: string;
-        /**
-         * Filter by the client role
-         */
-        client?: string;
-        /**
-         * Filter by the outcome role
-         */
-        outcome?: string;
-        state?: string;
-        freshness?: 'fresh' | 'stale';
-        /**
-         * Matches the entity id and non-personal text fields and profile traits
-         */
-        q?: string;
-        cursor?: string;
-        limit?: number;
+        window?: '30d' | '90d';
     };
     url: '/workspaces/{workspaceId}/analytics';
 };
@@ -8162,9 +8588,12 @@ export type ActivitySeriesData = {
          * outcomes: observations by the outcome role; funnel: distinct entities by furthest stage; lag: source-to-view percentiles
          */
         metric?: 'outcomes' | 'funnel' | 'lag';
-        window?: '1h' | '24h' | '7d';
         /**
-         * Defaults per window: 1h→5m, 24h→1h, 7d→1h. Allowed: 1h:5m, 24h:5m|1h, 7d:1h|1d
+         * 90d reads de-identified daily rollups
+         */
+        window?: '1h' | '24h' | '7d' | '30d' | '90d';
+        /**
+         * Defaults per window: 1h→5m, 24h→1h, 7d→1h, 30d→1d, 90d→1d. Allowed: 1h:5m, 24h:5m|1h, 7d:1h|1d, 30d:1d, 90d:1d
          */
         bucket?: '5m' | '1h' | '1d';
         /**

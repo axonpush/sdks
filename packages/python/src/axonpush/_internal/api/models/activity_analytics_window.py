@@ -1,9 +1,9 @@
 from enum import Enum
 
 
-class ActivityAnalyticsFreshness(str, Enum):
-    FRESH = "fresh"
-    STALE = "stale"
+class ActivityAnalyticsWindow(str, Enum):
+    VALUE_0 = "30d"
+    VALUE_1 = "90d"
 
     def __str__(self) -> str:
         return str(self.value)

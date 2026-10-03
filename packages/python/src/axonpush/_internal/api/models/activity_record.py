@@ -24,12 +24,14 @@ class ActivityRecord:
         observation (ActivityObservation):
         projected_at (datetime.datetime | None):
         received_at (datetime.datetime):
+        label (str | Unset): Plain-language title from the matching event rule's label
         masked (list[str] | None | Unset):
     """
 
     observation: ActivityObservation
     projected_at: datetime.datetime | None
     received_at: datetime.datetime
+    label: str | Unset = UNSET
     masked: list[str] | None | Unset = UNSET
 
     def to_dict(self) -> dict[str, Any]:
@@ -44,6 +46,8 @@ class ActivityRecord:
             projected_at = self.projected_at
 
         received_at = self.received_at.isoformat()
+
+        label = self.label
 
         masked: list[str] | None | Unset
         if isinstance(self.masked, Unset):
@@ -63,6 +67,8 @@ class ActivityRecord:
                 "receivedAt": received_at,
             }
         )
+        if label is not UNSET:
+            field_dict["label"] = label
         if masked is not UNSET:
             field_dict["masked"] = masked
 
@@ -92,6 +98,8 @@ class ActivityRecord:
 
         received_at = isoparse(d.pop("receivedAt"))
 
+        label = d.pop("label", UNSET)
+
         def _parse_masked(data: object) -> list[str] | None | Unset:
             if data is None:
                 return data
@@ -113,6 +121,7 @@ class ActivityRecord:
             observation=observation,
             projected_at=projected_at,
             received_at=received_at,
+            label=label,
             masked=masked,
         )
 

@@ -6,37 +6,20 @@ import httpx
 
 from ... import errors
 from ...client import AuthenticatedClient, Client
-from ...models.activity_analytics import ActivityAnalytics
-from ...models.activity_analytics_window import ActivityAnalyticsWindow
 from ...models.error_model import ErrorModel
-from ...types import UNSET, Response, Unset
+from ...models.grant_list_output_body import GrantListOutputBody
+from ...types import UNSET, Response
 
 
 def _get_kwargs(
     workspace_id: str,
-    *,
-    environment: str | Unset = UNSET,
-    window: ActivityAnalyticsWindow | Unset = ActivityAnalyticsWindow.VALUE_0,
 ) -> dict[str, Any]:
-
-    params: dict[str, Any] = {}
-
-    params["environment"] = environment
-
-    json_window: str | Unset = UNSET
-    if not isinstance(window, Unset):
-        json_window = window.value
-
-    params["window"] = json_window
-
-    params = {k: v for k, v in params.items() if v is not UNSET and v is not None}
 
     _kwargs: dict[str, Any] = {
         "method": "get",
-        "url": "/workspaces/{workspace_id}/analytics".format(
+        "url": "/workspaces/{workspace_id}/access-grants".format(
             workspace_id=quote(str(workspace_id), safe=""),
         ),
-        "params": params,
     }
 
     return _kwargs
@@ -44,9 +27,9 @@ def _get_kwargs(
 
 def _parse_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> ActivityAnalytics | ErrorModel:
+) -> ErrorModel | GrantListOutputBody:
     if response.status_code == 200:
-        response_200 = ActivityAnalytics.from_dict(response.json())
+        response_200 = GrantListOutputBody.from_dict(response.json())
 
         return response_200
 
@@ -57,7 +40,7 @@ def _parse_response(
 
 def _build_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> Response[ActivityAnalytics | ErrorModel]:
+) -> Response[ErrorModel | GrantListOutputBody]:
     return Response(
         status_code=HTTPStatus(response.status_code),
         content=response.content,
@@ -70,29 +53,27 @@ def sync_detailed(
     workspace_id: str,
     *,
     client: AuthenticatedClient | Client,
-    environment: str | Unset = UNSET,
-    window: ActivityAnalyticsWindow | Unset = ActivityAnalyticsWindow.VALUE_0,
-) -> Response[ActivityAnalytics | ErrorModel]:
-    """Distinct funnel milestones, funnel splits and client breakdowns; snapshots never count
+) -> Response[ErrorModel | GrantListOutputBody]:
+    """List scoped data-access grants for members and API keys
+
+     A member or API key with any grant sees only records carrying a granted value of a scoping
+    attribute, on every read: activity, timeline, catalog, views, series, analytics, summary, health,
+    incidents, traces and MCP. Organization-wide telemetry reads are refused for them. Owners and admins
+    are never scoped.
 
     Args:
         workspace_id (str):
-        environment (str | Unset):
-        window (ActivityAnalyticsWindow | Unset): 90d reads de-identified daily rollups and is
-            refused for scoped access Default: ActivityAnalyticsWindow.VALUE_0.
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[ActivityAnalytics | ErrorModel]
+        Response[ErrorModel | GrantListOutputBody]
     """
 
     kwargs = _get_kwargs(
         workspace_id=workspace_id,
-        environment=environment,
-        window=window,
     )
 
     response = client.get_httpx_client().request(
@@ -106,30 +87,28 @@ def sync(
     workspace_id: str,
     *,
     client: AuthenticatedClient | Client,
-    environment: str | Unset = UNSET,
-    window: ActivityAnalyticsWindow | Unset = ActivityAnalyticsWindow.VALUE_0,
-) -> ActivityAnalytics | ErrorModel | None:
-    """Distinct funnel milestones, funnel splits and client breakdowns; snapshots never count
+) -> ErrorModel | GrantListOutputBody | None:
+    """List scoped data-access grants for members and API keys
+
+     A member or API key with any grant sees only records carrying a granted value of a scoping
+    attribute, on every read: activity, timeline, catalog, views, series, analytics, summary, health,
+    incidents, traces and MCP. Organization-wide telemetry reads are refused for them. Owners and admins
+    are never scoped.
 
     Args:
         workspace_id (str):
-        environment (str | Unset):
-        window (ActivityAnalyticsWindow | Unset): 90d reads de-identified daily rollups and is
-            refused for scoped access Default: ActivityAnalyticsWindow.VALUE_0.
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        ActivityAnalytics | ErrorModel
+        ErrorModel | GrantListOutputBody
     """
 
     return sync_detailed(
         workspace_id=workspace_id,
         client=client,
-        environment=environment,
-        window=window,
     ).parsed
 
 
@@ -137,29 +116,27 @@ async def asyncio_detailed(
     workspace_id: str,
     *,
     client: AuthenticatedClient | Client,
-    environment: str | Unset = UNSET,
-    window: ActivityAnalyticsWindow | Unset = ActivityAnalyticsWindow.VALUE_0,
-) -> Response[ActivityAnalytics | ErrorModel]:
-    """Distinct funnel milestones, funnel splits and client breakdowns; snapshots never count
+) -> Response[ErrorModel | GrantListOutputBody]:
+    """List scoped data-access grants for members and API keys
+
+     A member or API key with any grant sees only records carrying a granted value of a scoping
+    attribute, on every read: activity, timeline, catalog, views, series, analytics, summary, health,
+    incidents, traces and MCP. Organization-wide telemetry reads are refused for them. Owners and admins
+    are never scoped.
 
     Args:
         workspace_id (str):
-        environment (str | Unset):
-        window (ActivityAnalyticsWindow | Unset): 90d reads de-identified daily rollups and is
-            refused for scoped access Default: ActivityAnalyticsWindow.VALUE_0.
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[ActivityAnalytics | ErrorModel]
+        Response[ErrorModel | GrantListOutputBody]
     """
 
     kwargs = _get_kwargs(
         workspace_id=workspace_id,
-        environment=environment,
-        window=window,
     )
 
     response = await client.get_async_httpx_client().request(**kwargs)
@@ -171,30 +148,28 @@ async def asyncio(
     workspace_id: str,
     *,
     client: AuthenticatedClient | Client,
-    environment: str | Unset = UNSET,
-    window: ActivityAnalyticsWindow | Unset = ActivityAnalyticsWindow.VALUE_0,
-) -> ActivityAnalytics | ErrorModel | None:
-    """Distinct funnel milestones, funnel splits and client breakdowns; snapshots never count
+) -> ErrorModel | GrantListOutputBody | None:
+    """List scoped data-access grants for members and API keys
+
+     A member or API key with any grant sees only records carrying a granted value of a scoping
+    attribute, on every read: activity, timeline, catalog, views, series, analytics, summary, health,
+    incidents, traces and MCP. Organization-wide telemetry reads are refused for them. Owners and admins
+    are never scoped.
 
     Args:
         workspace_id (str):
-        environment (str | Unset):
-        window (ActivityAnalyticsWindow | Unset): 90d reads de-identified daily rollups and is
-            refused for scoped access Default: ActivityAnalyticsWindow.VALUE_0.
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        ActivityAnalytics | ErrorModel
+        ErrorModel | GrantListOutputBody
     """
 
     return (
         await asyncio_detailed(
             workspace_id=workspace_id,
             client=client,
-            environment=environment,
-            window=window,
         )
     ).parsed

@@ -52,6 +52,8 @@ public sealed record ActivityActivationResult
     public long Incomplete { get; init; }
     [JsonPropertyName("rate")]
     public double? Rate { get; init; }
+    [JsonPropertyName("smallCohort")]
+    public bool? SmallCohort { get; init; }
     [JsonPropertyName("to")]
     public string To { get; init; } = default!;
     [JsonPropertyName("withinSeconds")]
@@ -72,12 +74,18 @@ public sealed record ActivityAlert
 {
     [JsonPropertyName("afterSeconds")]
     public long AfterSeconds { get; init; }
+    [JsonPropertyName("cooldownSeconds")]
+    public long? CooldownSeconds { get; init; }
     [JsonPropertyName("entity")]
     public string Entity { get; init; } = default!;
+    [JsonPropertyName("filter")]
+    public ActivityViewFilter? Filter { get; init; }
     [JsonPropertyName("minCount")]
     public long? MinCount { get; init; }
     [JsonPropertyName("name")]
     public string Name { get; init; } = default!;
+    [JsonPropertyName("silent")]
+    public bool? Silent { get; init; }
     [JsonPropertyName("state")]
     public string State { get; init; } = default!;
     [JsonPropertyName("windowSeconds")]
@@ -92,6 +100,8 @@ public sealed record ActivityAnalytics
     public IReadOnlyList<ActivityBreakdown>? Clients { get; init; } = default!;
     [JsonPropertyName("funnels")]
     public IReadOnlyList<ActivityFunnelResult>? Funnels { get; init; } = default!;
+    [JsonPropertyName("source")]
+    public string? Source { get; init; }
     [JsonPropertyName("splits")]
     public IReadOnlyList<ActivityFunnelSplit>? Splits { get; init; } = default!;
     [JsonPropertyName("windowDays")]
@@ -100,10 +110,14 @@ public sealed record ActivityAnalytics
 
 public sealed record ActivityAttribute
 {
+    [JsonPropertyName("cancelled")]
+    public IReadOnlyList<string>? Cancelled { get; init; }
     [JsonPropertyName("description")]
     public string? Description { get; init; }
     [JsonPropertyName("entity")]
     public string? Entity { get; init; }
+    [JsonPropertyName("expected")]
+    public IReadOnlyList<string>? Expected { get; init; }
     [JsonPropertyName("failure")]
     public IReadOnlyList<string>? Failure { get; init; }
     [JsonPropertyName("key")]
@@ -120,6 +134,8 @@ public sealed record ActivityAttribute
     public bool? Personal { get; init; }
     [JsonPropertyName("role")]
     public string? Role { get; init; }
+    [JsonPropertyName("scope")]
+    public bool? Scope { get; init; }
     [JsonPropertyName("type")]
     public string Type { get; init; } = default!;
     [JsonPropertyName("values")]
@@ -390,10 +406,18 @@ public sealed record ActivityEntityDefinition
     public string Type { get; init; } = default!;
 }
 
+public sealed record ActivityEventMatch
+{
+    [JsonPropertyName("event")]
+    public string Event { get; init; } = default!;
+}
+
 public sealed record ActivityEventRule
 {
     [JsonPropertyName("erase")]
     public bool? Erase { get; init; }
+    [JsonPropertyName("label")]
+    public string? Label { get; init; }
     [JsonPropertyName("match")]
     public string Match { get; init; } = default!;
     [JsonPropertyName("only")]
@@ -484,6 +508,64 @@ public sealed record ActivityFunnelSplit
     public string Value { get; init; } = default!;
 }
 
+public sealed record ActivityGrant
+{
+    [JsonPropertyName("createdAt")]
+    public DateTimeOffset CreatedAt { get; init; }
+    [JsonPropertyName("createdBy")]
+    public string CreatedBy { get; init; } = default!;
+    [JsonPropertyName("id")]
+    public string Id { get; init; } = default!;
+    [JsonPropertyName("key")]
+    public string Key { get; init; } = default!;
+    [JsonPropertyName("principalId")]
+    public string PrincipalId { get; init; } = default!;
+    [JsonPropertyName("principalType")]
+    public string PrincipalType { get; init; } = default!;
+    [JsonPropertyName("updatedAt")]
+    public DateTimeOffset UpdatedAt { get; init; }
+    [JsonPropertyName("values")]
+    public IReadOnlyList<string>? Values { get; init; } = default!;
+    [JsonPropertyName("workspaceId")]
+    public string WorkspaceId { get; init; } = default!;
+}
+
+public sealed record ActivityGraphEdge
+{
+    [JsonPropertyName("from")]
+    public string From { get; init; } = default!;
+    [JsonPropertyName("to")]
+    public string To { get; init; } = default!;
+}
+
+public sealed record ActivityGraphNode
+{
+    [JsonPropertyName("client")]
+    public string? Client { get; init; }
+    [JsonPropertyName("entityId")]
+    public string EntityId { get; init; } = default!;
+    [JsonPropertyName("id")]
+    public string Id { get; init; } = default!;
+    [JsonPropertyName("lastActivityAt")]
+    public DateTimeOffset? LastActivityAt { get; init; }
+    [JsonPropertyName("side")]
+    public string? Side { get; init; }
+    [JsonPropertyName("state")]
+    public string? State { get; init; }
+    [JsonPropertyName("type")]
+    public string Type { get; init; } = default!;
+}
+
+public sealed record ActivityGraphResult
+{
+    [JsonPropertyName("edges")]
+    public IReadOnlyList<ActivityGraphEdge>? Edges { get; init; } = default!;
+    [JsonPropertyName("nodes")]
+    public IReadOnlyList<ActivityGraphNode>? Nodes { get; init; } = default!;
+    [JsonPropertyName("truncated")]
+    public bool Truncated { get; init; }
+}
+
 public sealed record ActivityHealth
 {
     [JsonPropertyName("checkedAt")]
@@ -532,6 +614,26 @@ public sealed record ActivityIngestReport
     public IReadOnlyList<string>? Dropped { get; init; }
     [JsonPropertyName("receipts")]
     public IReadOnlyList<ActivityReceipt>? Receipts { get; init; } = default!;
+}
+
+public sealed record ActivityIntervalResult
+{
+    [JsonPropertyName("cohort")]
+    public long Cohort { get; init; }
+    [JsonPropertyName("completed")]
+    public long Completed { get; init; }
+    [JsonPropertyName("from")]
+    public string From { get; init; } = default!;
+    [JsonPropertyName("open")]
+    public long Open { get; init; }
+    [JsonPropertyName("p50Seconds")]
+    public double? P50Seconds { get; init; }
+    [JsonPropertyName("p95Seconds")]
+    public double? P95Seconds { get; init; }
+    [JsonPropertyName("smallSample")]
+    public bool SmallSample { get; init; }
+    [JsonPropertyName("to")]
+    public string To { get; init; } = default!;
 }
 
 public sealed record ActivityIssue
@@ -602,6 +704,18 @@ public sealed record ActivityOpDoc
     public string Op { get; init; } = default!;
 }
 
+public sealed record ActivityOutcomeCount
+{
+    [JsonPropertyName("class")]
+    public string Class { get; init; } = default!;
+    [JsonPropertyName("count")]
+    public long Count { get; init; }
+    [JsonPropertyName("outcome")]
+    public string Outcome { get; init; } = default!;
+    [JsonPropertyName("reason")]
+    public string? Reason { get; init; }
+}
+
 public sealed record ActivityProfile
 {
     [JsonPropertyName("entity")]
@@ -614,6 +728,36 @@ public sealed record ActivityProfile
     public IReadOnlyDictionary<string, JsonElement> Traits { get; init; } = default!;
     [JsonPropertyName("updatedAt")]
     public DateTimeOffset UpdatedAt { get; init; }
+}
+
+public sealed record ActivityRateResult
+{
+    [JsonPropertyName("cancelled")]
+    public long Cancelled { get; init; }
+    [JsonPropertyName("denominator")]
+    public long Denominator { get; init; }
+    [JsonPropertyName("expected")]
+    public long Expected { get; init; }
+    [JsonPropertyName("failed")]
+    public long Failed { get; init; }
+    [JsonPropertyName("numerator")]
+    public long Numerator { get; init; }
+    [JsonPropertyName("pending")]
+    public long Pending { get; init; }
+    [JsonPropertyName("rate")]
+    public double? Rate { get; init; }
+    [JsonPropertyName("smallSample")]
+    public bool SmallSample { get; init; }
+    [JsonPropertyName("success")]
+    public long Success { get; init; }
+    [JsonPropertyName("terminal")]
+    public long Terminal { get; init; }
+    [JsonPropertyName("terminalRate")]
+    public double? TerminalRate { get; init; }
+    [JsonPropertyName("unknown")]
+    public long Unknown { get; init; }
+    [JsonPropertyName("values")]
+    public IReadOnlyList<ActivityOutcomeCount>? Values { get; init; } = default!;
 }
 
 public sealed record ActivityReceipt
@@ -630,6 +774,8 @@ public sealed record ActivityReceipt
 
 public sealed record ActivityRecord
 {
+    [JsonPropertyName("label")]
+    public string? Label { get; init; }
     [JsonPropertyName("masked")]
     public IReadOnlyList<string>? Masked { get; init; }
     [JsonPropertyName("observation")]
@@ -742,24 +888,38 @@ public sealed record ActivityUndeclared
 
 public sealed record ActivityView
 {
+    [JsonPropertyName("entities")]
+    public IReadOnlyList<string>? Entities { get; init; }
     [JsonPropertyName("entity")]
     public string? Entity { get; init; }
+    [JsonPropertyName("exclude")]
+    public IReadOnlyList<ActivityViewFilter>? Exclude { get; init; }
     [JsonPropertyName("filter")]
     public ActivityViewFilter? Filter { get; init; }
+    [JsonPropertyName("from")]
+    public ActivityEventMatch? From { get; init; }
     [JsonPropertyName("funnel")]
     public string? Funnel { get; init; }
     [JsonPropertyName("id")]
     public string Id { get; init; } = default!;
     [JsonPropertyName("key")]
     public string? Key { get; init; }
+    [JsonPropertyName("limit")]
+    public long? Limit { get; init; }
+    [JsonPropertyName("minCohort")]
+    public long? MinCohort { get; init; }
     [JsonPropertyName("open")]
     public bool? Open { get; init; }
     [JsonPropertyName("role")]
     public string? Role { get; init; }
+    [JsonPropertyName("splitBy")]
+    public IReadOnlyList<string>? SplitBy { get; init; }
     [JsonPropertyName("state")]
     public IReadOnlyList<string>? State { get; init; }
     [JsonPropertyName("title")]
     public string Title { get; init; } = default!;
+    [JsonPropertyName("to")]
+    public ActivityEventMatch? To { get; init; }
     [JsonPropertyName("type")]
     public string Type { get; init; } = default!;
     [JsonPropertyName("window")]
@@ -788,22 +948,62 @@ public sealed record ActivityViewPoint
 
 public sealed record ActivityViewResult
 {
+    [JsonPropertyName("activation")]
+    public ActivityActivationResult? Activation { get; init; }
     [JsonPropertyName("entity")]
     public string? Entity { get; init; }
+    [JsonPropertyName("graph")]
+    public ActivityGraphResult? Graph { get; init; }
     [JsonPropertyName("id")]
     public string Id { get; init; } = default!;
+    [JsonPropertyName("interval")]
+    public ActivityIntervalResult? Interval { get; init; }
     [JsonPropertyName("key")]
     public string? Key { get; init; }
     [JsonPropertyName("points")]
     public IReadOnlyList<ActivityViewPoint>? Points { get; init; } = default!;
+    [JsonPropertyName("rate")]
+    public ActivityRateResult? Rate { get; init; }
     [JsonPropertyName("reason")]
     public string? Reason { get; init; }
+    [JsonPropertyName("series")]
+    public IReadOnlyList<ActivityViewSeries>? Series { get; init; }
+    [JsonPropertyName("splitKeys")]
+    public IReadOnlyList<string>? SplitKeys { get; init; }
+    [JsonPropertyName("splits")]
+    public IReadOnlyList<ActivityViewSplit>? Splits { get; init; }
     [JsonPropertyName("title")]
     public string Title { get; init; } = default!;
     [JsonPropertyName("type")]
     public string Type { get; init; } = default!;
     [JsonPropertyName("value")]
     public long? Value { get; init; }
+    [JsonPropertyName("windowSeconds")]
+    public long? WindowSeconds { get; init; }
+}
+
+public sealed record ActivityViewSeries
+{
+    [JsonPropertyName("key")]
+    public string Key { get; init; } = default!;
+    [JsonPropertyName("points")]
+    public IReadOnlyList<ActivityViewPoint>? Points { get; init; } = default!;
+}
+
+public sealed record ActivityViewSplit
+{
+    [JsonPropertyName("activation")]
+    public ActivityActivationResult? Activation { get; init; }
+    [JsonPropertyName("completion")]
+    public double? Completion { get; init; }
+    [JsonPropertyName("entities")]
+    public long Entities { get; init; }
+    [JsonPropertyName("smallCohort")]
+    public bool SmallCohort { get; init; }
+    [JsonPropertyName("stages")]
+    public IReadOnlyList<ActivityStageCount>? Stages { get; init; } = default!;
+    [JsonPropertyName("values")]
+    public IReadOnlyDictionary<string, string> Values { get; init; } = default!;
 }
 
 public sealed record ActivityWorkspace
@@ -846,6 +1046,8 @@ public sealed record ActivityWorkspaceSeries
     public string? Reason { get; init; }
     [JsonPropertyName("series")]
     public IReadOnlyList<ActivityMetricSeries>? Series { get; init; } = default!;
+    [JsonPropertyName("source")]
+    public string? Source { get; init; }
     [JsonPropertyName("to")]
     public DateTimeOffset To { get; init; }
     [JsonPropertyName("window")]
@@ -904,6 +1106,30 @@ public sealed record CreateInputBody
     public string AppId { get; init; } = default!;
     [JsonPropertyName("spec")]
     public ActivityWorkspaceSpec Spec { get; init; } = default!;
+}
+
+public sealed record GrantInputBody
+{
+    [JsonPropertyName("key")]
+    public string Key { get; init; } = default!;
+    [JsonPropertyName("principalId")]
+    public string PrincipalId { get; init; } = default!;
+    [JsonPropertyName("principalType")]
+    public string PrincipalType { get; init; } = default!;
+    [JsonPropertyName("values")]
+    public IReadOnlyList<string>? Values { get; init; } = default!;
+}
+
+public sealed record GrantListOutputBody
+{
+    [JsonPropertyName("grants")]
+    public IReadOnlyList<ActivityGrant>? Grants { get; init; } = default!;
+}
+
+public sealed record GrantUpdateInputBody
+{
+    [JsonPropertyName("values")]
+    public IReadOnlyList<string>? Values { get; init; } = default!;
 }
 
 public sealed record IdentifyInputBody

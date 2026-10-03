@@ -31,21 +31,11 @@ public sealed class ActivityResource
     }
 
     /// <summary>Distinct funnel milestones, funnel splits and client breakdowns; snapshots never count.</summary>
-    public Task<ActivityAnalytics?> AnalyticsAsync(string workspaceId, string? environment = null, string? entity = null, string? entityId = null, string? @ref = null, string? side = null, string? client = null, string? outcome = null, string? state = null, string? freshness = null, string? q = null, string? cursor = null, long? limit = null, CancellationToken cancellationToken = default)
+    public Task<ActivityAnalytics?> AnalyticsAsync(string workspaceId, string? environment = null, string? window = null, CancellationToken cancellationToken = default)
     {
         var path = $"workspaces/{Uri.EscapeDataString(workspaceId)}/analytics";
         path = AddQuery(path, "environment", environment);
-        path = AddQuery(path, "entity", entity);
-        path = AddQuery(path, "entityId", entityId);
-        path = AddQuery(path, "ref", @ref);
-        path = AddQuery(path, "side", side);
-        path = AddQuery(path, "client", client);
-        path = AddQuery(path, "outcome", outcome);
-        path = AddQuery(path, "state", state);
-        path = AddQuery(path, "freshness", freshness);
-        path = AddQuery(path, "q", q);
-        path = AddQuery(path, "cursor", cursor);
-        path = AddQuery(path, "limit", limit);
+        path = AddQuery(path, "window", window);
         return _transport.SendAsync<ActivityAnalytics>(HttpMethod.Get, path, null, cancellationToken);
     }
 
