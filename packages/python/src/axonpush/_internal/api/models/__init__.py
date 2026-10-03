@@ -7,6 +7,10 @@ from .access_request_dto import AccessRequestDTO
 from .activate_draft_input_body import ActivateDraftInputBody
 from .activate_draft_output_body import ActivateDraftOutputBody
 from .activate_input_body import ActivateInputBody
+from .activity_activation import ActivityActivation
+from .activity_activation_result import ActivityActivationResult
+from .activity_aggregates import ActivityAggregates
+from .activity_aggregates_open_by_type import ActivityAggregatesOpenByType
 from .activity_alert import ActivityAlert
 from .activity_analytics import ActivityAnalytics
 from .activity_analytics_freshness import ActivityAnalyticsFreshness
@@ -52,6 +56,7 @@ from .activity_incidents_freshness import ActivityIncidentsFreshness
 from .activity_ingest_report import ActivityIngestReport
 from .activity_issue import ActivityIssue
 from .activity_issue_severity import ActivityIssueSeverity
+from .activity_linked_count import ActivityLinkedCount
 from .activity_metric_series import ActivityMetricSeries
 from .activity_observation import ActivityObservation
 from .activity_observation_attributes import ActivityObservationAttributes
@@ -286,6 +291,10 @@ __all__ = (
     "ActivateDraftInputBody",
     "ActivateDraftOutputBody",
     "ActivateInputBody",
+    "ActivityActivation",
+    "ActivityActivationResult",
+    "ActivityAggregates",
+    "ActivityAggregatesOpenByType",
     "ActivityAlert",
     "ActivityAnalytics",
     "ActivityAnalyticsFreshness",
@@ -331,6 +340,7 @@ __all__ = (
     "ActivityIngestReport",
     "ActivityIssue",
     "ActivityIssueSeverity",
+    "ActivityLinkedCount",
     "ActivityMetricSeries",
     "ActivityObservation",
     "ActivityObservationAttributes",

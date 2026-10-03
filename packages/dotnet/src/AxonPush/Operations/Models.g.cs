@@ -28,6 +28,46 @@ public sealed record ActivateInputBody
     public string Revision { get; init; } = default!;
 }
 
+public sealed record ActivityActivation
+{
+    [JsonPropertyName("from")]
+    public string From { get; init; } = default!;
+    [JsonPropertyName("to")]
+    public string To { get; init; } = default!;
+    [JsonPropertyName("withinSeconds")]
+    public long WithinSeconds { get; init; }
+}
+
+public sealed record ActivityActivationResult
+{
+    [JsonPropertyName("activated")]
+    public long Activated { get; init; }
+    [JsonPropertyName("cohort")]
+    public long Cohort { get; init; }
+    [JsonPropertyName("eligible")]
+    public long Eligible { get; init; }
+    [JsonPropertyName("from")]
+    public string From { get; init; } = default!;
+    [JsonPropertyName("incomplete")]
+    public long Incomplete { get; init; }
+    [JsonPropertyName("rate")]
+    public double? Rate { get; init; }
+    [JsonPropertyName("to")]
+    public string To { get; init; } = default!;
+    [JsonPropertyName("withinSeconds")]
+    public long WithinSeconds { get; init; }
+}
+
+public sealed record ActivityAggregates
+{
+    [JsonPropertyName("openByType")]
+    public IReadOnlyDictionary<string, long> OpenByType { get; init; } = default!;
+    [JsonPropertyName("waitKey")]
+    public string? WaitKey { get; init; }
+    [JsonPropertyName("waitingOn")]
+    public string? WaitingOn { get; init; }
+}
+
 public sealed record ActivityAlert
 {
     [JsonPropertyName("afterSeconds")]
@@ -294,6 +334,8 @@ public sealed record ActivityDraftView
 
 public sealed record ActivityEntity
 {
+    [JsonPropertyName("aggregates")]
+    public ActivityAggregates? Aggregates { get; init; }
     [JsonPropertyName("evidence")]
     public string? Evidence { get; init; }
     [JsonPropertyName("fields")]
@@ -306,6 +348,8 @@ public sealed record ActivityEntity
     public IReadOnlyList<string>? Links { get; init; }
     [JsonPropertyName("masked")]
     public IReadOnlyList<string>? Masked { get; init; }
+    [JsonPropertyName("observedState")]
+    public string? ObservedState { get; init; }
     [JsonPropertyName("occurredAt")]
     public DateTimeOffset OccurredAt { get; init; }
     [JsonPropertyName("profile")]
@@ -314,6 +358,8 @@ public sealed record ActivityEntity
     public DateTimeOffset ReceivedAt { get; init; }
     [JsonPropertyName("snapshot")]
     public bool Snapshot { get; init; }
+    [JsonPropertyName("stale")]
+    public bool? Stale { get; init; }
     [JsonPropertyName("type")]
     public string Type { get; init; } = default!;
     [JsonPropertyName("versions")]
@@ -332,6 +378,12 @@ public sealed record ActivityEntityDefinition
     public string? Label { get; init; }
     [JsonPropertyName("profile")]
     public IReadOnlyList<string>? Profile { get; init; }
+    [JsonPropertyName("rollup")]
+    public IReadOnlyList<string>? Rollup { get; init; }
+    [JsonPropertyName("staleAfterSeconds")]
+    public long? StaleAfterSeconds { get; init; }
+    [JsonPropertyName("staleStates")]
+    public IReadOnlyList<string>? StaleStates { get; init; }
     [JsonPropertyName("terminal")]
     public IReadOnlyList<string>? Terminal { get; init; }
     [JsonPropertyName("type")]
@@ -376,12 +428,16 @@ public sealed record ActivityFieldVersion
 
 public sealed record ActivityFunnel
 {
+    [JsonPropertyName("activation")]
+    public ActivityActivation? Activation { get; init; }
     [JsonPropertyName("entity")]
     public string Entity { get; init; } = default!;
     [JsonPropertyName("errorKey")]
     public string? ErrorKey { get; init; }
     [JsonPropertyName("failure")]
     public string? Failure { get; init; }
+    [JsonPropertyName("linkedTo")]
+    public string? LinkedTo { get; init; }
     [JsonPropertyName("name")]
     public string Name { get; init; } = default!;
     [JsonPropertyName("splitBy")]
@@ -392,8 +448,12 @@ public sealed record ActivityFunnel
 
 public sealed record ActivityFunnelResult
 {
+    [JsonPropertyName("activation")]
+    public ActivityActivationResult? Activation { get; init; }
     [JsonPropertyName("entity")]
     public string Entity { get; init; } = default!;
+    [JsonPropertyName("linked")]
+    public ActivityLinkedCount? Linked { get; init; }
     [JsonPropertyName("name")]
     public string Name { get; init; } = default!;
     [JsonPropertyName("stages")]
@@ -448,6 +508,8 @@ public sealed record ActivityIncident
 {
     [JsonPropertyName("affected")]
     public long Affected { get; init; }
+    [JsonPropertyName("affectedIds")]
+    public IReadOnlyList<string>? AffectedIds { get; init; } = default!;
     [JsonPropertyName("checkedAt")]
     public DateTimeOffset CheckedAt { get; init; }
     [JsonPropertyName("entity")]
@@ -480,6 +542,18 @@ public sealed record ActivityIssue
     public string Path { get; init; } = default!;
     [JsonPropertyName("severity")]
     public string Severity { get; init; } = default!;
+}
+
+public sealed record ActivityLinkedCount
+{
+    [JsonPropertyName("attempts")]
+    public long Attempts { get; init; }
+    [JsonPropertyName("linked")]
+    public long Linked { get; init; }
+    [JsonPropertyName("to")]
+    public string To { get; init; } = default!;
+    [JsonPropertyName("unlinked")]
+    public long Unlinked { get; init; }
 }
 
 public sealed record ActivityMetricSeries

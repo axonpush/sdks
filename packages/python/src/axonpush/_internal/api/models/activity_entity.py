@@ -11,6 +11,7 @@ from dateutil.parser import isoparse
 from ..types import UNSET, Unset
 
 if TYPE_CHECKING:
+    from ..models.activity_aggregates import ActivityAggregates
     from ..models.activity_entity_fields import ActivityEntityFields
     from ..models.activity_entity_profile import ActivityEntityProfile
     from ..models.activity_entity_versions import ActivityEntityVersions
@@ -30,11 +31,15 @@ class ActivityEntity:
         snapshot (bool):
         type_ (str):
         versions (ActivityEntityVersions):
+        aggregates (ActivityAggregates | Unset):
         evidence (str | Unset):
         last_activity_at (datetime.datetime | Unset):
         links (list[str] | None | Unset): type:id of entities this one references, used for filtering and erasure
         masked (list[str] | None | Unset): Personal attribute keys hidden from this caller
+        observed_state (str | Unset): Last observed state of a stale entity
         profile (ActivityEntityProfile | Unset):
+        stale (bool | Unset): An open state outlived its expected duration without a terminal event: the state reads
+            stale and freshness is unknown, not failed
     """
 
     fields: ActivityEntityFields
@@ -44,13 +49,17 @@ class ActivityEntity:
     snapshot: bool
     type_: str
     versions: ActivityEntityVersions
+    aggregates: ActivityAggregates | Unset = UNSET
     evidence: str | Unset = UNSET
     last_activity_at: datetime.datetime | Unset = UNSET
     links: list[str] | None | Unset = UNSET
     masked: list[str] | None | Unset = UNSET
+    observed_state: str | Unset = UNSET
     profile: ActivityEntityProfile | Unset = UNSET
+    stale: bool | Unset = UNSET
 
     def to_dict(self) -> dict[str, Any]:
+        from ..models.activity_aggregates import ActivityAggregates
         from ..models.activity_entity_fields import ActivityEntityFields
         from ..models.activity_entity_profile import ActivityEntityProfile
         from ..models.activity_entity_versions import ActivityEntityVersions
@@ -68,6 +77,10 @@ class ActivityEntity:
         type_ = self.type_
 
         versions = self.versions.to_dict()
+
+        aggregates: dict[str, Any] | Unset = UNSET
+        if not isinstance(self.aggregates, Unset):
+            aggregates = self.aggregates.to_dict()
 
         evidence = self.evidence
 
@@ -93,9 +106,13 @@ class ActivityEntity:
         else:
             masked = self.masked
 
+        observed_state = self.observed_state
+
         profile: dict[str, Any] | Unset = UNSET
         if not isinstance(self.profile, Unset):
             profile = self.profile.to_dict()
+
+        stale = self.stale
 
         field_dict: dict[str, Any] = {}
 
@@ -110,6 +127,8 @@ class ActivityEntity:
                 "versions": versions,
             }
         )
+        if aggregates is not UNSET:
+            field_dict["aggregates"] = aggregates
         if evidence is not UNSET:
             field_dict["evidence"] = evidence
         if last_activity_at is not UNSET:
@@ -118,13 +137,18 @@ class ActivityEntity:
             field_dict["links"] = links
         if masked is not UNSET:
             field_dict["masked"] = masked
+        if observed_state is not UNSET:
+            field_dict["observedState"] = observed_state
         if profile is not UNSET:
             field_dict["profile"] = profile
+        if stale is not UNSET:
+            field_dict["stale"] = stale
 
         return field_dict
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
+        from ..models.activity_aggregates import ActivityAggregates
         from ..models.activity_entity_fields import ActivityEntityFields
         from ..models.activity_entity_profile import ActivityEntityProfile
         from ..models.activity_entity_versions import ActivityEntityVersions
@@ -143,6 +167,13 @@ class ActivityEntity:
         type_ = d.pop("type")
 
         versions = ActivityEntityVersions.from_dict(d.pop("versions"))
+
+        _aggregates = d.pop("aggregates", UNSET)
+        aggregates: ActivityAggregates | Unset
+        if isinstance(_aggregates, Unset):
+            aggregates = UNSET
+        else:
+            aggregates = ActivityAggregates.from_dict(_aggregates)
 
         evidence = d.pop("evidence", UNSET)
 
@@ -187,12 +218,16 @@ class ActivityEntity:
 
         masked = _parse_masked(d.pop("masked", UNSET))
 
+        observed_state = d.pop("observedState", UNSET)
+
         _profile = d.pop("profile", UNSET)
         profile: ActivityEntityProfile | Unset
         if isinstance(_profile, Unset):
             profile = UNSET
         else:
             profile = ActivityEntityProfile.from_dict(_profile)
+
+        stale = d.pop("stale", UNSET)
 
         activity_entity = cls(
             fields=fields,
@@ -202,11 +237,14 @@ class ActivityEntity:
             snapshot=snapshot,
             type_=type_,
             versions=versions,
+            aggregates=aggregates,
             evidence=evidence,
             last_activity_at=last_activity_at,
             links=links,
             masked=masked,
+            observed_state=observed_state,
             profile=profile,
+            stale=stale,
         )
 
         return activity_entity

@@ -81,6 +81,55 @@ export type ActivateInputBody = {
     revision: string;
 };
 
+export type ActivityActivation = {
+    /**
+     * Stage that admits an entity to the cohort
+     */
+    from: string;
+    /**
+     * Stage that counts as activation
+     */
+    to: string;
+    withinSeconds: number;
+};
+
+export type ActivityActivationResult = {
+    /**
+     * Eligible entities that reached To within the window
+     */
+    activated: number;
+    cohort: number;
+    eligible: number;
+    from: string;
+    /**
+     * Cohort entities still inside their window
+     */
+    incomplete: number;
+    /**
+     * activated / eligible; absent with no eligible entities
+     */
+    rate?: number;
+    to: string;
+    withinSeconds: number;
+};
+
+export type ActivityAggregates = {
+    /**
+     * Linked entities per rollup type that are neither terminal nor stale
+     */
+    openByType: {
+        [key: string]: number;
+    };
+    /**
+     * Attribute key waitingOn was read from
+     */
+    waitKey?: string;
+    /**
+     * Latest explicit wait among open linked entities, from the wait_reason or next_actor role
+     */
+    waitingOn?: string;
+};
+
 export type ActivityAlert = {
     afterSeconds: number;
     entity: string;
@@ -375,6 +424,10 @@ export type ActivityDraftView = {
 };
 
 export type ActivityEntity = {
+    /**
+     * Per-row counts over the entity's rollup types
+     */
+    aggregates?: ActivityAggregates;
     evidence?: string;
     fields: {
         [key: string]: unknown;
@@ -389,12 +442,20 @@ export type ActivityEntity = {
      * Personal attribute keys hidden from this caller
      */
     masked?: Array<string> | null;
+    /**
+     * Last observed state of a stale entity
+     */
+    observedState?: string;
     occurredAt: string;
     profile?: {
         [key: string]: unknown;
     };
     receivedAt: string;
     snapshot: boolean;
+    /**
+     * An open state outlived its expected duration without a terminal event: the state reads stale and freshness is unknown, not failed
+     */
+    stale?: boolean;
     type: string;
     versions: {
         [key: string]: ActivityFieldVersion;
@@ -413,6 +474,18 @@ export type ActivityEntityDefinition = {
      * Attribute keys settable through identify
      */
     profile?: Array<string> | null;
+    /**
+     * Linked entity types whose open members are counted on each row, with the latest explicit wait
+     */
+    rollup?: Array<string> | null;
+    /**
+     * An open state older than this, or than the entity's expected_duration value, reads as stale rather than failed; a late terminal event still lands
+     */
+    staleAfterSeconds?: number;
+    /**
+     * States that can go stale; default every non-terminal state
+     */
+    staleStates?: Array<string> | null;
     /**
      * State values that only a newer revision of the same source record may reopen
      */
@@ -459,6 +532,7 @@ export type ActivityFieldVersion = {
 };
 
 export type ActivityFunnel = {
+    activation?: ActivityActivation;
     entity: string;
     /**
      * Attribute key holding the failure category
@@ -468,16 +542,28 @@ export type ActivityFunnel = {
      * State that marks a failed attempt; it supersedes stages reached before it, not later ones
      */
     failure?: string;
+    /**
+     * Entity type: attempts linked to one count as linked, the rest as unlinked
+     */
+    linkedTo?: string;
     name: string;
     /**
      * Attribute key to split the funnel by
      */
     splitBy?: string;
+    /**
+     * Ordered stages; a|b means either stage, for methods that reach the same point differently
+     */
     stages: Array<string> | null;
 };
 
 export type ActivityFunnelResult = {
+    activation?: ActivityActivationResult;
     entity: string;
+    /**
+     * Attempts at the first stage, split by whether they link to the funnel's linkedTo entity
+     */
+    linked?: ActivityLinkedCount;
     name: string;
     stages: Array<ActivityStageCount> | null;
 };
@@ -520,6 +606,10 @@ export type ActivityHealth = {
 
 export type ActivityIncident = {
     affected: number;
+    /**
+     * Up to 20 affected entity ids, oldest first
+     */
+    affectedIds: Array<string> | null;
     checkedAt: string;
     entity: string;
     id: string;
@@ -545,6 +635,13 @@ export type ActivityIssue = {
     message: string;
     path: string;
     severity: 'error' | 'warning';
+};
+
+export type ActivityLinkedCount = {
+    attempts: number;
+    linked: number;
+    to: string;
+    unlinked: number;
 };
 
 export type ActivityMetricSeries = {

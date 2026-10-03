@@ -18,6 +18,7 @@ class ActivityIncident:
     """
     Attributes:
         affected (int):
+        affected_ids (list[str] | None): Up to 20 affected entity ids, oldest first
         checked_at (datetime.datetime):
         entity (str):
         id (str):
@@ -27,6 +28,7 @@ class ActivityIncident:
     """
 
     affected: int
+    affected_ids: list[str] | None
     checked_at: datetime.datetime
     entity: str
     id: str
@@ -36,6 +38,13 @@ class ActivityIncident:
 
     def to_dict(self) -> dict[str, Any]:
         affected = self.affected
+
+        affected_ids: list[str] | None
+        if isinstance(self.affected_ids, list):
+            affected_ids = self.affected_ids
+
+        else:
+            affected_ids = self.affected_ids
 
         checked_at = self.checked_at.isoformat()
 
@@ -58,6 +67,7 @@ class ActivityIncident:
         field_dict.update(
             {
                 "affected": affected,
+                "affectedIds": affected_ids,
                 "checkedAt": checked_at,
                 "entity": entity,
                 "id": id,
@@ -73,6 +83,21 @@ class ActivityIncident:
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         d = dict(src_dict)
         affected = d.pop("affected")
+
+        def _parse_affected_ids(data: object) -> list[str] | None:
+            if data is None:
+                return data
+            try:
+                if not isinstance(data, list):
+                    raise TypeError()
+                affected_ids_type_0 = cast(list[str], data)
+
+                return affected_ids_type_0
+            except (TypeError, ValueError, AttributeError, KeyError):
+                pass
+            return cast(list[str] | None, data)
+
+        affected_ids = _parse_affected_ids(d.pop("affectedIds"))
 
         checked_at = isoparse(d.pop("checkedAt"))
 
@@ -101,6 +126,7 @@ class ActivityIncident:
 
         activity_incident = cls(
             affected=affected,
+            affected_ids=affected_ids,
             checked_at=checked_at,
             entity=entity,
             id=id,

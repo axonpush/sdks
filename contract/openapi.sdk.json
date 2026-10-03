@@ -213,6 +213,106 @@
         ],
         "type": "object"
       },
+      "ActivityActivation": {
+        "additionalProperties": false,
+        "properties": {
+          "from": {
+            "description": "Stage that admits an entity to the cohort",
+            "maxLength": 120,
+            "type": "string"
+          },
+          "to": {
+            "description": "Stage that counts as activation",
+            "maxLength": 120,
+            "type": "string"
+          },
+          "withinSeconds": {
+            "format": "int64",
+            "maximum": 2592000,
+            "minimum": 60,
+            "type": "integer"
+          }
+        },
+        "required": [
+          "from",
+          "to",
+          "withinSeconds"
+        ],
+        "type": "object"
+      },
+      "ActivityActivationResult": {
+        "additionalProperties": false,
+        "properties": {
+          "activated": {
+            "description": "Eligible entities that reached To within the window",
+            "format": "int64",
+            "type": "integer"
+          },
+          "cohort": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "eligible": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "from": {
+            "type": "string"
+          },
+          "incomplete": {
+            "description": "Cohort entities still inside their window",
+            "format": "int64",
+            "type": "integer"
+          },
+          "rate": {
+            "description": "activated / eligible; absent with no eligible entities",
+            "format": "double",
+            "type": "number"
+          },
+          "to": {
+            "type": "string"
+          },
+          "withinSeconds": {
+            "format": "int64",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "from",
+          "to",
+          "withinSeconds",
+          "cohort",
+          "eligible",
+          "activated",
+          "incomplete"
+        ],
+        "type": "object"
+      },
+      "ActivityAggregates": {
+        "additionalProperties": false,
+        "properties": {
+          "openByType": {
+            "additionalProperties": {
+              "format": "int64",
+              "type": "integer"
+            },
+            "description": "Linked entities per rollup type that are neither terminal nor stale",
+            "type": "object"
+          },
+          "waitKey": {
+            "description": "Attribute key waitingOn was read from",
+            "type": "string"
+          },
+          "waitingOn": {
+            "description": "Latest explicit wait among open linked entities, from the wait_reason or next_actor role",
+            "type": "string"
+          }
+        },
+        "required": [
+          "openByType"
+        ],
+        "type": "object"
+      },
       "ActivityAlert": {
         "additionalProperties": false,
         "properties": {
@@ -1025,6 +1125,10 @@
       "ActivityEntity": {
         "additionalProperties": false,
         "properties": {
+          "aggregates": {
+            "$ref": "#/components/schemas/ActivityAggregates",
+            "description": "Per-row counts over the entity's rollup types"
+          },
           "evidence": {
             "type": "string"
           },
@@ -1059,6 +1163,10 @@
               "null"
             ]
           },
+          "observedState": {
+            "description": "Last observed state of a stale entity",
+            "type": "string"
+          },
           "occurredAt": {
             "format": "date-time",
             "type": "string"
@@ -1072,6 +1180,10 @@
             "type": "string"
           },
           "snapshot": {
+            "type": "boolean"
+          },
+          "stale": {
+            "description": "An open state outlived its expected duration without a terminal event: the state reads stale and freshness is unknown, not failed",
             "type": "boolean"
           },
           "type": {
@@ -1133,6 +1245,35 @@
               "type": "string"
             },
             "maxItems": 30,
+            "type": [
+              "array",
+              "null"
+            ]
+          },
+          "rollup": {
+            "description": "Linked entity types whose open members are counted on each row, with the latest explicit wait",
+            "items": {
+              "type": "string"
+            },
+            "maxItems": 10,
+            "type": [
+              "array",
+              "null"
+            ]
+          },
+          "staleAfterSeconds": {
+            "description": "An open state older than this, or than the entity's expected_duration value, reads as stale rather than failed; a late terminal event still lands",
+            "format": "int64",
+            "maximum": 2592000,
+            "minimum": 0,
+            "type": "integer"
+          },
+          "staleStates": {
+            "description": "States that can go stale; default every non-terminal state",
+            "items": {
+              "type": "string"
+            },
+            "maxItems": 20,
             "type": [
               "array",
               "null"
@@ -1257,6 +1398,9 @@
       "ActivityFunnel": {
         "additionalProperties": false,
         "properties": {
+          "activation": {
+            "$ref": "#/components/schemas/ActivityActivation"
+          },
           "entity": {
             "maxLength": 120,
             "type": "string"
@@ -1271,6 +1415,11 @@
             "maxLength": 120,
             "type": "string"
           },
+          "linkedTo": {
+            "description": "Entity type: attempts linked to one count as linked, the rest as unlinked",
+            "maxLength": 120,
+            "type": "string"
+          },
           "name": {
             "maxLength": 120,
             "minLength": 1,
@@ -1282,6 +1431,7 @@
             "type": "string"
           },
           "stages": {
+            "description": "Ordered stages; a|b means either stage, for methods that reach the same point differently",
             "items": {
               "type": "string"
             },
@@ -1303,8 +1453,15 @@
       "ActivityFunnelResult": {
         "additionalProperties": false,
         "properties": {
+          "activation": {
+            "$ref": "#/components/schemas/ActivityActivationResult"
+          },
           "entity": {
             "type": "string"
+          },
+          "linked": {
+            "$ref": "#/components/schemas/ActivityLinkedCount",
+            "description": "Attempts at the first stage, split by whether they link to the funnel's linkedTo entity"
           },
           "name": {
             "type": "string"
@@ -1469,6 +1626,16 @@
             "format": "int64",
             "type": "integer"
           },
+          "affectedIds": {
+            "description": "Up to 20 affected entity ids, oldest first",
+            "items": {
+              "type": "string"
+            },
+            "type": [
+              "array",
+              "null"
+            ]
+          },
           "checkedAt": {
             "format": "date-time",
             "type": "string"
@@ -1501,7 +1668,8 @@
           "affected",
           "openedAt",
           "checkedAt",
-          "resolvedAt"
+          "resolvedAt",
+          "affectedIds"
         ],
         "type": "object"
       },
@@ -1567,6 +1735,33 @@
           "severity",
           "path",
           "message"
+        ],
+        "type": "object"
+      },
+      "ActivityLinkedCount": {
+        "additionalProperties": false,
+        "properties": {
+          "attempts": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "linked": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "to": {
+            "type": "string"
+          },
+          "unlinked": {
+            "format": "int64",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "to",
+          "attempts",
+          "linked",
+          "unlinked"
         ],
         "type": "object"
       },
