@@ -18,7 +18,7 @@ rebuild lazily — see :meth:`AsyncAxonPush._get_client`.
 from __future__ import annotations
 
 import asyncio
-from typing import TYPE_CHECKING, Any, Callable, TypeVar
+from typing import TYPE_CHECKING, Any, Callable, TypeVar, cast
 
 from pydantic import HttpUrl, SecretStr
 
@@ -34,6 +34,11 @@ from axonpush._redaction import redact_telemetry
 
 if TYPE_CHECKING:
     from axonpush._internal.api.client import AuthenticatedClient
+    from axonpush.resources.workspaces import Workspaces, AsyncWorkspaces
+    from axonpush.resources.templates import Templates, AsyncTemplates
+    from axonpush.resources.observations import Observations, AsyncObservations
+    from axonpush.resources.activity import Activity, AsyncActivity
+
 
 R = TypeVar("R")
 
@@ -219,6 +224,26 @@ class AxonPush:
         return getattr(module, class_name)(self)
 
     @property
+    def workspaces(self) -> Workspaces:
+        """Typed workspaces operations (lazy import)."""
+        return cast("Workspaces", self._resource("workspaces", "Workspaces"))
+
+    @property
+    def templates(self) -> Templates:
+        """Typed templates operations (lazy import)."""
+        return cast("Templates", self._resource("templates", "Templates"))
+
+    @property
+    def observations(self) -> Observations:
+        """Typed observations operations (lazy import)."""
+        return cast("Observations", self._resource("observations", "Observations"))
+
+    @property
+    def activity(self) -> Activity:
+        """Typed activity operations (lazy import)."""
+        return cast("Activity", self._resource("activity", "Activity"))
+
+    @property
     def events(self) -> Any:
         """Events resource accessor (lazy import)."""
         return self._resource("events", "Events")
@@ -259,11 +284,6 @@ class AxonPush:
         return self._resource("analytics", "Analytics")
 
     @property
-    def moderation(self) -> Any:
-        """Moderation rules and violations. Lazy import."""
-        return self._resource("moderation", "Moderation")
-
-    @property
     def capabilities(self) -> Any:
         """Server capabilities (flags, scopes, license). Lazy import."""
         return self._resource("capabilities", "Capabilities")
@@ -279,24 +299,9 @@ class AxonPush:
         return self._resource("traces", "Traces")
 
     @property
-    def dashboards(self) -> Any:
-        """Saved analytics dashboards. Lazy import."""
-        return self._resource("dashboards", "Dashboards")
-
-    @property
     def errors(self) -> Any:
         """Error issues and triage. Lazy import."""
         return self._resource("errors", "Errors")
-
-    @property
-    def govern_policies(self) -> Any:
-        """Request-mutation govern policies. Lazy import."""
-        return self._resource("govern_policies", "GovernPolicies")
-
-    @property
-    def spend_policies(self) -> Any:
-        """Budget and rate spend policies. Lazy import."""
-        return self._resource("spend_policies", "SpendPolicies")
 
 
 class AsyncAxonPush:
@@ -460,6 +465,26 @@ class AsyncAxonPush:
         return getattr(module, class_name)(self)
 
     @property
+    def workspaces(self) -> AsyncWorkspaces:
+        """Typed workspaces operations (lazy import)."""
+        return cast("AsyncWorkspaces", self._resource("workspaces", "AsyncWorkspaces"))
+
+    @property
+    def templates(self) -> AsyncTemplates:
+        """Typed templates operations (lazy import)."""
+        return cast("AsyncTemplates", self._resource("templates", "AsyncTemplates"))
+
+    @property
+    def observations(self) -> AsyncObservations:
+        """Typed observations operations (lazy import)."""
+        return cast("AsyncObservations", self._resource("observations", "AsyncObservations"))
+
+    @property
+    def activity(self) -> AsyncActivity:
+        """Typed activity operations (lazy import)."""
+        return cast("AsyncActivity", self._resource("activity", "AsyncActivity"))
+
+    @property
     def events(self) -> Any:
         """Events resource accessor (lazy import)."""
         return self._resource("events", "AsyncEvents")
@@ -500,11 +525,6 @@ class AsyncAxonPush:
         return self._resource("analytics", "AsyncAnalytics")
 
     @property
-    def moderation(self) -> Any:
-        """Moderation rules and violations. Lazy import."""
-        return self._resource("moderation", "AsyncModeration")
-
-    @property
     def capabilities(self) -> Any:
         """Server capabilities (flags, scopes, license). Lazy import."""
         return self._resource("capabilities", "AsyncCapabilities")
@@ -520,24 +540,9 @@ class AsyncAxonPush:
         return self._resource("traces", "AsyncTraces")
 
     @property
-    def dashboards(self) -> Any:
-        """Saved analytics dashboards. Lazy import."""
-        return self._resource("dashboards", "AsyncDashboards")
-
-    @property
     def errors(self) -> Any:
         """Error issues and triage. Lazy import."""
         return self._resource("errors", "AsyncErrors")
-
-    @property
-    def govern_policies(self) -> Any:
-        """Request-mutation govern policies. Lazy import."""
-        return self._resource("govern_policies", "AsyncGovernPolicies")
-
-    @property
-    def spend_policies(self) -> Any:
-        """Budget and rate spend policies. Lazy import."""
-        return self._resource("spend_policies", "AsyncSpendPolicies")
 
 
 __all__ = ["AsyncAxonPush", "AxonPush"]

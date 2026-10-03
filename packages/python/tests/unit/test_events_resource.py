@@ -78,6 +78,18 @@ class TestPublishBody:
         assert body.event_type is UNSET
         assert body.dedup_key is UNSET
 
+    def test_source_occurrence_and_retry_key_survive_serialization(self) -> None:
+        from datetime import datetime, timezone
+
+        fake = FakeSyncClient(return_value=_ingest_response())
+        when = datetime(2026, 10, 3, tzinfo=timezone.utc)
+        Events(fake).publish(
+            "committed", {}, channel_id=CHANNEL_ID, dedup_key="source-row:7", occurred_at=when
+        )
+        sent = fake.calls[0][1]["body"].to_dict()
+        assert sent["dedupKey"] == "source-row:7"
+        assert sent["occurredAt"] == when.isoformat()
+
     def test_explicit_trace_id_is_passed_through(self) -> None:
         fake = FakeSyncClient(return_value=_ingest_response())
         events = Events(fake)

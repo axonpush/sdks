@@ -1,132 +1,28 @@
-# Trace a Multi-Step Agent Run End-to-End
+# Link activity to finite traces
 
-> Correlate every event in a single agent run with auto-generated trace and span IDs. Find where things went wrong without reading walls of logs.
-
-## The Problem
-
-Your agent runs 12 steps across 3 tool calls. Something went wrong at step 8. You have logs, but they're a wall of text with no correlation. You can't tell which events belong to the same run or what order they happened in. You need a trace ID that ties everything together.
-
-## The Solution
-
-```bash
-pip install axonpush
-```
+A finite trace explains one request or operation. Business entities remain linked across many traces through opaque operation, thread, attempt and confirmed agent references. Use the original trace ID from the source context in both spans and lifecycle observations.
 
 ```python
 from axonpush import AxonPush, EventType, get_or_create_trace
 
-with AxonPush(api_key="ak_...", tenant_id="<org-uuid>") as client:
-    # Create a trace: all events in this run share the same trace_id
-    trace = get_or_create_trace()
-
+trace = get_or_create_trace()
+with AxonPush() as client:
     client.events.publish(
-        "web_search", {"query": "AI frameworks"},
-        channel_id="chan_a1b2c3", agent_id="researcher",
-        trace_id=trace.trace_id, span_id=trace.next_span_id(),
-        event_type=EventType.AGENT_TOOL_CALL_START,
+        "tool_execution",
+        {"attributes": {"operation.kind": "tool", "outcome": "completed"}},
+        channel_id="channel-id",
+        trace_id=trace.trace_id,
+        span_id=trace.next_span_id(),
+        event_type=EventType.APP_SPAN,
+        dedup_key="persisted-source-event-id",
     )
-
-    client.events.publish(
-        "summarize", {"input_tokens": 1200},
-        channel_id="chan_a1b2c3", agent_id="researcher",
-        trace_id=trace.trace_id, span_id=trace.next_span_id(),
-        event_type=EventType.AGENT_TOOL_CALL_START,
-    )
-
-    # Get the full picture
-    summary = client.traces_v2.detail(trace.trace_id).summary
-    print(f"Events: {summary.event_count}, Duration: {summary.duration_ms}ms")
-    print(f"Errors: {summary.error_count}, Tool calls: {summary.tool_call_count}")
+    detail = client.traces.get(trace.trace_id)
+    if detail is not None:
+        print(detail.trace_id, len(detail.spans or []))
 ```
 
-## What Just Happened
+`next_span_id()` creates a W3C-compatible span identifier. When publishing through a durable source journal, persist the chosen span ID, deduplication key and `occurred_at` once and reuse them on retries. A regenerated timestamp or ID can turn a retry into different evidence.
 
-- `get_or_create_trace()` creates a `TraceContext` with an auto-generated `trace_id` (prefixed `tr_`).
-- `trace.next_span_id()` generates sequential span IDs (`sp_<hex>_0001`, `sp_<hex>_0002`, ...) so you can see event order.
-- Both events share the same `trace_id`, linking them as part of one run.
-- `traces.get_summary()` returns analytics: total events, duration, error count, tool call count, handoff count, and the list of agents involved.
-- No external tracing infrastructure needed. No Jaeger, no Datadog, no setup.
+For OpenTelemetry, reuse the application's existing provider and context; [telemetry configuration](../../README.md#opentelemetry-native-telemetry) describes the exporter. Do not mix UUID and compact W3C trace spellings for the same operation without verifying the server's normalization. Do not keep one trace open for an agent's entire lifetime.
 
-<details>
-<summary><strong>Go Deeper</strong></summary>
-
-### Query traces
-
-```python
-# List recent traces
-result = client.traces_v2.list({"limit": "20"})
-for t in result.data:
-    print(f"{t.trace_id}: {t.event_count} events ({t.start_time} to {t.end_time})")
-
-# Get all events in a trace, ordered
-events = client.traces_v2.events("tr_run_42")
-for e in events.data:
-    print(f"  [{e.span_id}] {e.identifier} ({e.event_type})")
-```
-
-### Trace summary fields
-
-| Field | Type | Description |
-|-------|------|-------------|
-| `trace_id` | `str` | The trace identifier |
-| `event_count` | `int` | Number of events in the trace |
-| `agents` | `List[str]` | Agent IDs that participated |
-| `start_time` | `datetime` | First event timestamp |
-| `end_time` | `datetime` | Last event timestamp |
-| `duration_ms` | `float` | Total trace duration |
-| `error_count` | `float` | Number of error events |
-| `tool_call_count` | `float` | Number of tool call events |
-| `handoff_count` | `float` | Number of agent handoffs |
-
-### Cross-service correlation
-
-Pass an explicit `trace_id` to correlate events across microservices:
-
-```python
-# Service A
-trace = get_or_create_trace("tr_pipeline_run_99")
-client_a.events.publish("step_a", {...}, channel_id="chan_a1b2c3", trace_id=trace.trace_id, ...)
-
-# Service B: same trace_id, different channel
-trace = get_or_create_trace("tr_pipeline_run_99")
-client_b.events.publish("step_b", {...}, channel_id="chan_d4e5f6", trace_id=trace.trace_id, ...)
-
-# Query the unified trace
-detail = client.traces_v2.detail("tr_pipeline_run_99")
-summary = detail.summary
-# Shows events from both services
-```
-
-### How context propagation works
-
-`get_or_create_trace()` uses Python's `contextvars` module. The trace context automatically propagates to:
-- Other functions called in the same thread
-- `asyncio` tasks spawned from the current task
-
-This means you can call `get_or_create_trace()` once at the top of your agent run, and all downstream `events.publish()` calls can reference the same trace without passing it explicitly.
-
-### Async variant
-
-```python
-from axonpush import AsyncAxonPush, get_or_create_trace
-
-async with AsyncAxonPush(api_key="ak_...", tenant_id="<org-uuid>") as client:
-    trace = get_or_create_trace()
-
-    await client.events.publish(
-        "web_search", {"query": "AI agents"},
-        channel_id="chan_a1b2c3", agent_id="researcher",
-        trace_id=trace.trace_id, span_id=trace.next_span_id(),
-        event_type=EventType.AGENT_TOOL_CALL_START,
-    )
-
-    detail = await client.traces_v2.detail(trace.trace_id)
-    summary = detail.summary
-```
-
-</details>
-
-## Next Steps
-
-- [Get notified when your agent fails (webhooks)](05-error-webhooks.md)
-- [Add framework integrations (auto-tracing included)](02-framework-integrations.md)
+Use `activity.timeline` for source evidence across traces and `activity.entities` for current concurrent operation/thread state. A completed operation cannot clear unrelated work. Capture only allowlisted metadata.

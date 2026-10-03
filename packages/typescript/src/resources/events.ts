@@ -44,6 +44,8 @@ export interface PublishParams {
    * Idempotency key. Duplicate events sharing a `dedupKey` are collapsed.
    */
   dedupKey?: string;
+  /** Original source event time (RFC3339), preserved across retries. */
+  occurredAt?: string;
   /**
    * Ignored by the backend — ingest is always asynchronous. Kept for
    * back-compat with callers that still pass it.
@@ -132,6 +134,7 @@ export class EventsResource {
       ...(params.agentId !== undefined ? { agentId: params.agentId } : {}),
       ...(params.parentSpanId !== undefined ? { parentSpanId: params.parentSpanId } : {}),
       ...(params.dedupKey !== undefined ? { dedupKey: params.dedupKey } : {}),
+      ...(params.occurredAt !== undefined ? { occurredAt: params.occurredAt } : {}),
       ...(rawMeta !== undefined
         ? { metadata: this.client.redactTelemetry?.(rawMeta) ?? rawMeta }
         : {}),

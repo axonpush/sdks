@@ -5,6 +5,16 @@
  * live under `./_internal` and are not part of the supported surface.
  */
 
+export type {
+  ActivityEntity,
+  ActivityObservation as Observation,
+  ActivityReceipt as ObservationReceipt,
+  ActivityRecord,
+  ActivityRevision as WorkspaceRevision,
+  ActivityTemplate as WorkspaceTemplate,
+  ActivityWorkspace as Workspace,
+  ActivityWorkspaceSpec as WorkspaceSpec,
+} from "./_internal/api/types.gen.js";
 // Core (Stream A)
 export { AxonPush } from "./client.js";
 export type { AxonPushOptions } from "./config.js";
@@ -19,12 +29,6 @@ export {
   ServerError,
   ValidationError,
 } from "./errors.js";
-export {
-  anthropicGateway,
-  type GatewayOptions,
-  gatewayHeaders,
-  openaiGateway,
-} from "./gateway.js";
 // Integrations — primitives + helpers (Stream D).
 // Framework-specific installers are reachable via
 // `@axonpush/sdk/integrations/<name>` per package.json `exports`.
@@ -98,21 +102,21 @@ export type {
   WebhookDelivery,
   WebhookEndpoint,
 } from "./models.js";
+export { ActivityResource } from "./resources/activity.js";
 export { AlertsResource } from "./resources/alerts.js";
 export { AnalyticsResource } from "./resources/analytics.js";
 export { AppsResource } from "./resources/apps.js";
 export { CapabilitiesResource } from "./resources/capabilities.js";
 export { ChannelsResource } from "./resources/channels.js";
-export { DashboardsResource } from "./resources/dashboards.js";
 export { EnvironmentsResource } from "./resources/environments.js";
 export { ErrorsResource } from "./resources/errors.js";
 export { EventsResource } from "./resources/events.js";
-export { GovernPoliciesResource } from "./resources/govern-policies.js";
-export { ModerationResource } from "./resources/moderation.js";
+export { ObservationsResource } from "./resources/observations.js";
 export { OrganizationsResource } from "./resources/organizations.js";
-export { SpendPoliciesResource } from "./resources/spend-policies.js";
+export { TemplatesResource } from "./resources/templates.js";
 // TracesV2Resource is a back-compat alias for TracesResource.
 export { TracesResource, TracesV2Resource } from "./resources/traces.js";
 export { WebhooksResource } from "./resources/webhooks.js";
+export { WorkspacesResource } from "./resources/workspaces.js";
 export { currentTrace, getOrCreateTrace, TraceContext } from "./tracing.js";
 export { __version__ } from "./version.js";

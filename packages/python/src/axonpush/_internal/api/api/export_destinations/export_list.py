@@ -7,7 +7,7 @@ import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
 from ...models.error_model import ErrorModel
-from ...models.list_output_body_4 import ListOutputBody4
+from ...models.list_output_body_1 import ListOutputBody1
 from ...types import UNSET, Response, Unset
 
 
@@ -33,9 +33,9 @@ def _get_kwargs(
 
 def _parse_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> ErrorModel | ListOutputBody4:
+) -> ErrorModel | ListOutputBody1:
     if response.status_code == 200:
-        response_200 = ListOutputBody4.from_dict(response.json())
+        response_200 = ListOutputBody1.from_dict(response.json())
 
         return response_200
 
@@ -46,7 +46,7 @@ def _parse_response(
 
 def _build_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> Response[ErrorModel | ListOutputBody4]:
+) -> Response[ErrorModel | ListOutputBody1]:
     return Response(
         status_code=HTTPStatus(response.status_code),
         content=response.content,
@@ -59,7 +59,7 @@ def sync_detailed(
     *,
     client: AuthenticatedClient | Client,
     env_slug: str | Unset = UNSET,
-) -> Response[ErrorModel | ListOutputBody4]:
+) -> Response[ErrorModel | ListOutputBody1]:
     """List export destinations
 
     Args:
@@ -70,7 +70,7 @@ def sync_detailed(
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[ErrorModel | ListOutputBody4]
+        Response[ErrorModel | ListOutputBody1]
     """
 
     kwargs = _get_kwargs(
@@ -88,7 +88,7 @@ def sync(
     *,
     client: AuthenticatedClient | Client,
     env_slug: str | Unset = UNSET,
-) -> ErrorModel | ListOutputBody4 | None:
+) -> ErrorModel | ListOutputBody1 | None:
     """List export destinations
 
     Args:
@@ -99,7 +99,7 @@ def sync(
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        ErrorModel | ListOutputBody4
+        ErrorModel | ListOutputBody1
     """
 
     return sync_detailed(
@@ -112,7 +112,7 @@ async def asyncio_detailed(
     *,
     client: AuthenticatedClient | Client,
     env_slug: str | Unset = UNSET,
-) -> Response[ErrorModel | ListOutputBody4]:
+) -> Response[ErrorModel | ListOutputBody1]:
     """List export destinations
 
     Args:
@@ -123,7 +123,7 @@ async def asyncio_detailed(
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[ErrorModel | ListOutputBody4]
+        Response[ErrorModel | ListOutputBody1]
     """
 
     kwargs = _get_kwargs(
@@ -139,7 +139,7 @@ async def asyncio(
     *,
     client: AuthenticatedClient | Client,
     env_slug: str | Unset = UNSET,
-) -> ErrorModel | ListOutputBody4 | None:
+) -> ErrorModel | ListOutputBody1 | None:
     """List export destinations
 
     Args:
@@ -150,7 +150,7 @@ async def asyncio(
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        ErrorModel | ListOutputBody4
+        ErrorModel | ListOutputBody1
     """
 
     return (

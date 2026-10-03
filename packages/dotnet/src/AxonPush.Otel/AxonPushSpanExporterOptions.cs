@@ -1,3 +1,5 @@
+using AxonPush.Otel.Telemetry;
+
 namespace AxonPush.Otel;
 
 /// <summary>
@@ -13,6 +15,9 @@ public sealed class AxonPushSpanExporterOptions
 
     /// <summary>Service version (OTel <c>service.version</c>).</summary>
     public string? ServiceVersion { get; set; }
+
+    /// <summary>Content capture policy. Metadata only is the default; secrets remain redacted.</summary>
+    public ContentCaptureMode ContentCapture { get; set; } = ContentCaptureMode.MetadataOnly;
 
     /// <summary>Environment tag (OTel <c>deployment.environment</c>).</summary>
     public string? Environment { get; set; }

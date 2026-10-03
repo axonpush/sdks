@@ -14,9 +14,9 @@ from axonpush._internal.api.api.alerts import (
 from axonpush._internal.api.models import (
     AlertOccurrenceDTO,
     AlertRuleDTO,
-    CreateInputBody,
+    CreateInputBody1 as CreateAlertRuleInput,
     DeleteOutputBody,
-    ListOutputBody3,
+    ListOutputBody,
     OccurrencesOutputBody,
     UpdateInputBody,
 )
@@ -25,7 +25,7 @@ if TYPE_CHECKING:
     from axonpush.resources._base import AsyncClientProtocol, SyncClientProtocol
 
 
-def _unwrap(result: ListOutputBody3 | None) -> List[AlertRuleDTO] | None:
+def _unwrap(result: ListOutputBody | None) -> List[AlertRuleDTO] | None:
     if result is None:
         return None
     return list(result.data or [])
@@ -49,7 +49,7 @@ class Alerts:
         """List them all (envelope unwrapped). ``GET /v2/alerts``"""
         return self._client._invoke(_list_op, _coerce=_unwrap)
 
-    def create(self, body: CreateInputBody) -> AlertRuleDTO | None:
+    def create(self, body: CreateAlertRuleInput) -> AlertRuleDTO | None:
         """Create one. ``POST /v2/alerts``"""
         return self._client._invoke(_create_op, body=body)
 
@@ -90,7 +90,7 @@ class AsyncAlerts:
         """See :meth:`Alerts.list`."""
         return await self._client._invoke(_list_op, _coerce=_unwrap)
 
-    async def create(self, body: CreateInputBody) -> AlertRuleDTO | None:
+    async def create(self, body: CreateAlertRuleInput) -> AlertRuleDTO | None:
         """See :meth:`Alerts.create`."""
         return await self._client._invoke(_create_op, body=body)
 

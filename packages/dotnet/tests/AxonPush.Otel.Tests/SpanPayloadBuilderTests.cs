@@ -6,6 +6,44 @@ namespace AxonPush.Otel.Tests;
 
 public class SpanPayloadBuilderTests
 {
+    [Fact]
+    public void MetadataOnly_RemovesNamespacedContentAndPreservesUsage()
+    {
+        using var activity = new Activity("synthetic-tool");
+        activity.Start();
+        activity.SetTag("gen_ai.input.messages", "synthetic sensitive input");
+        activity.SetTag("gen_ai.content.prompt", "synthetic prompt");
+        activity.SetTag("gen_ai.tool.call.arguments", "synthetic arguments");
+        activity.SetTag("gen_ai.request.model", "synthetic-model");
+        activity.SetTag("gen_ai.usage.input_tokens", 12);
+        activity.SetTag("gen_ai.tool.name", "synthetic-tool");
+        activity.Stop();
+        var payload = SpanPayloadBuilder.Build(activity, new Dictionary<string, object?>());
+        var attrs = Assert.IsType<Dictionary<string, object?>>(payload["attributes"]);
+        Assert.Equal("[REDACTED]", attrs["gen_ai.input.messages"]);
+        Assert.Equal("[REDACTED]", attrs["gen_ai.content.prompt"]);
+        Assert.Equal("[REDACTED]", attrs["gen_ai.tool.call.arguments"]);
+        Assert.Equal("synthetic-model", attrs["gen_ai.request.model"]);
+        Assert.Equal(12, attrs["gen_ai.usage.input_tokens"]);
+        Assert.Equal("synthetic-tool", attrs["gen_ai.tool.name"]);
+        Assert.Equal("synthetic prompt", activity.GetTagItem("gen_ai.content.prompt"));
+    }
+
+    [Fact]
+    public void ExplicitFullCapture_KeepsContentAndStillRedactsCredentials()
+    {
+        using var activity = new Activity("synthetic-tool");
+        activity.Start();
+        activity.SetTag("gen_ai.input.messages", "synthetic input");
+        activity.SetTag("authorization", "synthetic credential");
+        activity.Stop();
+        var payload = SpanPayloadBuilder.Build(activity, new Dictionary<string, object?>(),
+            AxonPush.Otel.Telemetry.ContentCaptureMode.Full);
+        var attrs = Assert.IsType<Dictionary<string, object?>>(payload["attributes"]);
+        Assert.Equal("synthetic input", attrs["gen_ai.input.messages"]);
+        Assert.Equal("[REDACTED]", attrs["authorization"]);
+    }
+
     private const string SourceName = "AxonPush.Otel.Tests";
     private static readonly ActivityListener Listener = new()
     {
@@ -54,7 +92,7 @@ public class SpanPayloadBuilderTests
 
         var status = Assert.IsType<Dictionary<string, object?>>(payload["status"]);
         Assert.Equal(2, status["code"]);
-        Assert.Equal("boom", status["message"]);
+        Assert.Equal("[REDACTED]", status["message"]);
 
         var scope = Assert.IsType<Dictionary<string, object?>>(payload["scope"]);
         Assert.Equal("AxonPush.Otel.Tests", scope["name"]);

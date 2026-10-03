@@ -58,6 +58,22 @@ function pythonSurface(): Map<string, Set<string>> {
   return out;
 }
 
+function dotnetOperationsSurface(): Map<string, Set<string>> {
+  const out = new Map<string, Set<string>>();
+  for (const file of readDir("packages/dotnet/src/AxonPush/Operations", ".g.cs")) {
+    if (!file.endsWith("Resource.g.cs")) continue;
+    const source = readFileSync(
+      join(root, "packages/dotnet/src/AxonPush/Operations", file),
+      "utf-8",
+    );
+    const methods = new Set<string>();
+    for (const match of source.matchAll(/public Task<[^\n]+> (\w+)Async\(/g))
+      methods.add(normalise(match[1]));
+    out.set(normalise(file.replace(/Resource\.g\.cs$/, "")), methods);
+  }
+  return out;
+}
+
 const ts = typescriptSurface();
 const py = pythonSurface();
 
@@ -93,6 +109,21 @@ for (const resource of resources) {
   console.log(`  FAIL  ${resource}`);
   if (onlyTs.length > 0) console.log(`          typescript only: ${onlyTs.join(", ")}`);
   if (onlyPy.length > 0) console.log(`          python only:     ${onlyPy.join(", ")}`);
+}
+
+const dotnet = dotnetOperationsSurface();
+for (const resource of ["activity", "observations", "templates", "workspaces"]) {
+  const expected = ts.get(resource);
+  const actual = dotnet.get(resource);
+  if (
+    !expected ||
+    !actual ||
+    expected.size !== actual.size ||
+    [...expected].some((method) => !actual.has(method))
+  ) {
+    console.log(`  FAIL  dotnet ${resource}: resource methods differ`);
+    failed = true;
+  } else console.log(`  ok    dotnet ${resource} (${actual.size} methods)`);
 }
 
 if (failed) {

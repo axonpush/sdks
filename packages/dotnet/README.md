@@ -10,6 +10,15 @@
 
 Targets `net8.0` and above.
 
+## Business operations
+
+The SDK provides typed workspace authoring, immutable revisions, pinned templates,
+metadata-only observation ingestion/receipts and exact activity queries. See the
+[shared operations contract](../../AGENT_OPERATIONS.md) for schemas, access,
+privacy, lifecycle alerts and pilot verification. Capture content remains opt-in;
+source lifecycle adapters must apply their own allowlist before buffering.
+
+
 ## Install
 
 For a Semantic Kernel project:
@@ -53,50 +62,6 @@ That single `AddAxonPushTelemetry` call:
 3. Attaches the axonpush span exporter, batched in the background.
 
 Call `AddAxonPushTelemetry(..., enableSensitiveData: true)` to also forward prompts and completions as span events. The default is off so PII does not leave the process without an explicit opt-in.
-
-## Zero-instrumentation: the LLM gateway
-
-The fastest self-serve path to full observability is the axonpush gateway: no SDK, exporter, or framework wrapper. Point an existing OpenAI client at the gateway `Endpoint` and add the `x-axonpush-api-key` header. Every call, tool call, cost, token count, and latency is captured, and any moderation / govern / spend policy runs inline, with zero code changes. It works alongside the Semantic Kernel and OpenTelemetry paths above.
-
-The official `OpenAI` NuGet client injects a custom header through a pipeline policy:
-
-```csharp
-using System.ClientModel;
-using System.ClientModel.Primitives;
-using OpenAI;
-using OpenAI.Chat;
-
-var options = new OpenAIClientOptions
-{
-    Endpoint = new Uri("https://api.axonpush.xyz/gw/openai"),
-};
-options.AddPolicy(
-    new AxonPushHeaderPolicy(Environment.GetEnvironmentVariable("AXONPUSH_API_KEY")!),
-    PipelinePosition.PerCall);
-
-// apiKey still reads OPENAI_API_KEY; the gateway forwards it upstream.
-var chat = new ChatClient(
-    "gpt-4o",
-    new ApiKeyCredential(Environment.GetEnvironmentVariable("OPENAI_API_KEY")!),
-    options);
-
-sealed class AxonPushHeaderPolicy(string apiKey) : PipelinePolicy
-{
-    public override void Process(PipelineMessage message, IReadOnlyList<PipelinePolicy> pipeline, int index)
-    {
-        message.Request.Headers.Set("x-axonpush-api-key", apiKey);
-        ProcessNext(message, pipeline, index);
-    }
-
-    public override ValueTask ProcessAsync(PipelineMessage message, IReadOnlyList<PipelinePolicy> pipeline, int index)
-    {
-        message.Request.Headers.Set("x-axonpush-api-key", apiKey);
-        return ProcessNextAsync(message, pipeline, index);
-    }
-}
-```
-
-The path segment (`/gw/openai` or `/gw/anthropic`) selects the wire shape. Add `x-axonpush-target: openrouter|anthropic|groq|together|vercel|openai` to route to a different upstream provider, with that provider's key in the standard `Authorization: Bearer <provider_key>` header.
 
 ## Authentication
 
@@ -209,42 +174,19 @@ With the GenAI switch enabled, Semantic Kernel emits spans on these activity sou
 - `Microsoft.SemanticKernel.Connectors.OpenAI` and `Microsoft.SemanticKernel.Connectors.AzureOpenAI` for chat completion calls.
 - Connector-specific sources for embeddings, image generation, and other AI services as they ship.
 
-Spans carry the OpenTelemetry GenAI semantic-convention attributes: `gen_ai.system`, `gen_ai.request.model`, `gen_ai.usage.input_tokens`, `gen_ai.usage.output_tokens`, `gen_ai.response.finish_reasons`, and others. AxonPush stores them verbatim, so the same dashboards you build for Python LangChain or TypeScript LangGraph runs apply to your Semantic Kernel runs without changes.
+Spans carry the OpenTelemetry GenAI semantic-convention attributes: `gen_ai.system`, `gen_ai.request.model`, `gen_ai.usage.input_tokens`, `gen_ai.usage.output_tokens`, `gen_ai.response.finish_reasons`, and others. AxonPush applies its capture policy and presents these spans as evidence alongside Python LangChain or TypeScript LangGraph activity.
 
 ## Sample app
 
 See [`samples/SemanticKernelChat`](samples/SemanticKernelChat) for an end-to-end console REPL with Azure OpenAI as the default backend and an inline `GetTime` kernel function for function-call spans.
+
+The REST span exporter applies metadata-only redaction to existing span attributes by default, including namespaced message/prompt/tool-content keys. Set `AxonPushSpanExporterOptions.ContentCapture` explicitly only when a source policy permits broader capture. Resource model/token/tool metadata remains available.
 
 ## Fail-open behaviour
 
 By default the client treats AxonPush as a soft dependency. If a publish fails after retries, the exception is logged at warning level and the call returns a failed `PublishResult` without throwing. Set `AxonPushOptions.FailOpen = false` (or env `AXONPUSH_FAIL_OPEN=false`) to surface errors to the caller.
 
 The OpenTelemetry exporter follows the same setting. When fail-open is on, `Export` returns `ExportResult.Success` even when individual spans could not be delivered, so the OpenTelemetry SDK never propagates the failure into user code.
-
-## Release gates
-
-`client.Gates` reads and writes release-gate policies and the history of gate
-decisions, matching the `gates` resource in the Python and TypeScript SDKs.
-Unlike telemetry publishing these are control-plane calls, so they throw
-`AxonPushException` on failure rather than failing open.
-
-```csharp
-using AxonPush;
-using AxonPush.Gates;
-
-using var client = new AxonPushClient(AxonPushOptions.FromEnvironment());
-
-await client.Gates.SavePolicyAsync(new SaveGatePolicyDto
-{
-    ScopeType = GatePolicyScope.Dataset,
-    ScopeId = "ds_123",
-    MinScore = 0.8,
-    MaxFailureRate = 0.05,
-});
-
-var policies = await client.Gates.ListPoliciesAsync();
-var runs = await client.Gates.ListRunsAsync(experimentId: "exp_123");
-```
 
 ## Cross-source correlation
 

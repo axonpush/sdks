@@ -9,7 +9,7 @@ from attrs import field as _attrs_field
 from ..types import UNSET, Unset
 
 if TYPE_CHECKING:
-    from ..models.govern_policy_view import GovernPolicyView
+    from ..models.destination_dto import DestinationDTO
 
 
 T = TypeVar("T", bound="ListOutputBody1")
@@ -19,25 +19,25 @@ T = TypeVar("T", bound="ListOutputBody1")
 class ListOutputBody1:
     """
     Attributes:
-        policies (list[GovernPolicyView] | None):
+        data (list[DestinationDTO] | None):
         schema (str | Unset): A URL to the JSON Schema for this object.
     """
 
-    policies: list[GovernPolicyView] | None
+    data: list[DestinationDTO] | None
     schema: str | Unset = UNSET
 
     def to_dict(self) -> dict[str, Any]:
-        from ..models.govern_policy_view import GovernPolicyView
+        from ..models.destination_dto import DestinationDTO
 
-        policies: list[dict[str, Any]] | None
-        if isinstance(self.policies, list):
-            policies = []
-            for policies_type_0_item_data in self.policies:
-                policies_type_0_item = policies_type_0_item_data.to_dict()
-                policies.append(policies_type_0_item)
+        data: list[dict[str, Any]] | None
+        if isinstance(self.data, list):
+            data = []
+            for data_type_0_item_data in self.data:
+                data_type_0_item = data_type_0_item_data.to_dict()
+                data.append(data_type_0_item)
 
         else:
-            policies = self.policies
+            data = self.data
 
         schema = self.schema
 
@@ -45,7 +45,7 @@ class ListOutputBody1:
 
         field_dict.update(
             {
-                "policies": policies,
+                "data": data,
             }
         )
         if schema is not UNSET:
@@ -55,34 +55,34 @@ class ListOutputBody1:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        from ..models.govern_policy_view import GovernPolicyView
+        from ..models.destination_dto import DestinationDTO
 
         d = dict(src_dict)
 
-        def _parse_policies(data: object) -> list[GovernPolicyView] | None:
+        def _parse_data(data: object) -> list[DestinationDTO] | None:
             if data is None:
                 return data
             try:
                 if not isinstance(data, list):
                     raise TypeError()
-                policies_type_0 = []
-                _policies_type_0 = data
-                for policies_type_0_item_data in _policies_type_0:
-                    policies_type_0_item = GovernPolicyView.from_dict(policies_type_0_item_data)
+                data_type_0 = []
+                _data_type_0 = data
+                for data_type_0_item_data in _data_type_0:
+                    data_type_0_item = DestinationDTO.from_dict(data_type_0_item_data)
 
-                    policies_type_0.append(policies_type_0_item)
+                    data_type_0.append(data_type_0_item)
 
-                return policies_type_0
+                return data_type_0
             except (TypeError, ValueError, AttributeError, KeyError):
                 pass
-            return cast(list[GovernPolicyView] | None, data)
+            return cast(list[DestinationDTO] | None, data)
 
-        policies = _parse_policies(d.pop("policies"))
+        data = _parse_data(d.pop("data"))
 
         schema = d.pop("$schema", UNSET)
 
         list_output_body_1 = cls(
-            policies=policies,
+            data=data,
             schema=schema,
         )
 

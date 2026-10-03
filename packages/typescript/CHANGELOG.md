@@ -1,5 +1,12 @@
 # Changelog
 
+## Unreleased
+
+- Add contract-generated business workspace, template, observation and activity resources; immutable revisions, rebuild activation and rollback, pinned template provenance, receipt/projection separation and lifecycle queries.
+- Preserve original event occurrence time and stable retry identity.
+- Remove gateway routing helpers and runtime moderation/governance/spend enforcement resources from the public SDK surface. Passive tracing, errors, usage and observational alerts remain.
+
+
 ## [0.0.12]
 
 ### Added

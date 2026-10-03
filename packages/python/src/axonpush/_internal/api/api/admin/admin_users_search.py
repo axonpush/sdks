@@ -14,11 +14,14 @@ from ...types import UNSET, Response, Unset
 def _get_kwargs(
     *,
     q: str | Unset = UNSET,
+    include_deleted: bool | Unset = UNSET,
 ) -> dict[str, Any]:
 
     params: dict[str, Any] = {}
 
     params["q"] = q
+
+    params["includeDeleted"] = include_deleted
 
     params = {k: v for k, v in params.items() if v is not UNSET and v is not None}
 
@@ -59,11 +62,13 @@ def sync_detailed(
     *,
     client: AuthenticatedClient | Client,
     q: str | Unset = UNSET,
+    include_deleted: bool | Unset = UNSET,
 ) -> Response[ErrorModel | SearchUsersOutputBody]:
     """Search users
 
     Args:
         q (str | Unset): Filter by email or username
+        include_deleted (bool | Unset): Include soft-deleted users
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -75,6 +80,7 @@ def sync_detailed(
 
     kwargs = _get_kwargs(
         q=q,
+        include_deleted=include_deleted,
     )
 
     response = client.get_httpx_client().request(
@@ -88,11 +94,13 @@ def sync(
     *,
     client: AuthenticatedClient | Client,
     q: str | Unset = UNSET,
+    include_deleted: bool | Unset = UNSET,
 ) -> ErrorModel | SearchUsersOutputBody | None:
     """Search users
 
     Args:
         q (str | Unset): Filter by email or username
+        include_deleted (bool | Unset): Include soft-deleted users
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -105,6 +113,7 @@ def sync(
     return sync_detailed(
         client=client,
         q=q,
+        include_deleted=include_deleted,
     ).parsed
 
 
@@ -112,11 +121,13 @@ async def asyncio_detailed(
     *,
     client: AuthenticatedClient | Client,
     q: str | Unset = UNSET,
+    include_deleted: bool | Unset = UNSET,
 ) -> Response[ErrorModel | SearchUsersOutputBody]:
     """Search users
 
     Args:
         q (str | Unset): Filter by email or username
+        include_deleted (bool | Unset): Include soft-deleted users
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -128,6 +139,7 @@ async def asyncio_detailed(
 
     kwargs = _get_kwargs(
         q=q,
+        include_deleted=include_deleted,
     )
 
     response = await client.get_async_httpx_client().request(**kwargs)
@@ -139,11 +151,13 @@ async def asyncio(
     *,
     client: AuthenticatedClient | Client,
     q: str | Unset = UNSET,
+    include_deleted: bool | Unset = UNSET,
 ) -> ErrorModel | SearchUsersOutputBody | None:
     """Search users
 
     Args:
         q (str | Unset): Filter by email or username
+        include_deleted (bool | Unset): Include soft-deleted users
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -157,5 +171,6 @@ async def asyncio(
         await asyncio_detailed(
             client=client,
             q=q,
+            include_deleted=include_deleted,
         )
     ).parsed

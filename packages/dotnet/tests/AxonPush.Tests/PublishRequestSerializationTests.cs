@@ -24,6 +24,7 @@ public class PublishRequestSerializationTests
             SpanId = "fedcba9876543210",
             Environment = "production",
             Metadata = new Dictionary<string, object?> { ["source"] = "test" },
+            ParentEventId = "synthetic-parent",
         };
 
         var json = JsonSerializer.Serialize(request, AxonPushJsonOptions.Default);
@@ -36,7 +37,9 @@ public class PublishRequestSerializationTests
         Assert.Equal(EventType.AppSpan, root.GetProperty("eventType").GetString());
         Assert.Equal("0123456789abcdef0123456789abcdef", root.GetProperty("traceId").GetString());
         Assert.Equal("fedcba9876543210", root.GetProperty("spanId").GetString());
-        Assert.Equal("production", root.GetProperty("environment").GetString());
+        Assert.False(root.TryGetProperty("environment", out _));
+        Assert.False(root.TryGetProperty("parentEventId", out _));
+        Assert.Equal("synthetic-parent", root.GetProperty("metadata").GetProperty("axonpush.parent_event_id").GetString());
         Assert.Equal("test", root.GetProperty("metadata").GetProperty("source").GetString());
 
         Assert.Equal("abcd", root.GetProperty("payload").GetProperty("traceId").GetString());

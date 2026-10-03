@@ -1,5 +1,12 @@
 # Changelog
 
+## Unreleased
+
+- Add contract-generated business workspace, template, observation and activity resources; immutable revisions, rebuild activation and rollback, pinned template provenance, receipt/projection separation and lifecycle queries.
+- Preserve original event occurrence time and stable retry identity.
+- Remove gateway routing helpers and runtime moderation/governance/spend enforcement resources from the public SDK surface. Passive tracing, errors, usage and observational alerts remain.
+
+
 All notable changes to the axonpush Python SDK are documented here. The
 format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/);
 versioning is [SemVer](https://semver.org/spec/v2.0.0.html).

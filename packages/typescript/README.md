@@ -10,6 +10,15 @@ infrastructure for AI agent systems. ESM-only, runs on Node 20+ and Bun.
   Vercel AI SDK, Mastra, Google ADK, OpenTelemetry, Sentry, pino,
   winston, console capture, BullMQ, and the Anthropic SDK.
 
+## Business operations
+
+The SDK provides typed workspace authoring, immutable revisions, pinned templates,
+metadata-only observation ingestion/receipts and exact activity queries. See the
+[shared operations contract](../../AGENT_OPERATIONS.md) for schemas, access,
+privacy, lifecycle alerts and pilot verification. Capture content remains opt-in;
+source lifecycle adapters must apply their own allowlist before buffering.
+
+
 ## Install
 
 ```bash
@@ -53,30 +62,6 @@ client.close();
 `new AxonPush()` resolves credentials from `AXONPUSH_*` env vars (see
 [Configuration](#configuration)). Pass an options bag to override.
 
-## Zero-instrumentation: the LLM gateway
-
-The fastest self-serve path to full observability is the axonpush gateway: no
-SDK, callback handler, or framework wrapper. Point an existing OpenAI (or
-Anthropic) client's `baseURL` at the gateway and add the `x-axonpush-api-key`
-default header. Every call, tool call, cost, token count, and latency is
-captured, and any moderation / govern / spend policy runs inline, with zero code
-changes. It works alongside the framework integrations below.
-
-```ts
-import OpenAI from "openai";
-
-const client = new OpenAI({
-  baseURL: "https://api.axonpush.xyz/gw/openai",
-  defaultHeaders: { "x-axonpush-api-key": process.env.AXONPUSH_API_KEY! },
-  // apiKey still reads OPENAI_API_KEY; the gateway forwards it upstream.
-});
-```
-
-The path segment (`/gw/openai` or `/gw/anthropic`) selects the wire shape. Add
-`x-axonpush-target: openrouter|anthropic|groq|together|vercel|openai` to route to
-a different upstream provider, with that provider's key in the standard
-`Authorization: Bearer <provider_key>` header.
-
 ## Configuration
 
 | Field | Env var | Default | Notes |
@@ -100,73 +85,11 @@ Two ingest credentials are supported, both passed via `apiKey` (or
 
 | Credential | Header | Prefix | Use |
 |---|---|---|---|
-| API key | `X-API-Key` | `ak_` | Server-side ingestion and management. Full resource access, scoped per key. |
+| API key | `X-API-Key` | `ak_` | Server-side ingestion and management according to the key’s scopes. |
 | Public ingest token | `X-Public-Token` | `pt_` | Browser and untrusted clients. Publish-only, safe to ship in a frontend. |
 
 The SDK routes `ak_` values to `X-API-Key` and `pt_` values to
 `X-Public-Token` by prefix.
-
-## Local evaluation and CI gates
-
-`axonpush-eval` runs customer evaluation code locally, against an immutable
-dataset revision, and sends only each result back to axonpush. It never uploads
-or executes your target code on axonpush infrastructure.
-
-It is a `bin` of this package, so `npx` resolves it without an install, or
-`npm install -g @axonpush/sdk` puts it on your `PATH`. The Python and .NET SDKs
-ship the same binary with the same flags and exit codes - see
-[the CLI reference](https://docs.axonpush.xyz/cli/).
-
-```bash
-npx axonpush-eval run \
-  --dataset ds_support --revision 3 --target target_local \
-  --command 'node ./scripts/evaluate-item.mjs' \
-  --evaluator correctness@2 --concurrency 4 \
-  --minimum-score 0.9 --max-score-regression 0.02 \
-  --json artifacts/evaluation.json --junit artifacts/evaluation.xml
-```
-
-The command receives exactly one newline-delimited JSON input per dataset item
-on stdin and must print one JSON result on stdout:
-
-```json
-{"type":"axonpush.evaluation.input","experimentId":"…","item":{"id":"…","input":{"question":"…"}}}
-{"output":{"answer":"…"},"traceId":"…","totalTokens":42,"costUsd":0.003}
-```
-
-Use `--experiment <id>` to attach a local run to an already-created
-experiment. With `--target <id>`, the CLI creates the experiment and captures
-the current commit, branch, and dirty state. It queues the experiment and waits
-for the local target to enter `running` before accepting results. It runs the server release gate by
-default; use `--no-gate` only for exploratory runs. JSON, JUnit XML, and a
-GitHub Actions step summary (`$GITHUB_STEP_SUMMARY`) are emitted when their
-respective output paths are available. Exit codes are stable: `0` pass, `1`
-gate failure, `2` invalid CLI input, `3` API failure, `4` local evaluator
-failure, `130` cancellation.
-
-The same building blocks are available as a library:
-
-```ts
-import { AxonPush, HttpEvaluationApi, runLocalEvaluation } from "@axonpush/sdk";
-
-const client = new AxonPush();
-const result = await runLocalEvaluation(new HttpEvaluationApi(client.settings), {
-  datasetId: "ds_support",
-  datasetRevision: 3,
-  experimentId: "exp_123",
-  command: "node ./scripts/evaluate-item.mjs",
-});
-```
-
-```ts
-const client = new AxonPush({
-  apiKey: process.env.AXONPUSH_API_KEY,
-  tenantId: process.env.AXONPUSH_TENANT_ID,
-  baseUrl: "https://api.axonpush.xyz",
-  environment: "production",
-  failOpen: true,
-});
-```
 
 ## Integrations
 
@@ -247,8 +170,8 @@ await client.events.publish({
   identifier: "plan",
   channelId,
   traceId: trace.traceId,
-  eventType: "agent.start",
-  payload: { goal: "..." },
+  eventType: "app.span",
+  payload: { attributes: { "operation.kind": "planning" } },
 });
 ```
 
@@ -372,8 +295,8 @@ plane so the operation is not recorded twice.
   `RealtimeClient`, the topic builders, the `iotEndpoint` / `wsUrl`
   options, and the `mqtt` dependency are gone. Ingest over the REST
   client, OTLP, or the Sentry DSN compat path instead.
-- **`events.list()` returns `EventListResponseDto`** (`{ data, meta }`),
-  not a bare array. Read `.data` for the events.
+- **`events.search()` returns the server search envelope.** Read `.events`
+  for the events; use `.entities` and `.nextCursor` for workspace entity pages.
 - **Models live in flat re-exports.** Import `App`, `Channel`, `Event`,
   `EventType`, etc. from `@axonpush/sdk` directly.
 - **Zero-arg constructor.** `new AxonPush()` reads `AXONPUSH_*` env
@@ -402,6 +325,6 @@ MIT.
 
 ## Contributing
 
-Issues and PRs welcome at [github.com/axonpush/ts-sdk](https://github.com/axonpush/ts-sdk).
+Issues and PRs welcome at [github.com/axonpush/sdks](https://github.com/axonpush/sdks).
 Please run `bun run lint && bun run typecheck && bun run test` before
 sending a PR.

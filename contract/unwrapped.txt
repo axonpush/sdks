@@ -37,11 +37,6 @@ admin.users.search
 
 # Billing surfaces. Checkout / portal / webhook are the hosted billing flow, and
 # usage/plans are read in the dashboard; not modelled in the SDK.
-billing.checkout
-billing.plans
-billing.portal
-billing.usage
-billing.webhook
 
 # Account surfaces. The active user's own identity and org switching are handled
 # by the dashboard session, not a programmatic client.
@@ -72,3 +67,8 @@ organization.telemetryPolicy.update
 tokens.create
 tokens.list
 tokens.revoke
+
+# Destructive console-only administration, excluded from public client facades.
+admin.orgs.delete
+admin.users.delete
+admin.users.restore

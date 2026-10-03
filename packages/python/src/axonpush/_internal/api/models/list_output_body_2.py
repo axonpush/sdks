@@ -9,7 +9,7 @@ from attrs import field as _attrs_field
 from ..types import UNSET, Unset
 
 if TYPE_CHECKING:
-    from ..models.dashboard_view import DashboardView
+    from ..models.log_dto import LogDTO
 
 
 T = TypeVar("T", bound="ListOutputBody2")
@@ -19,25 +19,25 @@ T = TypeVar("T", bound="ListOutputBody2")
 class ListOutputBody2:
     """
     Attributes:
-        dashboards (list[DashboardView] | None):
+        data (list[LogDTO] | None):
         schema (str | Unset): A URL to the JSON Schema for this object.
     """
 
-    dashboards: list[DashboardView] | None
+    data: list[LogDTO] | None
     schema: str | Unset = UNSET
 
     def to_dict(self) -> dict[str, Any]:
-        from ..models.dashboard_view import DashboardView
+        from ..models.log_dto import LogDTO
 
-        dashboards: list[dict[str, Any]] | None
-        if isinstance(self.dashboards, list):
-            dashboards = []
-            for dashboards_type_0_item_data in self.dashboards:
-                dashboards_type_0_item = dashboards_type_0_item_data.to_dict()
-                dashboards.append(dashboards_type_0_item)
+        data: list[dict[str, Any]] | None
+        if isinstance(self.data, list):
+            data = []
+            for data_type_0_item_data in self.data:
+                data_type_0_item = data_type_0_item_data.to_dict()
+                data.append(data_type_0_item)
 
         else:
-            dashboards = self.dashboards
+            data = self.data
 
         schema = self.schema
 
@@ -45,7 +45,7 @@ class ListOutputBody2:
 
         field_dict.update(
             {
-                "dashboards": dashboards,
+                "data": data,
             }
         )
         if schema is not UNSET:
@@ -55,34 +55,34 @@ class ListOutputBody2:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        from ..models.dashboard_view import DashboardView
+        from ..models.log_dto import LogDTO
 
         d = dict(src_dict)
 
-        def _parse_dashboards(data: object) -> list[DashboardView] | None:
+        def _parse_data(data: object) -> list[LogDTO] | None:
             if data is None:
                 return data
             try:
                 if not isinstance(data, list):
                     raise TypeError()
-                dashboards_type_0 = []
-                _dashboards_type_0 = data
-                for dashboards_type_0_item_data in _dashboards_type_0:
-                    dashboards_type_0_item = DashboardView.from_dict(dashboards_type_0_item_data)
+                data_type_0 = []
+                _data_type_0 = data
+                for data_type_0_item_data in _data_type_0:
+                    data_type_0_item = LogDTO.from_dict(data_type_0_item_data)
 
-                    dashboards_type_0.append(dashboards_type_0_item)
+                    data_type_0.append(data_type_0_item)
 
-                return dashboards_type_0
+                return data_type_0
             except (TypeError, ValueError, AttributeError, KeyError):
                 pass
-            return cast(list[DashboardView] | None, data)
+            return cast(list[LogDTO] | None, data)
 
-        dashboards = _parse_dashboards(d.pop("dashboards"))
+        data = _parse_data(d.pop("data"))
 
         schema = d.pop("$schema", UNSET)
 
         list_output_body_2 = cls(
-            dashboards=dashboards,
+            data=data,
             schema=schema,
         )
 

@@ -208,3 +208,30 @@ describe("AxonPush facade", () => {
     }).not.toThrow();
   });
 });
+
+it("scrubs namespaced span content while preserving model, usage and tool metadata", () => {
+  const client = new AxonPush({
+    apiKey: "ak_synthetic",
+    tenantId: "synthetic",
+    contentCaptureMode: "metadata_only",
+  });
+  const content = {
+    "gen_ai.input.messages": "synthetic sensitive input",
+    "gen_ai.output.messages": "synthetic sensitive output",
+    "gen_ai.content.prompt": "synthetic prompt",
+    "llm.prompts": "synthetic prompt",
+    "ai.tool.call.arguments": "synthetic arguments",
+    "gen_ai.tool.result": "synthetic result",
+  };
+  const metadata = {
+    "gen_ai.request.model": "synthetic-model",
+    "gen_ai.usage.input_tokens": 12,
+    "gen_ai.tool.name": "synthetic-tool",
+  };
+  const original = { attributes: { ...content, ...metadata } };
+  expect(client.redactTelemetry(original).attributes).toEqual({
+    ...Object.fromEntries(Object.keys(content).map((key) => [key, "[REDACTED]"])),
+    ...metadata,
+  });
+  expect(original.attributes["gen_ai.input.messages"]).toBe(content["gen_ai.input.messages"]);
+});

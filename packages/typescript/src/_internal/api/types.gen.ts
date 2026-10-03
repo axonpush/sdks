@@ -52,6 +52,303 @@ export type AccessRequestDto = {
     useCase: string;
 };
 
+export type ActivateInputBody = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
+    generation: number;
+    revision: string;
+};
+
+export type ActivityActivity = {
+    action?: string;
+    attempts?: number;
+    duration_ms?: number;
+    error_category?: string;
+    evidence: 'server_observed' | 'agent_reported' | 'derived' | 'reconstructed';
+    expected_seconds?: number;
+    family: string;
+    input_tokens?: number;
+    join_method?: string;
+    model?: string;
+    next_actor?: 'human' | 'candidate' | 'company' | 'none' | 'unknown';
+    outcome: 'observed' | 'accepted' | 'queued' | 'running' | 'committed' | 'completed' | 'failed' | 'cancelled' | 'unknown';
+    output_tokens?: number;
+    registration_source?: string;
+    snapshot?: boolean;
+    state?: string;
+    transport?: string;
+};
+
+export type ActivityActor = {
+    agent_id?: string;
+    initiating_agent_id?: string;
+    participant_side?: 'candidate' | 'recruiter' | 'company' | 'unknown';
+    related_agent_ids?: Array<string> | null;
+    type: 'agent' | 'human' | 'worker' | 'integration' | 'unknown';
+};
+
+export type ActivityAlert = {
+    afterSeconds: number;
+    entity: string;
+    name: string;
+    state: string;
+};
+
+export type ActivityAnalytics = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
+    activations: Array<ActivityCohortCount> | null;
+    asOf: string;
+    attempts: Array<ActivityCohortCount> | null;
+    clients: Array<ActivityBreakdown> | null;
+    funnels: Array<ActivityFunnelResult> | null;
+    windowDays: number;
+};
+
+export type ActivityBreakdown = {
+    active15m: number;
+    agents: number;
+    client: string;
+    side: string;
+};
+
+export type ActivityClient = {
+    attribution_source?: string;
+    confidence: 'verified_registration' | 'authenticated_registration_unverified_vendor' | 'self_reported' | 'inferred' | 'unknown';
+    conflict?: boolean;
+    evidence?: Array<ActivityClientEvidence> | null;
+    family: string;
+    reported_name?: string;
+    version?: string;
+};
+
+export type ActivityClientEvidence = {
+    confidence: 'verified_registration' | 'authenticated_registration_unverified_vendor' | 'self_reported' | 'inferred' | 'unknown';
+    family: string;
+    name?: string;
+    source: string;
+    version?: string;
+};
+
+export type ActivityCohortCount = {
+    client: string;
+    count: number;
+    side: string;
+};
+
+export type ActivityCorrelation = {
+    application_id?: string;
+    causation_id?: string;
+    connection_ref?: string;
+    job_id?: string;
+    join_attempt_id?: string;
+    operation_id?: string;
+    request_id?: string;
+    role_id?: string;
+    span_id?: string;
+    thread_id?: string;
+    trace_id?: string;
+};
+
+export type ActivityEntity = {
+    evidence: string;
+    fields: {
+        [key: string]: unknown;
+    };
+    id: string;
+    lastActivityAt?: string;
+    occurredAt: string;
+    receivedAt: string;
+    snapshot: boolean;
+    type: string;
+    versions: {
+        [key: string]: ActivityFieldVersion;
+    };
+};
+
+export type ActivityEntityDefinition = {
+    fields: Array<string> | null;
+    label: string;
+    terminalStates?: Array<string> | null;
+    type: string;
+};
+
+export type ActivityFieldVersion = {
+    eventId: string;
+    revision: number;
+    sourceRef: string;
+    time: string;
+};
+
+export type ActivityFunnel = {
+    entity: string;
+    name: string;
+    stages: Array<string> | null;
+};
+
+export type ActivityFunnelResult = {
+    name: string;
+    stages: Array<ActivityStageCount> | null;
+};
+
+export type ActivityIncident = {
+    affected: number;
+    checkedAt: string;
+    entity: string;
+    id: string;
+    name: string;
+    openedAt: string;
+    resolvedAt: string | null;
+};
+
+export type ActivityMapping = {
+    entity: string;
+    event: string;
+    fields?: {
+        [key: string]: string;
+    };
+    idPath: string;
+    values?: {
+        [key: string]: string;
+    };
+};
+
+export type ActivityObservation = {
+    activity: ActivityActivity;
+    actor: ActivityActor;
+    client: ActivityClient;
+    correlation: ActivityCorrelation;
+    event_name: string;
+    occurred_at: string;
+    pipeline?: ActivityPipelineHealth;
+    release?: string;
+    schema_version: 1;
+    service: string;
+    source: ActivitySource;
+    source_event_id: string;
+};
+
+export type ActivityPipelineHealth = {
+    capture_failures: number;
+    dead_letters: number;
+    dropped_transient: number;
+    last_export_at?: string;
+    pending: number;
+    reconciled_at?: string;
+    reconciled_records: number;
+    retries: number;
+};
+
+export type ActivityReceipt = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
+    projectedAt: string | null;
+    receivedAt: string;
+    sourceEventId: string;
+    status: string;
+};
+
+export type ActivityRecord = {
+    observation: ActivityObservation;
+    projectedAt: string | null;
+    receivedAt: string;
+};
+
+export type ActivityRevision = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
+    createdAt: string;
+    createdBy: string;
+    id: string;
+    spec: ActivityWorkspaceSpec;
+};
+
+export type ActivitySource = {
+    record_id?: string;
+    record_type?: string;
+    revision?: number;
+};
+
+export type ActivityStageCount = {
+    count: number;
+    stage: string;
+};
+
+export type ActivityTemplate = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
+    id: string;
+    spec: ActivityWorkspaceSpec;
+    version: number;
+    visibility: string;
+};
+
+export type ActivityTemplateRef = {
+    id: string;
+    version: number;
+};
+
+export type ActivityWidget = {
+    entity?: string;
+    field?: string;
+    title: string;
+    type: 'directory' | 'timeline' | 'operations' | 'workflows' | 'kpi' | 'funnel' | 'health' | 'timeseries' | 'breakdown' | 'latency';
+};
+
+export type ActivityWidgetPoint = {
+    count: number;
+    label: string;
+    value?: number;
+};
+
+export type ActivityWidgetSeries = {
+    entity: string;
+    field: string;
+    points: Array<ActivityWidgetPoint> | null;
+    title: string;
+    type: string;
+};
+
+export type ActivityWorkspace = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
+    activeRevision: string | null;
+    appId: string;
+    createdAt: string;
+    generation: number;
+    id: string;
+    name: string;
+    requestedRevision: string | null;
+};
+
+export type ActivityWorkspaceSpec = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
+    alerts?: Array<ActivityAlert> | null;
+    description?: string;
+    entities: Array<ActivityEntityDefinition> | null;
+    funnels?: Array<ActivityFunnel> | null;
+    mappings: Array<ActivityMapping> | null;
+    name: string;
+    schemaVersion: 1;
+    template?: ActivityTemplateRef;
+    widgets: Array<ActivityWidget> | null;
+};
+
 export type AlertOccurrenceDto = {
     firedAt: string;
     message?: string;
@@ -88,9 +385,9 @@ export type AlertRuleDto = {
 export type AnalyticsCapability = {
     breakdownDimensions: Array<string> | null;
     customDimensions: boolean;
-    dashboards: boolean;
     enabled: boolean;
     tagFilter: boolean;
+    workspaces: boolean;
 };
 
 export type AnalyticsOverviewOutputBody = {
@@ -193,26 +490,9 @@ export type ChannelDto = {
     updatedAt?: string;
 };
 
-export type CheckoutInputBody = {
-    /**
-     * A URL to the JSON Schema for this object.
-     */
-    readonly $schema?: string;
-    /**
-     * monthly or annual
-     */
-    cadence?: string;
-    /**
-     * pro or team
-     */
-    plan: string;
-};
-
 export type Controls = {
     analytics: AnalyticsCapability;
     auditTrail: AuditCapability;
-    inlineModeration: ModerationCapability;
-    spendPolicies: SpendPolicyCapability;
 };
 
 export type CreateAppInputBody = {
@@ -295,12 +575,21 @@ export type CreateInputBody = {
      * A URL to the JSON Schema for this object.
      */
     readonly $schema?: string;
+    appId: string;
+    spec: ActivityWorkspaceSpec;
+};
+
+export type CreateInputBody1 = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
     appId?: string;
     destination: string;
     destinationType: 'email' | 'webhook';
     enabled?: boolean;
     environmentId?: string;
-    metric: 'error_count' | 'error_rate' | 'latency_ms' | 'cost_usd';
+    metric: 'error_count' | 'error_rate' | 'latency_ms' | 'cost_usd' | 'lifecycle_open';
     model?: string;
     /**
      * Alert rule display name
@@ -312,7 +601,7 @@ export type CreateInputBody = {
     threshold: number;
 };
 
-export type CreateInputBody1 = {
+export type CreateInputBody2 = {
     /**
      * A URL to the JSON Schema for this object.
      */
@@ -334,7 +623,7 @@ export type CreateInputBody1 = {
     signals: Array<string> | null;
 };
 
-export type CreateInputBody2 = {
+export type CreateInputBody3 = {
     /**
      * A URL to the JSON Schema for this object.
      */
@@ -346,7 +635,7 @@ export type CreateInputBody2 = {
     message: string;
 };
 
-export type CreateInputBody3 = {
+export type CreateInputBody4 = {
     /**
      * A URL to the JSON Schema for this object.
      */
@@ -389,27 +678,6 @@ export type CreateOutputBody1 = {
     requestId: string;
 };
 
-export type CreateRuleInputBody = {
-    /**
-     * A URL to the JSON Schema for this object.
-     */
-    readonly $schema?: string;
-    action: 'allow' | 'redact' | 'block' | 'flag';
-    /**
-     * builtin detector name, or 'regex'/'keyword'/'tool_name'/'tool_arg'
-     */
-    detector: string;
-    name: string;
-    /**
-     * regex/keyword; tool name for tool_name; a JSON-path expression for tool_arg (e.g. 'amount > 10000', 'account =~ ^ext-')
-     */
-    pattern?: string;
-    /**
-     * which part of the loop to evaluate (default request)
-     */
-    target?: 'request' | 'response' | 'tool_call';
-};
-
 export type CreateTokenInputBody = {
     /**
      * A URL to the JSON Schema for this object.
@@ -448,33 +716,6 @@ export type CreateTokenOutputBody = {
      */
     token: string;
     tokenId: string;
-};
-
-export type DashboardBody = {
-    /**
-     * A URL to the JSON Schema for this object.
-     */
-    readonly $schema?: string;
-    description?: string;
-    name: string;
-    /**
-     * the widget spec; each widget is a saved analytics query
-     */
-    spec: Spec;
-};
-
-export type DashboardView = {
-    /**
-     * A URL to the JSON Schema for this object.
-     */
-    readonly $schema?: string;
-    createdAt: string;
-    createdBy?: string;
-    dashboardId: string;
-    description?: string;
-    name: string;
-    spec: Spec;
-    updatedAt: string;
 };
 
 export type DecisionDto = {
@@ -643,23 +884,6 @@ export type DimensionsOutputBody = {
     dimensions: Array<DimensionDto> | null;
 };
 
-export type EfficacyOutputBody = {
-    /**
-     * A URL to the JSON Schema for this object.
-     */
-    readonly $schema?: string;
-    rows: Array<EfficacyRowDto> | null;
-};
-
-export type EfficacyRowDto = {
-    action: string;
-    avgLatencyMs: number;
-    detector: string;
-    maxLatencyMs: number;
-    target: string;
-    violationCount: number;
-};
-
 export type EndpointDto = {
     active: boolean;
     channelId: string;
@@ -778,6 +1002,10 @@ export type EventBody = {
     metadata?: {
         [key: string]: unknown;
     };
+    /**
+     * Original source time; retries must preserve it
+     */
+    occurredAt?: string;
     parentSpanId?: string;
     /**
      * Event payload
@@ -865,6 +1093,7 @@ export type FeatureFlags = {
     readonly $schema?: string;
     analyticsV2: boolean;
     asyncIngest: boolean;
+    billing: boolean;
     environments: boolean;
     mcpServer: boolean;
     sentryIngest: boolean;
@@ -909,69 +1138,6 @@ export type GetTraceOutputBody = {
     readonly $schema?: string;
     spans: Array<EventDto> | null;
     traceId: string;
-};
-
-export type GovernPolicyBody = {
-    /**
-     * A URL to the JSON Schema for this object.
-     */
-    readonly $schema?: string;
-    apiKeyId?: string;
-    appId?: string;
-    enabled?: boolean;
-    /**
-     * enforce (mutate to comply, default) | block (reject 422) | warn (record only)
-     */
-    enforcement?: 'enforce' | 'block' | 'warn' | '';
-    environmentId?: string;
-    /**
-     * model prefix; empty = all models
-     */
-    model?: string;
-    name: string;
-    /**
-     * openai | anthropic; empty = all providers
-     */
-    provider?: string;
-    /**
-     * the structural rule set
-     */
-    rules: GovernRules;
-    userId?: string;
-};
-
-export type GovernPolicyView = {
-    /**
-     * A URL to the JSON Schema for this object.
-     */
-    readonly $schema?: string;
-    apiKeyId?: string;
-    appId?: string;
-    createdAt: string;
-    enabled: boolean;
-    enforcement: string;
-    environmentId?: string;
-    model?: string;
-    name: string;
-    policyId: string;
-    provider?: string;
-    rules: GovernRules;
-    updatedAt: string;
-    userId?: string;
-};
-
-export type GovernRules = {
-    allowedModels?: Array<string> | null;
-    allowedTools?: Array<string> | null;
-    defaultModel?: string;
-    deniedTools?: Array<string> | null;
-    maxTokens?: number;
-    reasoningEffortCap?: string;
-    reasoningTokensCap?: number;
-    requireSafetyIdentifier?: boolean;
-    requireStructuredOutput?: boolean;
-    serviceTier?: string;
-    temperatureMax?: number;
 };
 
 export type HealthOutputBody = {
@@ -1117,14 +1283,6 @@ export type LicenseStatus = {
     tier: string | null;
 };
 
-export type LinkOutputBody = {
-    /**
-     * A URL to the JSON Schema for this object.
-     */
-    readonly $schema?: string;
-    url: string;
-};
-
 export type ListAbuseFlagsOutputBody = {
     /**
      * A URL to the JSON Schema for this object.
@@ -1242,7 +1400,7 @@ export type ListOutputBody = {
      * A URL to the JSON Schema for this object.
      */
     readonly $schema?: string;
-    policies: Array<Policy> | null;
+    data: Array<AlertRuleDto> | null;
 };
 
 export type ListOutputBody1 = {
@@ -1250,7 +1408,7 @@ export type ListOutputBody1 = {
      * A URL to the JSON Schema for this object.
      */
     readonly $schema?: string;
-    policies: Array<GovernPolicyView> | null;
+    data: Array<DestinationDto> | null;
 };
 
 export type ListOutputBody2 = {
@@ -1258,39 +1416,7 @@ export type ListOutputBody2 = {
      * A URL to the JSON Schema for this object.
      */
     readonly $schema?: string;
-    dashboards: Array<DashboardView> | null;
-};
-
-export type ListOutputBody3 = {
-    /**
-     * A URL to the JSON Schema for this object.
-     */
-    readonly $schema?: string;
-    data: Array<AlertRuleDto> | null;
-};
-
-export type ListOutputBody4 = {
-    /**
-     * A URL to the JSON Schema for this object.
-     */
-    readonly $schema?: string;
-    data: Array<DestinationDto> | null;
-};
-
-export type ListOutputBody5 = {
-    /**
-     * A URL to the JSON Schema for this object.
-     */
-    readonly $schema?: string;
     data: Array<LogDto> | null;
-};
-
-export type ListRulesOutputBody = {
-    /**
-     * A URL to the JSON Schema for this object.
-     */
-    readonly $schema?: string;
-    rules: Array<RuleDto> | null;
 };
 
 export type ListTokensOutputBody = {
@@ -1307,14 +1433,6 @@ export type ListTracesOutputBody = {
      */
     readonly $schema?: string;
     traces: Array<TraceSummaryDto> | null;
-};
-
-export type ListViolationsOutputBody = {
-    /**
-     * A URL to the JSON Schema for this object.
-     */
-    readonly $schema?: string;
-    violations: Array<ViolationDto> | null;
 };
 
 export type LogDto = {
@@ -1342,7 +1460,10 @@ export type MeDto = {
     authMethod: string;
     email?: string;
     emailVerified: boolean;
+    firstName?: string;
+    lastName?: string;
     memberships: Array<MembershipDto> | null;
+    name?: string;
     orgId: string;
     roles: Array<string> | null;
     userId?: string;
@@ -1368,13 +1489,6 @@ export type MessageOutputBody = {
      */
     readonly $schema?: string;
     message: string;
-};
-
-export type ModerationCapability = {
-    actions: Array<string> | null;
-    detectors: Array<string> | null;
-    enabled: boolean;
-    targets: Array<string> | null;
 };
 
 export type OccurrencesOutputBody = {
@@ -1523,99 +1637,10 @@ export type PatchErrorInputBody = {
     snoozeUntilUsers?: number;
 };
 
-export type PlanFeatures = {
-    auditLog?: boolean;
-    customRetention?: boolean;
-    rbac?: boolean;
-    sso?: boolean;
-};
-
-export type PlanLimits = {
-    events: number | null;
-    features: PlanFeatures;
-    hotRetentionDays: number | null;
-    lemonsqueezyVariants?: {
-        [key: string]: string;
-    };
-    priceAnnualUsd: number | null;
-    priceMonthlyUsd: number | null;
-    retentionDays: number | null;
-    seats: number | null;
-};
-
 export type PlanMrr = {
     count: number;
     mrrUsd: number;
     plan: string;
-};
-
-export type PlansOutputBody = {
-    /**
-     * A URL to the JSON Schema for this object.
-     */
-    readonly $schema?: string;
-    plans: {
-        [key: string]: PlanLimits;
-    };
-};
-
-export type Policy = {
-    /**
-     * A URL to the JSON Schema for this object.
-     */
-    readonly $schema?: string;
-    apiKeyId?: string;
-    appId?: string;
-    cooldownMins: number;
-    createdAt: string;
-    currentSpendUsd?: number;
-    destination?: string;
-    destinationType?: string;
-    enabled: boolean;
-    environmentId?: string;
-    limitUsd: number;
-    model?: string;
-    name: string;
-    policyId: string;
-    provider?: string;
-    rungs: Array<Rung> | null;
-    tagKey?: string;
-    tagValue?: string;
-    updatedAt: string;
-    userId?: string;
-    windowType: string;
-};
-
-export type PolicyBody = {
-    /**
-     * A URL to the JSON Schema for this object.
-     */
-    readonly $schema?: string;
-    apiKeyId?: string;
-    appId?: string;
-    cooldownMins?: number;
-    destination?: string;
-    destinationType?: 'email' | 'webhook' | '';
-    enabled?: boolean;
-    environmentId?: string;
-    /**
-     * the 100% amount in USD
-     */
-    limitUsd: number;
-    /**
-     * model prefix; empty = all models
-     */
-    model?: string;
-    name: string;
-    provider?: string;
-    /**
-     * ordered ladder: each rung is {atPercent, action, blockMode?, fallbackModel?}
-     */
-    rungs: Array<Rung> | null;
-    tagKey?: string;
-    tagValue?: string;
-    userId?: string;
-    windowType: 'daily' | 'weekly' | 'monthly' | 'cumulative';
 };
 
 export type PublicIngestTokenDto = {
@@ -1631,26 +1656,12 @@ export type PublicIngestTokenDto = {
     tokenId: string;
 };
 
-export type RuleDto = {
+export type RevisionListOutputBody = {
     /**
      * A URL to the JSON Schema for this object.
      */
     readonly $schema?: string;
-    action: string;
-    createdAt: string;
-    detector: string;
-    enabled: boolean;
-    name: string;
-    pattern: string;
-    ruleId: string;
-    target: string;
-};
-
-export type Rung = {
-    action: string;
-    at_percent: number;
-    block_mode?: string;
-    fallback_model?: string;
+    revisions: Array<ActivityRevision> | null;
 };
 
 export type SearchEventsOutputBody = {
@@ -1757,17 +1768,6 @@ export type SetTrialInputBody = {
      * Trial length in days from now
      */
     days: number;
-};
-
-export type Spec = {
-    widgets: Array<Widget> | null;
-};
-
-export type SpendPolicyCapability = {
-    actions: Array<string> | null;
-    dimensions: Array<string> | null;
-    enabled: boolean;
-    windows: Array<string> | null;
 };
 
 export type StackFrameDto = {
@@ -1908,7 +1908,7 @@ export type UpdateInputBody = {
     destination?: string;
     destinationType?: 'email' | 'webhook';
     enabled?: boolean;
-    metric?: 'error_count' | 'error_rate' | 'latency_ms' | 'cost_usd';
+    metric?: 'error_count' | 'error_rate' | 'latency_ms' | 'cost_usd' | 'lifecycle_open';
     name?: string;
     operator?: 'gt' | 'gte' | 'lt' | 'lte';
     threshold?: number;
@@ -1959,25 +1959,12 @@ export type UpdateProfileInputBody = {
     lastName?: string;
 };
 
-export type UsageOutputBody = {
-    /**
-     * A URL to the JSON Schema for this object.
-     */
-    readonly $schema?: string;
-    cycleStartedAt: string | null;
-    hasBillingPortal: boolean;
-    limit: number | null;
-    plan: string;
-    retentionDays: number | null;
-    seats: number | null;
-    subscriptionStatus: string;
-    trialEndsAt: string | null;
-    used: number;
-};
-
 export type UserDto = {
+    createdAt: string;
+    deletedAt?: string;
     disabledAt?: string;
     email: string;
+    emailVerified: boolean;
     firstName?: string;
     id: string;
     lastName?: string;
@@ -2010,68 +1997,87 @@ export type VerifyResult = {
     ok: boolean;
 };
 
-export type ViolationDto = {
-    action: string;
-    appId?: string;
-    channelId?: string;
-    detector: string;
-    explanation?: string;
-    latencyMs?: number;
-    occurredAt: string;
-    ruleId: string;
-    ruleName: string;
-    target: string;
-    traceId?: string;
-    violationId: string;
-};
-
-export type WebhookOutputBody = {
+export type WorkspaceEntitiesOutputBody = {
     /**
      * A URL to the JSON Schema for this object.
      */
     readonly $schema?: string;
-    deduped?: boolean;
-    ok: boolean;
-    skipped?: string;
+    entities: Array<ActivityEntity> | null;
+    nextCursor?: string;
 };
 
-export type Widget = {
+export type WorkspaceIncidentsOutputBody = {
     /**
-     * breakdown dimension (model, provider, tag, ...)
+     * A URL to the JSON Schema for this object.
      */
-    dimension?: string;
-    limit?: number;
-    /**
-     * kpi/timeseries metric: calls|errors|cost|tokens|latency|ttft
-     */
-    metric?: string;
-    scope?: WidgetScope;
-    /**
-     * attribute key to group by when dimension=tag
-     */
-    tagKey?: string;
-    title?: string;
-    /**
-     * kpi | timeseries | breakdown | latency
-     */
-    type: 'kpi' | 'timeseries' | 'breakdown' | 'latency';
+    readonly $schema?: string;
+    incidents: Array<ActivityIncident> | null;
 };
 
-export type WidgetScope = {
-    app?: string;
+export type WorkspaceIngestInputBody = {
     /**
-     * Scope to a channel id
+     * A URL to the JSON Schema for this object.
      */
-    channel?: string;
-    environment?: string;
+    readonly $schema?: string;
+    environment: string;
+    observations: Array<ActivityObservation> | null;
+};
+
+export type WorkspaceIngestOutputBody = {
     /**
-     * Scope to a custom-dimension value; pair with filterTagValue
+     * A URL to the JSON Schema for this object.
      */
-    filterTagKey?: string;
-    filterTagValue?: string;
-    model?: string;
-    provider?: string;
-    source?: string;
+    readonly $schema?: string;
+    receipts: Array<ActivityReceipt> | null;
+};
+
+export type WorkspaceListOutputBody = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
+    workspaces: Array<ActivityWorkspace> | null;
+};
+
+export type WorkspacePreviewInputBody = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
+    observations: Array<ActivityObservation> | null;
+    spec: ActivityWorkspaceSpec;
+};
+
+export type WorkspaceStatusOutputBody = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
+    status: string;
+};
+
+export type WorkspaceTemplateListOutputBody = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
+    templates: Array<ActivityTemplate> | null;
+};
+
+export type WorkspaceTimelineOutputBody = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
+    events: Array<ActivityRecord> | null;
+};
+
+export type WorkspaceWidgetsOutputBody = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
+    series: Array<ActivityWidgetSeries> | null;
 };
 
 export type AcceptInvitationInputBodyWritable = {
@@ -2085,6 +2091,63 @@ export type AcceptInvitationOutputBodyWritable = {
     orgId: string;
     orgName: string;
     role: string;
+};
+
+export type ActivateInputBodyWritable = {
+    generation: number;
+    revision: string;
+};
+
+export type ActivityAnalyticsWritable = {
+    activations: Array<ActivityCohortCount> | null;
+    asOf: string;
+    attempts: Array<ActivityCohortCount> | null;
+    clients: Array<ActivityBreakdown> | null;
+    funnels: Array<ActivityFunnelResult> | null;
+    windowDays: number;
+};
+
+export type ActivityReceiptWritable = {
+    projectedAt: string | null;
+    receivedAt: string;
+    sourceEventId: string;
+    status: string;
+};
+
+export type ActivityRevisionWritable = {
+    createdAt: string;
+    createdBy: string;
+    id: string;
+    spec: ActivityWorkspaceSpecWritable;
+};
+
+export type ActivityTemplateWritable = {
+    id: string;
+    spec: ActivityWorkspaceSpecWritable;
+    version: number;
+    visibility: string;
+};
+
+export type ActivityWorkspaceWritable = {
+    activeRevision: string | null;
+    appId: string;
+    createdAt: string;
+    generation: number;
+    id: string;
+    name: string;
+    requestedRevision: string | null;
+};
+
+export type ActivityWorkspaceSpecWritable = {
+    alerts?: Array<ActivityAlert> | null;
+    description?: string;
+    entities: Array<ActivityEntityDefinition> | null;
+    funnels?: Array<ActivityFunnel> | null;
+    mappings: Array<ActivityMapping> | null;
+    name: string;
+    schemaVersion: 1;
+    template?: ActivityTemplateRef;
+    widgets: Array<ActivityWidget> | null;
 };
 
 export type AlertRuleDtoWritable = {
@@ -2145,17 +2208,6 @@ export type ChannelDtoWritable = {
     updatedAt?: string;
 };
 
-export type CheckoutInputBodyWritable = {
-    /**
-     * monthly or annual
-     */
-    cadence?: string;
-    /**
-     * pro or team
-     */
-    plan: string;
-};
-
 export type CreateAppInputBodyWritable = {
     /**
      * App display name
@@ -2212,12 +2264,17 @@ export type CreateEnvironmentInputBodyWritable = {
 };
 
 export type CreateInputBodyWritable = {
+    appId: string;
+    spec: ActivityWorkspaceSpecWritable;
+};
+
+export type CreateInputBody1Writable = {
     appId?: string;
     destination: string;
     destinationType: 'email' | 'webhook';
     enabled?: boolean;
     environmentId?: string;
-    metric: 'error_count' | 'error_rate' | 'latency_ms' | 'cost_usd';
+    metric: 'error_count' | 'error_rate' | 'latency_ms' | 'cost_usd' | 'lifecycle_open';
     model?: string;
     /**
      * Alert rule display name
@@ -2229,7 +2286,7 @@ export type CreateInputBodyWritable = {
     threshold: number;
 };
 
-export type CreateInputBody1Writable = {
+export type CreateInputBody2Writable = {
     endpointUrl: string;
     envSlug: string;
     eventTypeFilter?: Array<string> | null;
@@ -2247,7 +2304,7 @@ export type CreateInputBody1Writable = {
     signals: Array<string> | null;
 };
 
-export type CreateInputBody2Writable = {
+export type CreateInputBody3Writable = {
     category?: 'bug' | 'idea' | 'praise' | 'other';
     context?: {
         [key: string]: unknown;
@@ -2255,7 +2312,7 @@ export type CreateInputBody2Writable = {
     message: string;
 };
 
-export type CreateInputBody3Writable = {
+export type CreateInputBody4Writable = {
     company: string;
     email: string;
     name?: string;
@@ -2280,23 +2337,6 @@ export type CreateOutputBodyWritable = {
 export type CreateOutputBody1Writable = {
     ok: boolean;
     requestId: string;
-};
-
-export type CreateRuleInputBodyWritable = {
-    action: 'allow' | 'redact' | 'block' | 'flag';
-    /**
-     * builtin detector name, or 'regex'/'keyword'/'tool_name'/'tool_arg'
-     */
-    detector: string;
-    name: string;
-    /**
-     * regex/keyword; tool name for tool_name; a JSON-path expression for tool_arg (e.g. 'amount > 10000', 'account =~ ^ext-')
-     */
-    pattern?: string;
-    /**
-     * which part of the loop to evaluate (default request)
-     */
-    target?: 'request' | 'response' | 'tool_call';
 };
 
 export type CreateTokenInputBodyWritable = {
@@ -2329,25 +2369,6 @@ export type CreateTokenOutputBodyWritable = {
      */
     token: string;
     tokenId: string;
-};
-
-export type DashboardBodyWritable = {
-    description?: string;
-    name: string;
-    /**
-     * the widget spec; each widget is a saved analytics query
-     */
-    spec: Spec;
-};
-
-export type DashboardViewWritable = {
-    createdAt: string;
-    createdBy?: string;
-    dashboardId: string;
-    description?: string;
-    name: string;
-    spec: Spec;
-    updatedAt: string;
 };
 
 export type DeleteOutputBodyWritable = {
@@ -2399,10 +2420,6 @@ export type DimensionValuesOutputBodyWritable = {
 
 export type DimensionsOutputBodyWritable = {
     dimensions: Array<DimensionDto> | null;
-};
-
-export type EfficacyOutputBodyWritable = {
-    rows: Array<EfficacyRowDto> | null;
 };
 
 export type EnvironmentDtoWritable = {
@@ -2464,6 +2481,10 @@ export type EventBodyWritable = {
     metadata?: {
         [key: string]: unknown;
     };
+    /**
+     * Original source time; retries must preserve it
+     */
+    occurredAt?: string;
     parentSpanId?: string;
     /**
      * Event payload
@@ -2487,6 +2508,7 @@ export type EventOutputBodyWritable = {
 export type FeatureFlagsWritable = {
     analyticsV2: boolean;
     asyncIngest: boolean;
+    billing: boolean;
     environments: boolean;
     mcpServer: boolean;
     sentryIngest: boolean;
@@ -2505,47 +2527,6 @@ export type GetOutputBodyWritable = {
 export type GetTraceOutputBodyWritable = {
     spans: Array<EventDto> | null;
     traceId: string;
-};
-
-export type GovernPolicyBodyWritable = {
-    apiKeyId?: string;
-    appId?: string;
-    enabled?: boolean;
-    /**
-     * enforce (mutate to comply, default) | block (reject 422) | warn (record only)
-     */
-    enforcement?: 'enforce' | 'block' | 'warn' | '';
-    environmentId?: string;
-    /**
-     * model prefix; empty = all models
-     */
-    model?: string;
-    name: string;
-    /**
-     * openai | anthropic; empty = all providers
-     */
-    provider?: string;
-    /**
-     * the structural rule set
-     */
-    rules: GovernRules;
-    userId?: string;
-};
-
-export type GovernPolicyViewWritable = {
-    apiKeyId?: string;
-    appId?: string;
-    createdAt: string;
-    enabled: boolean;
-    enforcement: string;
-    environmentId?: string;
-    model?: string;
-    name: string;
-    policyId: string;
-    provider?: string;
-    rules: GovernRules;
-    updatedAt: string;
-    userId?: string;
 };
 
 export type HealthOutputBodyWritable = {
@@ -2632,10 +2613,6 @@ export type LicenseOutputBodyWritable = {
     tier?: string;
 };
 
-export type LinkOutputBodyWritable = {
-    url: string;
-};
-
 export type ListAbuseFlagsOutputBodyWritable = {
     flags: Array<AbuseFlagDto> | null;
 };
@@ -2693,31 +2670,15 @@ export type ListMembersOutputBodyWritable = {
 };
 
 export type ListOutputBodyWritable = {
-    policies: Array<PolicyWritable> | null;
-};
-
-export type ListOutputBody1Writable = {
-    policies: Array<GovernPolicyViewWritable> | null;
-};
-
-export type ListOutputBody2Writable = {
-    dashboards: Array<DashboardViewWritable> | null;
-};
-
-export type ListOutputBody3Writable = {
     data: Array<AlertRuleDtoWritable> | null;
 };
 
-export type ListOutputBody4Writable = {
+export type ListOutputBody1Writable = {
     data: Array<DestinationDtoWritable> | null;
 };
 
-export type ListOutputBody5Writable = {
+export type ListOutputBody2Writable = {
     data: Array<LogDto> | null;
-};
-
-export type ListRulesOutputBodyWritable = {
-    rules: Array<RuleDtoWritable> | null;
 };
 
 export type ListTokensOutputBodyWritable = {
@@ -2728,15 +2689,14 @@ export type ListTracesOutputBodyWritable = {
     traces: Array<TraceSummaryDto> | null;
 };
 
-export type ListViolationsOutputBodyWritable = {
-    violations: Array<ViolationDto> | null;
-};
-
 export type MeDtoWritable = {
     authMethod: string;
     email?: string;
     emailVerified: boolean;
+    firstName?: string;
+    lastName?: string;
     memberships: Array<MembershipDto> | null;
+    name?: string;
     orgId: string;
     roles: Array<string> | null;
     userId?: string;
@@ -2804,72 +2764,8 @@ export type PatchErrorInputBodyWritable = {
     snoozeUntilUsers?: number;
 };
 
-export type PlansOutputBodyWritable = {
-    plans: {
-        [key: string]: PlanLimits;
-    };
-};
-
-export type PolicyWritable = {
-    apiKeyId?: string;
-    appId?: string;
-    cooldownMins: number;
-    createdAt: string;
-    currentSpendUsd?: number;
-    destination?: string;
-    destinationType?: string;
-    enabled: boolean;
-    environmentId?: string;
-    limitUsd: number;
-    model?: string;
-    name: string;
-    policyId: string;
-    provider?: string;
-    rungs: Array<Rung> | null;
-    tagKey?: string;
-    tagValue?: string;
-    updatedAt: string;
-    userId?: string;
-    windowType: string;
-};
-
-export type PolicyBodyWritable = {
-    apiKeyId?: string;
-    appId?: string;
-    cooldownMins?: number;
-    destination?: string;
-    destinationType?: 'email' | 'webhook' | '';
-    enabled?: boolean;
-    environmentId?: string;
-    /**
-     * the 100% amount in USD
-     */
-    limitUsd: number;
-    /**
-     * model prefix; empty = all models
-     */
-    model?: string;
-    name: string;
-    provider?: string;
-    /**
-     * ordered ladder: each rung is {atPercent, action, blockMode?, fallbackModel?}
-     */
-    rungs: Array<Rung> | null;
-    tagKey?: string;
-    tagValue?: string;
-    userId?: string;
-    windowType: 'daily' | 'weekly' | 'monthly' | 'cumulative';
-};
-
-export type RuleDtoWritable = {
-    action: string;
-    createdAt: string;
-    detector: string;
-    enabled: boolean;
-    name: string;
-    pattern: string;
-    ruleId: string;
-    target: string;
+export type RevisionListOutputBodyWritable = {
+    revisions: Array<ActivityRevisionWritable> | null;
 };
 
 export type SearchEventsOutputBodyWritable = {
@@ -2982,7 +2878,7 @@ export type UpdateInputBodyWritable = {
     destination?: string;
     destinationType?: 'email' | 'webhook';
     enabled?: boolean;
-    metric?: 'error_count' | 'error_rate' | 'latency_ms' | 'cost_usd';
+    metric?: 'error_count' | 'error_rate' | 'latency_ms' | 'cost_usd' | 'lifecycle_open';
     name?: string;
     operator?: 'gt' | 'gte' | 'lt' | 'lte';
     threshold?: number;
@@ -3017,18 +2913,6 @@ export type UpdateProfileInputBodyWritable = {
     lastName?: string;
 };
 
-export type UsageOutputBodyWritable = {
-    cycleStartedAt: string | null;
-    hasBillingPortal: boolean;
-    limit: number | null;
-    plan: string;
-    retentionDays: number | null;
-    seats: number | null;
-    subscriptionStatus: string;
-    trialEndsAt: string | null;
-    used: number;
-};
-
 export type UserOrgDtoWritable = {
     organization: OrganizationDtoWritable;
     role: string;
@@ -3046,14 +2930,51 @@ export type VerifyResultWritable = {
     ok: boolean;
 };
 
-export type WebhookOutputBodyWritable = {
-    deduped?: boolean;
-    ok: boolean;
-    skipped?: string;
+export type WorkspaceEntitiesOutputBodyWritable = {
+    entities: Array<ActivityEntity> | null;
+    nextCursor?: string;
+};
+
+export type WorkspaceIncidentsOutputBodyWritable = {
+    incidents: Array<ActivityIncident> | null;
+};
+
+export type WorkspaceIngestInputBodyWritable = {
+    environment: string;
+    observations: Array<ActivityObservation> | null;
+};
+
+export type WorkspaceIngestOutputBodyWritable = {
+    receipts: Array<ActivityReceiptWritable> | null;
+};
+
+export type WorkspaceListOutputBodyWritable = {
+    workspaces: Array<ActivityWorkspaceWritable> | null;
+};
+
+export type WorkspacePreviewInputBodyWritable = {
+    observations: Array<ActivityObservation> | null;
+    spec: ActivityWorkspaceSpecWritable;
+};
+
+export type WorkspaceStatusOutputBodyWritable = {
+    status: string;
+};
+
+export type WorkspaceTemplateListOutputBodyWritable = {
+    templates: Array<ActivityTemplateWritable> | null;
+};
+
+export type WorkspaceTimelineOutputBodyWritable = {
+    events: Array<ActivityRecord> | null;
+};
+
+export type WorkspaceWidgetsOutputBodyWritable = {
+    series: Array<ActivityWidgetSeries> | null;
 };
 
 export type AccessRequestCreateData = {
-    body: CreateInputBody3Writable;
+    body: CreateInputBody4Writable;
     headers?: {
         'CF-Connecting-IP'?: string;
         'X-Forwarded-For'?: string;
@@ -3391,6 +3312,33 @@ export type AdminOrgsSetBillingResponses = {
 
 export type AdminOrgsSetBillingResponse = AdminOrgsSetBillingResponses[keyof AdminOrgsSetBillingResponses];
 
+export type AdminOrgsDeleteData = {
+    body?: never;
+    path: {
+        orgId: string;
+    };
+    query?: never;
+    url: '/admin/orgs/{orgId}/delete';
+};
+
+export type AdminOrgsDeleteErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type AdminOrgsDeleteError = AdminOrgsDeleteErrors[keyof AdminOrgsDeleteErrors];
+
+export type AdminOrgsDeleteResponses = {
+    /**
+     * OK
+     */
+    200: OkOutputBody;
+};
+
+export type AdminOrgsDeleteResponse = AdminOrgsDeleteResponses[keyof AdminOrgsDeleteResponses];
+
 export type AdminOrgsDisableData = {
     body?: never;
     path: {
@@ -3586,6 +3534,10 @@ export type AdminUsersSearchData = {
          * Filter by email or username
          */
         q?: string;
+        /**
+         * Include soft-deleted users
+         */
+        includeDeleted?: boolean;
     };
     url: '/admin/users';
 };
@@ -3607,6 +3559,33 @@ export type AdminUsersSearchResponses = {
 };
 
 export type AdminUsersSearchResponse = AdminUsersSearchResponses[keyof AdminUsersSearchResponses];
+
+export type AdminUsersDeleteData = {
+    body?: never;
+    path: {
+        userId: string;
+    };
+    query?: never;
+    url: '/admin/users/{userId}/delete';
+};
+
+export type AdminUsersDeleteErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type AdminUsersDeleteError = AdminUsersDeleteErrors[keyof AdminUsersDeleteErrors];
+
+export type AdminUsersDeleteResponses = {
+    /**
+     * OK
+     */
+    200: OkOutputBody;
+};
+
+export type AdminUsersDeleteResponse = AdminUsersDeleteResponses[keyof AdminUsersDeleteResponses];
 
 export type AdminUsersDisableData = {
     body?: never;
@@ -3661,6 +3640,33 @@ export type AdminUsersEnableResponses = {
 };
 
 export type AdminUsersEnableResponse = AdminUsersEnableResponses[keyof AdminUsersEnableResponses];
+
+export type AdminUsersRestoreData = {
+    body?: never;
+    path: {
+        userId: string;
+    };
+    query?: never;
+    url: '/admin/users/{userId}/restore';
+};
+
+export type AdminUsersRestoreErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type AdminUsersRestoreError = AdminUsersRestoreErrors[keyof AdminUsersRestoreErrors];
+
+export type AdminUsersRestoreResponses = {
+    /**
+     * OK
+     */
+    200: OkOutputBody;
+};
+
+export type AdminUsersRestoreResponse = AdminUsersRestoreResponses[keyof AdminUsersRestoreResponses];
 
 export type AnalyticsBreakdownData = {
     body?: never;
@@ -4564,7 +4570,7 @@ export type AuditListResponses = {
     /**
      * OK
      */
-    200: ListOutputBody5;
+    200: ListOutputBody2;
 };
 
 export type AuditListResponse = AuditListResponses[keyof AuditListResponses];
@@ -4636,134 +4642,6 @@ export type AudittrailGetResponses = {
 
 export type AudittrailGetResponse = AudittrailGetResponses[keyof AudittrailGetResponses];
 
-export type BillingCheckoutData = {
-    body: CheckoutInputBodyWritable;
-    path?: never;
-    query?: never;
-    url: '/billing/checkout';
-};
-
-export type BillingCheckoutErrors = {
-    /**
-     * Error
-     */
-    default: ErrorModel;
-};
-
-export type BillingCheckoutError = BillingCheckoutErrors[keyof BillingCheckoutErrors];
-
-export type BillingCheckoutResponses = {
-    /**
-     * Created
-     */
-    201: LinkOutputBody;
-};
-
-export type BillingCheckoutResponse = BillingCheckoutResponses[keyof BillingCheckoutResponses];
-
-export type BillingPlansData = {
-    body?: never;
-    path?: never;
-    query?: never;
-    url: '/billing/plans';
-};
-
-export type BillingPlansErrors = {
-    /**
-     * Error
-     */
-    default: ErrorModel;
-};
-
-export type BillingPlansError = BillingPlansErrors[keyof BillingPlansErrors];
-
-export type BillingPlansResponses = {
-    /**
-     * OK
-     */
-    200: PlansOutputBody;
-};
-
-export type BillingPlansResponse = BillingPlansResponses[keyof BillingPlansResponses];
-
-export type BillingPortalData = {
-    body?: never;
-    path?: never;
-    query?: never;
-    url: '/billing/portal';
-};
-
-export type BillingPortalErrors = {
-    /**
-     * Error
-     */
-    default: ErrorModel;
-};
-
-export type BillingPortalError = BillingPortalErrors[keyof BillingPortalErrors];
-
-export type BillingPortalResponses = {
-    /**
-     * OK
-     */
-    200: LinkOutputBody;
-};
-
-export type BillingPortalResponse = BillingPortalResponses[keyof BillingPortalResponses];
-
-export type BillingUsageData = {
-    body?: never;
-    path?: never;
-    query?: never;
-    url: '/billing/usage';
-};
-
-export type BillingUsageErrors = {
-    /**
-     * Error
-     */
-    default: ErrorModel;
-};
-
-export type BillingUsageError = BillingUsageErrors[keyof BillingUsageErrors];
-
-export type BillingUsageResponses = {
-    /**
-     * OK
-     */
-    200: UsageOutputBody;
-};
-
-export type BillingUsageResponse = BillingUsageResponses[keyof BillingUsageResponses];
-
-export type BillingWebhookData = {
-    body: Blob | File;
-    headers?: {
-        'X-Signature'?: string;
-    };
-    path?: never;
-    query?: never;
-    url: '/billing/webhook';
-};
-
-export type BillingWebhookErrors = {
-    /**
-     * Error
-     */
-    default: ErrorModel;
-};
-
-export type BillingWebhookError = BillingWebhookErrors[keyof BillingWebhookErrors];
-
-export type BillingWebhookResponses = {
-    /**
-     * OK
-     */
-    200: WebhookOutputBody;
-};
-
-export type BillingWebhookResponse = BillingWebhookResponses[keyof BillingWebhookResponses];
-
 export type CapabilitiesGetData = {
     body?: never;
     path?: never;
@@ -4788,137 +4666,6 @@ export type CapabilitiesGetResponses = {
 };
 
 export type CapabilitiesGetResponse = CapabilitiesGetResponses[keyof CapabilitiesGetResponses];
-
-export type DashboardsListData = {
-    body?: never;
-    path?: never;
-    query?: never;
-    url: '/dashboards';
-};
-
-export type DashboardsListErrors = {
-    /**
-     * Error
-     */
-    default: ErrorModel;
-};
-
-export type DashboardsListError = DashboardsListErrors[keyof DashboardsListErrors];
-
-export type DashboardsListResponses = {
-    /**
-     * OK
-     */
-    200: ListOutputBody2;
-};
-
-export type DashboardsListResponse = DashboardsListResponses[keyof DashboardsListResponses];
-
-export type DashboardsCreateData = {
-    body: DashboardBodyWritable;
-    path?: never;
-    query?: never;
-    url: '/dashboards';
-};
-
-export type DashboardsCreateErrors = {
-    /**
-     * Error
-     */
-    default: ErrorModel;
-};
-
-export type DashboardsCreateError = DashboardsCreateErrors[keyof DashboardsCreateErrors];
-
-export type DashboardsCreateResponses = {
-    /**
-     * Created
-     */
-    201: DashboardView;
-};
-
-export type DashboardsCreateResponse = DashboardsCreateResponses[keyof DashboardsCreateResponses];
-
-export type DashboardsDeleteData = {
-    body?: never;
-    path: {
-        dashboardId: string;
-    };
-    query?: never;
-    url: '/dashboards/{dashboardId}';
-};
-
-export type DashboardsDeleteErrors = {
-    /**
-     * Error
-     */
-    default: ErrorModel;
-};
-
-export type DashboardsDeleteError = DashboardsDeleteErrors[keyof DashboardsDeleteErrors];
-
-export type DashboardsDeleteResponses = {
-    /**
-     * OK
-     */
-    200: OkOutputBody;
-};
-
-export type DashboardsDeleteResponse = DashboardsDeleteResponses[keyof DashboardsDeleteResponses];
-
-export type DashboardsGetData = {
-    body?: never;
-    path: {
-        dashboardId: string;
-    };
-    query?: never;
-    url: '/dashboards/{dashboardId}';
-};
-
-export type DashboardsGetErrors = {
-    /**
-     * Error
-     */
-    default: ErrorModel;
-};
-
-export type DashboardsGetError = DashboardsGetErrors[keyof DashboardsGetErrors];
-
-export type DashboardsGetResponses = {
-    /**
-     * OK
-     */
-    200: DashboardView;
-};
-
-export type DashboardsGetResponse = DashboardsGetResponses[keyof DashboardsGetResponses];
-
-export type DashboardsUpdateData = {
-    body: DashboardBodyWritable;
-    path: {
-        dashboardId: string;
-    };
-    query?: never;
-    url: '/dashboards/{dashboardId}';
-};
-
-export type DashboardsUpdateErrors = {
-    /**
-     * Error
-     */
-    default: ErrorModel;
-};
-
-export type DashboardsUpdateError = DashboardsUpdateErrors[keyof DashboardsUpdateErrors];
-
-export type DashboardsUpdateResponses = {
-    /**
-     * OK
-     */
-    200: DashboardView;
-};
-
-export type DashboardsUpdateResponse = DashboardsUpdateResponses[keyof DashboardsUpdateResponses];
 
 export type EnvironmentsListData = {
     body?: never;
@@ -5367,13 +5114,13 @@ export type ExportListResponses = {
     /**
      * OK
      */
-    200: ListOutputBody4;
+    200: ListOutputBody1;
 };
 
 export type ExportListResponse = ExportListResponses[keyof ExportListResponses];
 
 export type ExportCreateData = {
-    body: CreateInputBody1Writable;
+    body: CreateInputBody2Writable;
     path?: never;
     query?: never;
     url: '/export-destinations';
@@ -5558,7 +5305,7 @@ export type FeatureFlagsMeResponses = {
 export type FeatureFlagsMeResponse = FeatureFlagsMeResponses[keyof FeatureFlagsMeResponses];
 
 export type FeedbackCreateData = {
-    body: CreateInputBody2Writable;
+    body: CreateInputBody3Writable;
     headers?: {
         'CF-Connecting-IP'?: string;
         'X-Forwarded-For'?: string;
@@ -5586,110 +5333,6 @@ export type FeedbackCreateResponses = {
 };
 
 export type FeedbackCreateResponse = FeedbackCreateResponses[keyof FeedbackCreateResponses];
-
-export type GovernPoliciesListData = {
-    body?: never;
-    path?: never;
-    query?: never;
-    url: '/govern-policies';
-};
-
-export type GovernPoliciesListErrors = {
-    /**
-     * Error
-     */
-    default: ErrorModel;
-};
-
-export type GovernPoliciesListError = GovernPoliciesListErrors[keyof GovernPoliciesListErrors];
-
-export type GovernPoliciesListResponses = {
-    /**
-     * OK
-     */
-    200: ListOutputBody1;
-};
-
-export type GovernPoliciesListResponse = GovernPoliciesListResponses[keyof GovernPoliciesListResponses];
-
-export type GovernPoliciesCreateData = {
-    body: GovernPolicyBodyWritable;
-    path?: never;
-    query?: never;
-    url: '/govern-policies';
-};
-
-export type GovernPoliciesCreateErrors = {
-    /**
-     * Error
-     */
-    default: ErrorModel;
-};
-
-export type GovernPoliciesCreateError = GovernPoliciesCreateErrors[keyof GovernPoliciesCreateErrors];
-
-export type GovernPoliciesCreateResponses = {
-    /**
-     * Created
-     */
-    201: GovernPolicyView;
-};
-
-export type GovernPoliciesCreateResponse = GovernPoliciesCreateResponses[keyof GovernPoliciesCreateResponses];
-
-export type GovernPoliciesDeleteData = {
-    body?: never;
-    path: {
-        policyId: string;
-    };
-    query?: never;
-    url: '/govern-policies/{policyId}';
-};
-
-export type GovernPoliciesDeleteErrors = {
-    /**
-     * Error
-     */
-    default: ErrorModel;
-};
-
-export type GovernPoliciesDeleteError = GovernPoliciesDeleteErrors[keyof GovernPoliciesDeleteErrors];
-
-export type GovernPoliciesDeleteResponses = {
-    /**
-     * OK
-     */
-    200: OkOutputBody;
-};
-
-export type GovernPoliciesDeleteResponse = GovernPoliciesDeleteResponses[keyof GovernPoliciesDeleteResponses];
-
-export type GovernPoliciesUpdateData = {
-    body: GovernPolicyBodyWritable;
-    path: {
-        policyId: string;
-    };
-    query?: never;
-    url: '/govern-policies/{policyId}';
-};
-
-export type GovernPoliciesUpdateErrors = {
-    /**
-     * Error
-     */
-    default: ErrorModel;
-};
-
-export type GovernPoliciesUpdateError = GovernPoliciesUpdateErrors[keyof GovernPoliciesUpdateErrors];
-
-export type GovernPoliciesUpdateResponses = {
-    /**
-     * OK
-     */
-    200: GovernPolicyView;
-};
-
-export type GovernPoliciesUpdateResponse = GovernPoliciesUpdateResponses[keyof GovernPoliciesUpdateResponses];
 
 export type GetHealthzData = {
     body?: never;
@@ -5765,144 +5408,6 @@ export type LicenseGetResponses = {
 };
 
 export type LicenseGetResponse = LicenseGetResponses[keyof LicenseGetResponses];
-
-export type ModerationEfficacyData = {
-    body?: never;
-    path?: never;
-    query?: {
-        /**
-         * Window start (RFC3339); defaults to 24h before until
-         */
-        since?: string;
-        /**
-         * Window end (RFC3339); defaults to now
-         */
-        until?: string;
-    };
-    url: '/moderation/efficacy';
-};
-
-export type ModerationEfficacyErrors = {
-    /**
-     * Error
-     */
-    default: ErrorModel;
-};
-
-export type ModerationEfficacyError = ModerationEfficacyErrors[keyof ModerationEfficacyErrors];
-
-export type ModerationEfficacyResponses = {
-    /**
-     * OK
-     */
-    200: EfficacyOutputBody;
-};
-
-export type ModerationEfficacyResponse = ModerationEfficacyResponses[keyof ModerationEfficacyResponses];
-
-export type ModerationRulesListData = {
-    body?: never;
-    path?: never;
-    query?: never;
-    url: '/moderation/rules';
-};
-
-export type ModerationRulesListErrors = {
-    /**
-     * Error
-     */
-    default: ErrorModel;
-};
-
-export type ModerationRulesListError = ModerationRulesListErrors[keyof ModerationRulesListErrors];
-
-export type ModerationRulesListResponses = {
-    /**
-     * OK
-     */
-    200: ListRulesOutputBody;
-};
-
-export type ModerationRulesListResponse = ModerationRulesListResponses[keyof ModerationRulesListResponses];
-
-export type ModerationRulesCreateData = {
-    body: CreateRuleInputBodyWritable;
-    path?: never;
-    query?: never;
-    url: '/moderation/rules';
-};
-
-export type ModerationRulesCreateErrors = {
-    /**
-     * Error
-     */
-    default: ErrorModel;
-};
-
-export type ModerationRulesCreateError = ModerationRulesCreateErrors[keyof ModerationRulesCreateErrors];
-
-export type ModerationRulesCreateResponses = {
-    /**
-     * Created
-     */
-    201: RuleDto;
-};
-
-export type ModerationRulesCreateResponse = ModerationRulesCreateResponses[keyof ModerationRulesCreateResponses];
-
-export type ModerationRulesDeleteData = {
-    body?: never;
-    path: {
-        ruleId: string;
-    };
-    query?: never;
-    url: '/moderation/rules/{ruleId}';
-};
-
-export type ModerationRulesDeleteErrors = {
-    /**
-     * Error
-     */
-    default: ErrorModel;
-};
-
-export type ModerationRulesDeleteError = ModerationRulesDeleteErrors[keyof ModerationRulesDeleteErrors];
-
-export type ModerationRulesDeleteResponses = {
-    /**
-     * OK
-     */
-    200: OkOutputBody;
-};
-
-export type ModerationRulesDeleteResponse = ModerationRulesDeleteResponses[keyof ModerationRulesDeleteResponses];
-
-export type ModerationViolationsListData = {
-    body?: never;
-    path?: never;
-    query?: {
-        limit?: number;
-    };
-    url: '/moderation/violations';
-};
-
-export type ModerationViolationsListErrors = {
-    /**
-     * Error
-     */
-    default: ErrorModel;
-};
-
-export type ModerationViolationsListError = ModerationViolationsListErrors[keyof ModerationViolationsListErrors];
-
-export type ModerationViolationsListResponses = {
-    /**
-     * OK
-     */
-    200: ListViolationsOutputBody;
-};
-
-export type ModerationViolationsListResponse = ModerationViolationsListResponses[keyof ModerationViolationsListResponses];
 
 export type OrganizationGetData = {
     body?: never;
@@ -6334,109 +5839,55 @@ export type TokensRevokeResponses = {
 
 export type TokensRevokeResponse = TokensRevokeResponses[keyof TokensRevokeResponses];
 
-export type SpendPoliciesListData = {
+export type TemplatesListData = {
     body?: never;
     path?: never;
     query?: never;
-    url: '/spend-policies';
+    url: '/templates';
 };
 
-export type SpendPoliciesListErrors = {
+export type TemplatesListErrors = {
     /**
      * Error
      */
     default: ErrorModel;
 };
 
-export type SpendPoliciesListError = SpendPoliciesListErrors[keyof SpendPoliciesListErrors];
+export type TemplatesListError = TemplatesListErrors[keyof TemplatesListErrors];
 
-export type SpendPoliciesListResponses = {
+export type TemplatesListResponses = {
     /**
      * OK
      */
-    200: ListOutputBody;
+    200: WorkspaceTemplateListOutputBody;
 };
 
-export type SpendPoliciesListResponse = SpendPoliciesListResponses[keyof SpendPoliciesListResponses];
+export type TemplatesListResponse = TemplatesListResponses[keyof TemplatesListResponses];
 
-export type SpendPoliciesCreateData = {
-    body: PolicyBodyWritable;
+export type TemplatesPublishData = {
+    body: ActivityTemplateWritable;
     path?: never;
     query?: never;
-    url: '/spend-policies';
+    url: '/templates';
 };
 
-export type SpendPoliciesCreateErrors = {
+export type TemplatesPublishErrors = {
     /**
      * Error
      */
     default: ErrorModel;
 };
 
-export type SpendPoliciesCreateError = SpendPoliciesCreateErrors[keyof SpendPoliciesCreateErrors];
+export type TemplatesPublishError = TemplatesPublishErrors[keyof TemplatesPublishErrors];
 
-export type SpendPoliciesCreateResponses = {
-    /**
-     * Created
-     */
-    201: Policy;
-};
-
-export type SpendPoliciesCreateResponse = SpendPoliciesCreateResponses[keyof SpendPoliciesCreateResponses];
-
-export type SpendPoliciesDeleteData = {
-    body?: never;
-    path: {
-        policyId: string;
-    };
-    query?: never;
-    url: '/spend-policies/{policyId}';
-};
-
-export type SpendPoliciesDeleteErrors = {
-    /**
-     * Error
-     */
-    default: ErrorModel;
-};
-
-export type SpendPoliciesDeleteError = SpendPoliciesDeleteErrors[keyof SpendPoliciesDeleteErrors];
-
-export type SpendPoliciesDeleteResponses = {
+export type TemplatesPublishResponses = {
     /**
      * OK
      */
-    200: OkOutputBody;
+    200: WorkspaceStatusOutputBody;
 };
 
-export type SpendPoliciesDeleteResponse = SpendPoliciesDeleteResponses[keyof SpendPoliciesDeleteResponses];
-
-export type SpendPoliciesUpdateData = {
-    body: PolicyBodyWritable;
-    path: {
-        policyId: string;
-    };
-    query?: never;
-    url: '/spend-policies/{policyId}';
-};
-
-export type SpendPoliciesUpdateErrors = {
-    /**
-     * Error
-     */
-    default: ErrorModel;
-};
-
-export type SpendPoliciesUpdateError = SpendPoliciesUpdateErrors[keyof SpendPoliciesUpdateErrors];
-
-export type SpendPoliciesUpdateResponses = {
-    /**
-     * OK
-     */
-    200: Policy;
-};
-
-export type SpendPoliciesUpdateResponse = SpendPoliciesUpdateResponses[keyof SpendPoliciesUpdateResponses];
+export type TemplatesPublishResponse = TemplatesPublishResponses[keyof TemplatesPublishResponses];
 
 export type TracesListData = {
     body?: never;
@@ -6703,13 +6154,13 @@ export type AlertsListResponses = {
     /**
      * OK
      */
-    200: ListOutputBody3;
+    200: ListOutputBody;
 };
 
 export type AlertsListResponse = AlertsListResponses[keyof AlertsListResponses];
 
 export type AlertsCreateData = {
-    body: CreateInputBodyWritable;
+    body: CreateInputBody1Writable;
     path?: never;
     query?: never;
     url: '/v2/alerts';
@@ -6924,3 +6375,616 @@ export type WebhooksDeleteEndpointResponses = {
 };
 
 export type WebhooksDeleteEndpointResponse = WebhooksDeleteEndpointResponses[keyof WebhooksDeleteEndpointResponses];
+
+export type WorkspacesListData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/workspaces';
+};
+
+export type WorkspacesListErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type WorkspacesListError = WorkspacesListErrors[keyof WorkspacesListErrors];
+
+export type WorkspacesListResponses = {
+    /**
+     * OK
+     */
+    200: WorkspaceListOutputBody;
+};
+
+export type WorkspacesListResponse = WorkspacesListResponses[keyof WorkspacesListResponses];
+
+export type WorkspacesCreateData = {
+    body: CreateInputBodyWritable;
+    path?: never;
+    query?: never;
+    url: '/workspaces';
+};
+
+export type WorkspacesCreateErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type WorkspacesCreateError = WorkspacesCreateErrors[keyof WorkspacesCreateErrors];
+
+export type WorkspacesCreateResponses = {
+    /**
+     * Created
+     */
+    201: ActivityWorkspace;
+};
+
+export type WorkspacesCreateResponse = WorkspacesCreateResponses[keyof WorkspacesCreateResponses];
+
+export type WorkspacesPreviewData = {
+    body: WorkspacePreviewInputBodyWritable;
+    path?: never;
+    query?: never;
+    url: '/workspaces/preview';
+};
+
+export type WorkspacesPreviewErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type WorkspacesPreviewError = WorkspacesPreviewErrors[keyof WorkspacesPreviewErrors];
+
+export type WorkspacesPreviewResponses = {
+    /**
+     * OK
+     */
+    200: WorkspaceEntitiesOutputBody;
+};
+
+export type WorkspacesPreviewResponse = WorkspacesPreviewResponses[keyof WorkspacesPreviewResponses];
+
+export type WorkspacesSchemaData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/workspaces/schema';
+};
+
+export type WorkspacesSchemaErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type WorkspacesSchemaError = WorkspacesSchemaErrors[keyof WorkspacesSchemaErrors];
+
+export type WorkspacesSchemaResponses = {
+    /**
+     * OK
+     */
+    200: {
+        [key: string]: unknown;
+    };
+};
+
+export type WorkspacesSchemaResponse = WorkspacesSchemaResponses[keyof WorkspacesSchemaResponses];
+
+export type WorkspacesValidateData = {
+    body: ActivityWorkspaceSpecWritable;
+    path?: never;
+    query?: never;
+    url: '/workspaces/validate';
+};
+
+export type WorkspacesValidateErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type WorkspacesValidateError = WorkspacesValidateErrors[keyof WorkspacesValidateErrors];
+
+export type WorkspacesValidateResponses = {
+    /**
+     * OK
+     */
+    200: WorkspaceStatusOutputBody;
+};
+
+export type WorkspacesValidateResponse = WorkspacesValidateResponses[keyof WorkspacesValidateResponses];
+
+export type WorkspacesGetData = {
+    body?: never;
+    path: {
+        workspaceId: string;
+    };
+    query?: never;
+    url: '/workspaces/{workspaceId}';
+};
+
+export type WorkspacesGetErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type WorkspacesGetError = WorkspacesGetErrors[keyof WorkspacesGetErrors];
+
+export type WorkspacesGetResponses = {
+    /**
+     * OK
+     */
+    200: ActivityWorkspace;
+};
+
+export type WorkspacesGetResponse = WorkspacesGetResponses[keyof WorkspacesGetResponses];
+
+export type WorkspacesActivateData = {
+    body: ActivateInputBodyWritable;
+    path: {
+        workspaceId: string;
+    };
+    query?: never;
+    url: '/workspaces/{workspaceId}/activate';
+};
+
+export type WorkspacesActivateErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type WorkspacesActivateError = WorkspacesActivateErrors[keyof WorkspacesActivateErrors];
+
+export type WorkspacesActivateResponses = {
+    /**
+     * OK
+     */
+    200: WorkspaceStatusOutputBody;
+};
+
+export type WorkspacesActivateResponse = WorkspacesActivateResponses[keyof WorkspacesActivateResponses];
+
+export type ActivityEntitiesData = {
+    body?: never;
+    path: {
+        workspaceId: string;
+    };
+    query?: {
+        environment?: string;
+        entity?: string;
+        entityId?: string;
+        side?: string;
+        client?: string;
+        action?: string;
+        outcome?: string;
+        state?: string;
+        freshness?: 'fresh' | 'stale';
+        q?: string;
+        agentId?: string;
+        cursor?: string;
+        limit?: number;
+    };
+    url: '/workspaces/{workspaceId}/activity';
+};
+
+export type ActivityEntitiesErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type ActivityEntitiesError = ActivityEntitiesErrors[keyof ActivityEntitiesErrors];
+
+export type ActivityEntitiesResponses = {
+    /**
+     * OK
+     */
+    200: WorkspaceEntitiesOutputBody;
+};
+
+export type ActivityEntitiesResponse = ActivityEntitiesResponses[keyof ActivityEntitiesResponses];
+
+export type ActivityDeleteAgentData = {
+    body?: never;
+    path: {
+        workspaceId: string;
+        agentId: string;
+    };
+    query?: {
+        environment?: string;
+    };
+    url: '/workspaces/{workspaceId}/agents/{agentId}';
+};
+
+export type ActivityDeleteAgentErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type ActivityDeleteAgentError = ActivityDeleteAgentErrors[keyof ActivityDeleteAgentErrors];
+
+export type ActivityDeleteAgentResponses = {
+    /**
+     * OK
+     */
+    200: WorkspaceStatusOutputBody;
+};
+
+export type ActivityDeleteAgentResponse = ActivityDeleteAgentResponses[keyof ActivityDeleteAgentResponses];
+
+export type ActivityAnalyticsData = {
+    body?: never;
+    path: {
+        workspaceId: string;
+    };
+    query?: {
+        environment?: string;
+        entity?: string;
+        entityId?: string;
+        side?: string;
+        client?: string;
+        action?: string;
+        outcome?: string;
+        state?: string;
+        freshness?: 'fresh' | 'stale';
+        q?: string;
+        agentId?: string;
+        cursor?: string;
+        limit?: number;
+    };
+    url: '/workspaces/{workspaceId}/analytics';
+};
+
+export type ActivityAnalyticsErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type ActivityAnalyticsError = ActivityAnalyticsErrors[keyof ActivityAnalyticsErrors];
+
+export type ActivityAnalyticsResponses = {
+    /**
+     * OK
+     */
+    200: ActivityAnalytics;
+};
+
+export type ActivityAnalyticsResponse = ActivityAnalyticsResponses[keyof ActivityAnalyticsResponses];
+
+export type ActivityHealthData = {
+    body?: never;
+    path: {
+        workspaceId: string;
+    };
+    query?: {
+        environment?: string;
+        entity?: string;
+        entityId?: string;
+        side?: string;
+        client?: string;
+        action?: string;
+        outcome?: string;
+        state?: string;
+        freshness?: 'fresh' | 'stale';
+        q?: string;
+        agentId?: string;
+        cursor?: string;
+        limit?: number;
+    };
+    url: '/workspaces/{workspaceId}/health';
+};
+
+export type ActivityHealthErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type ActivityHealthError = ActivityHealthErrors[keyof ActivityHealthErrors];
+
+export type ActivityHealthResponses = {
+    /**
+     * OK
+     */
+    200: {
+        [key: string]: unknown;
+    };
+};
+
+export type ActivityHealthResponse = ActivityHealthResponses[keyof ActivityHealthResponses];
+
+export type ActivityIncidentsData = {
+    body?: never;
+    path: {
+        workspaceId: string;
+    };
+    query?: {
+        environment?: string;
+        entity?: string;
+        entityId?: string;
+        side?: string;
+        client?: string;
+        action?: string;
+        outcome?: string;
+        state?: string;
+        freshness?: 'fresh' | 'stale';
+        q?: string;
+        agentId?: string;
+        cursor?: string;
+        limit?: number;
+    };
+    url: '/workspaces/{workspaceId}/incidents';
+};
+
+export type ActivityIncidentsErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type ActivityIncidentsError = ActivityIncidentsErrors[keyof ActivityIncidentsErrors];
+
+export type ActivityIncidentsResponses = {
+    /**
+     * OK
+     */
+    200: WorkspaceIncidentsOutputBody;
+};
+
+export type ActivityIncidentsResponse = ActivityIncidentsResponses[keyof ActivityIncidentsResponses];
+
+export type ObservationsAcceptData = {
+    body: WorkspaceIngestInputBodyWritable;
+    path: {
+        workspaceId: string;
+    };
+    query?: never;
+    url: '/workspaces/{workspaceId}/observations';
+};
+
+export type ObservationsAcceptErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type ObservationsAcceptError = ObservationsAcceptErrors[keyof ObservationsAcceptErrors];
+
+export type ObservationsAcceptResponses = {
+    /**
+     * OK
+     */
+    200: WorkspaceIngestOutputBody;
+};
+
+export type ObservationsAcceptResponse = ObservationsAcceptResponses[keyof ObservationsAcceptResponses];
+
+export type ObservationsReceiptData = {
+    body?: never;
+    path: {
+        workspaceId: string;
+        sourceEventId: string;
+    };
+    query?: {
+        environment?: string;
+    };
+    url: '/workspaces/{workspaceId}/observations/{sourceEventId}';
+};
+
+export type ObservationsReceiptErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type ObservationsReceiptError = ObservationsReceiptErrors[keyof ObservationsReceiptErrors];
+
+export type ObservationsReceiptResponses = {
+    /**
+     * OK
+     */
+    200: ActivityReceipt;
+};
+
+export type ObservationsReceiptResponse = ObservationsReceiptResponses[keyof ObservationsReceiptResponses];
+
+export type WorkspacesRevisionsData = {
+    body?: never;
+    path: {
+        workspaceId: string;
+    };
+    query?: never;
+    url: '/workspaces/{workspaceId}/revisions';
+};
+
+export type WorkspacesRevisionsErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type WorkspacesRevisionsError = WorkspacesRevisionsErrors[keyof WorkspacesRevisionsErrors];
+
+export type WorkspacesRevisionsResponses = {
+    /**
+     * OK
+     */
+    200: RevisionListOutputBody;
+};
+
+export type WorkspacesRevisionsResponse = WorkspacesRevisionsResponses[keyof WorkspacesRevisionsResponses];
+
+export type WorkspacesSaveRevisionData = {
+    body: ActivityWorkspaceSpecWritable;
+    path: {
+        workspaceId: string;
+    };
+    query?: never;
+    url: '/workspaces/{workspaceId}/revisions';
+};
+
+export type WorkspacesSaveRevisionErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type WorkspacesSaveRevisionError = WorkspacesSaveRevisionErrors[keyof WorkspacesSaveRevisionErrors];
+
+export type WorkspacesSaveRevisionResponses = {
+    /**
+     * Created
+     */
+    201: ActivityRevision;
+};
+
+export type WorkspacesSaveRevisionResponse = WorkspacesSaveRevisionResponses[keyof WorkspacesSaveRevisionResponses];
+
+export type ActivitySummaryData = {
+    body?: never;
+    path: {
+        workspaceId: string;
+    };
+    query?: {
+        environment?: string;
+        entity?: string;
+        entityId?: string;
+        side?: string;
+        client?: string;
+        action?: string;
+        outcome?: string;
+        state?: string;
+        freshness?: 'fresh' | 'stale';
+        q?: string;
+        agentId?: string;
+        cursor?: string;
+        limit?: number;
+    };
+    url: '/workspaces/{workspaceId}/summary';
+};
+
+export type ActivitySummaryErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type ActivitySummaryError = ActivitySummaryErrors[keyof ActivitySummaryErrors];
+
+export type ActivitySummaryResponses = {
+    /**
+     * OK
+     */
+    200: {
+        [key: string]: unknown;
+    };
+};
+
+export type ActivitySummaryResponse = ActivitySummaryResponses[keyof ActivitySummaryResponses];
+
+export type ActivityTimelineData = {
+    body?: never;
+    path: {
+        workspaceId: string;
+    };
+    query?: {
+        environment?: string;
+        entity?: string;
+        entityId?: string;
+        side?: string;
+        client?: string;
+        action?: string;
+        outcome?: string;
+        state?: string;
+        freshness?: 'fresh' | 'stale';
+        q?: string;
+        agentId?: string;
+        cursor?: string;
+        limit?: number;
+    };
+    url: '/workspaces/{workspaceId}/timeline';
+};
+
+export type ActivityTimelineErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type ActivityTimelineError = ActivityTimelineErrors[keyof ActivityTimelineErrors];
+
+export type ActivityTimelineResponses = {
+    /**
+     * OK
+     */
+    200: WorkspaceTimelineOutputBody;
+};
+
+export type ActivityTimelineResponse = ActivityTimelineResponses[keyof ActivityTimelineResponses];
+
+export type ActivityWidgetsData = {
+    body?: never;
+    path: {
+        workspaceId: string;
+    };
+    query?: {
+        environment?: string;
+        entity?: string;
+        entityId?: string;
+        side?: string;
+        client?: string;
+        action?: string;
+        outcome?: string;
+        state?: string;
+        freshness?: 'fresh' | 'stale';
+        q?: string;
+        agentId?: string;
+        cursor?: string;
+        limit?: number;
+    };
+    url: '/workspaces/{workspaceId}/widgets';
+};
+
+export type ActivityWidgetsErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type ActivityWidgetsError = ActivityWidgetsErrors[keyof ActivityWidgetsErrors];
+
+export type ActivityWidgetsResponses = {
+    /**
+     * OK
+     */
+    200: WorkspaceWidgetsOutputBody;
+};
+
+export type ActivityWidgetsResponse = ActivityWidgetsResponses[keyof ActivityWidgetsResponses];

@@ -1,117 +1,29 @@
-# Get Notified When Your Agent Fails
+# Notify operators about lifecycle incidents
 
-> Push error alerts to Slack, Discord, or any HTTP endpoint. Stop babysitting your agents.
+`activity.incidents` records stateful operational failures and recoveries. Configure an existing alert rule with `metric: lifecycle_open`, `operator: gte` and `threshold: 1`, an authorized app/environment, and an email or webhook destination. Optional `service: operation | journey | pipeline` restricts the incident entity. Incidents deduplicate while open; alert delivery retains its cooldown.
 
-## The Problem
-
-Your agent runs on a schedule or serves users in production. You can't sit there watching a dashboard all day. When something breaks, a tool call fails, an API times out, an agent loops, you need a push notification. A Slack message, a Discord alert, a PagerDuty trigger.
-
-## The Solution
-
-```bash
-pip install axonpush
-```
+Inspect the active alert schema before creating a rule:
 
 ```python
 from axonpush import AxonPush
+from axonpush.resources.alerts import CreateAlertRuleInput
 
-with AxonPush(api_key="ak_...", tenant_id="<org-uuid>") as client:
-    # Create a webhook that fires on agent errors
-    endpoint = client.webhooks.create_endpoint(
-        url="https://your-server.com/webhook",
-        channel_id="chan_a1b2c3",
-        event_types=["agent.error"],
-        secret="whsec_your_signing_secret",
-        description="Slack alert on agent errors",
-    )
-
-    print(f"Webhook {endpoint.id} active: {endpoint.active}")
-
-    # Check if deliveries are landing
-    deliveries = client.webhooks.get_deliveries(endpoint_id=endpoint.id)
-    for d in deliveries:
-        print(f"  Delivery {d.id}: {d.status} (HTTP {d.status_code})")
+with AxonPush() as client:
+    rule = client.alerts.create(CreateAlertRuleInput.from_dict({
+        "name": "Operational incidents",
+        "metric": "lifecycle_open",
+        "operator": "gte",
+        "threshold": 1,
+        "destinationType": "email",
+        "destination": "operator@example.test",
+        "appId": "authorized-app-id",
+        "environmentId": "authorized-environment-id",
+        "service": "pipeline",
+    }))
 ```
 
-## What Just Happened
+The example destination and IDs are synthetic placeholders. Create a destination only when authorized. An ordinary authentication challenge, human decision wait or idle agent is not automatically an incident. Rules notify operators and perform no hiring actions.
 
-- `create_endpoint()` registers a URL that axonpush will POST to whenever a matching event is published on the channel.
-- `event_types=["agent.error"]` filters the webhook to only fire on error events. Without this, it fires on every event.
-- The `secret` enables HMAC signature verification so your server can validate that the request came from axonpush.
-- `get_deliveries()` returns delivery attempts with status (`pending`, `success`, `failed`, `retrying`), HTTP status code, and any error message.
-- Failed deliveries are retried automatically.
+Event webhooks are a separate channel-level fan-out mechanism: `webhooks.create_endpoint` returns `endpoint_id` and a one-time `raw_secret`; `webhooks.deliveries(endpoint_id)` inspects attempts. Keep the signing secret in a secret store and verify signatures using the [shared fixture](../../../../contract/fixtures/webhook-signature.json). Do not print payloads or raw response bodies in operational logs.
 
-<details>
-<summary><strong>Go Deeper</strong></summary>
-
-### Manage webhook endpoints
-
-```python
-# List all webhooks on a channel
-endpoints = client.webhooks.list_endpoints(channel_id="chan_a1b2c3")
-for ep in endpoints:
-    print(f"{ep.id}: {ep.url}, active={ep.active}, types={ep.event_types}")
-
-# Delete a webhook
-client.webhooks.delete_endpoint(endpoint_id=endpoint.id)
-```
-
-### Filter by multiple event types
-
-Pass a list to capture specific combinations:
-
-```python
-endpoint = client.webhooks.create_endpoint(
-    url="https://your-server.com/webhook",
-    channel_id="chan_a1b2c3",
-    event_types=["agent.error", "agent.handoff", "agent.end"],
-    description="Alert on errors, handoffs, and completions",
-)
-```
-
-### Available event types for filtering
-
-| Event type | Fires when |
-|------------|-----------|
-| `agent.start` | Agent begins a run |
-| `agent.end` | Agent completes a run |
-| `agent.message` | Agent produces a message |
-| `agent.tool_call.start` | Agent invokes a tool |
-| `agent.tool_call.end` | Tool returns a result |
-| `agent.error` | Something went wrong |
-| `agent.handoff` | Agent delegates to another |
-| `agent.llm.token` | Streaming token from LLM |
-| `custom` | Custom event type |
-
-### Monitor delivery health
-
-```python
-deliveries = client.webhooks.get_deliveries(endpoint_id=endpoint.id)
-for d in deliveries:
-    if d.status == "failed":
-        print(f"Failed delivery {d.id}: {d.error}")
-        print(f"  Attempts: {d.attempts}, Last status: {d.status_code}")
-        print(f"  Response: {d.response_body}")
-```
-
-The `DeliveryStatus` enum values are: `pending`, `success`, `failed`, `retrying`.
-
-### Async variant
-
-```python
-async with AsyncAxonPush(api_key="ak_...", tenant_id="<org-uuid>") as client:
-    endpoint = await client.webhooks.create_endpoint(
-        url="https://your-server.com/webhook",
-        channel_id="chan_a1b2c3",
-        event_types=["agent.error"],
-    )
-
-    deliveries = await client.webhooks.get_deliveries(endpoint_id=endpoint.id)
-```
-
-</details>
-
-## Next Steps
-
-- [Handle errors and rate limits in your code](07-production-error-handling.md)
-- [Trace a multi-step agent run end-to-end](04-distributed-tracing.md)
+See [export failures](07-production-error-handling.md) and the [shared operations contract](../../../../AGENT_OPERATIONS.md).

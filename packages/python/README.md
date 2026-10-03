@@ -8,6 +8,15 @@ Publish, trace, and deliver agent events. Drop-in integrations for LangChain, La
 
 > **v1.0.0 is a breaking release.** All IDs are `str` UUIDs; models live under a flat `axonpush.models` namespace; the realtime feature (MQTT / SSE / WebSocket / `connect_realtime`) has been removed. See [`CHANGELOG.md`](CHANGELOG.md) for the migration guide.
 
+## Business operations
+
+The SDK provides typed workspace authoring, immutable revisions, pinned templates,
+metadata-only observation ingestion/receipts and exact activity queries. See the
+[shared operations contract](../../AGENT_OPERATIONS.md) for schemas, access,
+privacy, lifecycle alerts and pilot verification. Capture content remains opt-in;
+source lifecycle adapters must apply their own allowlist before buffering.
+
+
 ## Install
 
 ```bash
@@ -24,11 +33,6 @@ pip install axonpush[rq]              # Redis Queue durable backend
 pip install axonpush[all]             # everything above
 ```
 
-Installing the package also puts **`axonpush-eval`** on your `PATH`: the release
-gate that replays a dataset revision against a candidate in CI and exits
-non-zero when it regresses. Same flags and exit codes as the TypeScript and
-.NET builds. See [the CLI reference](https://docs.axonpush.xyz/cli/).
-
 ## Quick start
 
 ```python
@@ -39,16 +43,17 @@ from axonpush import AxonPush, EventType
 with AxonPush() as client:
     event = client.events.publish(
         "web_search",
-        {"query": "AI agent frameworks"},
+        {"attributes": {"operation.kind": "search"}},
         channel_id="…channel uuid…",
         agent_id="researcher",
         event_type=EventType.AGENT_TOOL_CALL_START,
     )
-    # event.event_id is server-assigned; event.queued is True within ~1 ms.
+    # The event ack carries event_id and status; inspect source-to-view freshness separately.
 
-    listing = client.events.list(channel_id="…channel uuid…", limit=20)
-    for ev in listing.data:
-        print(ev.event_type, ev.identifier)
+    listing = client.events.search(channel_id="…channel uuid…", limit=20)
+    if listing is not None:
+        for ev in listing.events or []:
+            print(ev.event_type, ev.operation_name)
 ```
 
 ### Async
@@ -61,7 +66,7 @@ async def main():
     async with AsyncAxonPush() as client:
         await client.events.publish(
             "web_search",
-            {"query": "AI agents"},
+            {"attributes": {"operation.kind": "search"}},
             channel_id="…channel uuid…",
             agent_id="researcher",
             event_type="agent.tool_call.start",
@@ -69,31 +74,6 @@ async def main():
 
 asyncio.run(main())
 ```
-
-## Zero-instrumentation: the LLM gateway
-
-The fastest self-serve path to full observability is the axonpush gateway: no
-SDK, callback handler, or framework wrapper. Point an existing OpenAI (or
-Anthropic) client's `base_url` at the gateway and add the `x-axonpush-api-key`
-default header. Every call, tool call, cost, token count, and latency is
-captured, and any moderation / govern / spend policy runs inline, with zero code
-changes. It works alongside the framework integrations below.
-
-```python
-import os
-from openai import OpenAI
-
-client = OpenAI(
-    base_url="https://api.axonpush.xyz/gw/openai",
-    default_headers={"x-axonpush-api-key": os.environ["AXONPUSH_API_KEY"]},
-    # api_key still reads OPENAI_API_KEY; the gateway forwards it upstream.
-)
-```
-
-The path segment (`/gw/openai` or `/gw/anthropic`) selects the wire shape. Add
-`x-axonpush-target: openrouter|anthropic|groq|together|vercel|openai` to route to
-a different upstream provider, with that provider's key in the standard
-`Authorization: Bearer <provider_key>` header.
 
 ## Configuration
 
@@ -119,7 +99,7 @@ The SDK supports two ingest credentials:
 
 | Credential | Header | Prefix | Use |
 |---|---|---|---|
-| API key | `X-API-Key` | `ak_` | Server-side ingestion and management. Full resource access, scoped per key. |
+| API key | `X-API-Key` | `ak_` | Server-side ingestion and management according to the key’s scopes. |
 | Public ingest token | `X-Public-Token` | `pt_` | Browser and untrusted clients. Publish-only, safe to ship in a frontend. |
 
 ```python
@@ -138,22 +118,26 @@ The client exposes Stripe-style resource accessors:
 
 | Accessor | Methods |
 |---|---|
-| `client.events` | `publish`, `list`, `search` |
-| `client.channels` | `create`, `get`, `update`, `delete` |
+| `client.events` | `publish`, `search` |
+| `client.workspaces` | `schema`, `validate`, `preview`, `list`, `create`, `get`, `revisions`, `save_revision`, `activate` |
+| `client.templates` | `list`, `publish` |
+| `client.observations` | `accept`, `receipt` |
+| `client.activity` | `entities`, `timeline`, `summary`, `analytics`, `widgets`, `health`, `incidents`, `delete_agent` |
+| `client.channels` | `list`, `get`, `create`, `update`, `delete` |
 | `client.apps` | `list`, `get`, `create`, `update`, `delete` |
-| `client.environments` | `list`, `create`, `update`, `delete`, `promote_to_default` |
+| `client.environments` | `list`, `create`, `update`, `delete`, `promote` |
 | `client.webhooks` | `create_endpoint`, `list_endpoints`, `delete_endpoint`, `deliveries` |
-| `client.traces_v2` | `list`, `stats`, `detail`, `events`, `spans`, `facets`, `attribute_keys` |
-| `client.api_keys` | `list`, `create`, `delete` |
-| `client.organizations` | `list`, `get`, `create`, `update`, `delete`, `invite`, `remove_member`, `transfer_ownership` |
-| `client.datasets` | `list`, `get`, `create`, `delete`, `revisions`, `create_revision`, `items`, … |
-| `client.experiments` | `list`, `get`, `create`, `run`, `cancel`, `results`, `compare`, `gate`, … |
-| `client.gates` | `list_policies`, `get_policy`, `save_policy`, `delete_policy`, `list_runs` |
+| `client.traces` | `list`, `get` |
+| `client.errors` | `list`, `get`, `events`, `triage` |
+| `client.analytics` | `overview`, `breakdown`, `timeseries`, `heatmap`, `diff`, `dimensions`, `dimension_values`, `latency`, `ingestion_status` |
+| `client.alerts` | `list`, `create`, `update`, `delete`, `occurrences` |
+| `client.organizations` | `list`, `get`, `update`, `delete`, `invite`, `cancel_invitation`, `accept_invitation`, `remove_member`, `transfer_ownership`, `leave` |
+| `client.capabilities` | `get` |
 
 Every resource has an `Async` sibling on `AsyncAxonPush`, and is importable
 from `axonpush.resources`.
 
-`events.list()` and `events.search()` return an `EventListResponseDto` with `.data` (list) and `.meta` (cursor + count).
+`events.search()` returns the server search envelope with `.events`. Workspace entity reads return `.entities` and `.next_cursor`; keep server-side scope and pagination when querying large directories.
 
 ## Errors
 
@@ -229,9 +213,9 @@ client.events.publish(
     span_id=trace.next_span_id(),
 )
 
-detail = client.traces_v2.detail(trace.trace_id)
-summary = detail.summary
-print(summary.event_count, summary.duration_ms, summary.tool_call_count)
+detail = client.traces.get(trace.trace_id)
+if detail is not None:
+    print(detail.trace_id, len(detail.spans or []))
 ```
 
 `get_or_create_trace()` reads the active context (set via `with TraceContext(...):`) when one exists, so framework integrations propagate the trace automatically.

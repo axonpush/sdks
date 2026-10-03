@@ -1,14 +1,15 @@
 {
-  "description": "API-key scopes. Each published operation carries the scopes it needs as x-axonpush-scopes in contract/openapi.sdk.json.",
+  "description": "Active API-key scope vocabulary. Workspace operations carry their enforced scopes as x-axonpush-scopes; session writes additionally require owner/admin.",
   "scopes": [
+    "events:publish",
+    "events:read",
+    "observe:read",
+    "observe:manage",
     "alerts:manage",
-    "analytics:read",
     "apps:manage",
     "channels:manage",
-    "events:read",
-    "publish",
-    "subscribe",
-    "traces:read",
-    "webhooks:manage"
+    "webhooks:manage",
+    "workspaces:manage",
+    "templates:publish"
   ]
 }

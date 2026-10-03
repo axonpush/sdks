@@ -110,6 +110,20 @@ describe("EventsResource.publish", () => {
     });
   });
 
+  it("preserves the original source occurrence and stable retry key", async () => {
+    const { client, calls } = makeClient();
+    await new EventsResource(client).publish({
+      identifier: "committed",
+      payload: {},
+      channelId: "c",
+      dedupKey: "source-row:7",
+      occurredAt: "2026-10-03T00:00:00Z",
+    });
+    const body = (calls[0]?.args as { body: Record<string, unknown> }).body;
+    expect(body.dedupKey).toBe("source-row:7");
+    expect(body.occurredAt).toBe("2026-10-03T00:00:00Z");
+  });
+
   it("propagates a caller-supplied traceId via getOrCreateTrace", async () => {
     const { client } = makeClient();
     const r = new EventsResource(client);

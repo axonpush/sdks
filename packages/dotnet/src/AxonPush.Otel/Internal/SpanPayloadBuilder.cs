@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using System.Globalization;
+using AxonPush.Otel.Telemetry;
 
 namespace AxonPush.Otel.Internal;
 
@@ -10,7 +11,7 @@ namespace AxonPush.Otel.Internal;
 /// </summary>
 internal static class SpanPayloadBuilder
 {
-    public static Dictionary<string, object?> Build(Activity activity, IReadOnlyDictionary<string, object?> resource)
+    public static Dictionary<string, object?> Build(Activity activity, IReadOnlyDictionary<string, object?> resource, ContentCaptureMode contentCapture = ContentCaptureMode.MetadataOnly)
     {
         ArgumentNullException.ThrowIfNull(activity);
         ArgumentNullException.ThrowIfNull(resource);
@@ -43,7 +44,7 @@ internal static class SpanPayloadBuilder
             payload["parentSpanId"] = activity.ParentSpanId.ToHexString();
         }
 
-        return payload;
+        return (Dictionary<string, object?>)TelemetryRedactor.Redact(payload, contentCapture, [], 4096)!;
     }
 
     private static Dictionary<string, object?> BuildStatus(Activity activity)

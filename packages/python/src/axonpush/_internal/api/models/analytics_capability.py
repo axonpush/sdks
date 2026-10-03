@@ -17,16 +17,16 @@ class AnalyticsCapability:
     Attributes:
         breakdown_dimensions (list[str] | None):
         custom_dimensions (bool):
-        dashboards (bool):
         enabled (bool):
         tag_filter (bool):
+        workspaces (bool):
     """
 
     breakdown_dimensions: list[str] | None
     custom_dimensions: bool
-    dashboards: bool
     enabled: bool
     tag_filter: bool
+    workspaces: bool
 
     def to_dict(self) -> dict[str, Any]:
         breakdown_dimensions: list[str] | None
@@ -38,11 +38,11 @@ class AnalyticsCapability:
 
         custom_dimensions = self.custom_dimensions
 
-        dashboards = self.dashboards
-
         enabled = self.enabled
 
         tag_filter = self.tag_filter
+
+        workspaces = self.workspaces
 
         field_dict: dict[str, Any] = {}
 
@@ -50,9 +50,9 @@ class AnalyticsCapability:
             {
                 "breakdownDimensions": breakdown_dimensions,
                 "customDimensions": custom_dimensions,
-                "dashboards": dashboards,
                 "enabled": enabled,
                 "tagFilter": tag_filter,
+                "workspaces": workspaces,
             }
         )
 
@@ -79,18 +79,18 @@ class AnalyticsCapability:
 
         custom_dimensions = d.pop("customDimensions")
 
-        dashboards = d.pop("dashboards")
-
         enabled = d.pop("enabled")
 
         tag_filter = d.pop("tagFilter")
 
+        workspaces = d.pop("workspaces")
+
         analytics_capability = cls(
             breakdown_dimensions=breakdown_dimensions,
             custom_dimensions=custom_dimensions,
-            dashboards=dashboards,
             enabled=enabled,
             tag_filter=tag_filter,
+            workspaces=workspaces,
         )
 
         return analytics_capability

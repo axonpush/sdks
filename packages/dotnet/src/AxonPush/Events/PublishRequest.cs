@@ -28,6 +28,12 @@ public sealed record PublishRequest
     /// <summary>Agent that emitted the event. Every other SDK sends this.</summary>
     public string? AgentId { get; init; }
 
+    /// <summary>Stable source identity across retries.</summary>
+    public string? DedupKey { get; init; }
+
+    /// <summary>Original source occurrence time.</summary>
+    public DateTimeOffset? OccurredAt { get; init; }
+
     /// <summary>Event-type discriminator. Defaults to <see cref="EventType.AppSpan"/>.</summary>
     public string EventType { get; init; } = AxonPush.EventType.AppSpan;
 
@@ -38,14 +44,32 @@ public sealed record PublishRequest
     public string? SpanId { get; init; }
 
     /// <summary>Parent event identifier, when this event continues a chain.</summary>
+    [JsonIgnore]
     public string? ParentEventId { get; init; }
 
     /// <summary>Environment tag (e.g. "production").</summary>
+    [JsonIgnore]
     public string? Environment { get; init; }
 
     /// <summary>Parent span identifier, when this event continues a span.</summary>
     public string? ParentSpanId { get; init; }
 
     /// <summary>Free-form metadata keyed by string.</summary>
+    [JsonIgnore]
     public IReadOnlyDictionary<string, object?>? Metadata { get; init; }
+
+    /// <summary>Metadata serialized with optional parent-event causality.</summary>
+    [JsonPropertyName("metadata")]
+    public IReadOnlyDictionary<string, object?>? SerializedMetadata
+    {
+        get
+        {
+            if (ParentEventId is null) return Metadata;
+            var metadata = Metadata is null
+                ? new Dictionary<string, object?>()
+                : new Dictionary<string, object?>(Metadata);
+            metadata["axonpush.parent_event_id"] = ParentEventId;
+            return metadata;
+        }
+    }
 }

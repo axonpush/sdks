@@ -37,19 +37,19 @@ from axonpush.models import (
     WebhookDelivery,
     WebhookEndpoint,
 )
+from axonpush.resources.workspaces import Workspaces, AsyncWorkspaces
+from axonpush.resources.templates import Templates, AsyncTemplates
+from axonpush.resources.observations import Observations, AsyncObservations
+from axonpush.resources.activity import Activity, AsyncActivity
 from axonpush.resources.alerts import Alerts, AsyncAlerts
 from axonpush.resources.analytics import Analytics, AsyncAnalytics
 from axonpush.resources.apps import Apps, AsyncApps
 from axonpush.resources.capabilities import AsyncCapabilities, Capabilities
 from axonpush.resources.channels import AsyncChannels, Channels
-from axonpush.resources.dashboards import AsyncDashboards, Dashboards
 from axonpush.resources.environments import AsyncEnvironments, Environments
 from axonpush.resources.errors import AsyncErrors, Errors
 from axonpush.resources.events import AsyncEvents, Events
-from axonpush.resources.govern_policies import AsyncGovernPolicies, GovernPolicies
-from axonpush.resources.moderation import AsyncModeration, Moderation
 from axonpush.resources.organizations import AsyncOrganizations, Organizations
-from axonpush.resources.spend_policies import AsyncSpendPolicies, SpendPolicies
 from axonpush.resources.traces import AsyncTraces, Traces
 from axonpush.resources.traces_v2 import AsyncTracesV2, TracesV2
 from axonpush.resources.webhooks import AsyncWebhooks, Webhooks
@@ -73,6 +73,14 @@ except ImportError:
     _HAS_TELEMETRY = False
 
 __all__ = [
+    "Workspaces",
+    "AsyncWorkspaces",
+    "Templates",
+    "AsyncTemplates",
+    "Observations",
+    "AsyncObservations",
+    "Activity",
+    "AsyncActivity",
     "APIConnectionError",
     "Alerts",
     "Analytics",
@@ -84,14 +92,10 @@ __all__ = [
     "AsyncAxonPush",
     "AsyncCapabilities",
     "AsyncChannels",
-    "AsyncDashboards",
     "AsyncEnvironments",
     "AsyncErrors",
     "AsyncEvents",
-    "AsyncGovernPolicies",
-    "AsyncModeration",
     "AsyncOrganizations",
-    "AsyncSpendPolicies",
     "AsyncTraces",
     "AsyncTracesV2",
     "AsyncWebhooks",
@@ -101,7 +105,6 @@ __all__ = [
     "Capabilities",
     "Channel",
     "Channels",
-    "Dashboards",
     "Environment",
     "Environments",
     "Errors",
@@ -111,8 +114,6 @@ __all__ = [
     "EventType",
     "Events",
     "ForbiddenError",
-    "GovernPolicies",
-    "Moderation",
     "NotFoundError",
     "Organization",
     "Organizations",
@@ -120,7 +121,6 @@ __all__ = [
     "RetryableError",
     "ServerError",
     "Settings",
-    "SpendPolicies",
     "TraceContext",
     "TraceSummary",
     "Traces",
@@ -144,3 +144,25 @@ if _HAS_TELEMETRY:
         "record_genai_content",
         "record_genai_response",
     ]
+
+from axonpush._internal.api.models import (
+    ActivityWorkspaceSpec as WorkspaceSpec,
+    ActivityObservation as Observation,
+    ActivityWorkspace as Workspace,
+    ActivityRevision as WorkspaceRevision,
+    ActivityTemplate as WorkspaceTemplate,
+    ActivityReceipt as ObservationReceipt,
+    ActivityEntity,
+    ActivityRecord,
+)
+
+__all__ += [
+    "WorkspaceSpec",
+    "Observation",
+    "Workspace",
+    "WorkspaceRevision",
+    "WorkspaceTemplate",
+    "ObservationReceipt",
+    "ActivityEntity",
+    "ActivityRecord",
+]

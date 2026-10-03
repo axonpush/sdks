@@ -141,6 +141,1231 @@
         ],
         "type": "object"
       },
+      "ActivateInputBody": {
+        "additionalProperties": false,
+        "properties": {
+          "$schema": {
+            "description": "A URL to the JSON Schema for this object.",
+            "examples": [
+              "https://example.com/schemas/ActivateInputBody.json"
+            ],
+            "format": "uri",
+            "readOnly": true,
+            "type": "string"
+          },
+          "generation": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "revision": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "revision",
+          "generation"
+        ],
+        "type": "object"
+      },
+      "ActivityActivity": {
+        "additionalProperties": false,
+        "properties": {
+          "action": {
+            "maxLength": 100,
+            "type": "string"
+          },
+          "attempts": {
+            "format": "int64",
+            "maximum": 100,
+            "minimum": 1,
+            "type": "integer"
+          },
+          "duration_ms": {
+            "format": "double",
+            "minimum": 0,
+            "type": "number"
+          },
+          "error_category": {
+            "maxLength": 60,
+            "type": "string"
+          },
+          "evidence": {
+            "enum": [
+              "server_observed",
+              "agent_reported",
+              "derived",
+              "reconstructed"
+            ],
+            "type": "string"
+          },
+          "expected_seconds": {
+            "format": "int64",
+            "maximum": 86400,
+            "minimum": 0,
+            "type": "integer"
+          },
+          "family": {
+            "maxLength": 60,
+            "type": "string"
+          },
+          "input_tokens": {
+            "format": "int64",
+            "minimum": 0,
+            "type": "integer"
+          },
+          "join_method": {
+            "maxLength": 60,
+            "type": "string"
+          },
+          "model": {
+            "maxLength": 120,
+            "type": "string"
+          },
+          "next_actor": {
+            "enum": [
+              "human",
+              "candidate",
+              "company",
+              "none",
+              "unknown"
+            ],
+            "type": "string"
+          },
+          "outcome": {
+            "enum": [
+              "observed",
+              "accepted",
+              "queued",
+              "running",
+              "committed",
+              "completed",
+              "failed",
+              "cancelled",
+              "unknown"
+            ],
+            "type": "string"
+          },
+          "output_tokens": {
+            "format": "int64",
+            "minimum": 0,
+            "type": "integer"
+          },
+          "registration_source": {
+            "maxLength": 60,
+            "type": "string"
+          },
+          "snapshot": {
+            "type": "boolean"
+          },
+          "state": {
+            "maxLength": 60,
+            "type": "string"
+          },
+          "transport": {
+            "maxLength": 60,
+            "type": "string"
+          }
+        },
+        "required": [
+          "family",
+          "outcome",
+          "evidence"
+        ],
+        "type": "object"
+      },
+      "ActivityActor": {
+        "additionalProperties": false,
+        "properties": {
+          "agent_id": {
+            "maxLength": 160,
+            "type": "string"
+          },
+          "initiating_agent_id": {
+            "maxLength": 160,
+            "type": "string"
+          },
+          "participant_side": {
+            "enum": [
+              "candidate",
+              "recruiter",
+              "company",
+              "unknown"
+            ],
+            "type": "string"
+          },
+          "related_agent_ids": {
+            "items": {
+              "type": "string"
+            },
+            "maxItems": 10,
+            "type": [
+              "array",
+              "null"
+            ]
+          },
+          "type": {
+            "enum": [
+              "agent",
+              "human",
+              "worker",
+              "integration",
+              "unknown"
+            ],
+            "type": "string"
+          }
+        },
+        "required": [
+          "type"
+        ],
+        "type": "object"
+      },
+      "ActivityAlert": {
+        "additionalProperties": false,
+        "properties": {
+          "afterSeconds": {
+            "format": "int64",
+            "maximum": 2592000,
+            "minimum": 60,
+            "type": "integer"
+          },
+          "entity": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "state": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "entity",
+          "state",
+          "afterSeconds"
+        ],
+        "type": "object"
+      },
+      "ActivityAnalytics": {
+        "additionalProperties": false,
+        "properties": {
+          "$schema": {
+            "description": "A URL to the JSON Schema for this object.",
+            "examples": [
+              "https://example.com/schemas/ActivityAnalytics.json"
+            ],
+            "format": "uri",
+            "readOnly": true,
+            "type": "string"
+          },
+          "activations": {
+            "items": {
+              "$ref": "#/components/schemas/ActivityCohortCount"
+            },
+            "type": [
+              "array",
+              "null"
+            ]
+          },
+          "asOf": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "attempts": {
+            "items": {
+              "$ref": "#/components/schemas/ActivityCohortCount"
+            },
+            "type": [
+              "array",
+              "null"
+            ]
+          },
+          "clients": {
+            "items": {
+              "$ref": "#/components/schemas/ActivityBreakdown"
+            },
+            "type": [
+              "array",
+              "null"
+            ]
+          },
+          "funnels": {
+            "items": {
+              "$ref": "#/components/schemas/ActivityFunnelResult"
+            },
+            "type": [
+              "array",
+              "null"
+            ]
+          },
+          "windowDays": {
+            "format": "int64",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "activations",
+          "attempts",
+          "funnels",
+          "clients",
+          "asOf",
+          "windowDays"
+        ],
+        "type": "object"
+      },
+      "ActivityBreakdown": {
+        "additionalProperties": false,
+        "properties": {
+          "active15m": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "agents": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "client": {
+            "type": "string"
+          },
+          "side": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "client",
+          "side",
+          "agents",
+          "active15m"
+        ],
+        "type": "object"
+      },
+      "ActivityClient": {
+        "additionalProperties": false,
+        "properties": {
+          "attribution_source": {
+            "maxLength": 60,
+            "type": "string"
+          },
+          "confidence": {
+            "enum": [
+              "verified_registration",
+              "authenticated_registration_unverified_vendor",
+              "self_reported",
+              "inferred",
+              "unknown"
+            ],
+            "type": "string"
+          },
+          "conflict": {
+            "type": "boolean"
+          },
+          "evidence": {
+            "items": {
+              "$ref": "#/components/schemas/ActivityClientEvidence"
+            },
+            "maxItems": 4,
+            "type": [
+              "array",
+              "null"
+            ]
+          },
+          "family": {
+            "maxLength": 60,
+            "type": "string"
+          },
+          "reported_name": {
+            "maxLength": 80,
+            "type": "string"
+          },
+          "version": {
+            "maxLength": 40,
+            "type": "string"
+          }
+        },
+        "required": [
+          "family",
+          "confidence"
+        ],
+        "type": "object"
+      },
+      "ActivityClientEvidence": {
+        "additionalProperties": false,
+        "properties": {
+          "confidence": {
+            "enum": [
+              "verified_registration",
+              "authenticated_registration_unverified_vendor",
+              "self_reported",
+              "inferred",
+              "unknown"
+            ],
+            "type": "string"
+          },
+          "family": {
+            "maxLength": 60,
+            "type": "string"
+          },
+          "name": {
+            "maxLength": 80,
+            "type": "string"
+          },
+          "source": {
+            "maxLength": 60,
+            "type": "string"
+          },
+          "version": {
+            "maxLength": 40,
+            "type": "string"
+          }
+        },
+        "required": [
+          "source",
+          "family",
+          "confidence"
+        ],
+        "type": "object"
+      },
+      "ActivityCohortCount": {
+        "additionalProperties": false,
+        "properties": {
+          "client": {
+            "type": "string"
+          },
+          "count": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "side": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "client",
+          "side",
+          "count"
+        ],
+        "type": "object"
+      },
+      "ActivityCorrelation": {
+        "additionalProperties": false,
+        "properties": {
+          "application_id": {
+            "maxLength": 160,
+            "type": "string"
+          },
+          "causation_id": {
+            "maxLength": 160,
+            "type": "string"
+          },
+          "connection_ref": {
+            "maxLength": 160,
+            "type": "string"
+          },
+          "job_id": {
+            "maxLength": 160,
+            "type": "string"
+          },
+          "join_attempt_id": {
+            "maxLength": 160,
+            "type": "string"
+          },
+          "operation_id": {
+            "maxLength": 160,
+            "type": "string"
+          },
+          "request_id": {
+            "maxLength": 160,
+            "type": "string"
+          },
+          "role_id": {
+            "maxLength": 160,
+            "type": "string"
+          },
+          "span_id": {
+            "maxLength": 160,
+            "type": "string"
+          },
+          "thread_id": {
+            "maxLength": 160,
+            "type": "string"
+          },
+          "trace_id": {
+            "maxLength": 160,
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "ActivityEntity": {
+        "additionalProperties": false,
+        "properties": {
+          "evidence": {
+            "type": "string"
+          },
+          "fields": {
+            "additionalProperties": {},
+            "type": "object"
+          },
+          "id": {
+            "type": "string"
+          },
+          "lastActivityAt": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "occurredAt": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "receivedAt": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "snapshot": {
+            "type": "boolean"
+          },
+          "type": {
+            "type": "string"
+          },
+          "versions": {
+            "additionalProperties": {
+              "$ref": "#/components/schemas/ActivityFieldVersion"
+            },
+            "type": "object"
+          }
+        },
+        "required": [
+          "type",
+          "id",
+          "fields",
+          "versions",
+          "occurredAt",
+          "receivedAt",
+          "evidence",
+          "snapshot"
+        ],
+        "type": "object"
+      },
+      "ActivityEntityDefinition": {
+        "additionalProperties": false,
+        "properties": {
+          "fields": {
+            "items": {
+              "type": "string"
+            },
+            "type": [
+              "array",
+              "null"
+            ]
+          },
+          "label": {
+            "type": "string"
+          },
+          "terminalStates": {
+            "items": {
+              "type": "string"
+            },
+            "type": [
+              "array",
+              "null"
+            ]
+          },
+          "type": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "type",
+          "label",
+          "fields"
+        ],
+        "type": "object"
+      },
+      "ActivityFieldVersion": {
+        "additionalProperties": false,
+        "properties": {
+          "eventId": {
+            "type": "string"
+          },
+          "revision": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "sourceRef": {
+            "type": "string"
+          },
+          "time": {
+            "format": "date-time",
+            "type": "string"
+          }
+        },
+        "required": [
+          "time",
+          "revision",
+          "sourceRef",
+          "eventId"
+        ],
+        "type": "object"
+      },
+      "ActivityFunnel": {
+        "additionalProperties": false,
+        "properties": {
+          "entity": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "stages": {
+            "items": {
+              "type": "string"
+            },
+            "type": [
+              "array",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "name",
+          "entity",
+          "stages"
+        ],
+        "type": "object"
+      },
+      "ActivityFunnelResult": {
+        "additionalProperties": false,
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "stages": {
+            "items": {
+              "$ref": "#/components/schemas/ActivityStageCount"
+            },
+            "type": [
+              "array",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "name",
+          "stages"
+        ],
+        "type": "object"
+      },
+      "ActivityIncident": {
+        "additionalProperties": false,
+        "properties": {
+          "affected": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "checkedAt": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "entity": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "openedAt": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "resolvedAt": {
+            "format": "date-time",
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "entity",
+          "affected",
+          "openedAt",
+          "checkedAt",
+          "resolvedAt"
+        ],
+        "type": "object"
+      },
+      "ActivityMapping": {
+        "additionalProperties": false,
+        "properties": {
+          "entity": {
+            "type": "string"
+          },
+          "event": {
+            "type": "string"
+          },
+          "fields": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "type": "object"
+          },
+          "idPath": {
+            "type": "string"
+          },
+          "values": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "type": "object"
+          }
+        },
+        "required": [
+          "event",
+          "entity",
+          "idPath"
+        ],
+        "type": "object"
+      },
+      "ActivityObservation": {
+        "additionalProperties": false,
+        "properties": {
+          "activity": {
+            "$ref": "#/components/schemas/ActivityActivity"
+          },
+          "actor": {
+            "$ref": "#/components/schemas/ActivityActor"
+          },
+          "client": {
+            "$ref": "#/components/schemas/ActivityClient"
+          },
+          "correlation": {
+            "$ref": "#/components/schemas/ActivityCorrelation"
+          },
+          "event_name": {
+            "maxLength": 120,
+            "minLength": 1,
+            "type": "string"
+          },
+          "occurred_at": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "pipeline": {
+            "$ref": "#/components/schemas/ActivityPipelineHealth"
+          },
+          "release": {
+            "maxLength": 80,
+            "type": "string"
+          },
+          "schema_version": {
+            "enum": [
+              1
+            ],
+            "format": "int64",
+            "type": "integer"
+          },
+          "service": {
+            "maxLength": 80,
+            "type": "string"
+          },
+          "source": {
+            "$ref": "#/components/schemas/ActivitySource"
+          },
+          "source_event_id": {
+            "maxLength": 160,
+            "minLength": 1,
+            "type": "string"
+          }
+        },
+        "required": [
+          "schema_version",
+          "source_event_id",
+          "event_name",
+          "occurred_at",
+          "service",
+          "actor",
+          "client",
+          "correlation",
+          "source",
+          "activity"
+        ],
+        "type": "object"
+      },
+      "ActivityPipelineHealth": {
+        "additionalProperties": false,
+        "properties": {
+          "capture_failures": {
+            "format": "int64",
+            "minimum": 0,
+            "type": "integer"
+          },
+          "dead_letters": {
+            "format": "int64",
+            "minimum": 0,
+            "type": "integer"
+          },
+          "dropped_transient": {
+            "format": "int64",
+            "minimum": 0,
+            "type": "integer"
+          },
+          "last_export_at": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "pending": {
+            "format": "int64",
+            "minimum": 0,
+            "type": "integer"
+          },
+          "reconciled_at": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "reconciled_records": {
+            "format": "int64",
+            "minimum": 0,
+            "type": "integer"
+          },
+          "retries": {
+            "format": "int64",
+            "minimum": 0,
+            "type": "integer"
+          }
+        },
+        "required": [
+          "pending",
+          "retries",
+          "dead_letters",
+          "dropped_transient",
+          "capture_failures",
+          "reconciled_records"
+        ],
+        "type": "object"
+      },
+      "ActivityReceipt": {
+        "additionalProperties": false,
+        "properties": {
+          "$schema": {
+            "description": "A URL to the JSON Schema for this object.",
+            "examples": [
+              "https://example.com/schemas/ActivityReceipt.json"
+            ],
+            "format": "uri",
+            "readOnly": true,
+            "type": "string"
+          },
+          "projectedAt": {
+            "format": "date-time",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "receivedAt": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "sourceEventId": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "sourceEventId",
+          "status",
+          "receivedAt",
+          "projectedAt"
+        ],
+        "type": "object"
+      },
+      "ActivityRecord": {
+        "additionalProperties": false,
+        "properties": {
+          "observation": {
+            "$ref": "#/components/schemas/ActivityObservation"
+          },
+          "projectedAt": {
+            "format": "date-time",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "receivedAt": {
+            "format": "date-time",
+            "type": "string"
+          }
+        },
+        "required": [
+          "observation",
+          "receivedAt",
+          "projectedAt"
+        ],
+        "type": "object"
+      },
+      "ActivityRevision": {
+        "additionalProperties": false,
+        "properties": {
+          "$schema": {
+            "description": "A URL to the JSON Schema for this object.",
+            "examples": [
+              "https://example.com/schemas/ActivityRevision.json"
+            ],
+            "format": "uri",
+            "readOnly": true,
+            "type": "string"
+          },
+          "createdAt": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "createdBy": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string"
+          },
+          "spec": {
+            "$ref": "#/components/schemas/ActivityWorkspaceSpec"
+          }
+        },
+        "required": [
+          "id",
+          "spec",
+          "createdBy",
+          "createdAt"
+        ],
+        "type": "object"
+      },
+      "ActivitySource": {
+        "additionalProperties": false,
+        "properties": {
+          "record_id": {
+            "maxLength": 160,
+            "type": "string"
+          },
+          "record_type": {
+            "maxLength": 60,
+            "type": "string"
+          },
+          "revision": {
+            "format": "int64",
+            "minimum": 0,
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      },
+      "ActivityStageCount": {
+        "additionalProperties": false,
+        "properties": {
+          "count": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "stage": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "stage",
+          "count"
+        ],
+        "type": "object"
+      },
+      "ActivityTemplate": {
+        "additionalProperties": false,
+        "properties": {
+          "$schema": {
+            "description": "A URL to the JSON Schema for this object.",
+            "examples": [
+              "https://example.com/schemas/ActivityTemplate.json"
+            ],
+            "format": "uri",
+            "readOnly": true,
+            "type": "string"
+          },
+          "id": {
+            "type": "string"
+          },
+          "spec": {
+            "$ref": "#/components/schemas/ActivityWorkspaceSpec"
+          },
+          "version": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "visibility": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "version",
+          "visibility",
+          "spec"
+        ],
+        "type": "object"
+      },
+      "ActivityTemplateRef": {
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "maxLength": 200,
+            "type": "string"
+          },
+          "version": {
+            "format": "int64",
+            "minimum": 1,
+            "type": "integer"
+          }
+        },
+        "required": [
+          "id",
+          "version"
+        ],
+        "type": "object"
+      },
+      "ActivityWidget": {
+        "additionalProperties": false,
+        "properties": {
+          "entity": {
+            "type": "string"
+          },
+          "field": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "type": {
+            "enum": [
+              "directory",
+              "timeline",
+              "operations",
+              "workflows",
+              "kpi",
+              "funnel",
+              "health",
+              "timeseries",
+              "breakdown",
+              "latency"
+            ],
+            "type": "string"
+          }
+        },
+        "required": [
+          "type",
+          "title"
+        ],
+        "type": "object"
+      },
+      "ActivityWidgetPoint": {
+        "additionalProperties": false,
+        "properties": {
+          "count": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "label": {
+            "type": "string"
+          },
+          "value": {
+            "format": "double",
+            "type": "number"
+          }
+        },
+        "required": [
+          "label",
+          "count"
+        ],
+        "type": "object"
+      },
+      "ActivityWidgetSeries": {
+        "additionalProperties": false,
+        "properties": {
+          "entity": {
+            "type": "string"
+          },
+          "field": {
+            "type": "string"
+          },
+          "points": {
+            "items": {
+              "$ref": "#/components/schemas/ActivityWidgetPoint"
+            },
+            "type": [
+              "array",
+              "null"
+            ]
+          },
+          "title": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "title",
+          "type",
+          "entity",
+          "field",
+          "points"
+        ],
+        "type": "object"
+      },
+      "ActivityWorkspace": {
+        "additionalProperties": false,
+        "properties": {
+          "$schema": {
+            "description": "A URL to the JSON Schema for this object.",
+            "examples": [
+              "https://example.com/schemas/ActivityWorkspace.json"
+            ],
+            "format": "uri",
+            "readOnly": true,
+            "type": "string"
+          },
+          "activeRevision": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "appId": {
+            "type": "string"
+          },
+          "createdAt": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "generation": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "requestedRevision": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "appId",
+          "name",
+          "activeRevision",
+          "requestedRevision",
+          "generation",
+          "createdAt"
+        ],
+        "type": "object"
+      },
+      "ActivityWorkspaceSpec": {
+        "additionalProperties": false,
+        "properties": {
+          "$schema": {
+            "description": "A URL to the JSON Schema for this object.",
+            "examples": [
+              "https://example.com/schemas/ActivityWorkspaceSpec.json"
+            ],
+            "format": "uri",
+            "readOnly": true,
+            "type": "string"
+          },
+          "alerts": {
+            "items": {
+              "$ref": "#/components/schemas/ActivityAlert"
+            },
+            "maxItems": 20,
+            "type": [
+              "array",
+              "null"
+            ]
+          },
+          "description": {
+            "maxLength": 500,
+            "type": "string"
+          },
+          "entities": {
+            "items": {
+              "$ref": "#/components/schemas/ActivityEntityDefinition"
+            },
+            "maxItems": 20,
+            "type": [
+              "array",
+              "null"
+            ]
+          },
+          "funnels": {
+            "items": {
+              "$ref": "#/components/schemas/ActivityFunnel"
+            },
+            "maxItems": 20,
+            "type": [
+              "array",
+              "null"
+            ]
+          },
+          "mappings": {
+            "items": {
+              "$ref": "#/components/schemas/ActivityMapping"
+            },
+            "maxItems": 500,
+            "type": [
+              "array",
+              "null"
+            ]
+          },
+          "name": {
+            "maxLength": 120,
+            "minLength": 1,
+            "type": "string"
+          },
+          "schemaVersion": {
+            "enum": [
+              1
+            ],
+            "format": "int64",
+            "type": "integer"
+          },
+          "template": {
+            "$ref": "#/components/schemas/ActivityTemplateRef"
+          },
+          "widgets": {
+            "items": {
+              "$ref": "#/components/schemas/ActivityWidget"
+            },
+            "maxItems": 40,
+            "type": [
+              "array",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "schemaVersion",
+          "name",
+          "entities",
+          "mappings",
+          "widgets"
+        ],
+        "type": "object"
+      },
       "AlertOccurrenceDTO": {
         "additionalProperties": false,
         "properties": {
@@ -270,13 +1495,13 @@
           "customDimensions": {
             "type": "boolean"
           },
-          "dashboards": {
-            "type": "boolean"
-          },
           "enabled": {
             "type": "boolean"
           },
           "tagFilter": {
+            "type": "boolean"
+          },
+          "workspaces": {
             "type": "boolean"
           }
         },
@@ -285,7 +1510,7 @@
           "breakdownDimensions",
           "customDimensions",
           "tagFilter",
-          "dashboards"
+          "workspaces"
         ],
         "type": "object"
       },
@@ -630,32 +1855,6 @@
         ],
         "type": "object"
       },
-      "CheckoutInputBody": {
-        "additionalProperties": false,
-        "properties": {
-          "$schema": {
-            "description": "A URL to the JSON Schema for this object.",
-            "examples": [
-              "https://example.com/schemas/CheckoutInputBody.json"
-            ],
-            "format": "uri",
-            "readOnly": true,
-            "type": "string"
-          },
-          "cadence": {
-            "description": "monthly or annual",
-            "type": "string"
-          },
-          "plan": {
-            "description": "pro or team",
-            "type": "string"
-          }
-        },
-        "required": [
-          "plan"
-        ],
-        "type": "object"
-      },
       "Controls": {
         "additionalProperties": false,
         "properties": {
@@ -664,17 +1863,9 @@
           },
           "auditTrail": {
             "$ref": "#/components/schemas/AuditCapability"
-          },
-          "inlineModeration": {
-            "$ref": "#/components/schemas/ModerationCapability"
-          },
-          "spendPolicies": {
-            "$ref": "#/components/schemas/SpendPolicyCapability"
           }
         },
         "required": [
-          "inlineModeration",
-          "spendPolicies",
           "auditTrail",
           "analytics"
         ],
@@ -886,6 +2077,31 @@
           "appId": {
             "type": "string"
           },
+          "spec": {
+            "$ref": "#/components/schemas/ActivityWorkspaceSpec"
+          }
+        },
+        "required": [
+          "appId",
+          "spec"
+        ],
+        "type": "object"
+      },
+      "CreateInputBody1": {
+        "additionalProperties": false,
+        "properties": {
+          "$schema": {
+            "description": "A URL to the JSON Schema for this object.",
+            "examples": [
+              "https://example.com/schemas/CreateInputBody1.json"
+            ],
+            "format": "uri",
+            "readOnly": true,
+            "type": "string"
+          },
+          "appId": {
+            "type": "string"
+          },
           "destination": {
             "minLength": 1,
             "type": "string"
@@ -908,7 +2124,8 @@
               "error_count",
               "error_rate",
               "latency_ms",
-              "cost_usd"
+              "cost_usd",
+              "lifecycle_open"
             ],
             "type": "string"
           },
@@ -950,13 +2167,13 @@
         ],
         "type": "object"
       },
-      "CreateInputBody1": {
+      "CreateInputBody2": {
         "additionalProperties": false,
         "properties": {
           "$schema": {
             "description": "A URL to the JSON Schema for this object.",
             "examples": [
-              "https://example.com/schemas/CreateInputBody1.json"
+              "https://example.com/schemas/CreateInputBody2.json"
             ],
             "format": "uri",
             "readOnly": true,
@@ -1014,13 +2231,13 @@
         ],
         "type": "object"
       },
-      "CreateInputBody2": {
+      "CreateInputBody3": {
         "additionalProperties": false,
         "properties": {
           "$schema": {
             "description": "A URL to the JSON Schema for this object.",
             "examples": [
-              "https://example.com/schemas/CreateInputBody2.json"
+              "https://example.com/schemas/CreateInputBody3.json"
             ],
             "format": "uri",
             "readOnly": true,
@@ -1050,13 +2267,13 @@
         ],
         "type": "object"
       },
-      "CreateInputBody3": {
+      "CreateInputBody4": {
         "additionalProperties": false,
         "properties": {
           "$schema": {
             "description": "A URL to the JSON Schema for this object.",
             "examples": [
-              "https://example.com/schemas/CreateInputBody3.json"
+              "https://example.com/schemas/CreateInputBody4.json"
             ],
             "format": "uri",
             "readOnly": true,
@@ -1168,57 +2385,6 @@
         ],
         "type": "object"
       },
-      "CreateRuleInputBody": {
-        "additionalProperties": false,
-        "properties": {
-          "$schema": {
-            "description": "A URL to the JSON Schema for this object.",
-            "examples": [
-              "https://example.com/schemas/CreateRuleInputBody.json"
-            ],
-            "format": "uri",
-            "readOnly": true,
-            "type": "string"
-          },
-          "action": {
-            "enum": [
-              "allow",
-              "redact",
-              "block",
-              "flag"
-            ],
-            "type": "string"
-          },
-          "detector": {
-            "description": "builtin detector name, or 'regex'/'keyword'/'tool_name'/'tool_arg'",
-            "type": "string"
-          },
-          "name": {
-            "maxLength": 120,
-            "minLength": 1,
-            "type": "string"
-          },
-          "pattern": {
-            "description": "regex/keyword; tool name for tool_name; a JSON-path expression for tool_arg (e.g. 'amount \u003e 10000', 'account =~ ^ext-')",
-            "type": "string"
-          },
-          "target": {
-            "description": "which part of the loop to evaluate (default request)",
-            "enum": [
-              "request",
-              "response",
-              "tool_call"
-            ],
-            "type": "string"
-          }
-        },
-        "required": [
-          "name",
-          "detector",
-          "action"
-        ],
-        "type": "object"
-      },
       "CreateTokenInputBody": {
         "additionalProperties": false,
         "properties": {
@@ -1310,81 +2476,6 @@
           "environmentId",
           "active",
           "createdAt"
-        ],
-        "type": "object"
-      },
-      "DashboardBody": {
-        "additionalProperties": false,
-        "properties": {
-          "$schema": {
-            "description": "A URL to the JSON Schema for this object.",
-            "examples": [
-              "https://example.com/schemas/DashboardBody.json"
-            ],
-            "format": "uri",
-            "readOnly": true,
-            "type": "string"
-          },
-          "description": {
-            "maxLength": 500,
-            "type": "string"
-          },
-          "name": {
-            "maxLength": 120,
-            "minLength": 1,
-            "type": "string"
-          },
-          "spec": {
-            "$ref": "#/components/schemas/Spec",
-            "description": "the widget spec; each widget is a saved analytics query"
-          }
-        },
-        "required": [
-          "name",
-          "spec"
-        ],
-        "type": "object"
-      },
-      "DashboardView": {
-        "additionalProperties": false,
-        "properties": {
-          "$schema": {
-            "description": "A URL to the JSON Schema for this object.",
-            "examples": [
-              "https://example.com/schemas/DashboardView.json"
-            ],
-            "format": "uri",
-            "readOnly": true,
-            "type": "string"
-          },
-          "createdAt": {
-            "type": "string"
-          },
-          "createdBy": {
-            "type": "string"
-          },
-          "dashboardId": {
-            "type": "string"
-          },
-          "description": {
-            "type": "string"
-          },
-          "name": {
-            "type": "string"
-          },
-          "spec": {
-            "$ref": "#/components/schemas/Spec"
-          },
-          "updatedAt": {
-            "type": "string"
-          }
-        },
-        "required": [
-          "dashboardId",
-          "name",
-          "spec",
-          "createdAt",
-          "updatedAt"
         ],
         "type": "object"
       },
@@ -1876,68 +2967,6 @@
         ],
         "type": "object"
       },
-      "EfficacyOutputBody": {
-        "additionalProperties": false,
-        "properties": {
-          "$schema": {
-            "description": "A URL to the JSON Schema for this object.",
-            "examples": [
-              "https://example.com/schemas/EfficacyOutputBody.json"
-            ],
-            "format": "uri",
-            "readOnly": true,
-            "type": "string"
-          },
-          "rows": {
-            "items": {
-              "$ref": "#/components/schemas/EfficacyRowDTO"
-            },
-            "type": [
-              "array",
-              "null"
-            ]
-          }
-        },
-        "required": [
-          "rows"
-        ],
-        "type": "object"
-      },
-      "EfficacyRowDTO": {
-        "additionalProperties": false,
-        "properties": {
-          "action": {
-            "type": "string"
-          },
-          "avgLatencyMs": {
-            "format": "double",
-            "type": "number"
-          },
-          "detector": {
-            "type": "string"
-          },
-          "maxLatencyMs": {
-            "format": "double",
-            "type": "number"
-          },
-          "target": {
-            "type": "string"
-          },
-          "violationCount": {
-            "format": "int64",
-            "type": "integer"
-          }
-        },
-        "required": [
-          "action",
-          "detector",
-          "target",
-          "violationCount",
-          "avgLatencyMs",
-          "maxLatencyMs"
-        ],
-        "type": "object"
-      },
       "EndpointDTO": {
         "additionalProperties": false,
         "properties": {
@@ -2243,6 +3272,11 @@
             "additionalProperties": {},
             "type": "object"
           },
+          "occurredAt": {
+            "description": "Original source time; retries must preserve it",
+            "format": "date-time",
+            "type": "string"
+          },
           "parentSpanId": {
             "type": "string"
           },
@@ -2495,6 +3529,9 @@
           "asyncIngest": {
             "type": "boolean"
           },
+          "billing": {
+            "type": "boolean"
+          },
           "environments": {
             "type": "boolean"
           },
@@ -2506,6 +3543,7 @@
           }
         },
         "required": [
+          "billing",
           "environments",
           "sentryIngest",
           "asyncIngest",
@@ -2654,190 +3692,6 @@
           "traceId",
           "spans"
         ],
-        "type": "object"
-      },
-      "GovernPolicyBody": {
-        "additionalProperties": false,
-        "properties": {
-          "$schema": {
-            "description": "A URL to the JSON Schema for this object.",
-            "examples": [
-              "https://example.com/schemas/GovernPolicyBody.json"
-            ],
-            "format": "uri",
-            "readOnly": true,
-            "type": "string"
-          },
-          "apiKeyId": {
-            "type": "string"
-          },
-          "appId": {
-            "type": "string"
-          },
-          "enabled": {
-            "type": "boolean"
-          },
-          "enforcement": {
-            "description": "enforce (mutate to comply, default) | block (reject 422) | warn (record only)",
-            "enum": [
-              "enforce",
-              "block",
-              "warn",
-              ""
-            ],
-            "type": "string"
-          },
-          "environmentId": {
-            "type": "string"
-          },
-          "model": {
-            "description": "model prefix; empty = all models",
-            "type": "string"
-          },
-          "name": {
-            "maxLength": 120,
-            "minLength": 1,
-            "type": "string"
-          },
-          "provider": {
-            "description": "openai | anthropic; empty = all providers",
-            "type": "string"
-          },
-          "rules": {
-            "$ref": "#/components/schemas/GovernRules",
-            "description": "the structural rule set"
-          },
-          "userId": {
-            "type": "string"
-          }
-        },
-        "required": [
-          "name",
-          "rules"
-        ],
-        "type": "object"
-      },
-      "GovernPolicyView": {
-        "additionalProperties": false,
-        "properties": {
-          "$schema": {
-            "description": "A URL to the JSON Schema for this object.",
-            "examples": [
-              "https://example.com/schemas/GovernPolicyView.json"
-            ],
-            "format": "uri",
-            "readOnly": true,
-            "type": "string"
-          },
-          "apiKeyId": {
-            "type": "string"
-          },
-          "appId": {
-            "type": "string"
-          },
-          "createdAt": {
-            "type": "string"
-          },
-          "enabled": {
-            "type": "boolean"
-          },
-          "enforcement": {
-            "type": "string"
-          },
-          "environmentId": {
-            "type": "string"
-          },
-          "model": {
-            "type": "string"
-          },
-          "name": {
-            "type": "string"
-          },
-          "policyId": {
-            "type": "string"
-          },
-          "provider": {
-            "type": "string"
-          },
-          "rules": {
-            "$ref": "#/components/schemas/GovernRules"
-          },
-          "updatedAt": {
-            "type": "string"
-          },
-          "userId": {
-            "type": "string"
-          }
-        },
-        "required": [
-          "policyId",
-          "name",
-          "enabled",
-          "enforcement",
-          "rules",
-          "createdAt",
-          "updatedAt"
-        ],
-        "type": "object"
-      },
-      "GovernRules": {
-        "additionalProperties": false,
-        "properties": {
-          "allowedModels": {
-            "items": {
-              "type": "string"
-            },
-            "type": [
-              "array",
-              "null"
-            ]
-          },
-          "allowedTools": {
-            "items": {
-              "type": "string"
-            },
-            "type": [
-              "array",
-              "null"
-            ]
-          },
-          "defaultModel": {
-            "type": "string"
-          },
-          "deniedTools": {
-            "items": {
-              "type": "string"
-            },
-            "type": [
-              "array",
-              "null"
-            ]
-          },
-          "maxTokens": {
-            "format": "int64",
-            "type": "integer"
-          },
-          "reasoningEffortCap": {
-            "type": "string"
-          },
-          "reasoningTokensCap": {
-            "format": "int64",
-            "type": "integer"
-          },
-          "requireSafetyIdentifier": {
-            "type": "boolean"
-          },
-          "requireStructuredOutput": {
-            "type": "boolean"
-          },
-          "serviceTier": {
-            "type": "string"
-          },
-          "temperatureMax": {
-            "format": "double",
-            "type": "number"
-          }
-        },
         "type": "object"
       },
       "HealthOutputBody": {
@@ -3339,27 +4193,6 @@
         ],
         "type": "object"
       },
-      "LinkOutputBody": {
-        "additionalProperties": false,
-        "properties": {
-          "$schema": {
-            "description": "A URL to the JSON Schema for this object.",
-            "examples": [
-              "https://example.com/schemas/LinkOutputBody.json"
-            ],
-            "format": "uri",
-            "readOnly": true,
-            "type": "string"
-          },
-          "url": {
-            "type": "string"
-          }
-        },
-        "required": [
-          "url"
-        ],
-        "type": "object"
-      },
       "ListAbuseFlagsOutputBody": {
         "additionalProperties": false,
         "properties": {
@@ -3750,87 +4583,6 @@
             "readOnly": true,
             "type": "string"
           },
-          "policies": {
-            "items": {
-              "$ref": "#/components/schemas/Policy"
-            },
-            "type": [
-              "array",
-              "null"
-            ]
-          }
-        },
-        "required": [
-          "policies"
-        ],
-        "type": "object"
-      },
-      "ListOutputBody1": {
-        "additionalProperties": false,
-        "properties": {
-          "$schema": {
-            "description": "A URL to the JSON Schema for this object.",
-            "examples": [
-              "https://example.com/schemas/ListOutputBody1.json"
-            ],
-            "format": "uri",
-            "readOnly": true,
-            "type": "string"
-          },
-          "policies": {
-            "items": {
-              "$ref": "#/components/schemas/GovernPolicyView"
-            },
-            "type": [
-              "array",
-              "null"
-            ]
-          }
-        },
-        "required": [
-          "policies"
-        ],
-        "type": "object"
-      },
-      "ListOutputBody2": {
-        "additionalProperties": false,
-        "properties": {
-          "$schema": {
-            "description": "A URL to the JSON Schema for this object.",
-            "examples": [
-              "https://example.com/schemas/ListOutputBody2.json"
-            ],
-            "format": "uri",
-            "readOnly": true,
-            "type": "string"
-          },
-          "dashboards": {
-            "items": {
-              "$ref": "#/components/schemas/DashboardView"
-            },
-            "type": [
-              "array",
-              "null"
-            ]
-          }
-        },
-        "required": [
-          "dashboards"
-        ],
-        "type": "object"
-      },
-      "ListOutputBody3": {
-        "additionalProperties": false,
-        "properties": {
-          "$schema": {
-            "description": "A URL to the JSON Schema for this object.",
-            "examples": [
-              "https://example.com/schemas/ListOutputBody3.json"
-            ],
-            "format": "uri",
-            "readOnly": true,
-            "type": "string"
-          },
           "data": {
             "items": {
               "$ref": "#/components/schemas/AlertRuleDTO"
@@ -3846,13 +4598,13 @@
         ],
         "type": "object"
       },
-      "ListOutputBody4": {
+      "ListOutputBody1": {
         "additionalProperties": false,
         "properties": {
           "$schema": {
             "description": "A URL to the JSON Schema for this object.",
             "examples": [
-              "https://example.com/schemas/ListOutputBody4.json"
+              "https://example.com/schemas/ListOutputBody1.json"
             ],
             "format": "uri",
             "readOnly": true,
@@ -3873,13 +4625,13 @@
         ],
         "type": "object"
       },
-      "ListOutputBody5": {
+      "ListOutputBody2": {
         "additionalProperties": false,
         "properties": {
           "$schema": {
             "description": "A URL to the JSON Schema for this object.",
             "examples": [
-              "https://example.com/schemas/ListOutputBody5.json"
+              "https://example.com/schemas/ListOutputBody2.json"
             ],
             "format": "uri",
             "readOnly": true,
@@ -3897,33 +4649,6 @@
         },
         "required": [
           "data"
-        ],
-        "type": "object"
-      },
-      "ListRulesOutputBody": {
-        "additionalProperties": false,
-        "properties": {
-          "$schema": {
-            "description": "A URL to the JSON Schema for this object.",
-            "examples": [
-              "https://example.com/schemas/ListRulesOutputBody.json"
-            ],
-            "format": "uri",
-            "readOnly": true,
-            "type": "string"
-          },
-          "rules": {
-            "items": {
-              "$ref": "#/components/schemas/RuleDTO"
-            },
-            "type": [
-              "array",
-              "null"
-            ]
-          }
-        },
-        "required": [
-          "rules"
         ],
         "type": "object"
       },
@@ -3978,33 +4703,6 @@
         },
         "required": [
           "traces"
-        ],
-        "type": "object"
-      },
-      "ListViolationsOutputBody": {
-        "additionalProperties": false,
-        "properties": {
-          "$schema": {
-            "description": "A URL to the JSON Schema for this object.",
-            "examples": [
-              "https://example.com/schemas/ListViolationsOutputBody.json"
-            ],
-            "format": "uri",
-            "readOnly": true,
-            "type": "string"
-          },
-          "violations": {
-            "items": {
-              "$ref": "#/components/schemas/ViolationDTO"
-            },
-            "type": [
-              "array",
-              "null"
-            ]
-          }
-        },
-        "required": [
-          "violations"
         ],
         "type": "object"
       },
@@ -4093,6 +4791,12 @@
           "emailVerified": {
             "type": "boolean"
           },
+          "firstName": {
+            "type": "string"
+          },
+          "lastName": {
+            "type": "string"
+          },
           "memberships": {
             "items": {
               "$ref": "#/components/schemas/MembershipDTO"
@@ -4101,6 +4805,9 @@
               "array",
               "null"
             ]
+          },
+          "name": {
+            "type": "string"
           },
           "orgId": {
             "type": "string"
@@ -4192,48 +4899,6 @@
         },
         "required": [
           "message"
-        ],
-        "type": "object"
-      },
-      "ModerationCapability": {
-        "additionalProperties": false,
-        "properties": {
-          "actions": {
-            "items": {
-              "type": "string"
-            },
-            "type": [
-              "array",
-              "null"
-            ]
-          },
-          "detectors": {
-            "items": {
-              "type": "string"
-            },
-            "type": [
-              "array",
-              "null"
-            ]
-          },
-          "enabled": {
-            "type": "boolean"
-          },
-          "targets": {
-            "items": {
-              "type": "string"
-            },
-            "type": [
-              "array",
-              "null"
-            ]
-          }
-        },
-        "required": [
-          "enabled",
-          "targets",
-          "detectors",
-          "actions"
         ],
         "type": "object"
       },
@@ -4710,90 +5375,6 @@
         ],
         "type": "object"
       },
-      "PlanFeatures": {
-        "additionalProperties": false,
-        "properties": {
-          "auditLog": {
-            "type": "boolean"
-          },
-          "customRetention": {
-            "type": "boolean"
-          },
-          "rbac": {
-            "type": "boolean"
-          },
-          "sso": {
-            "type": "boolean"
-          }
-        },
-        "type": "object"
-      },
-      "PlanLimits": {
-        "additionalProperties": false,
-        "properties": {
-          "events": {
-            "format": "int64",
-            "type": [
-              "integer",
-              "null"
-            ]
-          },
-          "features": {
-            "$ref": "#/components/schemas/PlanFeatures"
-          },
-          "hotRetentionDays": {
-            "format": "int64",
-            "type": [
-              "integer",
-              "null"
-            ]
-          },
-          "lemonsqueezyVariants": {
-            "additionalProperties": {
-              "type": "string"
-            },
-            "type": "object"
-          },
-          "priceAnnualUsd": {
-            "format": "int64",
-            "type": [
-              "integer",
-              "null"
-            ]
-          },
-          "priceMonthlyUsd": {
-            "format": "int64",
-            "type": [
-              "integer",
-              "null"
-            ]
-          },
-          "retentionDays": {
-            "format": "int64",
-            "type": [
-              "integer",
-              "null"
-            ]
-          },
-          "seats": {
-            "format": "int64",
-            "type": [
-              "integer",
-              "null"
-            ]
-          }
-        },
-        "required": [
-          "events",
-          "retentionDays",
-          "hotRetentionDays",
-          "seats",
-          "priceMonthlyUsd",
-          "priceAnnualUsd",
-          "features"
-        ],
-        "type": "object"
-      },
       "PlanMrr": {
         "additionalProperties": false,
         "properties": {
@@ -4813,218 +5394,6 @@
           "plan",
           "count",
           "mrrUsd"
-        ],
-        "type": "object"
-      },
-      "PlansOutputBody": {
-        "additionalProperties": false,
-        "properties": {
-          "$schema": {
-            "description": "A URL to the JSON Schema for this object.",
-            "examples": [
-              "https://example.com/schemas/PlansOutputBody.json"
-            ],
-            "format": "uri",
-            "readOnly": true,
-            "type": "string"
-          },
-          "plans": {
-            "additionalProperties": {
-              "$ref": "#/components/schemas/PlanLimits"
-            },
-            "type": "object"
-          }
-        },
-        "required": [
-          "plans"
-        ],
-        "type": "object"
-      },
-      "Policy": {
-        "additionalProperties": false,
-        "properties": {
-          "$schema": {
-            "description": "A URL to the JSON Schema for this object.",
-            "examples": [
-              "https://example.com/schemas/Policy.json"
-            ],
-            "format": "uri",
-            "readOnly": true,
-            "type": "string"
-          },
-          "apiKeyId": {
-            "type": "string"
-          },
-          "appId": {
-            "type": "string"
-          },
-          "cooldownMins": {
-            "format": "int32",
-            "type": "integer"
-          },
-          "createdAt": {
-            "type": "string"
-          },
-          "currentSpendUsd": {
-            "format": "double",
-            "type": "number"
-          },
-          "destination": {
-            "type": "string"
-          },
-          "destinationType": {
-            "type": "string"
-          },
-          "enabled": {
-            "type": "boolean"
-          },
-          "environmentId": {
-            "type": "string"
-          },
-          "limitUsd": {
-            "format": "double",
-            "type": "number"
-          },
-          "model": {
-            "type": "string"
-          },
-          "name": {
-            "type": "string"
-          },
-          "policyId": {
-            "type": "string"
-          },
-          "provider": {
-            "type": "string"
-          },
-          "rungs": {
-            "items": {
-              "$ref": "#/components/schemas/Rung"
-            },
-            "type": [
-              "array",
-              "null"
-            ]
-          },
-          "tagKey": {
-            "type": "string"
-          },
-          "tagValue": {
-            "type": "string"
-          },
-          "updatedAt": {
-            "type": "string"
-          },
-          "userId": {
-            "type": "string"
-          },
-          "windowType": {
-            "type": "string"
-          }
-        },
-        "required": [
-          "policyId",
-          "name",
-          "enabled",
-          "windowType",
-          "limitUsd",
-          "rungs",
-          "cooldownMins",
-          "createdAt",
-          "updatedAt"
-        ],
-        "type": "object"
-      },
-      "PolicyBody": {
-        "additionalProperties": false,
-        "properties": {
-          "$schema": {
-            "description": "A URL to the JSON Schema for this object.",
-            "examples": [
-              "https://example.com/schemas/PolicyBody.json"
-            ],
-            "format": "uri",
-            "readOnly": true,
-            "type": "string"
-          },
-          "apiKeyId": {
-            "type": "string"
-          },
-          "appId": {
-            "type": "string"
-          },
-          "cooldownMins": {
-            "format": "int32",
-            "type": "integer"
-          },
-          "destination": {
-            "type": "string"
-          },
-          "destinationType": {
-            "enum": [
-              "email",
-              "webhook",
-              ""
-            ],
-            "type": "string"
-          },
-          "enabled": {
-            "type": "boolean"
-          },
-          "environmentId": {
-            "type": "string"
-          },
-          "limitUsd": {
-            "description": "the 100% amount in USD",
-            "format": "double",
-            "type": "number"
-          },
-          "model": {
-            "description": "model prefix; empty = all models",
-            "type": "string"
-          },
-          "name": {
-            "maxLength": 120,
-            "minLength": 1,
-            "type": "string"
-          },
-          "provider": {
-            "type": "string"
-          },
-          "rungs": {
-            "description": "ordered ladder: each rung is {atPercent, action, blockMode?, fallbackModel?}",
-            "items": {
-              "$ref": "#/components/schemas/Rung"
-            },
-            "type": [
-              "array",
-              "null"
-            ]
-          },
-          "tagKey": {
-            "type": "string"
-          },
-          "tagValue": {
-            "type": "string"
-          },
-          "userId": {
-            "type": "string"
-          },
-          "windowType": {
-            "enum": [
-              "daily",
-              "weekly",
-              "monthly",
-              "cumulative"
-            ],
-            "type": "string"
-          }
-        },
-        "required": [
-          "name",
-          "windowType",
-          "limitUsd",
-          "rungs"
         ],
         "type": "object"
       },
@@ -5074,75 +5443,30 @@
         ],
         "type": "object"
       },
-      "RuleDTO": {
+      "RevisionListOutputBody": {
         "additionalProperties": false,
         "properties": {
           "$schema": {
             "description": "A URL to the JSON Schema for this object.",
             "examples": [
-              "https://example.com/schemas/RuleDTO.json"
+              "https://example.com/schemas/RevisionListOutputBody.json"
             ],
             "format": "uri",
             "readOnly": true,
             "type": "string"
           },
-          "action": {
-            "type": "string"
-          },
-          "createdAt": {
-            "type": "string"
-          },
-          "detector": {
-            "type": "string"
-          },
-          "enabled": {
-            "type": "boolean"
-          },
-          "name": {
-            "type": "string"
-          },
-          "pattern": {
-            "type": "string"
-          },
-          "ruleId": {
-            "type": "string"
-          },
-          "target": {
-            "type": "string"
+          "revisions": {
+            "items": {
+              "$ref": "#/components/schemas/ActivityRevision"
+            },
+            "type": [
+              "array",
+              "null"
+            ]
           }
         },
         "required": [
-          "ruleId",
-          "name",
-          "detector",
-          "pattern",
-          "action",
-          "target",
-          "enabled",
-          "createdAt"
-        ],
-        "type": "object"
-      },
-      "Rung": {
-        "additionalProperties": false,
-        "properties": {
-          "action": {
-            "type": "string"
-          },
-          "at_percent": {
-            "format": "int64",
-            "type": "integer"
-          },
-          "block_mode": {
-            "type": "string"
-          },
-          "fallback_model": {
-            "type": "string"
-          }
-        },
-        "required": [
-          "at_percent",
-          "action"
+          "revisions"
         ],
         "type": "object"
       },
@@ -5412,66 +5736,6 @@
         },
         "required": [
           "days"
-        ],
-        "type": "object"
-      },
-      "Spec": {
-        "additionalProperties": false,
-        "properties": {
-          "widgets": {
-            "items": {
-              "$ref": "#/components/schemas/Widget"
-            },
-            "type": [
-              "array",
-              "null"
-            ]
-          }
-        },
-        "required": [
-          "widgets"
-        ],
-        "type": "object"
-      },
-      "SpendPolicyCapability": {
-        "additionalProperties": false,
-        "properties": {
-          "actions": {
-            "items": {
-              "type": "string"
-            },
-            "type": [
-              "array",
-              "null"
-            ]
-          },
-          "dimensions": {
-            "items": {
-              "type": "string"
-            },
-            "type": [
-              "array",
-              "null"
-            ]
-          },
-          "enabled": {
-            "type": "boolean"
-          },
-          "windows": {
-            "items": {
-              "type": "string"
-            },
-            "type": [
-              "array",
-              "null"
-            ]
-          }
-        },
-        "required": [
-          "enabled",
-          "windows",
-          "actions",
-          "dimensions"
         ],
         "type": "object"
       },
@@ -5940,7 +6204,8 @@
               "error_count",
               "error_rate",
               "latency_ms",
-              "cost_usd"
+              "cost_usd",
+              "lifecycle_open"
             ],
             "type": "string"
           },
@@ -6082,86 +6347,23 @@
         },
         "type": "object"
       },
-      "UsageOutputBody": {
-        "additionalProperties": false,
-        "properties": {
-          "$schema": {
-            "description": "A URL to the JSON Schema for this object.",
-            "examples": [
-              "https://example.com/schemas/UsageOutputBody.json"
-            ],
-            "format": "uri",
-            "readOnly": true,
-            "type": "string"
-          },
-          "cycleStartedAt": {
-            "type": [
-              "string",
-              "null"
-            ]
-          },
-          "hasBillingPortal": {
-            "type": "boolean"
-          },
-          "limit": {
-            "format": "int64",
-            "type": [
-              "integer",
-              "null"
-            ]
-          },
-          "plan": {
-            "type": "string"
-          },
-          "retentionDays": {
-            "format": "int32",
-            "type": [
-              "integer",
-              "null"
-            ]
-          },
-          "seats": {
-            "format": "int32",
-            "type": [
-              "integer",
-              "null"
-            ]
-          },
-          "subscriptionStatus": {
-            "type": "string"
-          },
-          "trialEndsAt": {
-            "type": [
-              "string",
-              "null"
-            ]
-          },
-          "used": {
-            "format": "int64",
-            "type": "integer"
-          }
-        },
-        "required": [
-          "plan",
-          "used",
-          "limit",
-          "retentionDays",
-          "seats",
-          "cycleStartedAt",
-          "subscriptionStatus",
-          "trialEndsAt",
-          "hasBillingPortal"
-        ],
-        "type": "object"
-      },
       "UserDTO": {
         "additionalProperties": false,
         "properties": {
+          "createdAt": {
+            "type": "string"
+          },
+          "deletedAt": {
+            "type": "string"
+          },
           "disabledAt": {
             "type": "string"
           },
           "email": {
             "type": "string"
+          },
+          "emailVerified": {
+            "type": "boolean"
           },
           "firstName": {
             "type": "string"
@@ -6181,7 +6383,9 @@
         },
         "required": [
           "id",
-          "email"
+          "email",
+          "emailVerified",
+          "createdAt"
         ],
         "type": "object"
       },
@@ -6264,156 +6468,282 @@
         ],
         "type": "object"
       },
-      "ViolationDTO": {
-        "additionalProperties": false,
-        "properties": {
-          "action": {
-            "type": "string"
-          },
-          "appId": {
-            "type": "string"
-          },
-          "channelId": {
-            "type": "string"
-          },
-          "detector": {
-            "type": "string"
-          },
-          "explanation": {
-            "type": "string"
-          },
-          "latencyMs": {
-            "format": "double",
-            "type": "number"
-          },
-          "occurredAt": {
-            "type": "string"
-          },
-          "ruleId": {
-            "type": "string"
-          },
-          "ruleName": {
-            "type": "string"
-          },
-          "target": {
-            "type": "string"
-          },
-          "traceId": {
-            "type": "string"
-          },
-          "violationId": {
-            "type": "string"
-          }
-        },
-        "required": [
-          "violationId",
-          "ruleId",
-          "ruleName",
-          "detector",
-          "action",
-          "target",
-          "occurredAt"
-        ],
-        "type": "object"
-      },
-      "WebhookOutputBody": {
+      "WorkspaceEntitiesOutputBody": {
         "additionalProperties": false,
         "properties": {
           "$schema": {
             "description": "A URL to the JSON Schema for this object.",
             "examples": [
-              "https://example.com/schemas/WebhookOutputBody.json"
+              "https://example.com/schemas/WorkspaceEntitiesOutputBody.json"
             ],
             "format": "uri",
             "readOnly": true,
             "type": "string"
           },
-          "deduped": {
-            "type": "boolean"
+          "entities": {
+            "items": {
+              "$ref": "#/components/schemas/ActivityEntity"
+            },
+            "type": [
+              "array",
+              "null"
+            ]
           },
-          "ok": {
-            "type": "boolean"
-          },
-          "skipped": {
+          "nextCursor": {
             "type": "string"
           }
         },
         "required": [
-          "ok"
+          "entities"
         ],
         "type": "object"
       },
-      "Widget": {
+      "WorkspaceIncidentsOutputBody": {
         "additionalProperties": false,
         "properties": {
-          "dimension": {
-            "description": "breakdown dimension (model, provider, tag, ...)",
-            "type": "string"
-          },
-          "limit": {
-            "format": "int64",
-            "type": "integer"
-          },
-          "metric": {
-            "description": "kpi/timeseries metric: calls|errors|cost|tokens|latency|ttft",
-            "type": "string"
-          },
-          "scope": {
-            "$ref": "#/components/schemas/WidgetScope"
-          },
-          "tagKey": {
-            "description": "attribute key to group by when dimension=tag",
-            "type": "string"
-          },
-          "title": {
-            "type": "string"
-          },
-          "type": {
-            "description": "kpi | timeseries | breakdown | latency",
-            "enum": [
-              "kpi",
-              "timeseries",
-              "breakdown",
-              "latency"
+          "$schema": {
+            "description": "A URL to the JSON Schema for this object.",
+            "examples": [
+              "https://example.com/schemas/WorkspaceIncidentsOutputBody.json"
             ],
+            "format": "uri",
+            "readOnly": true,
             "type": "string"
+          },
+          "incidents": {
+            "items": {
+              "$ref": "#/components/schemas/ActivityIncident"
+            },
+            "type": [
+              "array",
+              "null"
+            ]
           }
         },
         "required": [
-          "type"
+          "incidents"
         ],
         "type": "object"
       },
-      "WidgetScope": {
+      "WorkspaceIngestInputBody": {
         "additionalProperties": false,
         "properties": {
-          "app": {
-            "type": "string"
-          },
-          "channel": {
-            "description": "Scope to a channel id",
+          "$schema": {
+            "description": "A URL to the JSON Schema for this object.",
+            "examples": [
+              "https://example.com/schemas/WorkspaceIngestInputBody.json"
+            ],
+            "format": "uri",
+            "readOnly": true,
             "type": "string"
           },
           "environment": {
             "type": "string"
           },
-          "filterTagKey": {
-            "description": "Scope to a custom-dimension value; pair with filterTagValue",
+          "observations": {
+            "items": {
+              "$ref": "#/components/schemas/ActivityObservation"
+            },
+            "maxItems": 100,
+            "minItems": 1,
+            "type": [
+              "array",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "environment",
+          "observations"
+        ],
+        "type": "object"
+      },
+      "WorkspaceIngestOutputBody": {
+        "additionalProperties": false,
+        "properties": {
+          "$schema": {
+            "description": "A URL to the JSON Schema for this object.",
+            "examples": [
+              "https://example.com/schemas/WorkspaceIngestOutputBody.json"
+            ],
+            "format": "uri",
+            "readOnly": true,
             "type": "string"
           },
-          "filterTagValue": {
+          "receipts": {
+            "items": {
+              "$ref": "#/components/schemas/ActivityReceipt"
+            },
+            "type": [
+              "array",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "receipts"
+        ],
+        "type": "object"
+      },
+      "WorkspaceListOutputBody": {
+        "additionalProperties": false,
+        "properties": {
+          "$schema": {
+            "description": "A URL to the JSON Schema for this object.",
+            "examples": [
+              "https://example.com/schemas/WorkspaceListOutputBody.json"
+            ],
+            "format": "uri",
+            "readOnly": true,
             "type": "string"
           },
-          "model": {
+          "workspaces": {
+            "items": {
+              "$ref": "#/components/schemas/ActivityWorkspace"
+            },
+            "type": [
+              "array",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "workspaces"
+        ],
+        "type": "object"
+      },
+      "WorkspacePreviewInputBody": {
+        "additionalProperties": false,
+        "properties": {
+          "$schema": {
+            "description": "A URL to the JSON Schema for this object.",
+            "examples": [
+              "https://example.com/schemas/WorkspacePreviewInputBody.json"
+            ],
+            "format": "uri",
+            "readOnly": true,
             "type": "string"
           },
-          "provider": {
+          "observations": {
+            "items": {
+              "$ref": "#/components/schemas/ActivityObservation"
+            },
+            "maxItems": 100,
+            "type": [
+              "array",
+              "null"
+            ]
+          },
+          "spec": {
+            "$ref": "#/components/schemas/ActivityWorkspaceSpec"
+          }
+        },
+        "required": [
+          "spec",
+          "observations"
+        ],
+        "type": "object"
+      },
+      "WorkspaceStatusOutputBody": {
+        "additionalProperties": false,
+        "properties": {
+          "$schema": {
+            "description": "A URL to the JSON Schema for this object.",
+            "examples": [
+              "https://example.com/schemas/WorkspaceStatusOutputBody.json"
+            ],
+            "format": "uri",
+            "readOnly": true,
             "type": "string"
           },
-          "source": {
+          "status": {
             "type": "string"
           }
         },
+        "required": [
+          "status"
+        ],
+        "type": "object"
+      },
+      "WorkspaceTemplateListOutputBody": {
+        "additionalProperties": false,
+        "properties": {
+          "$schema": {
+            "description": "A URL to the JSON Schema for this object.",
+            "examples": [
+              "https://example.com/schemas/WorkspaceTemplateListOutputBody.json"
+            ],
+            "format": "uri",
+            "readOnly": true,
+            "type": "string"
+          },
+          "templates": {
+            "items": {
+              "$ref": "#/components/schemas/ActivityTemplate"
+            },
+            "type": [
+              "array",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "templates"
+        ],
+        "type": "object"
+      },
+      "WorkspaceTimelineOutputBody": {
+        "additionalProperties": false,
+        "properties": {
+          "$schema": {
+            "description": "A URL to the JSON Schema for this object.",
+            "examples": [
+              "https://example.com/schemas/WorkspaceTimelineOutputBody.json"
+            ],
+            "format": "uri",
+            "readOnly": true,
+            "type": "string"
+          },
+          "events": {
+            "items": {
+              "$ref": "#/components/schemas/ActivityRecord"
+            },
+            "type": [
+              "array",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "events"
+        ],
+        "type": "object"
+      },
+      "WorkspaceWidgetsOutputBody": {
+        "additionalProperties": false,
+        "properties": {
+          "$schema": {
+            "description": "A URL to the JSON Schema for this object.",
+            "examples": [
+              "https://example.com/schemas/WorkspaceWidgetsOutputBody.json"
+            ],
+            "format": "uri",
+            "readOnly": true,
+            "type": "string"
+          },
+          "series": {
+            "items": {
+              "$ref": "#/components/schemas/ActivityWidgetSeries"
+            },
+            "type": [
+              "array",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "series"
+        ],
         "type": "object"
       }
     }
@@ -6468,7 +6798,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/CreateInputBody3"
+                "$ref": "#/components/schemas/CreateInputBody4"
               }
             }
           },
@@ -6981,6 +7311,47 @@
         ]
       }
     },
+    "/admin/orgs/{orgId}/delete": {
+      "post": {
+        "operationId": "admin.orgs.delete",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "orgId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OkOutputBody"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "summary": "Soft-delete an organization (hidden from lists and counts)",
+        "tags": [
+          "admin"
+        ]
+      }
+    },
     "/admin/orgs/{orgId}/disable": {
       "post": {
         "operationId": "admin.orgs.disable",
@@ -7311,6 +7682,16 @@
               "description": "Filter by email or username",
               "type": "string"
             }
+          },
+          {
+            "description": "Include soft-deleted users",
+            "explode": false,
+            "in": "query",
+            "name": "includeDeleted",
+            "schema": {
+              "description": "Include soft-deleted users",
+              "type": "boolean"
+            }
           }
         ],
         "responses": {
@@ -7336,6 +7717,47 @@
           }
         },
         "summary": "Search users",
+        "tags": [
+          "admin"
+        ]
+      }
+    },
+    "/admin/users/{userId}/delete": {
+      "post": {
+        "operationId": "admin.users.delete",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "userId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OkOutputBody"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "summary": "Soft-delete a user (hidden from lists and counts, sign-in blocked)",
         "tags": [
           "admin"
         ]
@@ -7418,6 +7840,47 @@
           }
         },
         "summary": "Enable a user",
+        "tags": [
+          "admin"
+        ]
+      }
+    },
+    "/admin/users/{userId}/restore": {
+      "post": {
+        "operationId": "admin.users.restore",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "userId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OkOutputBody"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "summary": "Restore a soft-deleted user",
         "tags": [
           "admin"
         ]
@@ -9195,7 +9658,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ListOutputBody5"
+                  "$ref": "#/components/schemas/ListOutputBody2"
                 }
               }
             },
@@ -9323,192 +9786,6 @@
         ]
       }
     },
-    "/billing/checkout": {
-      "post": {
-        "operationId": "billing.checkout",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CheckoutInputBody"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "201": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/LinkOutputBody"
-                }
-              }
-            },
-            "description": "Created"
-          },
-          "default": {
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorModel"
-                }
-              }
-            },
-            "description": "Error"
-          }
-        },
-        "summary": "Create a checkout link",
-        "tags": [
-          "billing"
-        ]
-      }
-    },
-    "/billing/plans": {
-      "get": {
-        "operationId": "billing.plans",
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/PlansOutputBody"
-                }
-              }
-            },
-            "description": "OK"
-          },
-          "default": {
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorModel"
-                }
-              }
-            },
-            "description": "Error"
-          }
-        },
-        "summary": "List billing plans",
-        "tags": [
-          "billing"
-        ]
-      }
-    },
-    "/billing/portal": {
-      "get": {
-        "operationId": "billing.portal",
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/LinkOutputBody"
-                }
-              }
-            },
-            "description": "OK"
-          },
-          "default": {
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorModel"
-                }
-              }
-            },
-            "description": "Error"
-          }
-        },
-        "summary": "Get the customer portal link",
-        "tags": [
-          "billing"
-        ]
-      }
-    },
-    "/billing/usage": {
-      "get": {
-        "operationId": "billing.usage",
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/UsageOutputBody"
-                }
-              }
-            },
-            "description": "OK"
-          },
-          "default": {
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorModel"
-                }
-              }
-            },
-            "description": "Error"
-          }
-        },
-        "summary": "Get billing usage",
-        "tags": [
-          "billing"
-        ]
-      }
-    },
-    "/billing/webhook": {
-      "post": {
-        "operationId": "billing.webhook",
-        "parameters": [
-          {
-            "in": "header",
-            "name": "X-Signature",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/octet-stream": {
-              "schema": {
-                "contentMediaType": "application/octet-stream",
-                "format": "binary",
-                "type": "string"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/WebhookOutputBody"
-                }
-              }
-            },
-            "description": "OK"
-          },
-          "default": {
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorModel"
-                }
-              }
-            },
-            "description": "Error"
-          }
-        },
-        "summary": "LemonSqueezy webhook",
-        "tags": [
-          "billing"
-        ]
-      }
-    },
     "/capabilities": {
       "get": {
         "operationId": "capabilities.get",
@@ -9537,206 +9814,6 @@
         "summary": "Get deployment capabilities",
         "tags": [
           "capabilities"
-        ]
-      }
-    },
-    "/dashboards": {
-      "get": {
-        "operationId": "dashboards.list",
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ListOutputBody2"
-                }
-              }
-            },
-            "description": "OK"
-          },
-          "default": {
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorModel"
-                }
-              }
-            },
-            "description": "Error"
-          }
-        },
-        "summary": "List saved dashboards",
-        "tags": [
-          "dashboards"
-        ]
-      },
-      "post": {
-        "description": "Author a dashboard tailored to this org's business. Discover which custom dimensions exist via /analytics/dimensions, then define widgets that bind to /analytics/breakdown (dimension=tag\u0026tagKey=\u003ckey\u003e, or dimension=channel to compare channels), /analytics/timeseries, and /analytics/latency, optionally scoped by filterTagKey+filterTagValue or by a channel id (scope.channel). List channels via /apps and /apps/{appId}/channels.",
-        "operationId": "dashboards.create",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/DashboardBody"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "201": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/DashboardView"
-                }
-              }
-            },
-            "description": "Created"
-          },
-          "default": {
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorModel"
-                }
-              }
-            },
-            "description": "Error"
-          }
-        },
-        "summary": "Create a saved dashboard from a widget spec",
-        "tags": [
-          "dashboards"
-        ]
-      }
-    },
-    "/dashboards/{dashboardId}": {
-      "delete": {
-        "operationId": "dashboards.delete",
-        "parameters": [
-          {
-            "in": "path",
-            "name": "dashboardId",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/OkOutputBody"
-                }
-              }
-            },
-            "description": "OK"
-          },
-          "default": {
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorModel"
-                }
-              }
-            },
-            "description": "Error"
-          }
-        },
-        "summary": "Delete a saved dashboard",
-        "tags": [
-          "dashboards"
-        ]
-      },
-      "get": {
-        "operationId": "dashboards.get",
-        "parameters": [
-          {
-            "in": "path",
-            "name": "dashboardId",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/DashboardView"
-                }
-              }
-            },
-            "description": "OK"
-          },
-          "default": {
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorModel"
-                }
-              }
-            },
-            "description": "Error"
-          }
-        },
-        "summary": "Get a saved dashboard",
-        "tags": [
-          "dashboards"
-        ]
-      },
-      "put": {
-        "operationId": "dashboards.update",
-        "parameters": [
-          {
-            "in": "path",
-            "name": "dashboardId",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/DashboardBody"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/DashboardView"
-                }
-              }
-            },
-            "description": "OK"
-          },
-          "default": {
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorModel"
-                }
-              }
-            },
-            "description": "Error"
-          }
-        },
-        "summary": "Update a saved dashboard",
-        "tags": [
-          "dashboards"
         ]
       }
     },
@@ -10558,7 +10635,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ListOutputBody4"
+                  "$ref": "#/components/schemas/ListOutputBody1"
                 }
               }
             },
@@ -10586,7 +10663,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/CreateInputBody1"
+                "$ref": "#/components/schemas/CreateInputBody2"
               }
             }
           },
@@ -10892,7 +10969,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/CreateInputBody2"
+                "$ref": "#/components/schemas/CreateInputBody3"
               }
             }
           },
@@ -10923,166 +11000,6 @@
         "summary": "Submit feedback",
         "tags": [
           "feedback"
-        ]
-      }
-    },
-    "/govern-policies": {
-      "get": {
-        "operationId": "govern-policies.list",
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ListOutputBody1"
-                }
-              }
-            },
-            "description": "OK"
-          },
-          "default": {
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorModel"
-                }
-              }
-            },
-            "description": "Error"
-          }
-        },
-        "summary": "List govern policies",
-        "tags": [
-          "govern-policies"
-        ]
-      },
-      "post": {
-        "operationId": "govern-policies.create",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/GovernPolicyBody"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "201": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GovernPolicyView"
-                }
-              }
-            },
-            "description": "Created"
-          },
-          "default": {
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorModel"
-                }
-              }
-            },
-            "description": "Error"
-          }
-        },
-        "summary": "Create a govern policy",
-        "tags": [
-          "govern-policies"
-        ]
-      }
-    },
-    "/govern-policies/{policyId}": {
-      "delete": {
-        "operationId": "govern-policies.delete",
-        "parameters": [
-          {
-            "in": "path",
-            "name": "policyId",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/OkOutputBody"
-                }
-              }
-            },
-            "description": "OK"
-          },
-          "default": {
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorModel"
-                }
-              }
-            },
-            "description": "Error"
-          }
-        },
-        "summary": "Delete a govern policy",
-        "tags": [
-          "govern-policies"
-        ]
-      },
-      "patch": {
-        "operationId": "govern-policies.update",
-        "parameters": [
-          {
-            "in": "path",
-            "name": "policyId",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/GovernPolicyBody"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GovernPolicyView"
-                }
-              }
-            },
-            "description": "OK"
-          },
-          "default": {
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorModel"
-                }
-              }
-            },
-            "description": "Error"
-          }
-        },
-        "summary": "Update a govern policy",
-        "tags": [
-          "govern-policies"
         ]
       }
     },
@@ -11183,209 +11100,6 @@
         "summary": "Get deployment licence state",
         "tags": [
           "license"
-        ]
-      }
-    },
-    "/moderation/efficacy": {
-      "get": {
-        "operationId": "moderation.efficacy",
-        "parameters": [
-          {
-            "description": "Window start (RFC3339); defaults to 24h before until",
-            "explode": false,
-            "in": "query",
-            "name": "since",
-            "schema": {
-              "description": "Window start (RFC3339); defaults to 24h before until",
-              "type": "string"
-            }
-          },
-          {
-            "description": "Window end (RFC3339); defaults to now",
-            "explode": false,
-            "in": "query",
-            "name": "until",
-            "schema": {
-              "description": "Window end (RFC3339); defaults to now",
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/EfficacyOutputBody"
-                }
-              }
-            },
-            "description": "OK"
-          },
-          "default": {
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorModel"
-                }
-              }
-            },
-            "description": "Error"
-          }
-        },
-        "summary": "Guardrail efficacy + latency",
-        "tags": [
-          "moderation"
-        ]
-      }
-    },
-    "/moderation/rules": {
-      "get": {
-        "operationId": "moderation.rules.list",
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ListRulesOutputBody"
-                }
-              }
-            },
-            "description": "OK"
-          },
-          "default": {
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorModel"
-                }
-              }
-            },
-            "description": "Error"
-          }
-        },
-        "tags": [
-          "moderation"
-        ]
-      },
-      "post": {
-        "operationId": "moderation.rules.create",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CreateRuleInputBody"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "201": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/RuleDTO"
-                }
-              }
-            },
-            "description": "Created"
-          },
-          "default": {
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorModel"
-                }
-              }
-            },
-            "description": "Error"
-          }
-        },
-        "tags": [
-          "moderation"
-        ]
-      }
-    },
-    "/moderation/rules/{ruleId}": {
-      "delete": {
-        "operationId": "moderation.rules.delete",
-        "parameters": [
-          {
-            "in": "path",
-            "name": "ruleId",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/OkOutputBody"
-                }
-              }
-            },
-            "description": "OK"
-          },
-          "default": {
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorModel"
-                }
-              }
-            },
-            "description": "Error"
-          }
-        },
-        "tags": [
-          "moderation"
-        ]
-      }
-    },
-    "/moderation/violations": {
-      "get": {
-        "operationId": "moderation.violations.list",
-        "parameters": [
-          {
-            "explode": false,
-            "in": "query",
-            "name": "limit",
-            "schema": {
-              "default": 50,
-              "format": "int64",
-              "type": "integer"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ListViolationsOutputBody"
-                }
-              }
-            },
-            "description": "OK"
-          },
-          "default": {
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorModel"
-                }
-              }
-            },
-            "description": "Error"
-          }
-        },
-        "tags": [
-          "moderation"
         ]
       }
     },
@@ -12079,15 +11793,15 @@
         ]
       }
     },
-    "/spend-policies": {
+    "/templates": {
       "get": {
-        "operationId": "spend-policies.list",
+        "operationId": "templates.list",
         "responses": {
           "200": {
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ListOutputBody"
+                  "$ref": "#/components/schemas/WorkspaceTemplateListOutputBody"
                 }
               }
             },
@@ -12104,70 +11818,32 @@
             "description": "Error"
           }
         },
-        "summary": "List spend policies",
+        "summary": "Discover public and organization-private immutable business templates",
         "tags": [
-          "spend-policies"
+          "templates"
+        ],
+        "x-axonpush-scopes": [
+          "observe:read"
         ]
       },
       "post": {
-        "operationId": "spend-policies.create",
+        "operationId": "templates.publish",
         "requestBody": {
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/PolicyBody"
+                "$ref": "#/components/schemas/ActivityTemplate"
               }
             }
           },
           "required": true
         },
         "responses": {
-          "201": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Policy"
-                }
-              }
-            },
-            "description": "Created"
-          },
-          "default": {
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorModel"
-                }
-              }
-            },
-            "description": "Error"
-          }
-        },
-        "summary": "Create a spend policy",
-        "tags": [
-          "spend-policies"
-        ]
-      }
-    },
-    "/spend-policies/{policyId}": {
-      "delete": {
-        "operationId": "spend-policies.delete",
-        "parameters": [
-          {
-            "in": "path",
-            "name": "policyId",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
           "200": {
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/OkOutputBody"
+                  "$ref": "#/components/schemas/WorkspaceStatusOutputBody"
                 }
               }
             },
@@ -12184,58 +11860,12 @@
             "description": "Error"
           }
         },
-        "summary": "Delete a spend policy",
+        "summary": "Publish immutable configuration only; never production data",
         "tags": [
-          "spend-policies"
-        ]
-      },
-      "patch": {
-        "operationId": "spend-policies.update",
-        "parameters": [
-          {
-            "in": "path",
-            "name": "policyId",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
+          "templates"
         ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/PolicyBody"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Policy"
-                }
-              }
-            },
-            "description": "OK"
-          },
-          "default": {
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorModel"
-                }
-              }
-            },
-            "description": "Error"
-          }
-        },
-        "summary": "Update a spend policy",
-        "tags": [
-          "spend-policies"
+        "x-axonpush-scopes": [
+          "templates:publish"
         ]
       }
     },
@@ -12796,7 +12426,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ListOutputBody3"
+                  "$ref": "#/components/schemas/ListOutputBody"
                 }
               }
             },
@@ -12824,7 +12454,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/CreateInputBody"
+                "$ref": "#/components/schemas/CreateInputBody1"
               }
             }
           },
@@ -13164,6 +12794,1745 @@
         "summary": "Deactivate a webhook endpoint",
         "tags": [
           "webhooks"
+        ]
+      }
+    },
+    "/workspaces": {
+      "get": {
+        "operationId": "workspaces.list",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WorkspaceListOutputBody"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "summary": "List organization workspaces",
+        "tags": [
+          "workspaces"
+        ],
+        "x-axonpush-scopes": [
+          "observe:read"
+        ]
+      },
+      "post": {
+        "operationId": "workspaces.create",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateInputBody"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ActivityWorkspace"
+                }
+              }
+            },
+            "description": "Created"
+          },
+          "default": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "summary": "Create an organization-owned workspace from a spec",
+        "tags": [
+          "workspaces"
+        ],
+        "x-axonpush-scopes": [
+          "workspaces:manage"
+        ]
+      }
+    },
+    "/workspaces/preview": {
+      "post": {
+        "operationId": "workspaces.preview",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WorkspacePreviewInputBody"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WorkspaceEntitiesOutputBody"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "summary": "Preview a spec against synthetic metadata-only observations",
+        "tags": [
+          "workspaces"
+        ],
+        "x-axonpush-scopes": [
+          "workspaces:manage"
+        ]
+      }
+    },
+    "/workspaces/schema": {
+      "get": {
+        "operationId": "workspaces.schema",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": {},
+                  "type": "object"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "summary": "Read the versioned declarative workspace JSON Schema",
+        "tags": [
+          "workspaces"
+        ],
+        "x-axonpush-scopes": [
+          "observe:read"
+        ]
+      }
+    },
+    "/workspaces/validate": {
+      "post": {
+        "operationId": "workspaces.validate",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ActivityWorkspaceSpec"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WorkspaceStatusOutputBody"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "summary": "Validate a workspace spec without saving or executing it",
+        "tags": [
+          "workspaces"
+        ],
+        "x-axonpush-scopes": [
+          "workspaces:manage"
+        ]
+      }
+    },
+    "/workspaces/{workspaceId}": {
+      "get": {
+        "operationId": "workspaces.get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "workspaceId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ActivityWorkspace"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "summary": "Read workspace activation and rebuild state",
+        "tags": [
+          "workspaces"
+        ],
+        "x-axonpush-scopes": [
+          "observe:read"
+        ]
+      }
+    },
+    "/workspaces/{workspaceId}/activate": {
+      "post": {
+        "operationId": "workspaces.activate",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "workspaceId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ActivateInputBody"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WorkspaceStatusOutputBody"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "summary": "Build a revision before activation; use a previous revision for rollback",
+        "tags": [
+          "workspaces"
+        ],
+        "x-axonpush-scopes": [
+          "workspaces:manage"
+        ]
+      }
+    },
+    "/workspaces/{workspaceId}/activity": {
+      "get": {
+        "operationId": "activity.entities",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "workspaceId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "explode": false,
+            "in": "query",
+            "name": "environment",
+            "schema": {
+              "maxLength": 160,
+              "type": "string"
+            }
+          },
+          {
+            "explode": false,
+            "in": "query",
+            "name": "entity",
+            "schema": {
+              "maxLength": 120,
+              "type": "string"
+            }
+          },
+          {
+            "explode": false,
+            "in": "query",
+            "name": "entityId",
+            "schema": {
+              "maxLength": 160,
+              "type": "string"
+            }
+          },
+          {
+            "explode": false,
+            "in": "query",
+            "name": "side",
+            "schema": {
+              "maxLength": 60,
+              "type": "string"
+            }
+          },
+          {
+            "explode": false,
+            "in": "query",
+            "name": "client",
+            "schema": {
+              "maxLength": 80,
+              "type": "string"
+            }
+          },
+          {
+            "explode": false,
+            "in": "query",
+            "name": "action",
+            "schema": {
+              "maxLength": 100,
+              "type": "string"
+            }
+          },
+          {
+            "explode": false,
+            "in": "query",
+            "name": "outcome",
+            "schema": {
+              "maxLength": 60,
+              "type": "string"
+            }
+          },
+          {
+            "explode": false,
+            "in": "query",
+            "name": "state",
+            "schema": {
+              "maxLength": 60,
+              "type": "string"
+            }
+          },
+          {
+            "explode": false,
+            "in": "query",
+            "name": "freshness",
+            "schema": {
+              "enum": [
+                "fresh",
+                "stale"
+              ],
+              "type": "string"
+            }
+          },
+          {
+            "explode": false,
+            "in": "query",
+            "name": "q",
+            "schema": {
+              "maxLength": 160,
+              "type": "string"
+            }
+          },
+          {
+            "explode": false,
+            "in": "query",
+            "name": "agentId",
+            "schema": {
+              "maxLength": 160,
+              "type": "string"
+            }
+          },
+          {
+            "explode": false,
+            "in": "query",
+            "name": "cursor",
+            "schema": {
+              "maxLength": 300,
+              "type": "string"
+            }
+          },
+          {
+            "explode": false,
+            "in": "query",
+            "name": "limit",
+            "schema": {
+              "default": 100,
+              "format": "int64",
+              "maximum": 200,
+              "minimum": 1,
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WorkspaceEntitiesOutputBody"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "summary": "Read exact scoped business entities and concurrent operations",
+        "tags": [
+          "activity"
+        ],
+        "x-axonpush-scopes": [
+          "observe:read"
+        ]
+      }
+    },
+    "/workspaces/{workspaceId}/agents/{agentId}": {
+      "delete": {
+        "operationId": "activity.deleteAgent",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "workspaceId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "agentId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "explode": false,
+            "in": "query",
+            "name": "environment",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WorkspaceStatusOutputBody"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "summary": "Delete agent evidence and install a replay tombstone",
+        "tags": [
+          "activity"
+        ],
+        "x-axonpush-scopes": [
+          "workspaces:manage"
+        ]
+      }
+    },
+    "/workspaces/{workspaceId}/analytics": {
+      "get": {
+        "operationId": "activity.analytics",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "workspaceId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "explode": false,
+            "in": "query",
+            "name": "environment",
+            "schema": {
+              "maxLength": 160,
+              "type": "string"
+            }
+          },
+          {
+            "explode": false,
+            "in": "query",
+            "name": "entity",
+            "schema": {
+              "maxLength": 120,
+              "type": "string"
+            }
+          },
+          {
+            "explode": false,
+            "in": "query",
+            "name": "entityId",
+            "schema": {
+              "maxLength": 160,
+              "type": "string"
+            }
+          },
+          {
+            "explode": false,
+            "in": "query",
+            "name": "side",
+            "schema": {
+              "maxLength": 60,
+              "type": "string"
+            }
+          },
+          {
+            "explode": false,
+            "in": "query",
+            "name": "client",
+            "schema": {
+              "maxLength": 80,
+              "type": "string"
+            }
+          },
+          {
+            "explode": false,
+            "in": "query",
+            "name": "action",
+            "schema": {
+              "maxLength": 100,
+              "type": "string"
+            }
+          },
+          {
+            "explode": false,
+            "in": "query",
+            "name": "outcome",
+            "schema": {
+              "maxLength": 60,
+              "type": "string"
+            }
+          },
+          {
+            "explode": false,
+            "in": "query",
+            "name": "state",
+            "schema": {
+              "maxLength": 60,
+              "type": "string"
+            }
+          },
+          {
+            "explode": false,
+            "in": "query",
+            "name": "freshness",
+            "schema": {
+              "enum": [
+                "fresh",
+                "stale"
+              ],
+              "type": "string"
+            }
+          },
+          {
+            "explode": false,
+            "in": "query",
+            "name": "q",
+            "schema": {
+              "maxLength": 160,
+              "type": "string"
+            }
+          },
+          {
+            "explode": false,
+            "in": "query",
+            "name": "agentId",
+            "schema": {
+              "maxLength": 160,
+              "type": "string"
+            }
+          },
+          {
+            "explode": false,
+            "in": "query",
+            "name": "cursor",
+            "schema": {
+              "maxLength": 300,
+              "type": "string"
+            }
+          },
+          {
+            "explode": false,
+            "in": "query",
+            "name": "limit",
+            "schema": {
+              "default": 100,
+              "format": "int64",
+              "maximum": 200,
+              "minimum": 1,
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ActivityAnalytics"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "summary": "Distinct lifecycle milestones and client activation; snapshots never count as joins",
+        "tags": [
+          "activity"
+        ],
+        "x-axonpush-scopes": [
+          "observe:read"
+        ]
+      }
+    },
+    "/workspaces/{workspaceId}/health": {
+      "get": {
+        "operationId": "activity.health",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "workspaceId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "explode": false,
+            "in": "query",
+            "name": "environment",
+            "schema": {
+              "maxLength": 160,
+              "type": "string"
+            }
+          },
+          {
+            "explode": false,
+            "in": "query",
+            "name": "entity",
+            "schema": {
+              "maxLength": 120,
+              "type": "string"
+            }
+          },
+          {
+            "explode": false,
+            "in": "query",
+            "name": "entityId",
+            "schema": {
+              "maxLength": 160,
+              "type": "string"
+            }
+          },
+          {
+            "explode": false,
+            "in": "query",
+            "name": "side",
+            "schema": {
+              "maxLength": 60,
+              "type": "string"
+            }
+          },
+          {
+            "explode": false,
+            "in": "query",
+            "name": "client",
+            "schema": {
+              "maxLength": 80,
+              "type": "string"
+            }
+          },
+          {
+            "explode": false,
+            "in": "query",
+            "name": "action",
+            "schema": {
+              "maxLength": 100,
+              "type": "string"
+            }
+          },
+          {
+            "explode": false,
+            "in": "query",
+            "name": "outcome",
+            "schema": {
+              "maxLength": 60,
+              "type": "string"
+            }
+          },
+          {
+            "explode": false,
+            "in": "query",
+            "name": "state",
+            "schema": {
+              "maxLength": 60,
+              "type": "string"
+            }
+          },
+          {
+            "explode": false,
+            "in": "query",
+            "name": "freshness",
+            "schema": {
+              "enum": [
+                "fresh",
+                "stale"
+              ],
+              "type": "string"
+            }
+          },
+          {
+            "explode": false,
+            "in": "query",
+            "name": "q",
+            "schema": {
+              "maxLength": 160,
+              "type": "string"
+            }
+          },
+          {
+            "explode": false,
+            "in": "query",
+            "name": "agentId",
+            "schema": {
+              "maxLength": 160,
+              "type": "string"
+            }
+          },
+          {
+            "explode": false,
+            "in": "query",
+            "name": "cursor",
+            "schema": {
+              "maxLength": 300,
+              "type": "string"
+            }
+          },
+          {
+            "explode": false,
+            "in": "query",
+            "name": "limit",
+            "schema": {
+              "default": 100,
+              "format": "int64",
+              "maximum": 200,
+              "minimum": 1,
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": {},
+                  "type": "object"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "summary": "Read independent storage and projection freshness",
+        "tags": [
+          "activity"
+        ],
+        "x-axonpush-scopes": [
+          "observe:read"
+        ]
+      }
+    },
+    "/workspaces/{workspaceId}/incidents": {
+      "get": {
+        "operationId": "activity.incidents",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "workspaceId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "explode": false,
+            "in": "query",
+            "name": "environment",
+            "schema": {
+              "maxLength": 160,
+              "type": "string"
+            }
+          },
+          {
+            "explode": false,
+            "in": "query",
+            "name": "entity",
+            "schema": {
+              "maxLength": 120,
+              "type": "string"
+            }
+          },
+          {
+            "explode": false,
+            "in": "query",
+            "name": "entityId",
+            "schema": {
+              "maxLength": 160,
+              "type": "string"
+            }
+          },
+          {
+            "explode": false,
+            "in": "query",
+            "name": "side",
+            "schema": {
+              "maxLength": 60,
+              "type": "string"
+            }
+          },
+          {
+            "explode": false,
+            "in": "query",
+            "name": "client",
+            "schema": {
+              "maxLength": 80,
+              "type": "string"
+            }
+          },
+          {
+            "explode": false,
+            "in": "query",
+            "name": "action",
+            "schema": {
+              "maxLength": 100,
+              "type": "string"
+            }
+          },
+          {
+            "explode": false,
+            "in": "query",
+            "name": "outcome",
+            "schema": {
+              "maxLength": 60,
+              "type": "string"
+            }
+          },
+          {
+            "explode": false,
+            "in": "query",
+            "name": "state",
+            "schema": {
+              "maxLength": 60,
+              "type": "string"
+            }
+          },
+          {
+            "explode": false,
+            "in": "query",
+            "name": "freshness",
+            "schema": {
+              "enum": [
+                "fresh",
+                "stale"
+              ],
+              "type": "string"
+            }
+          },
+          {
+            "explode": false,
+            "in": "query",
+            "name": "q",
+            "schema": {
+              "maxLength": 160,
+              "type": "string"
+            }
+          },
+          {
+            "explode": false,
+            "in": "query",
+            "name": "agentId",
+            "schema": {
+              "maxLength": 160,
+              "type": "string"
+            }
+          },
+          {
+            "explode": false,
+            "in": "query",
+            "name": "cursor",
+            "schema": {
+              "maxLength": 300,
+              "type": "string"
+            }
+          },
+          {
+            "explode": false,
+            "in": "query",
+            "name": "limit",
+            "schema": {
+              "default": 100,
+              "format": "int64",
+              "maximum": 200,
+              "minimum": 1,
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WorkspaceIncidentsOutputBody"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "summary": "Read lifecycle incidents and recovery without duplicate notifications",
+        "tags": [
+          "activity"
+        ],
+        "x-axonpush-scopes": [
+          "observe:read"
+        ]
+      }
+    },
+    "/workspaces/{workspaceId}/observations": {
+      "post": {
+        "operationId": "observations.accept",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "workspaceId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WorkspaceIngestInputBody"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WorkspaceIngestOutputBody"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "summary": "Store an idempotent metadata-only batch; projection occurs independently",
+        "tags": [
+          "ingest"
+        ],
+        "x-axonpush-scopes": [
+          "events:publish"
+        ]
+      }
+    },
+    "/workspaces/{workspaceId}/observations/{sourceEventId}": {
+      "get": {
+        "operationId": "observations.receipt",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "workspaceId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "sourceEventId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "explode": false,
+            "in": "query",
+            "name": "environment",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ActivityReceipt"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "summary": "Check storage and projection separately",
+        "tags": [
+          "activity"
+        ],
+        "x-axonpush-scopes-anyOf": [
+          "events:publish",
+          "observe:read"
+        ]
+      }
+    },
+    "/workspaces/{workspaceId}/revisions": {
+      "get": {
+        "operationId": "workspaces.revisions",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "workspaceId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RevisionListOutputBody"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "summary": "List immutable spec revisions for diff, upgrade or rollback",
+        "tags": [
+          "workspaces"
+        ],
+        "x-axonpush-scopes": [
+          "observe:read"
+        ]
+      },
+      "post": {
+        "operationId": "workspaces.saveRevision",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "workspaceId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ActivityWorkspaceSpec"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ActivityRevision"
+                }
+              }
+            },
+            "description": "Created"
+          },
+          "default": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "summary": "Save a validated immutable draft revision",
+        "tags": [
+          "workspaces"
+        ],
+        "x-axonpush-scopes": [
+          "workspaces:manage"
+        ]
+      }
+    },
+    "/workspaces/{workspaceId}/summary": {
+      "get": {
+        "operationId": "activity.summary",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "workspaceId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "explode": false,
+            "in": "query",
+            "name": "environment",
+            "schema": {
+              "maxLength": 160,
+              "type": "string"
+            }
+          },
+          {
+            "explode": false,
+            "in": "query",
+            "name": "entity",
+            "schema": {
+              "maxLength": 120,
+              "type": "string"
+            }
+          },
+          {
+            "explode": false,
+            "in": "query",
+            "name": "entityId",
+            "schema": {
+              "maxLength": 160,
+              "type": "string"
+            }
+          },
+          {
+            "explode": false,
+            "in": "query",
+            "name": "side",
+            "schema": {
+              "maxLength": 60,
+              "type": "string"
+            }
+          },
+          {
+            "explode": false,
+            "in": "query",
+            "name": "client",
+            "schema": {
+              "maxLength": 80,
+              "type": "string"
+            }
+          },
+          {
+            "explode": false,
+            "in": "query",
+            "name": "action",
+            "schema": {
+              "maxLength": 100,
+              "type": "string"
+            }
+          },
+          {
+            "explode": false,
+            "in": "query",
+            "name": "outcome",
+            "schema": {
+              "maxLength": 60,
+              "type": "string"
+            }
+          },
+          {
+            "explode": false,
+            "in": "query",
+            "name": "state",
+            "schema": {
+              "maxLength": 60,
+              "type": "string"
+            }
+          },
+          {
+            "explode": false,
+            "in": "query",
+            "name": "freshness",
+            "schema": {
+              "enum": [
+                "fresh",
+                "stale"
+              ],
+              "type": "string"
+            }
+          },
+          {
+            "explode": false,
+            "in": "query",
+            "name": "q",
+            "schema": {
+              "maxLength": 160,
+              "type": "string"
+            }
+          },
+          {
+            "explode": false,
+            "in": "query",
+            "name": "agentId",
+            "schema": {
+              "maxLength": 160,
+              "type": "string"
+            }
+          },
+          {
+            "explode": false,
+            "in": "query",
+            "name": "cursor",
+            "schema": {
+              "maxLength": 300,
+              "type": "string"
+            }
+          },
+          {
+            "explode": false,
+            "in": "query",
+            "name": "limit",
+            "schema": {
+              "default": 100,
+              "format": "int64",
+              "maximum": 200,
+              "minimum": 1,
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": {},
+                  "type": "object"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "summary": "Exact distinct entity counts with a visible 15 minute activity window",
+        "tags": [
+          "activity"
+        ],
+        "x-axonpush-scopes": [
+          "observe:read"
+        ]
+      }
+    },
+    "/workspaces/{workspaceId}/timeline": {
+      "get": {
+        "operationId": "activity.timeline",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "workspaceId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "explode": false,
+            "in": "query",
+            "name": "environment",
+            "schema": {
+              "maxLength": 160,
+              "type": "string"
+            }
+          },
+          {
+            "explode": false,
+            "in": "query",
+            "name": "entity",
+            "schema": {
+              "maxLength": 120,
+              "type": "string"
+            }
+          },
+          {
+            "explode": false,
+            "in": "query",
+            "name": "entityId",
+            "schema": {
+              "maxLength": 160,
+              "type": "string"
+            }
+          },
+          {
+            "explode": false,
+            "in": "query",
+            "name": "side",
+            "schema": {
+              "maxLength": 60,
+              "type": "string"
+            }
+          },
+          {
+            "explode": false,
+            "in": "query",
+            "name": "client",
+            "schema": {
+              "maxLength": 80,
+              "type": "string"
+            }
+          },
+          {
+            "explode": false,
+            "in": "query",
+            "name": "action",
+            "schema": {
+              "maxLength": 100,
+              "type": "string"
+            }
+          },
+          {
+            "explode": false,
+            "in": "query",
+            "name": "outcome",
+            "schema": {
+              "maxLength": 60,
+              "type": "string"
+            }
+          },
+          {
+            "explode": false,
+            "in": "query",
+            "name": "state",
+            "schema": {
+              "maxLength": 60,
+              "type": "string"
+            }
+          },
+          {
+            "explode": false,
+            "in": "query",
+            "name": "freshness",
+            "schema": {
+              "enum": [
+                "fresh",
+                "stale"
+              ],
+              "type": "string"
+            }
+          },
+          {
+            "explode": false,
+            "in": "query",
+            "name": "q",
+            "schema": {
+              "maxLength": 160,
+              "type": "string"
+            }
+          },
+          {
+            "explode": false,
+            "in": "query",
+            "name": "agentId",
+            "schema": {
+              "maxLength": 160,
+              "type": "string"
+            }
+          },
+          {
+            "explode": false,
+            "in": "query",
+            "name": "cursor",
+            "schema": {
+              "maxLength": 300,
+              "type": "string"
+            }
+          },
+          {
+            "explode": false,
+            "in": "query",
+            "name": "limit",
+            "schema": {
+              "default": 100,
+              "format": "int64",
+              "maximum": 200,
+              "minimum": 1,
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WorkspaceTimelineOutputBody"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "summary": "Follow chronological source evidence across traces",
+        "tags": [
+          "activity"
+        ],
+        "x-axonpush-scopes": [
+          "observe:read"
+        ]
+      }
+    },
+    "/workspaces/{workspaceId}/widgets": {
+      "get": {
+        "operationId": "activity.widgets",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "workspaceId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "explode": false,
+            "in": "query",
+            "name": "environment",
+            "schema": {
+              "maxLength": 160,
+              "type": "string"
+            }
+          },
+          {
+            "explode": false,
+            "in": "query",
+            "name": "entity",
+            "schema": {
+              "maxLength": 120,
+              "type": "string"
+            }
+          },
+          {
+            "explode": false,
+            "in": "query",
+            "name": "entityId",
+            "schema": {
+              "maxLength": 160,
+              "type": "string"
+            }
+          },
+          {
+            "explode": false,
+            "in": "query",
+            "name": "side",
+            "schema": {
+              "maxLength": 60,
+              "type": "string"
+            }
+          },
+          {
+            "explode": false,
+            "in": "query",
+            "name": "client",
+            "schema": {
+              "maxLength": 80,
+              "type": "string"
+            }
+          },
+          {
+            "explode": false,
+            "in": "query",
+            "name": "action",
+            "schema": {
+              "maxLength": 100,
+              "type": "string"
+            }
+          },
+          {
+            "explode": false,
+            "in": "query",
+            "name": "outcome",
+            "schema": {
+              "maxLength": 60,
+              "type": "string"
+            }
+          },
+          {
+            "explode": false,
+            "in": "query",
+            "name": "state",
+            "schema": {
+              "maxLength": 60,
+              "type": "string"
+            }
+          },
+          {
+            "explode": false,
+            "in": "query",
+            "name": "freshness",
+            "schema": {
+              "enum": [
+                "fresh",
+                "stale"
+              ],
+              "type": "string"
+            }
+          },
+          {
+            "explode": false,
+            "in": "query",
+            "name": "q",
+            "schema": {
+              "maxLength": 160,
+              "type": "string"
+            }
+          },
+          {
+            "explode": false,
+            "in": "query",
+            "name": "agentId",
+            "schema": {
+              "maxLength": 160,
+              "type": "string"
+            }
+          },
+          {
+            "explode": false,
+            "in": "query",
+            "name": "cursor",
+            "schema": {
+              "maxLength": 300,
+              "type": "string"
+            }
+          },
+          {
+            "explode": false,
+            "in": "query",
+            "name": "limit",
+            "schema": {
+              "default": 100,
+              "format": "int64",
+              "maximum": 200,
+              "minimum": 1,
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WorkspaceWidgetsOutputBody"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "summary": "Aggregate configured business widgets over the active entity revision",
+        "tags": [
+          "activity"
+        ],
+        "x-axonpush-scopes": [
+          "observe:read"
         ]
       }
     }

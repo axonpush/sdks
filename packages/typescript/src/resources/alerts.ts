@@ -8,16 +8,16 @@ import {
 import type {
   AlertOccurrenceDto,
   AlertRuleDto,
+  AlertsCreateData,
   AlertsListResponse,
   AlertsOccurrencesData,
-  CreateInputBodyWritable,
+  AlertsUpdateData,
   DeleteOutputBody,
-  UpdateInputBodyWritable,
 } from "../_internal/api/types.gen.js";
 import type { ResourceClient } from "./_client.js";
 
-export type CreateAlertRuleInput = CreateInputBodyWritable;
-export type UpdateAlertRuleInput = UpdateInputBodyWritable;
+export type CreateAlertRuleInput = AlertsCreateData["body"];
+export type UpdateAlertRuleInput = AlertsUpdateData["body"];
 export type AlertOccurrencesParams = NonNullable<AlertsOccurrencesData["query"]>;
 
 /** Alert rules over metric thresholds. */

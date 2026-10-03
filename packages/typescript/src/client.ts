@@ -1,21 +1,21 @@
 import { type GeneratedOp, Transport } from "./_internal/transport.js";
 import { type AxonPushOptions, type ResolvedSettings, resolveSettings } from "./config.js";
 import { redactTelemetry as applyTelemetryRedaction } from "./redaction.js";
+import { ActivityResource } from "./resources/activity.js";
 import { AlertsResource } from "./resources/alerts.js";
 import { AnalyticsResource } from "./resources/analytics.js";
 import { AppsResource } from "./resources/apps.js";
 import { CapabilitiesResource } from "./resources/capabilities.js";
 import { ChannelsResource } from "./resources/channels.js";
-import { DashboardsResource } from "./resources/dashboards.js";
 import { EnvironmentsResource } from "./resources/environments.js";
 import { ErrorsResource } from "./resources/errors.js";
 import { EventsResource } from "./resources/events.js";
-import { GovernPoliciesResource } from "./resources/govern-policies.js";
-import { ModerationResource } from "./resources/moderation.js";
+import { ObservationsResource } from "./resources/observations.js";
 import { OrganizationsResource } from "./resources/organizations.js";
-import { SpendPoliciesResource } from "./resources/spend-policies.js";
+import { TemplatesResource } from "./resources/templates.js";
 import { TracesResource } from "./resources/traces.js";
 import { WebhooksResource } from "./resources/webhooks.js";
+import { WorkspacesResource } from "./resources/workspaces.js";
 import { getOrCreateTrace, type TraceContext } from "./tracing.js";
 
 /**
@@ -32,6 +32,10 @@ export class AxonPush {
   /** Per-instance transport; carries this facade's settings, no shared slot. */
   private readonly transport: Transport;
 
+  readonly workspaces: WorkspacesResource;
+  readonly templates: TemplatesResource;
+  readonly observations: ObservationsResource;
+  readonly activity: ActivityResource;
   /** Events resource — `publish`, `search`. */
   readonly events: EventsResource;
   /** Channels resource — `list`, `get`, `create`, `update`, `delete`. */
@@ -55,16 +59,8 @@ export class AxonPush {
    * @deprecated Use `client.traces`.
    */
   readonly tracesV2: TracesResource;
-  /** Content moderation — rules, violations, and efficacy. */
-  readonly moderation: ModerationResource;
-  /** Saved analytics dashboards — `list`, `get`, `create`, `update`, `delete`. */
-  readonly dashboards: DashboardsResource;
   /** Error issues — `list`, `get`, `events`, `triage`. */
   readonly errors: ErrorsResource;
-  /** Request-mutation govern policies — `list`, `create`, `update`, `delete`. */
-  readonly governPolicies: GovernPoliciesResource;
-  /** Spend policies — `list`, `create`, `update`, `delete`. */
-  readonly spendPolicies: SpendPoliciesResource;
   /** Server capabilities — version, feature flags, license, scopes. */
   readonly capabilities: CapabilitiesResource;
 
@@ -75,6 +71,10 @@ export class AxonPush {
   constructor(options?: AxonPushOptions) {
     this.settings = resolveSettings(options);
     this.transport = new Transport(this.settings);
+    this.workspaces = new WorkspacesResource(this);
+    this.templates = new TemplatesResource(this);
+    this.observations = new ObservationsResource(this);
+    this.activity = new ActivityResource(this);
     this.events = new EventsResource(this);
     this.channels = new ChannelsResource(this);
     this.apps = new AppsResource(this);
@@ -85,11 +85,7 @@ export class AxonPush {
     this.analytics = new AnalyticsResource(this);
     this.traces = new TracesResource(this);
     this.tracesV2 = this.traces;
-    this.moderation = new ModerationResource(this);
-    this.dashboards = new DashboardsResource(this);
     this.errors = new ErrorsResource(this);
-    this.governPolicies = new GovernPoliciesResource(this);
-    this.spendPolicies = new SpendPoliciesResource(this);
     this.capabilities = new CapabilitiesResource(this);
   }
 

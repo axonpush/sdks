@@ -1,0 +1,62 @@
+{
+  "schema_version": 1,
+  "source_event_id": "synthetic-operation-start-1",
+  "event_name": "nova.operation.started",
+  "occurred_at": "2026-10-03T00:00:00Z",
+  "service": "nova-fixture",
+  "release": "local-test",
+  "actor": {
+    "type": "agent",
+    "agent_id": "synthetic-candidate-1",
+    "participant_side": "candidate",
+    "related_agent_ids": [
+      "synthetic-company-1"
+    ]
+  },
+  "client": {
+    "family": "custom",
+    "reported_name": "synthetic-client",
+    "version": "1.0",
+    "attribution_source": "mcp_client_info",
+    "confidence": "self_reported",
+    "conflict": true,
+    "evidence": [
+      {
+        "source": "mcp_client_info",
+        "family": "custom",
+        "name": "synthetic-client",
+        "version": "1.0",
+        "confidence": "self_reported"
+      },
+      {
+        "source": "user_agent",
+        "family": "browser",
+        "confidence": "inferred"
+      }
+    ]
+  },
+  "correlation": {
+    "operation_id": "synthetic-operation-1",
+    "trace_id": "0123456789abcdef0123456789abcdef",
+    "span_id": "0123456789abcdef",
+    "join_attempt_id": "synthetic-attempt-1",
+    "thread_id": "synthetic-thread-1",
+    "role_id": "synthetic-role-1"
+  },
+  "source": {
+    "record_type": "tool_execution",
+    "record_id": "synthetic-operation-1",
+    "revision": 1
+  },
+  "activity": {
+    "family": "tool",
+    "action": "describe_role",
+    "outcome": "running",
+    "evidence": "server_observed",
+    "state": "running",
+    "expected_seconds": 45,
+    "transport": "mcp",
+    "join_method": "mcp",
+    "snapshot": false
+  }
+}

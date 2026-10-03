@@ -75,6 +75,11 @@ internal sealed class AxonPushTransport : IDisposable
                     Content = JsonContent.Create(request, options: AxonPushJsonOptions.Default),
                 };
                 StampHeaders(message);
+                if (!string.IsNullOrWhiteSpace(request.Environment))
+                {
+                    message.Headers.Remove("X-Axonpush-Environment");
+                    message.Headers.Add("X-Axonpush-Environment", request.Environment);
+                }
 
                 using var response = await _httpClient.SendAsync(message, userCancellation).ConfigureAwait(false);
                 if (response.IsSuccessStatusCode)
@@ -205,6 +210,22 @@ internal sealed class AxonPushTransport : IDisposable
         throw new AxonPushException(
             lastError ?? $"AxonPush request to {path} failed.",
             lastException ?? new InvalidOperationException("retries exhausted"));
+    }
+
+    /// <summary>Observation acceptance fails open on connection failure when configured.</summary>
+    public async Task<TResponse?> SendObservationAsync<TResponse>(
+        HttpMethod method, string path, object? body, CancellationToken cancellationToken)
+        where TResponse : class
+    {
+        try
+        {
+            return await SendAsync<TResponse>(method, path, body, cancellationToken).ConfigureAwait(false);
+        }
+        catch (AxonPushException ex) when (_options.FailOpen && ex.StatusCode is null)
+        {
+            AxonPushTransportLogs.PublishFailedFailOpen(_logger, ex);
+            return null;
+        }
     }
 
     private void StampHeaders(HttpRequestMessage message)

@@ -69,6 +69,10 @@ public sealed class ContractTests
             Payload = new { ok = true },
             ChannelId = "chan_1",
             AgentId = "agent_1",
+            Environment = "production",
+            ParentEventId = "synthetic-parent",
+            DedupKey = "source-row:7",
+            OccurredAt = DateTimeOffset.Parse("2026-10-03T00:00:00Z"),
         };
 
         var json = JsonSerializer.Serialize(request, AxonPushJsonOptions.Default);
@@ -118,6 +122,25 @@ public sealed class ContractTests
             },
             AxonPushJsonOptions.Default);
         Assert.Contains("\"agentId\":\"agent_1\"", json);
+    }
+
+    [Fact]
+    public void OriginalOccurrenceAndRetryKeyAreDeclaredAndSerialized()
+    {
+        var request = new PublishRequest
+        {
+            Identifier = "committed",
+            Payload = new { },
+            ChannelId = "synthetic-channel",
+            DedupKey = "source-row:7",
+            OccurredAt = DateTimeOffset.Parse("2026-10-03T00:00:00Z"),
+        };
+        var sent = JsonNode.Parse(JsonSerializer.Serialize(request, AxonPushJsonOptions.Default))!.AsObject();
+        var fields = PublishSchema()["properties"]!.AsObject();
+        Assert.True(fields.ContainsKey("dedupKey"));
+        Assert.True(fields.ContainsKey("occurredAt"));
+        Assert.Equal(request.DedupKey, sent["dedupKey"]!.GetValue<string>());
+        Assert.Equal(request.OccurredAt, DateTimeOffset.Parse(sent["occurredAt"]!.GetValue<string>()));
     }
 
     [Fact]

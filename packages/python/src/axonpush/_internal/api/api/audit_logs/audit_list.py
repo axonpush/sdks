@@ -7,7 +7,7 @@ import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
 from ...models.error_model import ErrorModel
-from ...models.list_output_body_5 import ListOutputBody5
+from ...models.list_output_body_2 import ListOutputBody2
 from ...types import UNSET, Response, Unset
 
 
@@ -45,9 +45,9 @@ def _get_kwargs(
 
 def _parse_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> ErrorModel | ListOutputBody5:
+) -> ErrorModel | ListOutputBody2:
     if response.status_code == 200:
-        response_200 = ListOutputBody5.from_dict(response.json())
+        response_200 = ListOutputBody2.from_dict(response.json())
 
         return response_200
 
@@ -58,7 +58,7 @@ def _parse_response(
 
 def _build_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> Response[ErrorModel | ListOutputBody5]:
+) -> Response[ErrorModel | ListOutputBody2]:
     return Response(
         status_code=HTTPStatus(response.status_code),
         content=response.content,
@@ -75,7 +75,7 @@ def sync_detailed(
     source: str | Unset = UNSET,
     before: str | Unset = UNSET,
     limit: int | Unset = 50,
-) -> Response[ErrorModel | ListOutputBody5]:
+) -> Response[ErrorModel | ListOutputBody2]:
     """List audit log entries
 
     Args:
@@ -90,7 +90,7 @@ def sync_detailed(
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[ErrorModel | ListOutputBody5]
+        Response[ErrorModel | ListOutputBody2]
     """
 
     kwargs = _get_kwargs(
@@ -116,7 +116,7 @@ def sync(
     source: str | Unset = UNSET,
     before: str | Unset = UNSET,
     limit: int | Unset = 50,
-) -> ErrorModel | ListOutputBody5 | None:
+) -> ErrorModel | ListOutputBody2 | None:
     """List audit log entries
 
     Args:
@@ -131,7 +131,7 @@ def sync(
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        ErrorModel | ListOutputBody5
+        ErrorModel | ListOutputBody2
     """
 
     return sync_detailed(
@@ -152,7 +152,7 @@ async def asyncio_detailed(
     source: str | Unset = UNSET,
     before: str | Unset = UNSET,
     limit: int | Unset = 50,
-) -> Response[ErrorModel | ListOutputBody5]:
+) -> Response[ErrorModel | ListOutputBody2]:
     """List audit log entries
 
     Args:
@@ -167,7 +167,7 @@ async def asyncio_detailed(
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[ErrorModel | ListOutputBody5]
+        Response[ErrorModel | ListOutputBody2]
     """
 
     kwargs = _get_kwargs(
@@ -191,7 +191,7 @@ async def asyncio(
     source: str | Unset = UNSET,
     before: str | Unset = UNSET,
     limit: int | Unset = 50,
-) -> ErrorModel | ListOutputBody5 | None:
+) -> ErrorModel | ListOutputBody2 | None:
     """List audit log entries
 
     Args:
@@ -206,7 +206,7 @@ async def asyncio(
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        ErrorModel | ListOutputBody5
+        ErrorModel | ListOutputBody2
     """
 
     return (

@@ -3,7 +3,7 @@ import type { ResolvedSettings } from "./config.js";
 const SECRET_KEY =
   /^(authorization|proxy-authorization|cookie|set-cookie|password|passwd|secret|client_secret|api[-_.]?key|access[-_.]?token|refresh[-_.]?token|private[-_.]?key)$/i;
 const CONTENT_KEY =
-  /^(prompt|prompts|messages?|completion|completions|input|output|response|tool[-_.]?(arguments?|result|output)|retrieval[-_.]?(documents?|content))$/i;
+  /^(?:(?:(?:gen_ai|llm|ai)\.(?:(?:input|output|content)\.)?)?(?:prompts?|messages?|completions?|input|output|response|tool[-_.]?(?:arguments?|results?|output)|retrieval[-_.]?(?:documents?|content))|(?:gen_ai|llm|ai)\.tool(?:\.call)?\.(?:arguments?|results?|output))$/i;
 
 export function redactTelemetry<T>(value: T, settings: ResolvedSettings): T {
   const visit = (current: unknown): unknown => {

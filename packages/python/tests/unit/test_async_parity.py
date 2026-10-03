@@ -10,14 +10,10 @@ from axonpush.resources.analytics import Analytics, AsyncAnalytics
 from axonpush.resources.apps import Apps, AsyncApps
 from axonpush.resources.capabilities import AsyncCapabilities, Capabilities
 from axonpush.resources.channels import AsyncChannels, Channels
-from axonpush.resources.dashboards import AsyncDashboards, Dashboards
 from axonpush.resources.environments import AsyncEnvironments, Environments
 from axonpush.resources.errors import AsyncErrors, Errors
 from axonpush.resources.events import AsyncEvents, Events
-from axonpush.resources.govern_policies import AsyncGovernPolicies, GovernPolicies
-from axonpush.resources.moderation import AsyncModeration, Moderation
 from axonpush.resources.organizations import AsyncOrganizations, Organizations
-from axonpush.resources.spend_policies import AsyncSpendPolicies, SpendPolicies
 from axonpush.resources.traces import AsyncTraces, Traces
 from axonpush.resources.webhooks import AsyncWebhooks, Webhooks
 
@@ -35,13 +31,9 @@ _PAIRS: list[tuple[type, type]] = [
     (Traces, AsyncTraces),
     (Alerts, AsyncAlerts),
     (Analytics, AsyncAnalytics),
-    (Moderation, AsyncModeration),
     (Capabilities, AsyncCapabilities),
     (Organizations, AsyncOrganizations),
-    (Dashboards, AsyncDashboards),
     (Errors, AsyncErrors),
-    (GovernPolicies, AsyncGovernPolicies),
-    (SpendPolicies, AsyncSpendPolicies),
 ]
 
 

@@ -59,7 +59,7 @@ public sealed class AxonPushSpanExporter : BaseExporter<Activity>
     {
         try
         {
-            var payload = SpanPayloadBuilder.Build(activity, _resource);
+            var payload = SpanPayloadBuilder.Build(activity, _resource, _options.ContentCapture);
             var request = new PublishRequest
             {
                 Identifier = activity.SpanId.ToHexString(),
@@ -68,6 +68,9 @@ public sealed class AxonPushSpanExporter : BaseExporter<Activity>
                 EventType = EventType.AppSpan,
                 TraceId = activity.TraceId.ToHexString(),
                 SpanId = activity.SpanId.ToHexString(),
+                ParentSpanId = activity.ParentSpanId == default ? null : activity.ParentSpanId.ToHexString(),
+                DedupKey = "otel:" + activity.TraceId.ToHexString() + ":" + activity.SpanId.ToHexString(),
+                OccurredAt = new DateTimeOffset(activity.StartTimeUtc),
                 Environment = _options.Environment,
             };
 

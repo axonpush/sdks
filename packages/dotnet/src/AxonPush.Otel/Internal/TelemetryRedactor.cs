@@ -23,8 +23,7 @@ internal static partial class TelemetryRedactor
     private static partial Regex SecretKey();
 
     [GeneratedRegex(
-        "^(prompt|prompts|messages?|completion|completions|input|output|response|" +
-        "tool[-_.]?(arguments?|result|output)|retrieval[-_.]?(documents?|content))$",
+        @"^(?:(?:(?:gen_ai|llm|ai)\.(?:(?:input|output|content)\.)?)?(?:prompts?|messages?|completions?|input|output|response|tool[-_.]?(?:arguments?|results?|output)|retrieval[-_.]?(?:documents?|content))|(?:gen_ai|llm|ai)\.tool(?:\.call)?\.(?:arguments?|results?|output))$",
         RegexOptions.IgnoreCase | RegexOptions.CultureInvariant)]
     private static partial Regex ContentKey();
 

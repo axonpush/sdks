@@ -1,102 +1,37 @@
-# See What Your AI Agent Is Doing
+# Observe business activity
 
-> Publish structured events from your agent and query them instantly. The hello world of agent observability.
+Business observations describe confirmed source transitions across traces. They use a workspace installed from a versioned spec. Framework spans are supporting technical evidence. See the [shared operations contract](../../../../AGENT_OPERATIONS.md) for authoring, access and privacy.
 
-## The Problem
-
-You built an AI agent. It runs for 30 seconds, returns a result, and you have no idea what happened in between. Did it call the right tools? Did it waste tokens on a dead-end? Without event-level visibility, debugging is guesswork.
-
-## The Solution
-
-```bash
-pip install axonpush
-```
+The exporter reads an already allowlisted batch from its durable journal. This synthetic file has the same structure as `contract/fixtures/activity-observation.json`; preserve its event ID, original occurrence time and content on every retry.
 
 ```python
-from axonpush import AxonPush, EventType
+import json
+from pathlib import Path
+from axonpush import AxonPush
+from axonpush._internal.api.models import WorkspaceIngestInputBody
 
-with AxonPush(api_key="ak_...", tenant_id="<org-uuid>", environment="production") as client:
-    # Publish an event when your agent calls a tool
-    event = client.events.publish(
-        "web_search",                              # what happened
-        {"query": "AI agent frameworks", "results": 5},  # structured data
-        channel_id="chan_a1b2c3",
-        agent_id="researcher",
-        event_type=EventType.AGENT_TOOL_CALL_START,
-    )
-
-    print(f"Queued {event.identifier} on trace {event.trace_id}")
-
-    # Pull the last 10 events from this channel
-    events = client.events.list(channel_id="chan_a1b2c3", limit=10)
-    for e in events:
-        print(f"[{e.agent_id}] {e.identifier}: {e.payload}")
+batch = json.loads(Path("allowlisted-observation-batch.json").read_text())
+body = WorkspaceIngestInputBody.from_dict(batch)
+with AxonPush() as client:
+    stored = client.observations.accept("workspace-id", body)
+    if stored is not None:
+        for receipt in stored.receipts or []:
+            status = client.observations.receipt(
+                "workspace-id", receipt.source_event_id,
+                {"environment": body.environment},
+            )
+            print(status.status if status is not None else "export unavailable")
 ```
 
-## What Just Happened
+The input batch contains `environment` and up to 100 `observations`. A receipt with `stored` status confirms durable acceptance; `projected` plus `projected_at` confirms projection. Poll from the exporter with bounded backoff. Authorize publishing with `events:publish`; that credential may read narrow status receipts without gaining operational read access.
 
-- You created a client with your API key and tenant ID. The `with` block ensures cleanup.
-- `events.publish()` sent a structured event to the channel. The `identifier` names the action, `payload` carries the data.
-- `EventType.AGENT_TOOL_CALL_START` tags this event so dashboards and filters know it's a tool invocation.
-- `events.list()` retrieved recent events from the same channel, useful for debugging or building a replay view.
-- The returned `Event` has `queued=True` and no DB `id` yet. The server async-ingests and writes within a few ms. Once written, the `list()` endpoint returns the full shape with `id`, `created_at`, and `updated_at`.
-
-<details>
-<summary><strong>Go Deeper</strong></summary>
-
-### Async variant
+An operator with `observe:read` can query an exact opaque agent reference:
 
 ```python
-from axonpush import AsyncAxonPush, EventType
-
-async with AsyncAxonPush(api_key="ak_...", tenant_id="<org-uuid>") as client:
-    event = await client.events.publish(
-        "web_search",
-        {"query": "AI agent frameworks"},
-        channel_id="chan_a1b2c3",
-        agent_id="researcher",
-        event_type=EventType.AGENT_TOOL_CALL_START,
+with AxonPush() as operator:
+    page = operator.activity.entities(
+        "workspace-id", {"environment": "dev", "agent_id": "opaque-agent-id", "limit": 50}
     )
 ```
 
-### All event types
-
-The `EventType` enum covers the full agent lifecycle:
-
-| Type | When to use |
-|------|-------------|
-| `AGENT_START` | Agent begins a run |
-| `AGENT_END` | Agent completes a run |
-| `AGENT_MESSAGE` | Agent produces a message |
-| `AGENT_TOOL_CALL_START` | Agent invokes a tool |
-| `AGENT_TOOL_CALL_END` | Tool returns a result |
-| `AGENT_ERROR` | Something went wrong |
-| `AGENT_HANDOFF` | Agent delegates to another agent |
-| `AGENT_LLM_TOKEN` | Streaming token from the LLM |
-| `CUSTOM` | Anything else (default) |
-
-### Extra parameters
-
-```python
-event = client.events.publish(
-    "web_search",
-    {"query": "AI agents"},
-    channel_id="chan_a1b2c3",
-    agent_id="researcher",
-    trace_id="tr_run_42",          # correlate events in a single run
-    span_id="sp_abc123_0001",      # order events within a trace
-    parent_event_id="evt_7f3a",           # link to a parent event (id from a prior list() call)
-    event_type=EventType.AGENT_TOOL_CALL_START,
-    metadata={"model": "gpt-4", "latency_ms": 230},  # arbitrary context
-    environment="eval",            # optional per-call override of the client default
-)
-```
-
-> `parent_event_id` takes the DB-assigned `id` of a prior event. Publishes return `queued=True` with no `id`, so if you need to build a parent/child relationship, fetch the id from `events.list()`, or use `trace_id` + `span_id` to reconstruct ordering without a hard FK.
-
-</details>
-
-## Next Steps
-
-- [Add observability to your existing framework in 3 lines](02-framework-integrations.md)
-- [Trace a multi-step run end-to-end](04-distributed-tracing.md)
+Keep `.next_cursor` when paging. Counts come from `activity.summary`, not the length of a table page. Unidentified attempts stay unlinked until the source confirms identity. Snapshots restore current state without creating historical activity.

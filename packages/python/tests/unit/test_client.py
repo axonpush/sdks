@@ -373,3 +373,26 @@ def respx_mock() -> Any:
     import respx
 
     return respx.mock(base_url="http://x.test", assert_all_called=False)
+
+
+def test_metadata_only_scrubs_namespaced_span_content_preserving_model_usage() -> None:
+    from axonpush._redaction import redact_telemetry
+
+    content = {
+        "gen_ai.input.messages": "synthetic sensitive input",
+        "gen_ai.output.messages": "synthetic sensitive output",
+        "gen_ai.content.prompt": "synthetic prompt",
+        "llm.prompts": "synthetic prompt",
+        "ai.tool.call.arguments": "synthetic arguments",
+        "gen_ai.tool.result": "synthetic result",
+    }
+    metadata = {
+        "gen_ai.request.model": "synthetic-model",
+        "gen_ai.usage.input_tokens": 12,
+        "gen_ai.tool.name": "synthetic-tool",
+    }
+    settings = Settings(api_key="ak_synthetic", tenant_id="synthetic")
+    original = {"attributes": {**content, **metadata}}
+    result = redact_telemetry(original, settings)
+    assert result["attributes"] == {**dict.fromkeys(content, "[REDACTED]"), **metadata}
+    assert original["attributes"]["gen_ai.input.messages"] == content["gen_ai.input.messages"]

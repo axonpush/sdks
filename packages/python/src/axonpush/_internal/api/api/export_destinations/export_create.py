@@ -6,7 +6,7 @@ import httpx
 
 from ... import errors
 from ...client import AuthenticatedClient, Client
-from ...models.create_input_body_1 import CreateInputBody1
+from ...models.create_input_body_2 import CreateInputBody2
 from ...models.destination_dto import DestinationDTO
 from ...models.error_model import ErrorModel
 from ...types import UNSET, Response
@@ -14,7 +14,7 @@ from ...types import UNSET, Response
 
 def _get_kwargs(
     *,
-    body: CreateInputBody1,
+    body: CreateInputBody2,
 ) -> dict[str, Any]:
     headers: dict[str, Any] = {}
 
@@ -58,12 +58,12 @@ def _build_response(
 def sync_detailed(
     *,
     client: AuthenticatedClient | Client,
-    body: CreateInputBody1,
+    body: CreateInputBody2,
 ) -> Response[DestinationDTO | ErrorModel]:
     """Create an export destination
 
     Args:
-        body (CreateInputBody1):
+        body (CreateInputBody2):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -87,12 +87,12 @@ def sync_detailed(
 def sync(
     *,
     client: AuthenticatedClient | Client,
-    body: CreateInputBody1,
+    body: CreateInputBody2,
 ) -> DestinationDTO | ErrorModel | None:
     """Create an export destination
 
     Args:
-        body (CreateInputBody1):
+        body (CreateInputBody2):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -111,12 +111,12 @@ def sync(
 async def asyncio_detailed(
     *,
     client: AuthenticatedClient | Client,
-    body: CreateInputBody1,
+    body: CreateInputBody2,
 ) -> Response[DestinationDTO | ErrorModel]:
     """Create an export destination
 
     Args:
-        body (CreateInputBody1):
+        body (CreateInputBody2):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -138,12 +138,12 @@ async def asyncio_detailed(
 async def asyncio(
     *,
     client: AuthenticatedClient | Client,
-    body: CreateInputBody1,
+    body: CreateInputBody2,
 ) -> DestinationDTO | ErrorModel | None:
     """Create an export destination
 
     Args:
-        body (CreateInputBody1):
+        body (CreateInputBody2):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.

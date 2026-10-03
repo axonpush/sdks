@@ -13,8 +13,7 @@ _SECRET_KEY = re.compile(
     re.IGNORECASE,
 )
 _CONTENT_KEY = re.compile(
-    r"^(prompt|prompts|messages?|completion|completions|input|output|response|"
-    r"tool[-_.]?(arguments?|result|output)|retrieval[-_.]?(documents?|content))$",
+    r"^(?:(?:(?:gen_ai|llm|ai)\.(?:(?:input|output|content)\.)?)?(?:prompts?|messages?|completions?|input|output|response|tool[-_.]?(?:arguments?|results?|output)|retrieval[-_.]?(?:documents?|content))|(?:gen_ai|llm|ai)\.tool(?:\.call)?\.(?:arguments?|results?|output))$",
     re.IGNORECASE,
 )
 

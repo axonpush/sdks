@@ -3,12 +3,8 @@ import * as ops from "../../_internal/api/sdk.gen.js";
 import type { ResourceClient } from "../../resources/_client.js";
 import { AlertsResource } from "../../resources/alerts.js";
 import { AnalyticsResource } from "../../resources/analytics.js";
-import { DashboardsResource } from "../../resources/dashboards.js";
 import { ErrorsResource } from "../../resources/errors.js";
-import { GovernPoliciesResource } from "../../resources/govern-policies.js";
-import { ModerationResource } from "../../resources/moderation.js";
 import { OrganizationsResource } from "../../resources/organizations.js";
-import { SpendPoliciesResource } from "../../resources/spend-policies.js";
 
 vi.mock("../../_internal/api/sdk.gen.js", async () => {
   const real = await vi.importActual<Record<string, unknown>>("../../_internal/api/sdk.gen.js");
@@ -40,46 +36,6 @@ function makeClient(resultByOp: Map<unknown, unknown> = new Map()): {
 
 beforeEach(() => {
   vi.clearAllMocks();
-});
-
-describe("DashboardsResource", () => {
-  it("list() unwraps the dashboards envelope", async () => {
-    const { client, calls } = makeClient(
-      new Map([[ops.dashboardsList, { dashboards: [{ id: "d" }] }]]),
-    );
-    const res = await new DashboardsResource(client).list();
-    expect(calls[0]?.op).toBe(ops.dashboardsList);
-    expect(calls[0]?.args).toEqual({});
-    expect(res).toEqual([{ id: "d" }]);
-  });
-
-  it("get(id) sends dashboardId in the path", async () => {
-    const { client, calls } = makeClient();
-    await new DashboardsResource(client).get("d-1");
-    expect(calls[0]?.op).toBe(ops.dashboardsGet);
-    expect(calls[0]?.args).toEqual({ path: { dashboardId: "d-1" } });
-  });
-
-  it("create(body) forwards the body", async () => {
-    const { client, calls } = makeClient();
-    await new DashboardsResource(client).create({ name: "ops" } as never);
-    expect(calls[0]?.op).toBe(ops.dashboardsCreate);
-    expect(calls[0]?.args).toEqual({ body: { name: "ops" } });
-  });
-
-  it("update(id, body) sends a path + body", async () => {
-    const { client, calls } = makeClient();
-    await new DashboardsResource(client).update("d-1", { name: "renamed" } as never);
-    expect(calls[0]?.op).toBe(ops.dashboardsUpdate);
-    expect(calls[0]?.args).toEqual({ path: { dashboardId: "d-1" }, body: { name: "renamed" } });
-  });
-
-  it("delete(id) sends only a path arg", async () => {
-    const { client, calls } = makeClient();
-    await new DashboardsResource(client).delete("d-1");
-    expect(calls[0]?.op).toBe(ops.dashboardsDelete);
-    expect(calls[0]?.args).toEqual({ path: { dashboardId: "d-1" } });
-  });
 });
 
 describe("ErrorsResource", () => {
@@ -122,70 +78,6 @@ describe("ErrorsResource", () => {
   });
 });
 
-describe("GovernPoliciesResource", () => {
-  it("list() unwraps the policies envelope", async () => {
-    const { client, calls } = makeClient(
-      new Map([[ops.governPoliciesList, { policies: [{ id: "g" }] }]]),
-    );
-    const res = await new GovernPoliciesResource(client).list();
-    expect(calls[0]?.op).toBe(ops.governPoliciesList);
-    expect(res).toEqual([{ id: "g" }]);
-  });
-
-  it("create(body) forwards the body", async () => {
-    const { client, calls } = makeClient();
-    await new GovernPoliciesResource(client).create({ name: "redact" } as never);
-    expect(calls[0]?.op).toBe(ops.governPoliciesCreate);
-    expect(calls[0]?.args).toEqual({ body: { name: "redact" } });
-  });
-
-  it("update(id, body) sends policyId + body", async () => {
-    const { client, calls } = makeClient();
-    await new GovernPoliciesResource(client).update("g-1", { name: "x" } as never);
-    expect(calls[0]?.op).toBe(ops.governPoliciesUpdate);
-    expect(calls[0]?.args).toEqual({ path: { policyId: "g-1" }, body: { name: "x" } });
-  });
-
-  it("delete(id) sends policyId", async () => {
-    const { client, calls } = makeClient();
-    await new GovernPoliciesResource(client).delete("g-1");
-    expect(calls[0]?.op).toBe(ops.governPoliciesDelete);
-    expect(calls[0]?.args).toEqual({ path: { policyId: "g-1" } });
-  });
-});
-
-describe("SpendPoliciesResource", () => {
-  it("list() unwraps the policies envelope", async () => {
-    const { client, calls } = makeClient(
-      new Map([[ops.spendPoliciesList, { policies: [{ id: "s" }] }]]),
-    );
-    const res = await new SpendPoliciesResource(client).list();
-    expect(calls[0]?.op).toBe(ops.spendPoliciesList);
-    expect(res).toEqual([{ id: "s" }]);
-  });
-
-  it("create(body) forwards the body", async () => {
-    const { client, calls } = makeClient();
-    await new SpendPoliciesResource(client).create({ name: "budget" } as never);
-    expect(calls[0]?.op).toBe(ops.spendPoliciesCreate);
-    expect(calls[0]?.args).toEqual({ body: { name: "budget" } });
-  });
-
-  it("update(id, body) sends policyId + body", async () => {
-    const { client, calls } = makeClient();
-    await new SpendPoliciesResource(client).update("s-1", { name: "x" } as never);
-    expect(calls[0]?.op).toBe(ops.spendPoliciesUpdate);
-    expect(calls[0]?.args).toEqual({ path: { policyId: "s-1" }, body: { name: "x" } });
-  });
-
-  it("delete(id) sends policyId", async () => {
-    const { client, calls } = makeClient();
-    await new SpendPoliciesResource(client).delete("s-1");
-    expect(calls[0]?.op).toBe(ops.spendPoliciesDelete);
-    expect(calls[0]?.args).toEqual({ path: { policyId: "s-1" } });
-  });
-});
-
 describe("AnalyticsResource additions", () => {
   it("overview(query) invokes analyticsOverview", async () => {
     const { client, calls } = makeClient();
@@ -225,15 +117,6 @@ describe("AlertsResource.occurrences", () => {
     expect(calls[0]?.op).toBe(ops.alertsOccurrences);
     expect(calls[0]?.args).toEqual({ path: { alertRuleId: "ar-1" }, query: { limit: 5 } });
     expect(res).toEqual([{ id: "o" }]);
-  });
-});
-
-describe("ModerationResource.efficacy", () => {
-  it("invokes moderationEfficacy", async () => {
-    const { client, calls } = makeClient();
-    await new ModerationResource(client).efficacy({ since: "t0" });
-    expect(calls[0]?.op).toBe(ops.moderationEfficacy);
-    expect(calls[0]?.args).toEqual({ query: { since: "t0" } });
   });
 });
 

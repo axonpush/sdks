@@ -1,10 +1,12 @@
 from __future__ import annotations
 
+import datetime
 from collections.abc import Mapping
 from typing import TYPE_CHECKING, Any, BinaryIO, Generator, TextIO, TypeVar, cast
 
 from attrs import define as _attrs_define
 from attrs import field as _attrs_field
+from dateutil.parser import isoparse
 
 from ..types import UNSET, Unset
 
@@ -28,6 +30,7 @@ class EventBody:
         dedup_key (str | Unset):
         event_type (str | Unset): Canonical event type; defaults to custom
         metadata (EventBodyMetadata | Unset):
+        occurred_at (datetime.datetime | Unset): Original source time; retries must preserve it
         parent_span_id (str | Unset):
         span_id (str | Unset):
         sync (bool | Unset): Ignored; ingest is always asynchronous
@@ -42,6 +45,7 @@ class EventBody:
     dedup_key: str | Unset = UNSET
     event_type: str | Unset = UNSET
     metadata: EventBodyMetadata | Unset = UNSET
+    occurred_at: datetime.datetime | Unset = UNSET
     parent_span_id: str | Unset = UNSET
     span_id: str | Unset = UNSET
     sync: bool | Unset = UNSET
@@ -68,6 +72,10 @@ class EventBody:
         metadata: dict[str, Any] | Unset = UNSET
         if not isinstance(self.metadata, Unset):
             metadata = self.metadata.to_dict()
+
+        occurred_at: str | Unset = UNSET
+        if not isinstance(self.occurred_at, Unset):
+            occurred_at = self.occurred_at.isoformat()
 
         parent_span_id = self.parent_span_id
 
@@ -97,6 +105,8 @@ class EventBody:
             field_dict["eventType"] = event_type
         if metadata is not UNSET:
             field_dict["metadata"] = metadata
+        if occurred_at is not UNSET:
+            field_dict["occurredAt"] = occurred_at
         if parent_span_id is not UNSET:
             field_dict["parentSpanId"] = parent_span_id
         if span_id is not UNSET:
@@ -135,6 +145,13 @@ class EventBody:
         else:
             metadata = EventBodyMetadata.from_dict(_metadata)
 
+        _occurred_at = d.pop("occurredAt", UNSET)
+        occurred_at: datetime.datetime | Unset
+        if isinstance(_occurred_at, Unset):
+            occurred_at = UNSET
+        else:
+            occurred_at = isoparse(_occurred_at)
+
         parent_span_id = d.pop("parentSpanId", UNSET)
 
         span_id = d.pop("spanId", UNSET)
@@ -152,6 +169,7 @@ class EventBody:
             dedup_key=dedup_key,
             event_type=event_type,
             metadata=metadata,
+            occurred_at=occurred_at,
             parent_span_id=parent_span_id,
             span_id=span_id,
             sync=sync,

@@ -8,7 +8,7 @@ pytest.importorskip("opentelemetry.sdk.trace")
 pytest.importorskip("opentelemetry.exporter.otlp.proto.http.trace_exporter")
 
 from opentelemetry.sdk.trace import TracerProvider  # noqa: E402
-from opentelemetry.sdk.trace.export import SimpleSpanProcessor  # noqa: E402
+from opentelemetry.sdk.trace.export import SimpleSpanProcessor, SpanExportResult  # noqa: E402
 from opentelemetry.sdk.trace.export.in_memory_span_exporter import (  # noqa: E402
     InMemorySpanExporter,
 )
@@ -23,9 +23,25 @@ from axonpush.telemetry import (  # noqa: E402
 
 
 @pytest.fixture(autouse=True)
-def _reset_installed():
+def _reset_installed(monkeypatch):
+    # These are unit tests of attributes and configuration. Keep every installed
+    # processor offline and shut it down before restoring the exporter method.
+    processors = []
+    original = telemetry._install_processor
+
+    def install(*args, **kwargs):
+        processor = original(*args, **kwargs)
+        processors.append(processor)
+        return processor
+
+    monkeypatch.setattr(telemetry, "_install_processor", install)
+    monkeypatch.setattr(
+        telemetry.OTLPSpanExporter, "export", lambda *args: SpanExportResult.SUCCESS
+    )
     telemetry._INSTALLED.clear()
     yield
+    for processor in processors:
+        processor.shutdown()
     telemetry._INSTALLED.clear()
 
 
