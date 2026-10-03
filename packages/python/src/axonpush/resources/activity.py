@@ -5,23 +5,30 @@ from collections.abc import Mapping
 from typing import Any, TYPE_CHECKING
 from axonpush._internal.api.models import (
     ActivityAnalytics,
+    ActivityHealth,
+    ActivitySummary,
+    ActivityWorkspaceSeries,
+    IdentifyInputBody,
+    IdentifyOutputBody,
+    ViewsOutputBody,
     WorkspaceEntitiesOutputBody,
     WorkspaceIncidentsOutputBody,
     WorkspaceStatusOutputBody,
     WorkspaceTimelineOutputBody,
-    WorkspaceWidgetsOutputBody,
 )
 
 if TYPE_CHECKING:
     from axonpush.resources._base import AsyncClientProtocol, SyncClientProtocol
 from axonpush._internal.api.api.activity import activity_entities as _entities_op
-from axonpush._internal.api.api.activity import activity_delete_agent as _delete_agent_op
 from axonpush._internal.api.api.activity import activity_analytics as _analytics_op
+from axonpush._internal.api.api.activity import activity_delete_entity as _delete_entity_op
 from axonpush._internal.api.api.activity import activity_health as _health_op
+from axonpush._internal.api.api.activity import activity_identify as _identify_op
 from axonpush._internal.api.api.activity import activity_incidents as _incidents_op
+from axonpush._internal.api.api.activity import activity_series as _series_op
 from axonpush._internal.api.api.activity import activity_summary as _summary_op
 from axonpush._internal.api.api.activity import activity_timeline as _timeline_op
-from axonpush._internal.api.api.activity import activity_widgets as _widgets_op
+from axonpush._internal.api.api.activity import activity_views as _views_op
 
 
 class Activity:
@@ -31,41 +38,52 @@ class Activity:
     def entities(
         self, workspace_id: str, params: Mapping[str, Any] | None = None
     ) -> WorkspaceEntitiesOutputBody | None:
-        """Read exact scoped business entities and concurrent operations."""
+        """Read projected entities with their profiles; personal attributes are masked without profiles:read."""
         return self._client._invoke(
             _entities_op,
             workspace_id=workspace_id,
             **{k: v for k, v in (params or {}).items() if v is not None},
         )
 
-    def delete_agent(
-        self, workspace_id: str, agent_id: str, params: Mapping[str, Any] | None = None
-    ) -> WorkspaceStatusOutputBody | None:
-        """Delete agent evidence and install a replay tombstone."""
-        return self._client._invoke(
-            _delete_agent_op,
-            workspace_id=workspace_id,
-            agent_id=agent_id,
-            **{k: v for k, v in (params or {}).items() if v is not None},
-        )
-
     def analytics(
         self, workspace_id: str, params: Mapping[str, Any] | None = None
     ) -> ActivityAnalytics | None:
-        """Distinct lifecycle milestones and client activation; snapshots never count as joins."""
+        """Distinct funnel milestones, funnel splits and client breakdowns; snapshots never count."""
         return self._client._invoke(
             _analytics_op,
             workspace_id=workspace_id,
             **{k: v for k, v in (params or {}).items() if v is not None},
         )
 
-    def health(self, workspace_id: str, params: Mapping[str, Any] | None = None) -> Any | None:
-        """Read independent storage and projection freshness."""
+    def delete_entity(
+        self,
+        workspace_id: str,
+        entity_type: str,
+        entity_id: str,
+        params: Mapping[str, Any] | None = None,
+    ) -> WorkspaceStatusOutputBody | None:
+        """Erase an entity, everything linked to it and its profile, and install a replay tombstone."""
+        return self._client._invoke(
+            _delete_entity_op,
+            workspace_id=workspace_id,
+            entity_type=entity_type,
+            entity_id=entity_id,
+            **{k: v for k, v in (params or {}).items() if v is not None},
+        )
+
+    def health(
+        self, workspace_id: str, params: Mapping[str, Any] | None = None
+    ) -> ActivityHealth | None:
+        """Read storage and projection freshness, source heartbeat and undeclared attributes."""
         return self._client._invoke(
             _health_op,
             workspace_id=workspace_id,
             **{k: v for k, v in (params or {}).items() if v is not None},
         )
+
+    def identify(self, workspace_id: str, body: IdentifyInputBody) -> IdentifyOutputBody | None:
+        """Attach human-readable profile traits to an entity (merge; null deletes)."""
+        return self._client._invoke(_identify_op, workspace_id=workspace_id, body=body)
 
     def incidents(
         self, workspace_id: str, params: Mapping[str, Any] | None = None
@@ -77,8 +95,20 @@ class Activity:
             **{k: v for k, v in (params or {}).items() if v is not None},
         )
 
-    def summary(self, workspace_id: str, params: Mapping[str, Any] | None = None) -> Any | None:
-        """Exact distinct entity counts with a visible 15 minute activity window."""
+    def series(
+        self, workspace_id: str, params: Mapping[str, Any] | None = None
+    ) -> ActivityWorkspaceSeries | None:
+        """Zero-filled time series: observations by the outcome role, distinct funnel entities by furthest stage, or source-to-view lag."""
+        return self._client._invoke(
+            _series_op,
+            workspace_id=workspace_id,
+            **{k: v for k, v in (params or {}).items() if v is not None},
+        )
+
+    def summary(
+        self, workspace_id: str, params: Mapping[str, Any] | None = None
+    ) -> ActivitySummary | None:
+        """Exact entity counts per state with a 15 minute activity window."""
         return self._client._invoke(
             _summary_op,
             workspace_id=workspace_id,
@@ -88,19 +118,19 @@ class Activity:
     def timeline(
         self, workspace_id: str, params: Mapping[str, Any] | None = None
     ) -> WorkspaceTimelineOutputBody | None:
-        """Follow chronological source evidence across traces."""
+        """Follow chronological source evidence; filter with ref=type:id."""
         return self._client._invoke(
             _timeline_op,
             workspace_id=workspace_id,
             **{k: v for k, v in (params or {}).items() if v is not None},
         )
 
-    def widgets(
+    def views(
         self, workspace_id: str, params: Mapping[str, Any] | None = None
-    ) -> WorkspaceWidgetsOutputBody | None:
-        """Aggregate configured business widgets over the active entity revision."""
+    ) -> ViewsOutputBody | None:
+        """Aggregate the spec's declared views (KPIs, breakdowns, latency, funnels) over the active revision."""
         return self._client._invoke(
-            _widgets_op,
+            _views_op,
             workspace_id=workspace_id,
             **{k: v for k, v in (params or {}).items() if v is not None},
         )
@@ -113,43 +143,54 @@ class AsyncActivity:
     async def entities(
         self, workspace_id: str, params: Mapping[str, Any] | None = None
     ) -> WorkspaceEntitiesOutputBody | None:
-        """Read exact scoped business entities and concurrent operations."""
+        """Read projected entities with their profiles; personal attributes are masked without profiles:read."""
         return await self._client._invoke(
             _entities_op,
             workspace_id=workspace_id,
             **{k: v for k, v in (params or {}).items() if v is not None},
         )
 
-    async def delete_agent(
-        self, workspace_id: str, agent_id: str, params: Mapping[str, Any] | None = None
-    ) -> WorkspaceStatusOutputBody | None:
-        """Delete agent evidence and install a replay tombstone."""
-        return await self._client._invoke(
-            _delete_agent_op,
-            workspace_id=workspace_id,
-            agent_id=agent_id,
-            **{k: v for k, v in (params or {}).items() if v is not None},
-        )
-
     async def analytics(
         self, workspace_id: str, params: Mapping[str, Any] | None = None
     ) -> ActivityAnalytics | None:
-        """Distinct lifecycle milestones and client activation; snapshots never count as joins."""
+        """Distinct funnel milestones, funnel splits and client breakdowns; snapshots never count."""
         return await self._client._invoke(
             _analytics_op,
             workspace_id=workspace_id,
             **{k: v for k, v in (params or {}).items() if v is not None},
         )
 
+    async def delete_entity(
+        self,
+        workspace_id: str,
+        entity_type: str,
+        entity_id: str,
+        params: Mapping[str, Any] | None = None,
+    ) -> WorkspaceStatusOutputBody | None:
+        """Erase an entity, everything linked to it and its profile, and install a replay tombstone."""
+        return await self._client._invoke(
+            _delete_entity_op,
+            workspace_id=workspace_id,
+            entity_type=entity_type,
+            entity_id=entity_id,
+            **{k: v for k, v in (params or {}).items() if v is not None},
+        )
+
     async def health(
         self, workspace_id: str, params: Mapping[str, Any] | None = None
-    ) -> Any | None:
-        """Read independent storage and projection freshness."""
+    ) -> ActivityHealth | None:
+        """Read storage and projection freshness, source heartbeat and undeclared attributes."""
         return await self._client._invoke(
             _health_op,
             workspace_id=workspace_id,
             **{k: v for k, v in (params or {}).items() if v is not None},
         )
+
+    async def identify(
+        self, workspace_id: str, body: IdentifyInputBody
+    ) -> IdentifyOutputBody | None:
+        """Attach human-readable profile traits to an entity (merge; null deletes)."""
+        return await self._client._invoke(_identify_op, workspace_id=workspace_id, body=body)
 
     async def incidents(
         self, workspace_id: str, params: Mapping[str, Any] | None = None
@@ -161,10 +202,20 @@ class AsyncActivity:
             **{k: v for k, v in (params or {}).items() if v is not None},
         )
 
+    async def series(
+        self, workspace_id: str, params: Mapping[str, Any] | None = None
+    ) -> ActivityWorkspaceSeries | None:
+        """Zero-filled time series: observations by the outcome role, distinct funnel entities by furthest stage, or source-to-view lag."""
+        return await self._client._invoke(
+            _series_op,
+            workspace_id=workspace_id,
+            **{k: v for k, v in (params or {}).items() if v is not None},
+        )
+
     async def summary(
         self, workspace_id: str, params: Mapping[str, Any] | None = None
-    ) -> Any | None:
-        """Exact distinct entity counts with a visible 15 minute activity window."""
+    ) -> ActivitySummary | None:
+        """Exact entity counts per state with a 15 minute activity window."""
         return await self._client._invoke(
             _summary_op,
             workspace_id=workspace_id,
@@ -174,19 +225,19 @@ class AsyncActivity:
     async def timeline(
         self, workspace_id: str, params: Mapping[str, Any] | None = None
     ) -> WorkspaceTimelineOutputBody | None:
-        """Follow chronological source evidence across traces."""
+        """Follow chronological source evidence; filter with ref=type:id."""
         return await self._client._invoke(
             _timeline_op,
             workspace_id=workspace_id,
             **{k: v for k, v in (params or {}).items() if v is not None},
         )
 
-    async def widgets(
+    async def views(
         self, workspace_id: str, params: Mapping[str, Any] | None = None
-    ) -> WorkspaceWidgetsOutputBody | None:
-        """Aggregate configured business widgets over the active entity revision."""
+    ) -> ViewsOutputBody | None:
+        """Aggregate the spec's declared views (KPIs, breakdowns, latency, funnels) over the active revision."""
         return await self._client._invoke(
-            _widgets_op,
+            _views_op,
             workspace_id=workspace_id,
             **{k: v for k, v in (params or {}).items() if v is not None},
         )

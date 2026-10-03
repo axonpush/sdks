@@ -10,7 +10,7 @@ import type { ResourceClient } from "./_client.js";
 export class TemplatesResource {
   constructor(private readonly client: ResourceClient) {}
 
-  /** Discover public and organization-private immutable business templates. `GET /templates` */
+  /** Discover public and organization-private immutable workspace templates. `GET /templates` */
   async list(): Promise<WorkspaceTemplateListOutputBody | null> {
     return this.client.invoke(templatesList, {});
   }

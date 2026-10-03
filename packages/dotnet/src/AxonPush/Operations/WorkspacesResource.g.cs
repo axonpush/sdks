@@ -18,32 +18,32 @@ public sealed class WorkspacesResource
         return _transport.SendAsync<WorkspaceListOutputBody>(HttpMethod.Get, path, null, cancellationToken);
     }
 
-    /// <summary>Create an organization-owned workspace from a spec.</summary>
+    /// <summary>Create a workspace for an application, from a full or blank spec.</summary>
     public Task<ActivityWorkspace?> CreateAsync(CreateInputBody body, CancellationToken cancellationToken = default)
     {
         var path = $"workspaces";
         return _transport.SendAsync<ActivityWorkspace>(HttpMethod.Post, path, body, cancellationToken);
     }
 
-    /// <summary>Preview a spec against synthetic metadata-only observations.</summary>
+    /// <summary>Preview the entities a spec projects from sample observations; nothing is stored.</summary>
     public Task<WorkspaceEntitiesOutputBody?> PreviewAsync(WorkspacePreviewInputBody body, CancellationToken cancellationToken = default)
     {
         var path = $"workspaces/preview";
         return _transport.SendAsync<WorkspaceEntitiesOutputBody>(HttpMethod.Post, path, body, cancellationToken);
     }
 
-    /// <summary>Read the versioned declarative workspace JSON Schema.</summary>
+    /// <summary>Read the workspace spec JSON Schema.</summary>
     public Task<object?> SchemaAsync(CancellationToken cancellationToken = default)
     {
         var path = $"workspaces/schema";
         return _transport.SendAsync<object>(HttpMethod.Get, path, null, cancellationToken);
     }
 
-    /// <summary>Validate a workspace spec without saving or executing it.</summary>
-    public Task<WorkspaceStatusOutputBody?> ValidateAsync(ActivityWorkspaceSpec body, CancellationToken cancellationToken = default)
+    /// <summary>Validate a workspace spec without saving it; returns every issue.</summary>
+    public Task<ValidateOutputBody?> ValidateAsync(ActivityWorkspaceSpec body, CancellationToken cancellationToken = default)
     {
         var path = $"workspaces/validate";
-        return _transport.SendAsync<WorkspaceStatusOutputBody>(HttpMethod.Post, path, body, cancellationToken);
+        return _transport.SendAsync<ValidateOutputBody>(HttpMethod.Post, path, body, cancellationToken);
     }
 
     /// <summary>Read workspace activation and rebuild state.</summary>
@@ -60,6 +60,64 @@ public sealed class WorkspacesResource
         return _transport.SendAsync<WorkspaceStatusOutputBody>(HttpMethod.Post, path, body, cancellationToken);
     }
 
+    /// <summary>Events actually received: counts, refs and attribute keys seen (declared and undeclared) and which entities consume each event.</summary>
+    public Task<ActivityCatalog?> CatalogAsync(string workspaceId, string? environment = null, string? window = null, CancellationToken cancellationToken = default)
+    {
+        var path = $"workspaces/{Uri.EscapeDataString(workspaceId)}/catalog";
+        path = AddQuery(path, "environment", environment);
+        path = AddQuery(path, "window", window);
+        return _transport.SendAsync<ActivityCatalog>(HttpMethod.Get, path, null, cancellationToken);
+    }
+
+    /// <summary>Start here: explains this workspace in plain language plus the spec format, roles and draft ops an agent uses to change it.</summary>
+    public Task<ActivityDescription?> DescribeAsync(string workspaceId, CancellationToken cancellationToken = default)
+    {
+        var path = $"workspaces/{Uri.EscapeDataString(workspaceId)}/describe";
+        return _transport.SendAsync<ActivityDescription>(HttpMethod.Get, path, null, cancellationToken);
+    }
+
+    /// <summary>Discard the shared draft.</summary>
+    public Task<WorkspaceStatusOutputBody?> DiscardDraftAsync(string workspaceId, CancellationToken cancellationToken = default)
+    {
+        var path = $"workspaces/{Uri.EscapeDataString(workspaceId)}/draft";
+        return _transport.SendAsync<WorkspaceStatusOutputBody>(HttpMethod.Delete, path, null, cancellationToken);
+    }
+
+    /// <summary>Read the shared draft of the workspace spec (created from the active spec on first read).</summary>
+    public Task<ActivityDraftView?> DraftAsync(string workspaceId, CancellationToken cancellationToken = default)
+    {
+        var path = $"workspaces/{Uri.EscapeDataString(workspaceId)}/draft";
+        return _transport.SendAsync<ActivityDraftView>(HttpMethod.Get, path, null, cancellationToken);
+    }
+
+    /// <summary>Replace the whole draft spec (JSON editor); 409 with the current draft on a version mismatch.</summary>
+    public Task<ActivityDraftView?> ReplaceDraftAsync(string workspaceId, ReplaceInputBody body, CancellationToken cancellationToken = default)
+    {
+        var path = $"workspaces/{Uri.EscapeDataString(workspaceId)}/draft";
+        return _transport.SendAsync<ActivityDraftView>(HttpMethod.Put, path, body, cancellationToken);
+    }
+
+    /// <summary>Save the draft as a revision and rebuild projections with it; the draft is then cleared.</summary>
+    public Task<ActivateDraftOutputBody?> ActivateDraftAsync(string workspaceId, ActivateDraftInputBody? body = null, CancellationToken cancellationToken = default)
+    {
+        var path = $"workspaces/{Uri.EscapeDataString(workspaceId)}/draft/activate";
+        return _transport.SendAsync<ActivateDraftOutputBody>(HttpMethod.Post, path, body, cancellationToken);
+    }
+
+    /// <summary>List, in plain language, what the draft changes against the current spec.</summary>
+    public Task<ChangesOutputBody?> DraftChangesAsync(string workspaceId, CancellationToken cancellationToken = default)
+    {
+        var path = $"workspaces/{Uri.EscapeDataString(workspaceId)}/draft/changes";
+        return _transport.SendAsync<ChangesOutputBody>(HttpMethod.Get, path, null, cancellationToken);
+    }
+
+    /// <summary>Apply typed edits to the shared draft atomically.</summary>
+    public Task<ActivityDraftView?> ApplyDraftOpsAsync(string workspaceId, OpsInputBody body, CancellationToken cancellationToken = default)
+    {
+        var path = $"workspaces/{Uri.EscapeDataString(workspaceId)}/draft/ops";
+        return _transport.SendAsync<ActivityDraftView>(HttpMethod.Post, path, body, cancellationToken);
+    }
+
     /// <summary>List immutable spec revisions for diff, upgrade or rollback.</summary>
     public Task<RevisionListOutputBody?> RevisionsAsync(string workspaceId, CancellationToken cancellationToken = default)
     {
@@ -67,7 +125,7 @@ public sealed class WorkspacesResource
         return _transport.SendAsync<RevisionListOutputBody>(HttpMethod.Get, path, null, cancellationToken);
     }
 
-    /// <summary>Save a validated immutable draft revision.</summary>
+    /// <summary>Save a validated immutable revision.</summary>
     public Task<ActivityRevision?> SaveRevisionAsync(string workspaceId, ActivityWorkspaceSpec body, CancellationToken cancellationToken = default)
     {
         var path = $"workspaces/{Uri.EscapeDataString(workspaceId)}/revisions";

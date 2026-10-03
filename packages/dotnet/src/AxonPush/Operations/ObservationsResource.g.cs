@@ -11,11 +11,11 @@ public sealed class ObservationsResource
     private readonly AxonPushTransport _transport;
     internal ObservationsResource(AxonPushTransport transport) => _transport = transport;
 
-    /// <summary>Store an idempotent metadata-only batch; projection occurs independently.</summary>
-    public Task<WorkspaceIngestOutputBody?> AcceptAsync(string workspaceId, WorkspaceIngestInputBody body, CancellationToken cancellationToken = default)
+    /// <summary>Store an idempotent metadata-only batch; undeclared attributes are dropped and counted.</summary>
+    public Task<ActivityIngestReport?> AcceptAsync(string workspaceId, WorkspaceIngestInputBody body, CancellationToken cancellationToken = default)
     {
         var path = $"workspaces/{Uri.EscapeDataString(workspaceId)}/observations";
-        return _transport.SendObservationAsync<WorkspaceIngestOutputBody>(HttpMethod.Post, path, body, cancellationToken);
+        return _transport.SendObservationAsync<ActivityIngestReport>(HttpMethod.Post, path, body, cancellationToken);
     }
 
     /// <summary>Check storage and projection separately.</summary>

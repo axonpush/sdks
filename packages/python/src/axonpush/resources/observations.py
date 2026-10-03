@@ -4,9 +4,9 @@ from __future__ import annotations
 from collections.abc import Mapping
 from typing import Any, TYPE_CHECKING
 from axonpush._internal.api.models import (
+    ActivityIngestReport,
     ActivityReceipt,
     WorkspaceIngestInputBody,
-    WorkspaceIngestOutputBody,
 )
 
 if TYPE_CHECKING:
@@ -21,8 +21,8 @@ class Observations:
 
     def accept(
         self, workspace_id: str, body: WorkspaceIngestInputBody
-    ) -> WorkspaceIngestOutputBody | None:
-        """Store an idempotent metadata-only batch; projection occurs independently."""
+    ) -> ActivityIngestReport | None:
+        """Store an idempotent metadata-only batch; undeclared attributes are dropped and counted."""
         return self._client._invoke(_accept_op, workspace_id=workspace_id, body=body)
 
     def receipt(
@@ -43,8 +43,8 @@ class AsyncObservations:
 
     async def accept(
         self, workspace_id: str, body: WorkspaceIngestInputBody
-    ) -> WorkspaceIngestOutputBody | None:
-        """Store an idempotent metadata-only batch; projection occurs independently."""
+    ) -> ActivityIngestReport | None:
+        """Store an idempotent metadata-only batch; undeclared attributes are dropped and counted."""
         return await self._client._invoke(_accept_op, workspace_id=workspace_id, body=body)
 
     async def receipt(

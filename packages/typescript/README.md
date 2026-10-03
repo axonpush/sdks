@@ -10,13 +10,41 @@ infrastructure for AI agent systems. ESM-only, runs on Node 20+ and Bun.
   Vercel AI SDK, Mastra, Google ADK, OpenTelemetry, Sentry, pino,
   winston, console capture, BullMQ, and the Anthropic SDK.
 
-## Business operations
+## Agent operations
 
-The SDK provides typed workspace authoring, immutable revisions, pinned templates,
-metadata-only observation ingestion/receipts and exact activity queries. See the
-[shared operations contract](../../AGENT_OPERATIONS.md) for schemas, access,
-privacy, lifecycle alerts and pilot verification. Capture content remains opt-in;
-source lifecycle adapters must apply their own allowlist before buffering.
+Each workspace declares its own data dictionary and entities (usually drafted by
+your coding agent over MCP). Your app then sends observations and profile traits.
+Nothing is sent unless you call these methods.
+
+```ts
+const client = new AxonPush({ environment: "production" });
+
+await client.observe(workspaceId, {
+  event: "ticket.escalated",
+  refs: { ticket: "t_42", agent: "a_7" },
+  attributes: { priority: "high", queue: "billing" },
+});
+
+await client.identify(workspaceId, {
+  entity: "agent",
+  id: "a_7",
+  traits: { display_name: "Triage bot", team: null },
+});
+
+// Same call as identify, for organisation-like entities.
+await client.group(workspaceId, { entity: "company", id: "c_1", traits: { name: "Acme" } });
+```
+
+`observe` fills in `schema_version`, a UUID `source_event_id` and an ISO
+`occurred_at` when you leave them out, plus the bound trace id when there is one.
+Pass an array to send several; they go in batches of 100. Attribute keys the
+workspace has not declared are dropped by the server and listed in the report's
+`dropped`. `identify` merges traits; `null` deletes one. Both return `null`
+instead of throwing on a connection failure while `failOpen` is on (the default).
+
+The lower-level `workspaces`, `templates`, `observations` and `activity`
+resources cover drafts, revisions and activity queries. See the
+[shared operations contract](../../AGENT_OPERATIONS.md).
 
 
 ## Install

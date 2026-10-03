@@ -102,6 +102,13 @@ export type {
   WebhookDelivery,
   WebhookEndpoint,
 } from "./models.js";
+export {
+  type IdentifyParams,
+  type IdentifyReport,
+  MAX_OBSERVATION_BATCH,
+  type ObserveParams,
+  type ObserveReport,
+} from "./observe.js";
 export { ActivityResource } from "./resources/activity.js";
 export { AlertsResource } from "./resources/alerts.js";
 export { AnalyticsResource } from "./resources/analytics.js";

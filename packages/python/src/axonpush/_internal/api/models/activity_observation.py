@@ -12,11 +12,8 @@ from ..models.activity_observation_schema_version import ActivityObservationSche
 from ..types import UNSET, Unset
 
 if TYPE_CHECKING:
-    from ..models.activity_activity import ActivityActivity
-    from ..models.activity_actor import ActivityActor
-    from ..models.activity_client import ActivityClient
-    from ..models.activity_correlation import ActivityCorrelation
-    from ..models.activity_pipeline_health import ActivityPipelineHealth
+    from ..models.activity_observation_attributes import ActivityObservationAttributes
+    from ..models.activity_observation_refs import ActivityObservationRefs
     from ..models.activity_source import ActivitySource
 
 
@@ -27,142 +24,147 @@ T = TypeVar("T", bound="ActivityObservation")
 class ActivityObservation:
     """
     Attributes:
-        activity (ActivityActivity):
-        actor (ActivityActor):
-        client (ActivityClient):
-        correlation (ActivityCorrelation):
-        event_name (str):
+        event (str):
         occurred_at (datetime.datetime):
         schema_version (ActivityObservationSchemaVersion):
-        service (str):
-        source (ActivitySource):
         source_event_id (str):
-        pipeline (ActivityPipelineHealth | Unset):
-        release (str | Unset):
+        attributes (ActivityObservationAttributes | Unset):
+        environment (str | Unset):
+        refs (ActivityObservationRefs | Unset): Entity type to opaque identifier
+        snapshot (bool | Unset): Reconstructed state rather than live activity
+        source (ActivitySource | Unset):
+        span_id (str | Unset):
+        trace_id (str | Unset):
     """
 
-    activity: ActivityActivity
-    actor: ActivityActor
-    client: ActivityClient
-    correlation: ActivityCorrelation
-    event_name: str
+    event: str
     occurred_at: datetime.datetime
     schema_version: ActivityObservationSchemaVersion
-    service: str
-    source: ActivitySource
     source_event_id: str
-    pipeline: ActivityPipelineHealth | Unset = UNSET
-    release: str | Unset = UNSET
+    attributes: ActivityObservationAttributes | Unset = UNSET
+    environment: str | Unset = UNSET
+    refs: ActivityObservationRefs | Unset = UNSET
+    snapshot: bool | Unset = UNSET
+    source: ActivitySource | Unset = UNSET
+    span_id: str | Unset = UNSET
+    trace_id: str | Unset = UNSET
 
     def to_dict(self) -> dict[str, Any]:
-        from ..models.activity_activity import ActivityActivity
-        from ..models.activity_actor import ActivityActor
-        from ..models.activity_client import ActivityClient
-        from ..models.activity_correlation import ActivityCorrelation
-        from ..models.activity_pipeline_health import ActivityPipelineHealth
+        from ..models.activity_observation_attributes import ActivityObservationAttributes
+        from ..models.activity_observation_refs import ActivityObservationRefs
         from ..models.activity_source import ActivitySource
 
-        activity = self.activity.to_dict()
-
-        actor = self.actor.to_dict()
-
-        client = self.client.to_dict()
-
-        correlation = self.correlation.to_dict()
-
-        event_name = self.event_name
+        event = self.event
 
         occurred_at = self.occurred_at.isoformat()
 
         schema_version = self.schema_version.value
 
-        service = self.service
-
-        source = self.source.to_dict()
-
         source_event_id = self.source_event_id
 
-        pipeline: dict[str, Any] | Unset = UNSET
-        if not isinstance(self.pipeline, Unset):
-            pipeline = self.pipeline.to_dict()
+        attributes: dict[str, Any] | Unset = UNSET
+        if not isinstance(self.attributes, Unset):
+            attributes = self.attributes.to_dict()
 
-        release = self.release
+        environment = self.environment
+
+        refs: dict[str, Any] | Unset = UNSET
+        if not isinstance(self.refs, Unset):
+            refs = self.refs.to_dict()
+
+        snapshot = self.snapshot
+
+        source: dict[str, Any] | Unset = UNSET
+        if not isinstance(self.source, Unset):
+            source = self.source.to_dict()
+
+        span_id = self.span_id
+
+        trace_id = self.trace_id
 
         field_dict: dict[str, Any] = {}
 
         field_dict.update(
             {
-                "activity": activity,
-                "actor": actor,
-                "client": client,
-                "correlation": correlation,
-                "event_name": event_name,
+                "event": event,
                 "occurred_at": occurred_at,
                 "schema_version": schema_version,
-                "service": service,
-                "source": source,
                 "source_event_id": source_event_id,
             }
         )
-        if pipeline is not UNSET:
-            field_dict["pipeline"] = pipeline
-        if release is not UNSET:
-            field_dict["release"] = release
+        if attributes is not UNSET:
+            field_dict["attributes"] = attributes
+        if environment is not UNSET:
+            field_dict["environment"] = environment
+        if refs is not UNSET:
+            field_dict["refs"] = refs
+        if snapshot is not UNSET:
+            field_dict["snapshot"] = snapshot
+        if source is not UNSET:
+            field_dict["source"] = source
+        if span_id is not UNSET:
+            field_dict["span_id"] = span_id
+        if trace_id is not UNSET:
+            field_dict["trace_id"] = trace_id
 
         return field_dict
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        from ..models.activity_activity import ActivityActivity
-        from ..models.activity_actor import ActivityActor
-        from ..models.activity_client import ActivityClient
-        from ..models.activity_correlation import ActivityCorrelation
-        from ..models.activity_pipeline_health import ActivityPipelineHealth
+        from ..models.activity_observation_attributes import ActivityObservationAttributes
+        from ..models.activity_observation_refs import ActivityObservationRefs
         from ..models.activity_source import ActivitySource
 
         d = dict(src_dict)
-        activity = ActivityActivity.from_dict(d.pop("activity"))
-
-        actor = ActivityActor.from_dict(d.pop("actor"))
-
-        client = ActivityClient.from_dict(d.pop("client"))
-
-        correlation = ActivityCorrelation.from_dict(d.pop("correlation"))
-
-        event_name = d.pop("event_name")
+        event = d.pop("event")
 
         occurred_at = isoparse(d.pop("occurred_at"))
 
         schema_version = ActivityObservationSchemaVersion(d.pop("schema_version"))
 
-        service = d.pop("service")
-
-        source = ActivitySource.from_dict(d.pop("source"))
-
         source_event_id = d.pop("source_event_id")
 
-        _pipeline = d.pop("pipeline", UNSET)
-        pipeline: ActivityPipelineHealth | Unset
-        if isinstance(_pipeline, Unset):
-            pipeline = UNSET
+        _attributes = d.pop("attributes", UNSET)
+        attributes: ActivityObservationAttributes | Unset
+        if isinstance(_attributes, Unset):
+            attributes = UNSET
         else:
-            pipeline = ActivityPipelineHealth.from_dict(_pipeline)
+            attributes = ActivityObservationAttributes.from_dict(_attributes)
 
-        release = d.pop("release", UNSET)
+        environment = d.pop("environment", UNSET)
+
+        _refs = d.pop("refs", UNSET)
+        refs: ActivityObservationRefs | Unset
+        if isinstance(_refs, Unset):
+            refs = UNSET
+        else:
+            refs = ActivityObservationRefs.from_dict(_refs)
+
+        snapshot = d.pop("snapshot", UNSET)
+
+        _source = d.pop("source", UNSET)
+        source: ActivitySource | Unset
+        if isinstance(_source, Unset):
+            source = UNSET
+        else:
+            source = ActivitySource.from_dict(_source)
+
+        span_id = d.pop("span_id", UNSET)
+
+        trace_id = d.pop("trace_id", UNSET)
 
         activity_observation = cls(
-            activity=activity,
-            actor=actor,
-            client=client,
-            correlation=correlation,
-            event_name=event_name,
+            event=event,
             occurred_at=occurred_at,
             schema_version=schema_version,
-            service=service,
-            source=source,
             source_event_id=source_event_id,
-            pipeline=pipeline,
-            release=release,
+            attributes=attributes,
+            environment=environment,
+            refs=refs,
+            snapshot=snapshot,
+            source=source,
+            span_id=span_id,
+            trace_id=trace_id,
         )
 
         return activity_observation

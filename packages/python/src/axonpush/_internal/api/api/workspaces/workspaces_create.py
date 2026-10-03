@@ -60,7 +60,7 @@ def sync_detailed(
     client: AuthenticatedClient | Client,
     body: CreateInputBody,
 ) -> Response[ActivityWorkspace | ErrorModel]:
-    """Create an organization-owned workspace from a spec
+    """Create a workspace for an application, from a full or blank spec
 
     Args:
         body (CreateInputBody):
@@ -89,7 +89,7 @@ def sync(
     client: AuthenticatedClient | Client,
     body: CreateInputBody,
 ) -> ActivityWorkspace | ErrorModel | None:
-    """Create an organization-owned workspace from a spec
+    """Create a workspace for an application, from a full or blank spec
 
     Args:
         body (CreateInputBody):
@@ -113,7 +113,7 @@ async def asyncio_detailed(
     client: AuthenticatedClient | Client,
     body: CreateInputBody,
 ) -> Response[ActivityWorkspace | ErrorModel]:
-    """Create an organization-owned workspace from a spec
+    """Create a workspace for an application, from a full or blank spec
 
     Args:
         body (CreateInputBody):
@@ -140,7 +140,7 @@ async def asyncio(
     client: AuthenticatedClient | Client,
     body: CreateInputBody,
 ) -> ActivityWorkspace | ErrorModel | None:
-    """Create an organization-owned workspace from a spec
+    """Create a workspace for an application, from a full or blank spec
 
     Args:
         body (CreateInputBody):

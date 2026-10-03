@@ -49,7 +49,7 @@ def sync_detailed(
     *,
     client: AuthenticatedClient | Client,
 ) -> Response[ErrorModel | WorkspacesSchemaResponse200]:
-    """Read the versioned declarative workspace JSON Schema
+    """Read the workspace spec JSON Schema
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -72,7 +72,7 @@ def sync(
     *,
     client: AuthenticatedClient | Client,
 ) -> ErrorModel | WorkspacesSchemaResponse200 | None:
-    """Read the versioned declarative workspace JSON Schema
+    """Read the workspace spec JSON Schema
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -91,7 +91,7 @@ async def asyncio_detailed(
     *,
     client: AuthenticatedClient | Client,
 ) -> Response[ErrorModel | WorkspacesSchemaResponse200]:
-    """Read the versioned declarative workspace JSON Schema
+    """Read the workspace spec JSON Schema
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -112,7 +112,7 @@ async def asyncio(
     *,
     client: AuthenticatedClient | Client,
 ) -> ErrorModel | WorkspacesSchemaResponse200 | None:
-    """Read the versioned declarative workspace JSON Schema
+    """Read the workspace spec JSON Schema
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.

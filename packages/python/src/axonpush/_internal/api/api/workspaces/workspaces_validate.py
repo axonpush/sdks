@@ -8,7 +8,7 @@ from ... import errors
 from ...client import AuthenticatedClient, Client
 from ...models.activity_workspace_spec import ActivityWorkspaceSpec
 from ...models.error_model import ErrorModel
-from ...models.workspace_status_output_body import WorkspaceStatusOutputBody
+from ...models.validate_output_body import ValidateOutputBody
 from ...types import UNSET, Response
 
 
@@ -33,9 +33,9 @@ def _get_kwargs(
 
 def _parse_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> ErrorModel | WorkspaceStatusOutputBody:
+) -> ErrorModel | ValidateOutputBody:
     if response.status_code == 200:
-        response_200 = WorkspaceStatusOutputBody.from_dict(response.json())
+        response_200 = ValidateOutputBody.from_dict(response.json())
 
         return response_200
 
@@ -46,7 +46,7 @@ def _parse_response(
 
 def _build_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> Response[ErrorModel | WorkspaceStatusOutputBody]:
+) -> Response[ErrorModel | ValidateOutputBody]:
     return Response(
         status_code=HTTPStatus(response.status_code),
         content=response.content,
@@ -59,8 +59,8 @@ def sync_detailed(
     *,
     client: AuthenticatedClient | Client,
     body: ActivityWorkspaceSpec,
-) -> Response[ErrorModel | WorkspaceStatusOutputBody]:
-    """Validate a workspace spec without saving or executing it
+) -> Response[ErrorModel | ValidateOutputBody]:
+    """Validate a workspace spec without saving it; returns every issue
 
     Args:
         body (ActivityWorkspaceSpec):
@@ -70,7 +70,7 @@ def sync_detailed(
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[ErrorModel | WorkspaceStatusOutputBody]
+        Response[ErrorModel | ValidateOutputBody]
     """
 
     kwargs = _get_kwargs(
@@ -88,8 +88,8 @@ def sync(
     *,
     client: AuthenticatedClient | Client,
     body: ActivityWorkspaceSpec,
-) -> ErrorModel | WorkspaceStatusOutputBody | None:
-    """Validate a workspace spec without saving or executing it
+) -> ErrorModel | ValidateOutputBody | None:
+    """Validate a workspace spec without saving it; returns every issue
 
     Args:
         body (ActivityWorkspaceSpec):
@@ -99,7 +99,7 @@ def sync(
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        ErrorModel | WorkspaceStatusOutputBody
+        ErrorModel | ValidateOutputBody
     """
 
     return sync_detailed(
@@ -112,8 +112,8 @@ async def asyncio_detailed(
     *,
     client: AuthenticatedClient | Client,
     body: ActivityWorkspaceSpec,
-) -> Response[ErrorModel | WorkspaceStatusOutputBody]:
-    """Validate a workspace spec without saving or executing it
+) -> Response[ErrorModel | ValidateOutputBody]:
+    """Validate a workspace spec without saving it; returns every issue
 
     Args:
         body (ActivityWorkspaceSpec):
@@ -123,7 +123,7 @@ async def asyncio_detailed(
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[ErrorModel | WorkspaceStatusOutputBody]
+        Response[ErrorModel | ValidateOutputBody]
     """
 
     kwargs = _get_kwargs(
@@ -139,8 +139,8 @@ async def asyncio(
     *,
     client: AuthenticatedClient | Client,
     body: ActivityWorkspaceSpec,
-) -> ErrorModel | WorkspaceStatusOutputBody | None:
-    """Validate a workspace spec without saving or executing it
+) -> ErrorModel | ValidateOutputBody | None:
+    """Validate a workspace spec without saving it; returns every issue
 
     Args:
         body (ActivityWorkspaceSpec):
@@ -150,7 +150,7 @@ async def asyncio(
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        ErrorModel | WorkspaceStatusOutputBody
+        ErrorModel | ValidateOutputBody
     """
 
     return (

@@ -52,6 +52,26 @@ export type AccessRequestDto = {
     useCase: string;
 };
 
+export type ActivateDraftInputBody = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
+    /**
+     * When set, activate only if the draft is still at this version
+     */
+    version?: number;
+};
+
+export type ActivateDraftOutputBody = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
+    revision: string;
+    status: string;
+};
+
 export type ActivateInputBody = {
     /**
      * A URL to the JSON Schema for this object.
@@ -61,39 +81,19 @@ export type ActivateInputBody = {
     revision: string;
 };
 
-export type ActivityActivity = {
-    action?: string;
-    attempts?: number;
-    duration_ms?: number;
-    error_category?: string;
-    evidence: 'server_observed' | 'agent_reported' | 'derived' | 'reconstructed';
-    expected_seconds?: number;
-    family: string;
-    input_tokens?: number;
-    join_method?: string;
-    model?: string;
-    next_actor?: 'human' | 'candidate' | 'company' | 'none' | 'unknown';
-    outcome: 'observed' | 'accepted' | 'queued' | 'running' | 'committed' | 'completed' | 'failed' | 'cancelled' | 'unknown';
-    output_tokens?: number;
-    registration_source?: string;
-    snapshot?: boolean;
-    state?: string;
-    transport?: string;
-};
-
-export type ActivityActor = {
-    agent_id?: string;
-    initiating_agent_id?: string;
-    participant_side?: 'candidate' | 'recruiter' | 'company' | 'unknown';
-    related_agent_ids?: Array<string> | null;
-    type: 'agent' | 'human' | 'worker' | 'integration' | 'unknown';
-};
-
 export type ActivityAlert = {
     afterSeconds: number;
     entity: string;
+    /**
+     * Fire only when at least this many entities are affected
+     */
+    minCount?: number;
     name: string;
     state: string;
+    /**
+     * Only count entities that changed inside this window
+     */
+    windowSeconds?: number;
 };
 
 export type ActivityAnalytics = {
@@ -101,67 +101,220 @@ export type ActivityAnalytics = {
      * A URL to the JSON Schema for this object.
      */
     readonly $schema?: string;
-    activations: Array<ActivityCohortCount> | null;
     asOf: string;
-    attempts: Array<ActivityCohortCount> | null;
+    /**
+     * Entities by the client and actor_side roles; empty without a client role
+     */
     clients: Array<ActivityBreakdown> | null;
     funnels: Array<ActivityFunnelResult> | null;
+    splits: Array<ActivityFunnelSplit> | null;
     windowDays: number;
+};
+
+export type ActivityAttribute = {
+    description?: string;
+    /**
+     * For a ref: the entity type it points at (used for linking and erasure)
+     */
+    entity?: string;
+    /**
+     * Outcome values that count as failures
+     */
+    failure?: Array<string> | null;
+    /**
+     * Stable attribute key sent in observation attributes and stored on entities
+     */
+    key: string;
+    label?: string;
+    /**
+     * For text: maximum length, default 200
+     */
+    maxLength?: number;
+    /**
+     * For a ref: the value is a list of up to 20 identifiers
+     */
+    multiple?: boolean;
+    /**
+     * Outcome values that mean the work is still in progress
+     */
+    pending?: Array<string> | null;
+    /**
+     * Personal data: masked unless the caller is an owner/admin or holds profiles:read
+     */
+    personal?: boolean;
+    /**
+     * Product meaning that generic views, analytics and alerts read through. expected_duration is in seconds.
+     */
+    role?: 'outcome' | 'state' | 'actor_side' | 'client' | 'client_confidence' | 'duration' | 'expected_duration' | 'wait_reason' | 'next_actor' | 'evidence' | 'display_name' | 'display_subtitle' | 'avatar';
+    /**
+     * duration is milliseconds; time is RFC 3339; ref is an opaque identifier
+     */
+    type: 'text' | 'number' | 'duration' | 'time' | 'enum' | 'ref' | 'bool';
+    /**
+     * Allowed values for an enum
+     */
+    values?: Array<string> | null;
 };
 
 export type ActivityBreakdown = {
     active15m: number;
-    agents: number;
-    client: string;
-    side: string;
-};
-
-export type ActivityClient = {
-    attribution_source?: string;
-    confidence: 'verified_registration' | 'authenticated_registration_unverified_vendor' | 'self_reported' | 'inferred' | 'unknown';
-    conflict?: boolean;
-    evidence?: Array<ActivityClientEvidence> | null;
-    family: string;
-    reported_name?: string;
-    version?: string;
-};
-
-export type ActivityClientEvidence = {
-    confidence: 'verified_registration' | 'authenticated_registration_unverified_vendor' | 'self_reported' | 'inferred' | 'unknown';
-    family: string;
-    name?: string;
-    source: string;
-    version?: string;
-};
-
-export type ActivityCohortCount = {
     client: string;
     count: number;
+    entity: string;
     side: string;
 };
 
-export type ActivityCorrelation = {
-    application_id?: string;
-    causation_id?: string;
-    connection_ref?: string;
-    job_id?: string;
-    join_attempt_id?: string;
-    operation_id?: string;
-    request_id?: string;
-    role_id?: string;
-    span_id?: string;
-    thread_id?: string;
-    trace_id?: string;
+export type ActivityCatalog = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
+    events: Array<ActivityCatalogEvent> | null;
+    from: string;
+    /**
+     * Attribute keys sent but not declared, per event (identify drops appear as identify:<entity>)
+     */
+    undeclared: Array<ActivityUndeclared> | null;
+    /**
+     * Events no entity consumes
+     */
+    unmapped: number;
+    window: string;
+};
+
+export type ActivityCatalogAttribute = {
+    /**
+     * Observations carrying the key; for undeclared keys, how many were dropped
+     */
+    count: number;
+    declared: boolean;
+    key: string;
+};
+
+export type ActivityCatalogEvent = {
+    attributes: Array<ActivityCatalogAttribute> | null;
+    /**
+     * Entity types whose rules match this event; empty means unmapped
+     */
+    consumers: Array<string> | null;
+    count: number;
+    event: string;
+    lastSeenAt: string;
+    /**
+     * Entity types referenced in refs
+     */
+    refs: Array<string> | null;
+};
+
+export type ActivityChange = {
+    kind: 'workspace' | 'attribute' | 'entity' | 'field' | 'profile' | 'event' | 'funnel' | 'view' | 'alert';
+    text: string;
+};
+
+export type ActivityDescription = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
+    /**
+     * Pending draft status, if any
+     */
+    draft?: string;
+    ops: Array<ActivityOpDoc> | null;
+    /**
+     * The spec and observation format
+     */
+    reference: string;
+    roles: Array<ActivityRoleDoc> | null;
+    /**
+     * One plain sentence per part of the current spec
+     */
+    summary: Array<string> | null;
+    types: Array<string> | null;
+    workspace: ActivityWorkspace;
+};
+
+export type ActivityDraft = {
+    /**
+     * Revision the draft started from; changes are listed against the current active or building revision
+     */
+    baseRevision: string;
+    spec: ActivityWorkspaceSpec;
+    updatedAt: string;
+    updatedBy: string;
+    /**
+     * MCP client name when the edit came from a coding agent
+     */
+    updatedClient?: string;
+    updatedSource: 'dashboard' | 'mcp' | 'apikey';
+    /**
+     * Send this back with ops; it increments on every edit
+     */
+    version: number;
+    workspaceId: string;
+};
+
+export type ActivityDraftOp = {
+    alert?: ActivityAlert;
+    attribute?: ActivityAttribute;
+    /**
+     * entity.add: the full entity. entity.update: label, description and terminal replace; fields, profile and events replace only when given
+     */
+    entity?: ActivityEntityDefinition;
+    event?: ActivityEventRule;
+    funnel?: ActivityFunnel;
+    /**
+     * Attribute key (attribute.update/remove, entity.field.*, entity.profile.*)
+     */
+    key?: string;
+    /**
+     * Event rule match (event.update/remove)
+     */
+    match?: string;
+    /**
+     * Funnel or alert name, or view id (update/remove)
+     */
+    name?: string;
+    op: 'workspace.update' | 'attribute.add' | 'attribute.update' | 'attribute.remove' | 'entity.add' | 'entity.update' | 'entity.remove' | 'entity.field.add' | 'entity.field.remove' | 'entity.profile.add' | 'entity.profile.remove' | 'event.add' | 'event.update' | 'event.remove' | 'funnel.add' | 'funnel.update' | 'funnel.remove' | 'view.add' | 'view.update' | 'view.remove' | 'alert.add' | 'alert.update' | 'alert.remove';
+    /**
+     * Entity type the op targets
+     */
+    type?: string;
+    view?: ActivityView;
+    workspace?: ActivityWorkspacePatch;
+};
+
+export type ActivityDraftView = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
+    draft: ActivityDraft;
+    /**
+     * Validation issues in the draft; errors block activation, warnings mean a view or feature will render empty
+     */
+    issues: Array<ActivityIssue> | null;
 };
 
 export type ActivityEntity = {
-    evidence: string;
+    evidence?: string;
     fields: {
         [key: string]: unknown;
     };
     id: string;
     lastActivityAt?: string;
+    /**
+     * type:id of entities this one references, used for filtering and erasure
+     */
+    links?: Array<string> | null;
+    /**
+     * Personal attribute keys hidden from this caller
+     */
+    masked?: Array<string> | null;
     occurredAt: string;
+    profile?: {
+        [key: string]: unknown;
+    };
     receivedAt: string;
     snapshot: boolean;
     type: string;
@@ -171,10 +324,53 @@ export type ActivityEntity = {
 };
 
 export type ActivityEntityDefinition = {
-    fields: Array<string> | null;
-    label: string;
-    terminalStates?: Array<string> | null;
+    description?: string;
+    events?: Array<ActivityEventRule> | null;
+    /**
+     * Attribute keys stored on this entity
+     */
+    fields?: Array<string> | null;
+    label?: string;
+    /**
+     * Attribute keys settable through identify
+     */
+    profile?: Array<string> | null;
+    /**
+     * State values that only a newer revision of the same source record may reopen
+     */
+    terminal?: Array<string> | null;
     type: string;
+};
+
+export type ActivityEventRule = {
+    /**
+     * The event erases the referenced entity, everything linked to it, and its profile
+     */
+    erase?: boolean;
+    /**
+     * Exact event name, or a prefix ending in * (the most specific matching rule wins)
+     */
+    match: string;
+    /**
+     * Restrict which entity fields this event updates from attributes
+     */
+    only?: Array<string> | null;
+    /**
+     * The event updates the entity but does not count as activity
+     */
+    passive?: boolean;
+    /**
+     * Literal field values assigned when the rule matches
+     */
+    set?: {
+        [key: string]: string;
+    };
+};
+
+export type ActivityFailureCount = {
+    category: string;
+    class: 'expected_challenge' | 'rejected' | 'service_error' | 'unclassified';
+    count: number;
 };
 
 export type ActivityFieldVersion = {
@@ -186,13 +382,62 @@ export type ActivityFieldVersion = {
 
 export type ActivityFunnel = {
     entity: string;
+    /**
+     * Attribute key holding the failure category
+     */
+    errorKey?: string;
+    /**
+     * State that marks a failed attempt; it supersedes stages reached before it, not later ones
+     */
+    failure?: string;
     name: string;
+    /**
+     * Attribute key to split the funnel by
+     */
+    splitBy?: string;
     stages: Array<string> | null;
 };
 
 export type ActivityFunnelResult = {
+    entity: string;
     name: string;
     stages: Array<ActivityStageCount> | null;
+};
+
+export type ActivityFunnelSplit = {
+    entities: number;
+    failureCategories: Array<ActivityFailureCount> | null;
+    failures: number;
+    funnel: string;
+    key: string;
+    rejected: number;
+    serviceErrors: number;
+    stages: Array<ActivityStageCount> | null;
+    unclassifiedFailures: number;
+    value: string;
+};
+
+export type ActivityHealth = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
+    checkedAt: string;
+    lastProjectedAt: string | null;
+    lastReceivedAt: string | null;
+    oldestPendingAt: string | null;
+    pending: number;
+    /**
+     * Attributes of the latest declared heartbeat event
+     */
+    source?: {
+        [key: string]: unknown;
+    };
+    sourceHeartbeatAt?: string;
+    /**
+     * Attribute keys sent in the last 7 days that the dictionary does not declare; they were dropped
+     */
+    undeclared: Array<ActivityUndeclared> | null;
 };
 
 export type ActivityIncident = {
@@ -205,42 +450,69 @@ export type ActivityIncident = {
     resolvedAt: string | null;
 };
 
-export type ActivityMapping = {
-    entity: string;
-    event: string;
-    fields?: {
-        [key: string]: string;
-    };
-    idPath: string;
-    values?: {
-        [key: string]: string;
-    };
+export type ActivityIngestReport = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
+    dropCount?: number;
+    /**
+     * Undeclared attribute keys that were dropped and counted
+     */
+    dropped?: Array<string> | null;
+    receipts: Array<ActivityReceipt> | null;
+};
+
+export type ActivityIssue = {
+    message: string;
+    path: string;
+    severity: 'error' | 'warning';
+};
+
+export type ActivityMetricSeries = {
+    key: string;
+    label: string;
+    points: Array<ActivitySeriesPoint> | null;
 };
 
 export type ActivityObservation = {
-    activity: ActivityActivity;
-    actor: ActivityActor;
-    client: ActivityClient;
-    correlation: ActivityCorrelation;
-    event_name: string;
+    attributes?: {
+        [key: string]: unknown;
+    };
+    environment?: string;
+    event: string;
     occurred_at: string;
-    pipeline?: ActivityPipelineHealth;
-    release?: string;
+    /**
+     * Entity type to opaque identifier
+     */
+    refs?: {
+        [key: string]: string;
+    };
     schema_version: 1;
-    service: string;
-    source: ActivitySource;
+    /**
+     * Reconstructed state rather than live activity
+     */
+    snapshot?: boolean;
+    source?: ActivitySource;
     source_event_id: string;
+    span_id?: string;
+    trace_id?: string;
 };
 
-export type ActivityPipelineHealth = {
-    capture_failures: number;
-    dead_letters: number;
-    dropped_transient: number;
-    last_export_at?: string;
-    pending: number;
-    reconciled_at?: string;
-    reconciled_records: number;
-    retries: number;
+export type ActivityOpDoc = {
+    description: string;
+    example: string;
+    op: string;
+};
+
+export type ActivityProfile = {
+    entity: string;
+    id: string;
+    masked?: Array<string> | null;
+    traits: {
+        [key: string]: unknown;
+    };
+    updatedAt: string;
 };
 
 export type ActivityReceipt = {
@@ -255,6 +527,7 @@ export type ActivityReceipt = {
 };
 
 export type ActivityRecord = {
+    masked?: Array<string> | null;
     observation: ActivityObservation;
     projectedAt: string | null;
     receivedAt: string;
@@ -271,15 +544,51 @@ export type ActivityRevision = {
     spec: ActivityWorkspaceSpec;
 };
 
+export type ActivityRoleDoc = {
+    meaning: string;
+    role: string;
+};
+
+export type ActivitySeriesPoint = {
+    /**
+     * Sample count behind a lag percentile; zero means the bucket had no evidence
+     */
+    n?: number;
+    t: string;
+    v: number;
+};
+
 export type ActivitySource = {
-    record_id?: string;
-    record_type?: string;
+    /**
+     * Source record reference, e.g. table:id
+     */
+    ref?: string;
+    /**
+     * Monotonic revision of that source record
+     */
     revision?: number;
 };
 
 export type ActivityStageCount = {
     count: number;
     stage: string;
+};
+
+export type ActivityStateCount = {
+    active15m: number;
+    count: number;
+    entity: string;
+    state: string;
+};
+
+export type ActivitySummary = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
+    asOf: string;
+    counts: Array<ActivityStateCount> | null;
+    windowMinutes: number;
 };
 
 export type ActivityTemplate = {
@@ -298,25 +607,72 @@ export type ActivityTemplateRef = {
     version: number;
 };
 
-export type ActivityWidget = {
-    entity?: string;
-    field?: string;
-    title: string;
-    type: 'directory' | 'timeline' | 'operations' | 'workflows' | 'kpi' | 'funnel' | 'health' | 'timeseries' | 'breakdown' | 'latency';
+export type ActivityUndeclared = {
+    count: number;
+    event: string;
+    key: string;
+    lastSeenAt: string;
 };
 
-export type ActivityWidgetPoint = {
+export type ActivityView = {
+    entity?: string;
+    filter?: ActivityViewFilter;
+    funnel?: string;
+    id: string;
+    /**
+     * Attribute key to group or measure by, when no role fits
+     */
+    key?: string;
+    /**
+     * Only entities not in a terminal state
+     */
+    open?: boolean;
+    /**
+     * Attribute role to group or measure by
+     */
+    role?: string;
+    /**
+     * Only entities in these states
+     */
+    state?: Array<string> | null;
+    title: string;
+    type: 'kpi' | 'timeseries' | 'breakdown' | 'funnel' | 'latency' | 'directory' | 'health';
+    /**
+     * Only entities with activity inside the window
+     */
+    window?: '15m' | '1h' | '24h' | '7d' | '30d';
+};
+
+export type ActivityViewFilter = {
+    key?: string;
+    role?: string;
+    values: Array<string> | null;
+};
+
+export type ActivityViewPoint = {
     count: number;
     label: string;
     value?: number;
 };
 
-export type ActivityWidgetSeries = {
-    entity: string;
-    field: string;
-    points: Array<ActivityWidgetPoint> | null;
+export type ActivityViewResult = {
+    entity?: string;
+    id: string;
+    /**
+     * Attribute key the view resolved its role to
+     */
+    key?: string;
+    points: Array<ActivityViewPoint> | null;
+    /**
+     * Why the view is empty, e.g. a role the dictionary does not declare
+     */
+    reason?: string;
     title: string;
     type: string;
+    /**
+     * KPI count
+     */
+    value?: number;
 };
 
 export type ActivityWorkspace = {
@@ -333,20 +689,47 @@ export type ActivityWorkspace = {
     requestedRevision: string | null;
 };
 
+export type ActivityWorkspacePatch = {
+    description?: string;
+    heartbeat?: string;
+    name?: string;
+};
+
+export type ActivityWorkspaceSeries = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
+    bucket: '5m' | '1h' | '1d';
+    from: string;
+    metric: 'outcomes' | 'funnel' | 'lag';
+    /**
+     * Why the series is empty when the spec lacks a needed role or funnel
+     */
+    reason?: string;
+    series: Array<ActivityMetricSeries> | null;
+    to: string;
+    window: '1h' | '24h' | '7d';
+};
+
 export type ActivityWorkspaceSpec = {
     /**
      * A URL to the JSON Schema for this object.
      */
     readonly $schema?: string;
     alerts?: Array<ActivityAlert> | null;
+    attributes?: Array<ActivityAttribute> | null;
     description?: string;
-    entities: Array<ActivityEntityDefinition> | null;
+    entities?: Array<ActivityEntityDefinition> | null;
     funnels?: Array<ActivityFunnel> | null;
-    mappings: Array<ActivityMapping> | null;
+    /**
+     * Event name the source emits as a liveness heartbeat; its attributes are shown as source health
+     */
+    heartbeat?: string;
     name: string;
-    schemaVersion: 1;
+    schemaVersion?: number;
     template?: ActivityTemplateRef;
-    widgets: Array<ActivityWidget> | null;
+    views?: Array<ActivityView> | null;
 };
 
 export type AlertOccurrenceDto = {
@@ -477,6 +860,17 @@ export type CapabilitiesOutputBody = {
     version: string;
 };
 
+export type ChangesOutputBody = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
+    baseRevision: string;
+    changes: Array<ActivityChange> | null;
+    issues: Array<ActivityIssue> | null;
+    version: number;
+};
+
 export type ChannelDto = {
     /**
      * A URL to the JSON Schema for this object.
@@ -488,6 +882,24 @@ export type ChannelDto = {
     name: string;
     orgId: string;
     updatedAt?: string;
+};
+
+export type Connection = {
+    clientKey: string;
+    clientName: string;
+    clientVersion: string;
+    firstSeen: string;
+    lastSeen: string;
+    oauthClientId?: string;
+    userId: string;
+};
+
+export type ConnectionsOutputBody = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
+    connections: Array<Connection> | null;
 };
 
 export type Controls = {
@@ -576,6 +988,9 @@ export type CreateInputBody = {
      */
     readonly $schema?: string;
     appId: string;
+    /**
+     * A blank spec ({"name": "My workspace"}) is enough; build the rest through the draft
+     */
     spec: ActivityWorkspaceSpec;
 };
 
@@ -1185,6 +1600,39 @@ export type HeatmapOutputBody = {
     timeBuckets: Array<string> | null;
 };
 
+export type IdentifyInputBody = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
+    /**
+     * Entity type declared in the active spec
+     */
+    entity: string;
+    /**
+     * Opaque entity identifier, the same value sent in refs
+     */
+    id: string;
+    /**
+     * Keys from the entity's profile list; null deletes a trait
+     */
+    traits: {
+        [key: string]: unknown;
+    };
+};
+
+export type IdentifyOutputBody = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
+    /**
+     * Keys not in the entity's profile list; they were dropped and counted
+     */
+    dropped: Array<string> | null;
+    profile: ActivityProfile;
+};
+
 export type IngestionStatusOutputBody = {
     /**
      * A URL to the JSON Schema for this object.
@@ -1507,6 +1955,18 @@ export type OkOutputBody = {
     ok: boolean;
 };
 
+export type OpsInputBody = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
+    ops: Array<ActivityDraftOp> | null;
+    /**
+     * The draft version you read; a mismatch returns 409 with the current draft
+     */
+    version: number;
+};
+
 export type OrgDto = {
     billingMonthlyAmountUsd?: number;
     billingNotes?: string;
@@ -1654,6 +2114,18 @@ export type PublicIngestTokenDto = {
     orgId: string;
     prefix: string;
     tokenId: string;
+};
+
+export type ReplaceInputBody = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
+    spec: ActivityWorkspaceSpec;
+    /**
+     * The draft version you edited
+     */
+    version: number;
 };
 
 export type RevisionListOutputBody = {
@@ -1985,6 +2457,15 @@ export type UserOrgsOutputBody = {
     organizations: Array<UserOrgDto> | null;
 };
 
+export type ValidateOutputBody = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
+    issues: Array<ActivityIssue> | null;
+    status: 'valid' | 'invalid';
+};
+
 export type VerifyResult = {
     /**
      * A URL to the JSON Schema for this object.
@@ -1997,11 +2478,23 @@ export type VerifyResult = {
     ok: boolean;
 };
 
+export type ViewsOutputBody = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
+    views: Array<ActivityViewResult> | null;
+};
+
 export type WorkspaceEntitiesOutputBody = {
     /**
      * A URL to the JSON Schema for this object.
      */
     readonly $schema?: string;
+    /**
+     * Preview only: undeclared attribute keys that were dropped
+     */
+    dropped?: Array<string> | null;
     entities: Array<ActivityEntity> | null;
     nextCursor?: string;
 };
@@ -2019,16 +2512,11 @@ export type WorkspaceIngestInputBody = {
      * A URL to the JSON Schema for this object.
      */
     readonly $schema?: string;
-    environment: string;
-    observations: Array<ActivityObservation> | null;
-};
-
-export type WorkspaceIngestOutputBody = {
     /**
-     * A URL to the JSON Schema for this object.
+     * Environment slug or id; defaults to each observation's environment
      */
-    readonly $schema?: string;
-    receipts: Array<ActivityReceipt> | null;
+    environment?: string;
+    observations: Array<ActivityObservation> | null;
 };
 
 export type WorkspaceListOutputBody = {
@@ -2072,14 +2560,6 @@ export type WorkspaceTimelineOutputBody = {
     events: Array<ActivityRecord> | null;
 };
 
-export type WorkspaceWidgetsOutputBody = {
-    /**
-     * A URL to the JSON Schema for this object.
-     */
-    readonly $schema?: string;
-    series: Array<ActivityWidgetSeries> | null;
-};
-
 export type AcceptInvitationInputBodyWritable = {
     /**
      * Invitation code from the invite link
@@ -2093,18 +2573,121 @@ export type AcceptInvitationOutputBodyWritable = {
     role: string;
 };
 
+export type ActivateDraftInputBodyWritable = {
+    /**
+     * When set, activate only if the draft is still at this version
+     */
+    version?: number;
+};
+
+export type ActivateDraftOutputBodyWritable = {
+    revision: string;
+    status: string;
+};
+
 export type ActivateInputBodyWritable = {
     generation: number;
     revision: string;
 };
 
 export type ActivityAnalyticsWritable = {
-    activations: Array<ActivityCohortCount> | null;
     asOf: string;
-    attempts: Array<ActivityCohortCount> | null;
+    /**
+     * Entities by the client and actor_side roles; empty without a client role
+     */
     clients: Array<ActivityBreakdown> | null;
     funnels: Array<ActivityFunnelResult> | null;
+    splits: Array<ActivityFunnelSplit> | null;
     windowDays: number;
+};
+
+export type ActivityCatalogWritable = {
+    events: Array<ActivityCatalogEvent> | null;
+    from: string;
+    /**
+     * Attribute keys sent but not declared, per event (identify drops appear as identify:<entity>)
+     */
+    undeclared: Array<ActivityUndeclared> | null;
+    /**
+     * Events no entity consumes
+     */
+    unmapped: number;
+    window: string;
+};
+
+export type ActivityDescriptionWritable = {
+    /**
+     * Pending draft status, if any
+     */
+    draft?: string;
+    ops: Array<ActivityOpDoc> | null;
+    /**
+     * The spec and observation format
+     */
+    reference: string;
+    roles: Array<ActivityRoleDoc> | null;
+    /**
+     * One plain sentence per part of the current spec
+     */
+    summary: Array<string> | null;
+    types: Array<string> | null;
+    workspace: ActivityWorkspaceWritable;
+};
+
+export type ActivityDraftWritable = {
+    /**
+     * Revision the draft started from; changes are listed against the current active or building revision
+     */
+    baseRevision: string;
+    spec: ActivityWorkspaceSpecWritable;
+    updatedAt: string;
+    updatedBy: string;
+    /**
+     * MCP client name when the edit came from a coding agent
+     */
+    updatedClient?: string;
+    updatedSource: 'dashboard' | 'mcp' | 'apikey';
+    /**
+     * Send this back with ops; it increments on every edit
+     */
+    version: number;
+    workspaceId: string;
+};
+
+export type ActivityDraftViewWritable = {
+    draft: ActivityDraftWritable;
+    /**
+     * Validation issues in the draft; errors block activation, warnings mean a view or feature will render empty
+     */
+    issues: Array<ActivityIssue> | null;
+};
+
+export type ActivityHealthWritable = {
+    checkedAt: string;
+    lastProjectedAt: string | null;
+    lastReceivedAt: string | null;
+    oldestPendingAt: string | null;
+    pending: number;
+    /**
+     * Attributes of the latest declared heartbeat event
+     */
+    source?: {
+        [key: string]: unknown;
+    };
+    sourceHeartbeatAt?: string;
+    /**
+     * Attribute keys sent in the last 7 days that the dictionary does not declare; they were dropped
+     */
+    undeclared: Array<ActivityUndeclared> | null;
+};
+
+export type ActivityIngestReportWritable = {
+    dropCount?: number;
+    /**
+     * Undeclared attribute keys that were dropped and counted
+     */
+    dropped?: Array<string> | null;
+    receipts: Array<ActivityReceiptWritable> | null;
 };
 
 export type ActivityReceiptWritable = {
@@ -2119,6 +2702,12 @@ export type ActivityRevisionWritable = {
     createdBy: string;
     id: string;
     spec: ActivityWorkspaceSpecWritable;
+};
+
+export type ActivitySummaryWritable = {
+    asOf: string;
+    counts: Array<ActivityStateCount> | null;
+    windowMinutes: number;
 };
 
 export type ActivityTemplateWritable = {
@@ -2138,16 +2727,33 @@ export type ActivityWorkspaceWritable = {
     requestedRevision: string | null;
 };
 
+export type ActivityWorkspaceSeriesWritable = {
+    bucket: '5m' | '1h' | '1d';
+    from: string;
+    metric: 'outcomes' | 'funnel' | 'lag';
+    /**
+     * Why the series is empty when the spec lacks a needed role or funnel
+     */
+    reason?: string;
+    series: Array<ActivityMetricSeries> | null;
+    to: string;
+    window: '1h' | '24h' | '7d';
+};
+
 export type ActivityWorkspaceSpecWritable = {
     alerts?: Array<ActivityAlert> | null;
+    attributes?: Array<ActivityAttribute> | null;
     description?: string;
-    entities: Array<ActivityEntityDefinition> | null;
+    entities?: Array<ActivityEntityDefinition> | null;
     funnels?: Array<ActivityFunnel> | null;
-    mappings: Array<ActivityMapping> | null;
+    /**
+     * Event name the source emits as a liveness heartbeat; its attributes are shown as source health
+     */
+    heartbeat?: string;
     name: string;
-    schemaVersion: 1;
+    schemaVersion?: number;
     template?: ActivityTemplateRef;
-    widgets: Array<ActivityWidget> | null;
+    views?: Array<ActivityView> | null;
 };
 
 export type AlertRuleDtoWritable = {
@@ -2199,6 +2805,13 @@ export type CapabilitiesOutputBodyWritable = {
     version: string;
 };
 
+export type ChangesOutputBodyWritable = {
+    baseRevision: string;
+    changes: Array<ActivityChange> | null;
+    issues: Array<ActivityIssue> | null;
+    version: number;
+};
+
 export type ChannelDtoWritable = {
     appId: string;
     channelId: string;
@@ -2206,6 +2819,10 @@ export type ChannelDtoWritable = {
     name: string;
     orgId: string;
     updatedAt?: string;
+};
+
+export type ConnectionsOutputBodyWritable = {
+    connections: Array<Connection> | null;
 };
 
 export type CreateAppInputBodyWritable = {
@@ -2265,6 +2882,9 @@ export type CreateEnvironmentInputBodyWritable = {
 
 export type CreateInputBodyWritable = {
     appId: string;
+    /**
+     * A blank spec ({"name": "My workspace"}) is enough; build the rest through the draft
+     */
     spec: ActivityWorkspaceSpecWritable;
 };
 
@@ -2555,6 +3175,31 @@ export type HeatmapOutputBodyWritable = {
     timeBuckets: Array<string> | null;
 };
 
+export type IdentifyInputBodyWritable = {
+    /**
+     * Entity type declared in the active spec
+     */
+    entity: string;
+    /**
+     * Opaque entity identifier, the same value sent in refs
+     */
+    id: string;
+    /**
+     * Keys from the entity's profile list; null deletes a trait
+     */
+    traits: {
+        [key: string]: unknown;
+    };
+};
+
+export type IdentifyOutputBodyWritable = {
+    /**
+     * Keys not in the entity's profile list; they were dropped and counted
+     */
+    dropped: Array<string> | null;
+    profile: ActivityProfile;
+};
+
 export type IngestionStatusOutputBodyWritable = {
     everIngested: boolean;
 };
@@ -2714,6 +3359,14 @@ export type OkOutputBodyWritable = {
     ok: boolean;
 };
 
+export type OpsInputBodyWritable = {
+    ops: Array<ActivityDraftOp> | null;
+    /**
+     * The draft version you read; a mismatch returns 409 with the current draft
+     */
+    version: number;
+};
+
 export type OrganizationDtoWritable = {
     createdAt: string;
     description?: string;
@@ -2762,6 +3415,14 @@ export type PatchErrorInputBodyWritable = {
      * Re-alert after this many affected users (for action=mute)
      */
     snoozeUntilUsers?: number;
+};
+
+export type ReplaceInputBodyWritable = {
+    spec: ActivityWorkspaceSpecWritable;
+    /**
+     * The draft version you edited
+     */
+    version: number;
 };
 
 export type RevisionListOutputBodyWritable = {
@@ -2922,6 +3583,11 @@ export type UserOrgsOutputBodyWritable = {
     organizations: Array<UserOrgDtoWritable> | null;
 };
 
+export type ValidateOutputBodyWritable = {
+    issues: Array<ActivityIssue> | null;
+    status: 'valid' | 'invalid';
+};
+
 export type VerifyResultWritable = {
     actual?: string;
     brokenAtSeq?: number;
@@ -2930,7 +3596,15 @@ export type VerifyResultWritable = {
     ok: boolean;
 };
 
+export type ViewsOutputBodyWritable = {
+    views: Array<ActivityViewResult> | null;
+};
+
 export type WorkspaceEntitiesOutputBodyWritable = {
+    /**
+     * Preview only: undeclared attribute keys that were dropped
+     */
+    dropped?: Array<string> | null;
     entities: Array<ActivityEntity> | null;
     nextCursor?: string;
 };
@@ -2940,12 +3614,11 @@ export type WorkspaceIncidentsOutputBodyWritable = {
 };
 
 export type WorkspaceIngestInputBodyWritable = {
-    environment: string;
+    /**
+     * Environment slug or id; defaults to each observation's environment
+     */
+    environment?: string;
     observations: Array<ActivityObservation> | null;
-};
-
-export type WorkspaceIngestOutputBodyWritable = {
-    receipts: Array<ActivityReceiptWritable> | null;
 };
 
 export type WorkspaceListOutputBodyWritable = {
@@ -2967,10 +3640,6 @@ export type WorkspaceTemplateListOutputBodyWritable = {
 
 export type WorkspaceTimelineOutputBodyWritable = {
     events: Array<ActivityRecord> | null;
-};
-
-export type WorkspaceWidgetsOutputBodyWritable = {
-    series: Array<ActivityWidgetSeries> | null;
 };
 
 export type AccessRequestCreateData = {
@@ -5409,6 +6078,31 @@ export type LicenseGetResponses = {
 
 export type LicenseGetResponse = LicenseGetResponses[keyof LicenseGetResponses];
 
+export type McpConnectionsData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/mcp/connections';
+};
+
+export type McpConnectionsErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type McpConnectionsError = McpConnectionsErrors[keyof McpConnectionsErrors];
+
+export type McpConnectionsResponses = {
+    /**
+     * OK
+     */
+    200: ConnectionsOutputBody;
+};
+
+export type McpConnectionsResponse = McpConnectionsResponses[keyof McpConnectionsResponses];
+
 export type OrganizationGetData = {
     body?: never;
     path?: never;
@@ -6498,7 +7192,7 @@ export type WorkspacesValidateResponses = {
     /**
      * OK
      */
-    200: WorkspaceStatusOutputBody;
+    200: ValidateOutputBody;
 };
 
 export type WorkspacesValidateResponse = WorkspacesValidateResponses[keyof WorkspacesValidateResponses];
@@ -6564,16 +7258,33 @@ export type ActivityEntitiesData = {
     };
     query?: {
         environment?: string;
+        /**
+         * Entity type
+         */
         entity?: string;
         entityId?: string;
+        /**
+         * type:id; entities that are, or link to, this entity. Timeline: observations that reference it
+         */
+        ref?: string;
+        /**
+         * Filter by the actor_side role
+         */
         side?: string;
+        /**
+         * Filter by the client role
+         */
         client?: string;
-        action?: string;
+        /**
+         * Filter by the outcome role
+         */
         outcome?: string;
         state?: string;
         freshness?: 'fresh' | 'stale';
+        /**
+         * Matches the entity id and non-personal text fields and profile traits
+         */
         q?: string;
-        agentId?: string;
         cursor?: string;
         limit?: number;
     };
@@ -6598,36 +7309,6 @@ export type ActivityEntitiesResponses = {
 
 export type ActivityEntitiesResponse = ActivityEntitiesResponses[keyof ActivityEntitiesResponses];
 
-export type ActivityDeleteAgentData = {
-    body?: never;
-    path: {
-        workspaceId: string;
-        agentId: string;
-    };
-    query?: {
-        environment?: string;
-    };
-    url: '/workspaces/{workspaceId}/agents/{agentId}';
-};
-
-export type ActivityDeleteAgentErrors = {
-    /**
-     * Error
-     */
-    default: ErrorModel;
-};
-
-export type ActivityDeleteAgentError = ActivityDeleteAgentErrors[keyof ActivityDeleteAgentErrors];
-
-export type ActivityDeleteAgentResponses = {
-    /**
-     * OK
-     */
-    200: WorkspaceStatusOutputBody;
-};
-
-export type ActivityDeleteAgentResponse = ActivityDeleteAgentResponses[keyof ActivityDeleteAgentResponses];
-
 export type ActivityAnalyticsData = {
     body?: never;
     path: {
@@ -6635,16 +7316,33 @@ export type ActivityAnalyticsData = {
     };
     query?: {
         environment?: string;
+        /**
+         * Entity type
+         */
         entity?: string;
         entityId?: string;
+        /**
+         * type:id; entities that are, or link to, this entity. Timeline: observations that reference it
+         */
+        ref?: string;
+        /**
+         * Filter by the actor_side role
+         */
         side?: string;
+        /**
+         * Filter by the client role
+         */
         client?: string;
-        action?: string;
+        /**
+         * Filter by the outcome role
+         */
         outcome?: string;
         state?: string;
         freshness?: 'fresh' | 'stale';
+        /**
+         * Matches the entity id and non-personal text fields and profile traits
+         */
         q?: string;
-        agentId?: string;
         cursor?: string;
         limit?: number;
     };
@@ -6669,6 +7367,259 @@ export type ActivityAnalyticsResponses = {
 
 export type ActivityAnalyticsResponse = ActivityAnalyticsResponses[keyof ActivityAnalyticsResponses];
 
+export type WorkspacesCatalogData = {
+    body?: never;
+    path: {
+        workspaceId: string;
+    };
+    query?: {
+        /**
+         * Defaults to every environment the caller may read
+         */
+        environment?: string;
+        window?: '1h' | '24h' | '7d' | '30d';
+    };
+    url: '/workspaces/{workspaceId}/catalog';
+};
+
+export type WorkspacesCatalogErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type WorkspacesCatalogError = WorkspacesCatalogErrors[keyof WorkspacesCatalogErrors];
+
+export type WorkspacesCatalogResponses = {
+    /**
+     * OK
+     */
+    200: ActivityCatalog;
+};
+
+export type WorkspacesCatalogResponse = WorkspacesCatalogResponses[keyof WorkspacesCatalogResponses];
+
+export type WorkspacesDescribeData = {
+    body?: never;
+    path: {
+        workspaceId: string;
+    };
+    query?: never;
+    url: '/workspaces/{workspaceId}/describe';
+};
+
+export type WorkspacesDescribeErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type WorkspacesDescribeError = WorkspacesDescribeErrors[keyof WorkspacesDescribeErrors];
+
+export type WorkspacesDescribeResponses = {
+    /**
+     * OK
+     */
+    200: ActivityDescription;
+};
+
+export type WorkspacesDescribeResponse = WorkspacesDescribeResponses[keyof WorkspacesDescribeResponses];
+
+export type WorkspacesDiscardDraftData = {
+    body?: never;
+    path: {
+        workspaceId: string;
+    };
+    query?: never;
+    url: '/workspaces/{workspaceId}/draft';
+};
+
+export type WorkspacesDiscardDraftErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type WorkspacesDiscardDraftError = WorkspacesDiscardDraftErrors[keyof WorkspacesDiscardDraftErrors];
+
+export type WorkspacesDiscardDraftResponses = {
+    /**
+     * OK
+     */
+    200: WorkspaceStatusOutputBody;
+};
+
+export type WorkspacesDiscardDraftResponse = WorkspacesDiscardDraftResponses[keyof WorkspacesDiscardDraftResponses];
+
+export type WorkspacesDraftData = {
+    body?: never;
+    path: {
+        workspaceId: string;
+    };
+    query?: never;
+    url: '/workspaces/{workspaceId}/draft';
+};
+
+export type WorkspacesDraftErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type WorkspacesDraftError = WorkspacesDraftErrors[keyof WorkspacesDraftErrors];
+
+export type WorkspacesDraftResponses = {
+    /**
+     * OK
+     */
+    200: ActivityDraftView;
+};
+
+export type WorkspacesDraftResponse = WorkspacesDraftResponses[keyof WorkspacesDraftResponses];
+
+export type WorkspacesReplaceDraftData = {
+    body: ReplaceInputBodyWritable;
+    path: {
+        workspaceId: string;
+    };
+    query?: never;
+    url: '/workspaces/{workspaceId}/draft';
+};
+
+export type WorkspacesReplaceDraftErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type WorkspacesReplaceDraftError = WorkspacesReplaceDraftErrors[keyof WorkspacesReplaceDraftErrors];
+
+export type WorkspacesReplaceDraftResponses = {
+    /**
+     * OK
+     */
+    200: ActivityDraftView;
+};
+
+export type WorkspacesReplaceDraftResponse = WorkspacesReplaceDraftResponses[keyof WorkspacesReplaceDraftResponses];
+
+export type WorkspacesActivateDraftData = {
+    body?: ActivateDraftInputBodyWritable;
+    path: {
+        workspaceId: string;
+    };
+    query?: never;
+    url: '/workspaces/{workspaceId}/draft/activate';
+};
+
+export type WorkspacesActivateDraftErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type WorkspacesActivateDraftError = WorkspacesActivateDraftErrors[keyof WorkspacesActivateDraftErrors];
+
+export type WorkspacesActivateDraftResponses = {
+    /**
+     * OK
+     */
+    200: ActivateDraftOutputBody;
+};
+
+export type WorkspacesActivateDraftResponse = WorkspacesActivateDraftResponses[keyof WorkspacesActivateDraftResponses];
+
+export type WorkspacesDraftChangesData = {
+    body?: never;
+    path: {
+        workspaceId: string;
+    };
+    query?: never;
+    url: '/workspaces/{workspaceId}/draft/changes';
+};
+
+export type WorkspacesDraftChangesErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type WorkspacesDraftChangesError = WorkspacesDraftChangesErrors[keyof WorkspacesDraftChangesErrors];
+
+export type WorkspacesDraftChangesResponses = {
+    /**
+     * OK
+     */
+    200: ChangesOutputBody;
+};
+
+export type WorkspacesDraftChangesResponse = WorkspacesDraftChangesResponses[keyof WorkspacesDraftChangesResponses];
+
+export type WorkspacesApplyDraftOpsData = {
+    body: OpsInputBodyWritable;
+    path: {
+        workspaceId: string;
+    };
+    query?: never;
+    url: '/workspaces/{workspaceId}/draft/ops';
+};
+
+export type WorkspacesApplyDraftOpsErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type WorkspacesApplyDraftOpsError = WorkspacesApplyDraftOpsErrors[keyof WorkspacesApplyDraftOpsErrors];
+
+export type WorkspacesApplyDraftOpsResponses = {
+    /**
+     * OK
+     */
+    200: ActivityDraftView;
+};
+
+export type WorkspacesApplyDraftOpsResponse = WorkspacesApplyDraftOpsResponses[keyof WorkspacesApplyDraftOpsResponses];
+
+export type ActivityDeleteEntityData = {
+    body?: never;
+    path: {
+        workspaceId: string;
+        entityType: string;
+        entityId: string;
+    };
+    query?: {
+        environment?: string;
+    };
+    url: '/workspaces/{workspaceId}/entities/{entityType}/{entityId}';
+};
+
+export type ActivityDeleteEntityErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type ActivityDeleteEntityError = ActivityDeleteEntityErrors[keyof ActivityDeleteEntityErrors];
+
+export type ActivityDeleteEntityResponses = {
+    /**
+     * OK
+     */
+    200: WorkspaceStatusOutputBody;
+};
+
+export type ActivityDeleteEntityResponse = ActivityDeleteEntityResponses[keyof ActivityDeleteEntityResponses];
+
 export type ActivityHealthData = {
     body?: never;
     path: {
@@ -6676,16 +7627,33 @@ export type ActivityHealthData = {
     };
     query?: {
         environment?: string;
+        /**
+         * Entity type
+         */
         entity?: string;
         entityId?: string;
+        /**
+         * type:id; entities that are, or link to, this entity. Timeline: observations that reference it
+         */
+        ref?: string;
+        /**
+         * Filter by the actor_side role
+         */
         side?: string;
+        /**
+         * Filter by the client role
+         */
         client?: string;
-        action?: string;
+        /**
+         * Filter by the outcome role
+         */
         outcome?: string;
         state?: string;
         freshness?: 'fresh' | 'stale';
+        /**
+         * Matches the entity id and non-personal text fields and profile traits
+         */
         q?: string;
-        agentId?: string;
         cursor?: string;
         limit?: number;
     };
@@ -6705,12 +7673,37 @@ export type ActivityHealthResponses = {
     /**
      * OK
      */
-    200: {
-        [key: string]: unknown;
-    };
+    200: ActivityHealth;
 };
 
 export type ActivityHealthResponse = ActivityHealthResponses[keyof ActivityHealthResponses];
+
+export type ActivityIdentifyData = {
+    body: IdentifyInputBodyWritable;
+    path: {
+        workspaceId: string;
+    };
+    query?: never;
+    url: '/workspaces/{workspaceId}/identify';
+};
+
+export type ActivityIdentifyErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type ActivityIdentifyError = ActivityIdentifyErrors[keyof ActivityIdentifyErrors];
+
+export type ActivityIdentifyResponses = {
+    /**
+     * OK
+     */
+    200: IdentifyOutputBody;
+};
+
+export type ActivityIdentifyResponse = ActivityIdentifyResponses[keyof ActivityIdentifyResponses];
 
 export type ActivityIncidentsData = {
     body?: never;
@@ -6719,16 +7712,33 @@ export type ActivityIncidentsData = {
     };
     query?: {
         environment?: string;
+        /**
+         * Entity type
+         */
         entity?: string;
         entityId?: string;
+        /**
+         * type:id; entities that are, or link to, this entity. Timeline: observations that reference it
+         */
+        ref?: string;
+        /**
+         * Filter by the actor_side role
+         */
         side?: string;
+        /**
+         * Filter by the client role
+         */
         client?: string;
-        action?: string;
+        /**
+         * Filter by the outcome role
+         */
         outcome?: string;
         state?: string;
         freshness?: 'fresh' | 'stale';
+        /**
+         * Matches the entity id and non-personal text fields and profile traits
+         */
         q?: string;
-        agentId?: string;
         cursor?: string;
         limit?: number;
     };
@@ -6775,7 +7785,7 @@ export type ObservationsAcceptResponses = {
     /**
      * OK
      */
-    200: WorkspaceIngestOutputBody;
+    200: ActivityIngestReport;
 };
 
 export type ObservationsAcceptResponse = ObservationsAcceptResponses[keyof ObservationsAcceptResponses];
@@ -6864,6 +7874,60 @@ export type WorkspacesSaveRevisionResponses = {
 
 export type WorkspacesSaveRevisionResponse = WorkspacesSaveRevisionResponses[keyof WorkspacesSaveRevisionResponses];
 
+export type ActivitySeriesData = {
+    body?: never;
+    path: {
+        workspaceId: string;
+    };
+    query?: {
+        environment?: string;
+        /**
+         * outcomes: observations by the outcome role; funnel: distinct entities by furthest stage; lag: source-to-view percentiles
+         */
+        metric?: 'outcomes' | 'funnel' | 'lag';
+        window?: '1h' | '24h' | '7d';
+        /**
+         * Defaults per window: 1h→5m, 24h→1h, 7d→1h. Allowed: 1h:5m, 24h:5m|1h, 7d:1h|1d
+         */
+        bucket?: '5m' | '1h' | '1d';
+        /**
+         * outcomes: only events that update this entity
+         */
+        entity?: string;
+        /**
+         * funnel: funnel name, default the first declared
+         */
+        funnel?: string;
+        /**
+         * Filter by the actor_side role
+         */
+        side?: string;
+        /**
+         * Filter by the client role
+         */
+        client?: string;
+    };
+    url: '/workspaces/{workspaceId}/series';
+};
+
+export type ActivitySeriesErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type ActivitySeriesError = ActivitySeriesErrors[keyof ActivitySeriesErrors];
+
+export type ActivitySeriesResponses = {
+    /**
+     * OK
+     */
+    200: ActivityWorkspaceSeries;
+};
+
+export type ActivitySeriesResponse = ActivitySeriesResponses[keyof ActivitySeriesResponses];
+
 export type ActivitySummaryData = {
     body?: never;
     path: {
@@ -6871,16 +7935,33 @@ export type ActivitySummaryData = {
     };
     query?: {
         environment?: string;
+        /**
+         * Entity type
+         */
         entity?: string;
         entityId?: string;
+        /**
+         * type:id; entities that are, or link to, this entity. Timeline: observations that reference it
+         */
+        ref?: string;
+        /**
+         * Filter by the actor_side role
+         */
         side?: string;
+        /**
+         * Filter by the client role
+         */
         client?: string;
-        action?: string;
+        /**
+         * Filter by the outcome role
+         */
         outcome?: string;
         state?: string;
         freshness?: 'fresh' | 'stale';
+        /**
+         * Matches the entity id and non-personal text fields and profile traits
+         */
         q?: string;
-        agentId?: string;
         cursor?: string;
         limit?: number;
     };
@@ -6900,9 +7981,7 @@ export type ActivitySummaryResponses = {
     /**
      * OK
      */
-    200: {
-        [key: string]: unknown;
-    };
+    200: ActivitySummary;
 };
 
 export type ActivitySummaryResponse = ActivitySummaryResponses[keyof ActivitySummaryResponses];
@@ -6914,16 +7993,33 @@ export type ActivityTimelineData = {
     };
     query?: {
         environment?: string;
+        /**
+         * Entity type
+         */
         entity?: string;
         entityId?: string;
+        /**
+         * type:id; entities that are, or link to, this entity. Timeline: observations that reference it
+         */
+        ref?: string;
+        /**
+         * Filter by the actor_side role
+         */
         side?: string;
+        /**
+         * Filter by the client role
+         */
         client?: string;
-        action?: string;
+        /**
+         * Filter by the outcome role
+         */
         outcome?: string;
         state?: string;
         freshness?: 'fresh' | 'stale';
+        /**
+         * Matches the entity id and non-personal text fields and profile traits
+         */
         q?: string;
-        agentId?: string;
         cursor?: string;
         limit?: number;
     };
@@ -6948,43 +8044,60 @@ export type ActivityTimelineResponses = {
 
 export type ActivityTimelineResponse = ActivityTimelineResponses[keyof ActivityTimelineResponses];
 
-export type ActivityWidgetsData = {
+export type ActivityViewsData = {
     body?: never;
     path: {
         workspaceId: string;
     };
     query?: {
         environment?: string;
+        /**
+         * Entity type
+         */
         entity?: string;
         entityId?: string;
+        /**
+         * type:id; entities that are, or link to, this entity. Timeline: observations that reference it
+         */
+        ref?: string;
+        /**
+         * Filter by the actor_side role
+         */
         side?: string;
+        /**
+         * Filter by the client role
+         */
         client?: string;
-        action?: string;
+        /**
+         * Filter by the outcome role
+         */
         outcome?: string;
         state?: string;
         freshness?: 'fresh' | 'stale';
+        /**
+         * Matches the entity id and non-personal text fields and profile traits
+         */
         q?: string;
-        agentId?: string;
         cursor?: string;
         limit?: number;
     };
-    url: '/workspaces/{workspaceId}/widgets';
+    url: '/workspaces/{workspaceId}/views';
 };
 
-export type ActivityWidgetsErrors = {
+export type ActivityViewsErrors = {
     /**
      * Error
      */
     default: ErrorModel;
 };
 
-export type ActivityWidgetsError = ActivityWidgetsErrors[keyof ActivityWidgetsErrors];
+export type ActivityViewsError = ActivityViewsErrors[keyof ActivityViewsErrors];
 
-export type ActivityWidgetsResponses = {
+export type ActivityViewsResponses = {
     /**
      * OK
      */
-    200: WorkspaceWidgetsOutputBody;
+    200: ViewsOutputBody;
 };
 
-export type ActivityWidgetsResponse = ActivityWidgetsResponses[keyof ActivityWidgetsResponses];
+export type ActivityViewsResponse = ActivityViewsResponses[keyof ActivityViewsResponses];

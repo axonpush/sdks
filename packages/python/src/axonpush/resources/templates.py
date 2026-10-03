@@ -19,7 +19,7 @@ class Templates:
         self._client = client
 
     def list(self) -> WorkspaceTemplateListOutputBody | None:
-        """Discover public and organization-private immutable business templates."""
+        """Discover public and organization-private immutable workspace templates."""
         return self._client._invoke(_list_op)
 
     def publish(self, body: ActivityTemplate) -> WorkspaceStatusOutputBody | None:
@@ -32,7 +32,7 @@ class AsyncTemplates:
         self._client = client
 
     async def list(self) -> WorkspaceTemplateListOutputBody | None:
-        """Discover public and organization-private immutable business templates."""
+        """Discover public and organization-private immutable workspace templates."""
         return await self._client._invoke(_list_op)
 
     async def publish(self, body: ActivityTemplate) -> WorkspaceStatusOutputBody | None:

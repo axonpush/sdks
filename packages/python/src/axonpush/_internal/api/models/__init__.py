@@ -4,60 +4,88 @@ from .abuse_flag_dto import AbuseFlagDTO
 from .accept_invitation_input_body import AcceptInvitationInputBody
 from .accept_invitation_output_body import AcceptInvitationOutputBody
 from .access_request_dto import AccessRequestDTO
+from .activate_draft_input_body import ActivateDraftInputBody
+from .activate_draft_output_body import ActivateDraftOutputBody
 from .activate_input_body import ActivateInputBody
-from .activity_activity import ActivityActivity
-from .activity_activity_evidence import ActivityActivityEvidence
-from .activity_activity_next_actor import ActivityActivityNextActor
-from .activity_activity_outcome import ActivityActivityOutcome
-from .activity_actor import ActivityActor
-from .activity_actor_participant_side import ActivityActorParticipantSide
-from .activity_actor_type import ActivityActorType
 from .activity_alert import ActivityAlert
 from .activity_analytics import ActivityAnalytics
 from .activity_analytics_freshness import ActivityAnalyticsFreshness
+from .activity_attribute import ActivityAttribute
+from .activity_attribute_role import ActivityAttributeRole
+from .activity_attribute_type import ActivityAttributeType
 from .activity_breakdown import ActivityBreakdown
-from .activity_client import ActivityClient
-from .activity_client_confidence import ActivityClientConfidence
-from .activity_client_evidence import ActivityClientEvidence
-from .activity_client_evidence_confidence import ActivityClientEvidenceConfidence
-from .activity_cohort_count import ActivityCohortCount
-from .activity_correlation import ActivityCorrelation
+from .activity_catalog import ActivityCatalog
+from .activity_catalog_attribute import ActivityCatalogAttribute
+from .activity_catalog_event import ActivityCatalogEvent
+from .activity_change import ActivityChange
+from .activity_change_kind import ActivityChangeKind
+from .activity_description import ActivityDescription
+from .activity_draft import ActivityDraft
+from .activity_draft_op import ActivityDraftOp
+from .activity_draft_op_op import ActivityDraftOpOp
+from .activity_draft_updated_source import ActivityDraftUpdatedSource
+from .activity_draft_view import ActivityDraftView
 from .activity_entities_freshness import ActivityEntitiesFreshness
 from .activity_entity import ActivityEntity
 from .activity_entity_definition import ActivityEntityDefinition
 from .activity_entity_fields import ActivityEntityFields
+from .activity_entity_profile import ActivityEntityProfile
 from .activity_entity_versions import ActivityEntityVersions
+from .activity_event_rule import ActivityEventRule
+from .activity_event_rule_set import ActivityEventRuleSet
+from .activity_failure_count import ActivityFailureCount
+from .activity_failure_count_class import ActivityFailureCountClass
 from .activity_field_version import ActivityFieldVersion
 from .activity_funnel import ActivityFunnel
 from .activity_funnel_result import ActivityFunnelResult
+from .activity_funnel_split import ActivityFunnelSplit
+from .activity_health import ActivityHealth
 from .activity_health_freshness import ActivityHealthFreshness
-from .activity_health_response_200 import ActivityHealthResponse200
+from .activity_health_source import ActivityHealthSource
 from .activity_incident import ActivityIncident
 from .activity_incidents_freshness import ActivityIncidentsFreshness
-from .activity_mapping import ActivityMapping
-from .activity_mapping_fields import ActivityMappingFields
-from .activity_mapping_values import ActivityMappingValues
+from .activity_ingest_report import ActivityIngestReport
+from .activity_issue import ActivityIssue
+from .activity_issue_severity import ActivityIssueSeverity
+from .activity_metric_series import ActivityMetricSeries
 from .activity_observation import ActivityObservation
+from .activity_observation_attributes import ActivityObservationAttributes
+from .activity_observation_refs import ActivityObservationRefs
 from .activity_observation_schema_version import ActivityObservationSchemaVersion
-from .activity_pipeline_health import ActivityPipelineHealth
+from .activity_op_doc import ActivityOpDoc
+from .activity_profile import ActivityProfile
+from .activity_profile_traits import ActivityProfileTraits
 from .activity_receipt import ActivityReceipt
 from .activity_record import ActivityRecord
 from .activity_revision import ActivityRevision
+from .activity_role_doc import ActivityRoleDoc
+from .activity_series_bucket import ActivitySeriesBucket
+from .activity_series_metric import ActivitySeriesMetric
+from .activity_series_point import ActivitySeriesPoint
+from .activity_series_window import ActivitySeriesWindow
 from .activity_source import ActivitySource
 from .activity_stage_count import ActivityStageCount
+from .activity_state_count import ActivityStateCount
+from .activity_summary import ActivitySummary
 from .activity_summary_freshness import ActivitySummaryFreshness
-from .activity_summary_response_200 import ActivitySummaryResponse200
 from .activity_template import ActivityTemplate
 from .activity_template_ref import ActivityTemplateRef
 from .activity_timeline_freshness import ActivityTimelineFreshness
-from .activity_widget import ActivityWidget
-from .activity_widget_point import ActivityWidgetPoint
-from .activity_widget_series import ActivityWidgetSeries
-from .activity_widget_type import ActivityWidgetType
-from .activity_widgets_freshness import ActivityWidgetsFreshness
+from .activity_undeclared import ActivityUndeclared
+from .activity_view import ActivityView
+from .activity_view_filter import ActivityViewFilter
+from .activity_view_point import ActivityViewPoint
+from .activity_view_result import ActivityViewResult
+from .activity_view_type import ActivityViewType
+from .activity_view_window import ActivityViewWindow
+from .activity_views_freshness import ActivityViewsFreshness
 from .activity_workspace import ActivityWorkspace
+from .activity_workspace_patch import ActivityWorkspacePatch
+from .activity_workspace_series import ActivityWorkspaceSeries
+from .activity_workspace_series_bucket import ActivityWorkspaceSeriesBucket
+from .activity_workspace_series_metric import ActivityWorkspaceSeriesMetric
+from .activity_workspace_series_window import ActivityWorkspaceSeriesWindow
 from .activity_workspace_spec import ActivityWorkspaceSpec
-from .activity_workspace_spec_schema_version import ActivityWorkspaceSpecSchemaVersion
 from .alert_occurrence_dto import AlertOccurrenceDTO
 from .alert_rule_dto import AlertRuleDTO
 from .analytics_breakdown_dimension import AnalyticsBreakdownDimension
@@ -75,7 +103,10 @@ from .breadcrumb_dto import BreadcrumbDTO
 from .breakdown_output_body import BreakdownOutputBody
 from .breakdown_row_dto import BreakdownRowDTO
 from .capabilities_output_body import CapabilitiesOutputBody
+from .changes_output_body import ChangesOutputBody
 from .channel_dto import ChannelDTO
+from .connection import Connection
+from .connections_output_body import ConnectionsOutputBody
 from .controls import Controls
 from .create_app_input_body import CreateAppInputBody
 from .create_channel_input_body import CreateChannelInputBody
@@ -133,6 +164,9 @@ from .health_output_body import HealthOutputBody
 from .heatmap_band_dto import HeatmapBandDTO
 from .heatmap_cell_dto import HeatmapCellDTO
 from .heatmap_output_body import HeatmapOutputBody
+from .identify_input_body import IdentifyInputBody
+from .identify_input_body_traits import IdentifyInputBodyTraits
+from .identify_output_body import IdentifyOutputBody
 from .ingestion_status_output_body import IngestionStatusOutputBody
 from .invitation_dto import InvitationDTO
 from .issue_bucket_dto import IssueBucketDTO
@@ -168,6 +202,7 @@ from .membership_dto import MembershipDTO
 from .message_output_body import MessageOutputBody
 from .occurrences_output_body import OccurrencesOutputBody
 from .ok_output_body import OkOutputBody
+from .ops_input_body import OpsInputBody
 from .org_dto import OrgDTO
 from .org_invitation_dto import OrgInvitationDTO
 from .org_member_dto import OrgMemberDTO
@@ -183,6 +218,7 @@ from .patch_error_input_body import PatchErrorInputBody
 from .patch_error_input_body_action import PatchErrorInputBodyAction
 from .plan_mrr import PlanMrr
 from .public_ingest_token_dto import PublicIngestTokenDTO
+from .replace_input_body import ReplaceInputBody
 from .revision_list_output_body import RevisionListOutputBody
 from .search_events_output_body import SearchEventsOutputBody
 from .search_orgs_output_body import SearchOrgsOutputBody
@@ -221,17 +257,19 @@ from .update_profile_input_body import UpdateProfileInputBody
 from .user_dto import UserDTO
 from .user_org_dto import UserOrgDTO
 from .user_orgs_output_body import UserOrgsOutputBody
+from .validate_output_body import ValidateOutputBody
+from .validate_output_body_status import ValidateOutputBodyStatus
 from .verify_result import VerifyResult
+from .views_output_body import ViewsOutputBody
 from .workspace_entities_output_body import WorkspaceEntitiesOutputBody
 from .workspace_incidents_output_body import WorkspaceIncidentsOutputBody
 from .workspace_ingest_input_body import WorkspaceIngestInputBody
-from .workspace_ingest_output_body import WorkspaceIngestOutputBody
 from .workspace_list_output_body import WorkspaceListOutputBody
 from .workspace_preview_input_body import WorkspacePreviewInputBody
 from .workspace_status_output_body import WorkspaceStatusOutputBody
 from .workspace_template_list_output_body import WorkspaceTemplateListOutputBody
 from .workspace_timeline_output_body import WorkspaceTimelineOutputBody
-from .workspace_widgets_output_body import WorkspaceWidgetsOutputBody
+from .workspaces_catalog_window import WorkspacesCatalogWindow
 from .workspaces_schema_response_200 import WorkspacesSchemaResponse200
 
 __all__ = (
@@ -239,60 +277,88 @@ __all__ = (
     "AcceptInvitationInputBody",
     "AcceptInvitationOutputBody",
     "AccessRequestDTO",
+    "ActivateDraftInputBody",
+    "ActivateDraftOutputBody",
     "ActivateInputBody",
-    "ActivityActivity",
-    "ActivityActivityEvidence",
-    "ActivityActivityNextActor",
-    "ActivityActivityOutcome",
-    "ActivityActor",
-    "ActivityActorParticipantSide",
-    "ActivityActorType",
     "ActivityAlert",
     "ActivityAnalytics",
     "ActivityAnalyticsFreshness",
+    "ActivityAttribute",
+    "ActivityAttributeRole",
+    "ActivityAttributeType",
     "ActivityBreakdown",
-    "ActivityClient",
-    "ActivityClientConfidence",
-    "ActivityClientEvidence",
-    "ActivityClientEvidenceConfidence",
-    "ActivityCohortCount",
-    "ActivityCorrelation",
+    "ActivityCatalog",
+    "ActivityCatalogAttribute",
+    "ActivityCatalogEvent",
+    "ActivityChange",
+    "ActivityChangeKind",
+    "ActivityDescription",
+    "ActivityDraft",
+    "ActivityDraftOp",
+    "ActivityDraftOpOp",
+    "ActivityDraftUpdatedSource",
+    "ActivityDraftView",
     "ActivityEntitiesFreshness",
     "ActivityEntity",
     "ActivityEntityDefinition",
     "ActivityEntityFields",
+    "ActivityEntityProfile",
     "ActivityEntityVersions",
+    "ActivityEventRule",
+    "ActivityEventRuleSet",
+    "ActivityFailureCount",
+    "ActivityFailureCountClass",
     "ActivityFieldVersion",
     "ActivityFunnel",
     "ActivityFunnelResult",
+    "ActivityFunnelSplit",
+    "ActivityHealth",
     "ActivityHealthFreshness",
-    "ActivityHealthResponse200",
+    "ActivityHealthSource",
     "ActivityIncident",
     "ActivityIncidentsFreshness",
-    "ActivityMapping",
-    "ActivityMappingFields",
-    "ActivityMappingValues",
+    "ActivityIngestReport",
+    "ActivityIssue",
+    "ActivityIssueSeverity",
+    "ActivityMetricSeries",
     "ActivityObservation",
+    "ActivityObservationAttributes",
+    "ActivityObservationRefs",
     "ActivityObservationSchemaVersion",
-    "ActivityPipelineHealth",
+    "ActivityOpDoc",
+    "ActivityProfile",
+    "ActivityProfileTraits",
     "ActivityReceipt",
     "ActivityRecord",
     "ActivityRevision",
+    "ActivityRoleDoc",
+    "ActivitySeriesBucket",
+    "ActivitySeriesMetric",
+    "ActivitySeriesPoint",
+    "ActivitySeriesWindow",
     "ActivitySource",
     "ActivityStageCount",
+    "ActivityStateCount",
+    "ActivitySummary",
     "ActivitySummaryFreshness",
-    "ActivitySummaryResponse200",
     "ActivityTemplate",
     "ActivityTemplateRef",
     "ActivityTimelineFreshness",
-    "ActivityWidget",
-    "ActivityWidgetPoint",
-    "ActivityWidgetSeries",
-    "ActivityWidgetsFreshness",
-    "ActivityWidgetType",
+    "ActivityUndeclared",
+    "ActivityView",
+    "ActivityViewFilter",
+    "ActivityViewPoint",
+    "ActivityViewResult",
+    "ActivityViewsFreshness",
+    "ActivityViewType",
+    "ActivityViewWindow",
     "ActivityWorkspace",
+    "ActivityWorkspacePatch",
+    "ActivityWorkspaceSeries",
+    "ActivityWorkspaceSeriesBucket",
+    "ActivityWorkspaceSeriesMetric",
+    "ActivityWorkspaceSeriesWindow",
     "ActivityWorkspaceSpec",
-    "ActivityWorkspaceSpecSchemaVersion",
     "AlertOccurrenceDTO",
     "AlertRuleDTO",
     "AnalyticsBreakdownDimension",
@@ -310,7 +376,10 @@ __all__ = (
     "BreakdownOutputBody",
     "BreakdownRowDTO",
     "CapabilitiesOutputBody",
+    "ChangesOutputBody",
     "ChannelDTO",
+    "Connection",
+    "ConnectionsOutputBody",
     "Controls",
     "CreateAppInputBody",
     "CreateChannelInputBody",
@@ -368,6 +437,9 @@ __all__ = (
     "HeatmapBandDTO",
     "HeatmapCellDTO",
     "HeatmapOutputBody",
+    "IdentifyInputBody",
+    "IdentifyInputBodyTraits",
+    "IdentifyOutputBody",
     "IngestionStatusOutputBody",
     "InvitationDTO",
     "IssueBucketDTO",
@@ -403,6 +475,7 @@ __all__ = (
     "MessageOutputBody",
     "OccurrencesOutputBody",
     "OkOutputBody",
+    "OpsInputBody",
     "OrganizationDTO",
     "OrgDTO",
     "OrgInvitationDTO",
@@ -418,6 +491,7 @@ __all__ = (
     "PatchErrorInputBodyAction",
     "PlanMrr",
     "PublicIngestTokenDTO",
+    "ReplaceInputBody",
     "RevisionListOutputBody",
     "SearchEventsOutputBody",
     "SearchOrgsOutputBody",
@@ -456,16 +530,18 @@ __all__ = (
     "UserDTO",
     "UserOrgDTO",
     "UserOrgsOutputBody",
+    "ValidateOutputBody",
+    "ValidateOutputBodyStatus",
     "VerifyResult",
+    "ViewsOutputBody",
     "WorkspaceEntitiesOutputBody",
     "WorkspaceIncidentsOutputBody",
     "WorkspaceIngestInputBody",
-    "WorkspaceIngestOutputBody",
     "WorkspaceListOutputBody",
     "WorkspacePreviewInputBody",
+    "WorkspacesCatalogWindow",
     "WorkspacesSchemaResponse200",
     "WorkspaceStatusOutputBody",
     "WorkspaceTemplateListOutputBody",
     "WorkspaceTimelineOutputBody",
-    "WorkspaceWidgetsOutputBody",
 )

@@ -13,6 +13,7 @@ featureFlags.me
 # Console / admin surfaces. These back the hosted admin app, not a programmatic
 # client, so they are intentionally not part of the public SDK.
 accessRequest.create
+mcp.connections
 admin.abuseFlags.list
 admin.abuseFlags.review
 admin.abuseFlags.suspend

@@ -18,6 +18,8 @@ rebuild lazily — see :meth:`AsyncAxonPush._get_client`.
 from __future__ import annotations
 
 import asyncio
+from collections.abc import Mapping, Sequence
+from datetime import datetime
 from typing import TYPE_CHECKING, Any, Callable, TypeVar, cast
 
 from pydantic import HttpUrl, SecretStr
@@ -30,10 +32,17 @@ from axonpush._internal.transport import (
     call_with_retries_sync,
 )
 from axonpush.exceptions import APIConnectionError
+from axonpush._observe import (
+    ObserveParams,
+    identify_body,
+    merge_reports,
+    observation_batches,
+)
 from axonpush._redaction import redact_telemetry
 
 if TYPE_CHECKING:
     from axonpush._internal.api.client import AuthenticatedClient
+    from axonpush._internal.api.models import ActivityIngestReport, IdentifyOutputBody
     from axonpush.resources.workspaces import Workspaces, AsyncWorkspaces
     from axonpush.resources.templates import Templates, AsyncTemplates
     from axonpush.resources.observations import Observations, AsyncObservations
@@ -203,6 +212,80 @@ class AxonPush:
         if _coerce is not None and parsed is not None:
             return _coerce(parsed)
         return parsed
+
+    def observe(
+        self,
+        workspace_id: str,
+        event: str,
+        *,
+        refs: Mapping[str, str] | None = None,
+        attributes: Mapping[str, Any] | None = None,
+        occurred_at: str | datetime | None = None,
+        source_event_id: str | None = None,
+        trace_id: str | None = None,
+        span_id: str | None = None,
+        environment: str | None = None,
+        snapshot: bool | None = None,
+        source: Mapping[str, Any] | None = None,
+    ) -> ActivityIngestReport | None:
+        """Send one observation to a workspace.
+
+        Fills in ``schema_version``, a UUID ``source_event_id`` and an ISO
+        ``occurred_at`` when absent, and the bound trace id when there is one.
+        Attribute keys the workspace has not declared are dropped by the
+        server and listed in the report's ``dropped``. Nothing is sent unless
+        this is called. Returns ``None`` when fail-open swallowed a
+        connection error.
+        """
+        params: ObserveParams = {"event": event}
+        for key, value in (
+            ("refs", refs),
+            ("attributes", attributes),
+            ("occurred_at", occurred_at),
+            ("source_event_id", source_event_id),
+            ("trace_id", trace_id),
+            ("span_id", span_id),
+            ("environment", environment),
+            ("snapshot", snapshot),
+            ("source", source),
+        ):
+            if value is not None:
+                params[key] = value  # type: ignore[literal-required]
+        return self.observe_many(workspace_id, [params])
+
+    def observe_many(
+        self, workspace_id: str, observations: Sequence[ObserveParams]
+    ) -> ActivityIngestReport | None:
+        """Send several observations, in batches of 100, and merge the reports."""
+        reports = []
+        for body in observation_batches(
+            list(observations),
+            environment=self._settings.environment,
+            redact=self._redact_telemetry,
+        ):
+            report = self.observations.accept(workspace_id, body)
+            if report is not None:
+                reports.append(report)
+        return merge_reports(reports)
+
+    def identify(
+        self, workspace_id: str, entity: str, id: str, traits: Mapping[str, Any]
+    ) -> IdentifyOutputBody | None:
+        """Attach profile traits to an entity.
+
+        Traits must be keys in the entity's declared ``profile``. They merge
+        with what is stored; a ``None`` value deletes that trait. Undeclared
+        keys come back in ``dropped``.
+        """
+        return self.activity.identify(
+            workspace_id, identify_body(entity, id, traits, redact=self._redact_telemetry)
+        )
+
+    def group(
+        self, workspace_id: str, entity: str, id: str, traits: Mapping[str, Any]
+    ) -> IdentifyOutputBody | None:
+        """Same as :meth:`identify`; reads better for entities such as ``company``."""
+        return self.identify(workspace_id, entity, id, traits)
 
     def close(self) -> None:
         """Close the underlying HTTP client. Idempotent."""
@@ -425,6 +508,80 @@ class AsyncAxonPush:
         if _coerce is not None and parsed is not None:
             return _coerce(parsed)
         return parsed
+
+    async def observe(
+        self,
+        workspace_id: str,
+        event: str,
+        *,
+        refs: Mapping[str, str] | None = None,
+        attributes: Mapping[str, Any] | None = None,
+        occurred_at: str | datetime | None = None,
+        source_event_id: str | None = None,
+        trace_id: str | None = None,
+        span_id: str | None = None,
+        environment: str | None = None,
+        snapshot: bool | None = None,
+        source: Mapping[str, Any] | None = None,
+    ) -> ActivityIngestReport | None:
+        """Send one observation to a workspace.
+
+        Fills in ``schema_version``, a UUID ``source_event_id`` and an ISO
+        ``occurred_at`` when absent, and the bound trace id when there is one.
+        Attribute keys the workspace has not declared are dropped by the
+        server and listed in the report's ``dropped``. Nothing is sent unless
+        this is called. Returns ``None`` when fail-open swallowed a
+        connection error.
+        """
+        params: ObserveParams = {"event": event}
+        for key, value in (
+            ("refs", refs),
+            ("attributes", attributes),
+            ("occurred_at", occurred_at),
+            ("source_event_id", source_event_id),
+            ("trace_id", trace_id),
+            ("span_id", span_id),
+            ("environment", environment),
+            ("snapshot", snapshot),
+            ("source", source),
+        ):
+            if value is not None:
+                params[key] = value  # type: ignore[literal-required]
+        return await self.observe_many(workspace_id, [params])
+
+    async def observe_many(
+        self, workspace_id: str, observations: Sequence[ObserveParams]
+    ) -> ActivityIngestReport | None:
+        """Send several observations, in batches of 100, and merge the reports."""
+        reports = []
+        for body in observation_batches(
+            list(observations),
+            environment=self._settings.environment,
+            redact=self._redact_telemetry,
+        ):
+            report = await self.observations.accept(workspace_id, body)
+            if report is not None:
+                reports.append(report)
+        return merge_reports(reports)
+
+    async def identify(
+        self, workspace_id: str, entity: str, id: str, traits: Mapping[str, Any]
+    ) -> IdentifyOutputBody | None:
+        """Attach profile traits to an entity.
+
+        Traits must be keys in the entity's declared ``profile``. They merge
+        with what is stored; a ``None`` value deletes that trait. Undeclared
+        keys come back in ``dropped``.
+        """
+        return await self.activity.identify(
+            workspace_id, identify_body(entity, id, traits, redact=self._redact_telemetry)
+        )
+
+    async def group(
+        self, workspace_id: str, entity: str, id: str, traits: Mapping[str, Any]
+    ) -> IdentifyOutputBody | None:
+        """Same as :meth:`identify`; reads better for entities such as ``company``."""
+        return await self.identify(workspace_id, entity, id, traits)
 
     async def close(self) -> None:
         """Close the underlying HTTP client on the current loop. Idempotent.

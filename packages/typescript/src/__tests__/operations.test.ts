@@ -82,7 +82,8 @@ describe("shared business operations contract", () => {
     server.use(
       http.get(`${BASE}/workspaces/synthetic-workspace/activity`, ({ request }) => {
         const query = new URL(request.url).searchParams;
-        expect(query.get("agentId")).toBe("synthetic-candidate-1");
+        expect(query.get("entity")).toBe("ticket");
+        expect(query.get("entityId")).toBe("synthetic-ticket-1");
         expect(query.get("environment")).toBe("dev");
         expect(query.get("limit")).toBe("2");
         expect(query.get("cursor")).toBe("previous-agent");
@@ -90,7 +91,8 @@ describe("shared business operations contract", () => {
       }),
     );
     const result = await client().activity.entities("synthetic-workspace", {
-      agentId: "synthetic-candidate-1",
+      entity: "ticket",
+      entityId: "synthetic-ticket-1",
       environment: "dev",
       limit: 2,
       cursor: "previous-agent",

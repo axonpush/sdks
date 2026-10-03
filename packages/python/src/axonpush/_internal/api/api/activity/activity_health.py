@@ -6,8 +6,8 @@ import httpx
 
 from ... import errors
 from ...client import AuthenticatedClient, Client
+from ...models.activity_health import ActivityHealth
 from ...models.activity_health_freshness import ActivityHealthFreshness
-from ...models.activity_health_response_200 import ActivityHealthResponse200
 from ...models.error_model import ErrorModel
 from ...types import UNSET, Response, Unset
 
@@ -18,14 +18,13 @@ def _get_kwargs(
     environment: str | Unset = UNSET,
     entity: str | Unset = UNSET,
     entity_id: str | Unset = UNSET,
+    ref: str | Unset = UNSET,
     side: str | Unset = UNSET,
     client_query: str | Unset = UNSET,
-    action: str | Unset = UNSET,
     outcome: str | Unset = UNSET,
     state: str | Unset = UNSET,
     freshness: ActivityHealthFreshness | Unset = UNSET,
     q: str | Unset = UNSET,
-    agent_id: str | Unset = UNSET,
     cursor: str | Unset = UNSET,
     limit: int | Unset = 100,
 ) -> dict[str, Any]:
@@ -38,11 +37,11 @@ def _get_kwargs(
 
     params["entityId"] = entity_id
 
+    params["ref"] = ref
+
     params["side"] = side
 
     params["client"] = client_query
-
-    params["action"] = action
 
     params["outcome"] = outcome
 
@@ -55,8 +54,6 @@ def _get_kwargs(
     params["freshness"] = json_freshness
 
     params["q"] = q
-
-    params["agentId"] = agent_id
 
     params["cursor"] = cursor
 
@@ -77,9 +74,9 @@ def _get_kwargs(
 
 def _parse_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> ActivityHealthResponse200 | ErrorModel:
+) -> ActivityHealth | ErrorModel:
     if response.status_code == 200:
-        response_200 = ActivityHealthResponse200.from_dict(response.json())
+        response_200 = ActivityHealth.from_dict(response.json())
 
         return response_200
 
@@ -90,7 +87,7 @@ def _parse_response(
 
 def _build_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> Response[ActivityHealthResponse200 | ErrorModel]:
+) -> Response[ActivityHealth | ErrorModel]:
     return Response(
         status_code=HTTPStatus(response.status_code),
         content=response.content,
@@ -106,32 +103,31 @@ def sync_detailed(
     environment: str | Unset = UNSET,
     entity: str | Unset = UNSET,
     entity_id: str | Unset = UNSET,
+    ref: str | Unset = UNSET,
     side: str | Unset = UNSET,
     client_query: str | Unset = UNSET,
-    action: str | Unset = UNSET,
     outcome: str | Unset = UNSET,
     state: str | Unset = UNSET,
     freshness: ActivityHealthFreshness | Unset = UNSET,
     q: str | Unset = UNSET,
-    agent_id: str | Unset = UNSET,
     cursor: str | Unset = UNSET,
     limit: int | Unset = 100,
-) -> Response[ActivityHealthResponse200 | ErrorModel]:
-    """Read independent storage and projection freshness
+) -> Response[ActivityHealth | ErrorModel]:
+    """Read storage and projection freshness, source heartbeat and undeclared attributes
 
     Args:
         workspace_id (str):
         environment (str | Unset):
-        entity (str | Unset):
+        entity (str | Unset): Entity type
         entity_id (str | Unset):
-        side (str | Unset):
-        client_query (str | Unset):
-        action (str | Unset):
-        outcome (str | Unset):
+        ref (str | Unset): type:id; entities that are, or link to, this entity. Timeline:
+            observations that reference it
+        side (str | Unset): Filter by the actor_side role
+        client_query (str | Unset): Filter by the client role
+        outcome (str | Unset): Filter by the outcome role
         state (str | Unset):
         freshness (ActivityHealthFreshness | Unset):
-        q (str | Unset):
-        agent_id (str | Unset):
+        q (str | Unset): Matches the entity id and non-personal text fields and profile traits
         cursor (str | Unset):
         limit (int | Unset):  Default: 100.
 
@@ -140,7 +136,7 @@ def sync_detailed(
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[ActivityHealthResponse200 | ErrorModel]
+        Response[ActivityHealth | ErrorModel]
     """
 
     kwargs = _get_kwargs(
@@ -148,14 +144,13 @@ def sync_detailed(
         environment=environment,
         entity=entity,
         entity_id=entity_id,
+        ref=ref,
         side=side,
         client_query=client_query,
-        action=action,
         outcome=outcome,
         state=state,
         freshness=freshness,
         q=q,
-        agent_id=agent_id,
         cursor=cursor,
         limit=limit,
     )
@@ -174,32 +169,31 @@ def sync(
     environment: str | Unset = UNSET,
     entity: str | Unset = UNSET,
     entity_id: str | Unset = UNSET,
+    ref: str | Unset = UNSET,
     side: str | Unset = UNSET,
     client_query: str | Unset = UNSET,
-    action: str | Unset = UNSET,
     outcome: str | Unset = UNSET,
     state: str | Unset = UNSET,
     freshness: ActivityHealthFreshness | Unset = UNSET,
     q: str | Unset = UNSET,
-    agent_id: str | Unset = UNSET,
     cursor: str | Unset = UNSET,
     limit: int | Unset = 100,
-) -> ActivityHealthResponse200 | ErrorModel | None:
-    """Read independent storage and projection freshness
+) -> ActivityHealth | ErrorModel | None:
+    """Read storage and projection freshness, source heartbeat and undeclared attributes
 
     Args:
         workspace_id (str):
         environment (str | Unset):
-        entity (str | Unset):
+        entity (str | Unset): Entity type
         entity_id (str | Unset):
-        side (str | Unset):
-        client_query (str | Unset):
-        action (str | Unset):
-        outcome (str | Unset):
+        ref (str | Unset): type:id; entities that are, or link to, this entity. Timeline:
+            observations that reference it
+        side (str | Unset): Filter by the actor_side role
+        client_query (str | Unset): Filter by the client role
+        outcome (str | Unset): Filter by the outcome role
         state (str | Unset):
         freshness (ActivityHealthFreshness | Unset):
-        q (str | Unset):
-        agent_id (str | Unset):
+        q (str | Unset): Matches the entity id and non-personal text fields and profile traits
         cursor (str | Unset):
         limit (int | Unset):  Default: 100.
 
@@ -208,7 +202,7 @@ def sync(
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        ActivityHealthResponse200 | ErrorModel
+        ActivityHealth | ErrorModel
     """
 
     return sync_detailed(
@@ -217,14 +211,13 @@ def sync(
         environment=environment,
         entity=entity,
         entity_id=entity_id,
+        ref=ref,
         side=side,
         client_query=client_query,
-        action=action,
         outcome=outcome,
         state=state,
         freshness=freshness,
         q=q,
-        agent_id=agent_id,
         cursor=cursor,
         limit=limit,
     ).parsed
@@ -237,32 +230,31 @@ async def asyncio_detailed(
     environment: str | Unset = UNSET,
     entity: str | Unset = UNSET,
     entity_id: str | Unset = UNSET,
+    ref: str | Unset = UNSET,
     side: str | Unset = UNSET,
     client_query: str | Unset = UNSET,
-    action: str | Unset = UNSET,
     outcome: str | Unset = UNSET,
     state: str | Unset = UNSET,
     freshness: ActivityHealthFreshness | Unset = UNSET,
     q: str | Unset = UNSET,
-    agent_id: str | Unset = UNSET,
     cursor: str | Unset = UNSET,
     limit: int | Unset = 100,
-) -> Response[ActivityHealthResponse200 | ErrorModel]:
-    """Read independent storage and projection freshness
+) -> Response[ActivityHealth | ErrorModel]:
+    """Read storage and projection freshness, source heartbeat and undeclared attributes
 
     Args:
         workspace_id (str):
         environment (str | Unset):
-        entity (str | Unset):
+        entity (str | Unset): Entity type
         entity_id (str | Unset):
-        side (str | Unset):
-        client_query (str | Unset):
-        action (str | Unset):
-        outcome (str | Unset):
+        ref (str | Unset): type:id; entities that are, or link to, this entity. Timeline:
+            observations that reference it
+        side (str | Unset): Filter by the actor_side role
+        client_query (str | Unset): Filter by the client role
+        outcome (str | Unset): Filter by the outcome role
         state (str | Unset):
         freshness (ActivityHealthFreshness | Unset):
-        q (str | Unset):
-        agent_id (str | Unset):
+        q (str | Unset): Matches the entity id and non-personal text fields and profile traits
         cursor (str | Unset):
         limit (int | Unset):  Default: 100.
 
@@ -271,7 +263,7 @@ async def asyncio_detailed(
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[ActivityHealthResponse200 | ErrorModel]
+        Response[ActivityHealth | ErrorModel]
     """
 
     kwargs = _get_kwargs(
@@ -279,14 +271,13 @@ async def asyncio_detailed(
         environment=environment,
         entity=entity,
         entity_id=entity_id,
+        ref=ref,
         side=side,
         client_query=client_query,
-        action=action,
         outcome=outcome,
         state=state,
         freshness=freshness,
         q=q,
-        agent_id=agent_id,
         cursor=cursor,
         limit=limit,
     )
@@ -303,32 +294,31 @@ async def asyncio(
     environment: str | Unset = UNSET,
     entity: str | Unset = UNSET,
     entity_id: str | Unset = UNSET,
+    ref: str | Unset = UNSET,
     side: str | Unset = UNSET,
     client_query: str | Unset = UNSET,
-    action: str | Unset = UNSET,
     outcome: str | Unset = UNSET,
     state: str | Unset = UNSET,
     freshness: ActivityHealthFreshness | Unset = UNSET,
     q: str | Unset = UNSET,
-    agent_id: str | Unset = UNSET,
     cursor: str | Unset = UNSET,
     limit: int | Unset = 100,
-) -> ActivityHealthResponse200 | ErrorModel | None:
-    """Read independent storage and projection freshness
+) -> ActivityHealth | ErrorModel | None:
+    """Read storage and projection freshness, source heartbeat and undeclared attributes
 
     Args:
         workspace_id (str):
         environment (str | Unset):
-        entity (str | Unset):
+        entity (str | Unset): Entity type
         entity_id (str | Unset):
-        side (str | Unset):
-        client_query (str | Unset):
-        action (str | Unset):
-        outcome (str | Unset):
+        ref (str | Unset): type:id; entities that are, or link to, this entity. Timeline:
+            observations that reference it
+        side (str | Unset): Filter by the actor_side role
+        client_query (str | Unset): Filter by the client role
+        outcome (str | Unset): Filter by the outcome role
         state (str | Unset):
         freshness (ActivityHealthFreshness | Unset):
-        q (str | Unset):
-        agent_id (str | Unset):
+        q (str | Unset): Matches the entity id and non-personal text fields and profile traits
         cursor (str | Unset):
         limit (int | Unset):  Default: 100.
 
@@ -337,7 +327,7 @@ async def asyncio(
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        ActivityHealthResponse200 | ErrorModel
+        ActivityHealth | ErrorModel
     """
 
     return (
@@ -347,14 +337,13 @@ async def asyncio(
             environment=environment,
             entity=entity,
             entity_id=entity_id,
+            ref=ref,
             side=side,
             client_query=client_query,
-            action=action,
             outcome=outcome,
             state=state,
             freshness=freshness,
             q=q,
-            agent_id=agent_id,
             cursor=cursor,
             limit=limit,
         )

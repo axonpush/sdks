@@ -19,15 +19,19 @@ T = TypeVar("T", bound="ActivityFunnelResult")
 class ActivityFunnelResult:
     """
     Attributes:
+        entity (str):
         name (str):
         stages (list[ActivityStageCount] | None):
     """
 
+    entity: str
     name: str
     stages: list[ActivityStageCount] | None
 
     def to_dict(self) -> dict[str, Any]:
         from ..models.activity_stage_count import ActivityStageCount
+
+        entity = self.entity
 
         name = self.name
 
@@ -45,6 +49,7 @@ class ActivityFunnelResult:
 
         field_dict.update(
             {
+                "entity": entity,
                 "name": name,
                 "stages": stages,
             }
@@ -57,6 +62,8 @@ class ActivityFunnelResult:
         from ..models.activity_stage_count import ActivityStageCount
 
         d = dict(src_dict)
+        entity = d.pop("entity")
+
         name = d.pop("name")
 
         def _parse_stages(data: object) -> list[ActivityStageCount] | None:
@@ -80,6 +87,7 @@ class ActivityFunnelResult:
         stages = _parse_stages(d.pop("stages"))
 
         activity_funnel_result = cls(
+            entity=entity,
             name=name,
             stages=stages,
         )

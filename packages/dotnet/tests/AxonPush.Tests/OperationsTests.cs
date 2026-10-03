@@ -43,15 +43,12 @@ public sealed class OperationsTests
         Assert.Equal("stored", first!.Receipts![0].Status);
         Assert.Null(first.Receipts[0].ProjectedAt);
         var sent = JsonNode.Parse(captured[0])!["observations"]![0]!;
-        Assert.Equal("synthetic-operation-start-1", sent["source_event_id"]!.GetValue<string>());
+        Assert.Equal("synthetic-ticket-escalated-1", sent["source_event_id"]!.GetValue<string>());
         Assert.Equal(fixture.OccurredAt, DateTimeOffset.Parse(sent["occurred_at"]!.GetValue<string>()));
-        Assert.Equal("self_reported", sent["client"]!["confidence"]!.GetValue<string>());
-        Assert.True(sent["client"]!["conflict"]!.GetValue<bool>());
-        Assert.Equal(2, sent["client"]!["evidence"]!.AsArray().Count);
-        Assert.Equal("mcp_client_info", sent["client"]!["evidence"]![0]!["source"]!.GetValue<string>());
-        Assert.Equal("synthetic-company-1", sent["actor"]!["related_agent_ids"]![0]!.GetValue<string>());
-        Assert.Equal("synthetic-role-1", sent["correlation"]!["role_id"]!.GetValue<string>());
-        Assert.Equal(fixture.Correlation.TraceId, sent["correlation"]!["trace_id"]!.GetValue<string>());
+        Assert.Equal("synthetic-ticket-1", sent["refs"]!["ticket"]!.GetValue<string>());
+        Assert.Equal("high", sent["attributes"]!["priority"]!.GetValue<string>());
+        Assert.Equal(45, sent["attributes"]!["wait_seconds"]!.GetValue<int>());
+        Assert.Equal(fixture.TraceId, sent["trace_id"]!.GetValue<string>());
     }
 
     [Fact]

@@ -19,12 +19,16 @@ class ActivityAlert:
         entity (str):
         name (str):
         state (str):
+        min_count (int | Unset): Fire only when at least this many entities are affected
+        window_seconds (int | Unset): Only count entities that changed inside this window
     """
 
     after_seconds: int
     entity: str
     name: str
     state: str
+    min_count: int | Unset = UNSET
+    window_seconds: int | Unset = UNSET
 
     def to_dict(self) -> dict[str, Any]:
         after_seconds = self.after_seconds
@@ -34,6 +38,10 @@ class ActivityAlert:
         name = self.name
 
         state = self.state
+
+        min_count = self.min_count
+
+        window_seconds = self.window_seconds
 
         field_dict: dict[str, Any] = {}
 
@@ -45,6 +53,10 @@ class ActivityAlert:
                 "state": state,
             }
         )
+        if min_count is not UNSET:
+            field_dict["minCount"] = min_count
+        if window_seconds is not UNSET:
+            field_dict["windowSeconds"] = window_seconds
 
         return field_dict
 
@@ -59,11 +71,17 @@ class ActivityAlert:
 
         state = d.pop("state")
 
+        min_count = d.pop("minCount", UNSET)
+
+        window_seconds = d.pop("windowSeconds", UNSET)
+
         activity_alert = cls(
             after_seconds=after_seconds,
             entity=entity,
             name=name,
             state=state,
+            min_count=min_count,
+            window_seconds=window_seconds,
         )
 
         return activity_alert

@@ -2,7 +2,7 @@
 
 import type { Client, Options as Options2, TDataShape } from './client/index.js';
 import { client } from './client.gen.js';
-import type { AccessRequestCreateData, AccessRequestCreateErrors, AccessRequestCreateResponses, ActivityAnalyticsData, ActivityAnalyticsErrors, ActivityAnalyticsResponses, ActivityDeleteAgentData, ActivityDeleteAgentErrors, ActivityDeleteAgentResponses, ActivityEntitiesData, ActivityEntitiesErrors, ActivityEntitiesResponses, ActivityHealthData, ActivityHealthErrors, ActivityHealthResponses, ActivityIncidentsData, ActivityIncidentsErrors, ActivityIncidentsResponses, ActivitySummaryData, ActivitySummaryErrors, ActivitySummaryResponses, ActivityTimelineData, ActivityTimelineErrors, ActivityTimelineResponses, ActivityWidgetsData, ActivityWidgetsErrors, ActivityWidgetsResponses, AdminAbuseFlagsListData, AdminAbuseFlagsListErrors, AdminAbuseFlagsListResponses, AdminAbuseFlagsReviewData, AdminAbuseFlagsReviewErrors, AdminAbuseFlagsReviewResponses, AdminAbuseFlagsSuspendData, AdminAbuseFlagsSuspendErrors, AdminAbuseFlagsSuspendResponses, AdminAccessRequestsListData, AdminAccessRequestsListErrors, AdminAccessRequestsListResponses, AdminAccessRequestsSetStatusData, AdminAccessRequestsSetStatusErrors, AdminAccessRequestsSetStatusResponses, AdminBillingEventsListData, AdminBillingEventsListErrors, AdminBillingEventsListResponses, AdminFeedbackListData, AdminFeedbackListErrors, AdminFeedbackListResponses, AdminFeedbackSetStatusData, AdminFeedbackSetStatusErrors, AdminFeedbackSetStatusResponses, AdminOrgsDeleteData, AdminOrgsDeleteErrors, AdminOrgsDeleteResponses, AdminOrgsDisableData, AdminOrgsDisableErrors, AdminOrgsDisableResponses, AdminOrgsEnableData, AdminOrgsEnableErrors, AdminOrgsEnableResponses, AdminOrgsGetData, AdminOrgsGetErrors, AdminOrgsGetResponses, AdminOrgsSearchData, AdminOrgsSearchErrors, AdminOrgsSearchResponses, AdminOrgsSetBillingData, AdminOrgsSetBillingErrors, AdminOrgsSetBillingResponses, AdminOrgsSetLimitsData, AdminOrgsSetLimitsErrors, AdminOrgsSetLimitsResponses, AdminOrgsSetPlanData, AdminOrgsSetPlanErrors, AdminOrgsSetPlanResponses, AdminOrgsSetStatusData, AdminOrgsSetStatusErrors, AdminOrgsSetStatusResponses, AdminOrgsSetTrialData, AdminOrgsSetTrialErrors, AdminOrgsSetTrialResponses, AdminOverviewData, AdminOverviewErrors, AdminOverviewResponses, AdminUsersDeleteData, AdminUsersDeleteErrors, AdminUsersDeleteResponses, AdminUsersDisableData, AdminUsersDisableErrors, AdminUsersDisableResponses, AdminUsersEnableData, AdminUsersEnableErrors, AdminUsersEnableResponses, AdminUsersRestoreData, AdminUsersRestoreErrors, AdminUsersRestoreResponses, AdminUsersSearchData, AdminUsersSearchErrors, AdminUsersSearchResponses, AlertsCreateData, AlertsCreateErrors, AlertsCreateResponses, AlertsDeleteData, AlertsDeleteErrors, AlertsDeleteResponses, AlertsListData, AlertsListErrors, AlertsListResponses, AlertsOccurrencesData, AlertsOccurrencesErrors, AlertsOccurrencesResponses, AlertsUpdateData, AlertsUpdateErrors, AlertsUpdateResponses, AnalyticsBreakdownData, AnalyticsBreakdownErrors, AnalyticsBreakdownResponses, AnalyticsDiffData, AnalyticsDiffErrors, AnalyticsDiffResponses, AnalyticsDimensionsData, AnalyticsDimensionsErrors, AnalyticsDimensionsResponses, AnalyticsDimensionValuesData, AnalyticsDimensionValuesErrors, AnalyticsDimensionValuesResponses, AnalyticsHeatmapData, AnalyticsHeatmapErrors, AnalyticsHeatmapResponses, AnalyticsIngestionStatusData, AnalyticsIngestionStatusErrors, AnalyticsIngestionStatusResponses, AnalyticsLatencyData, AnalyticsLatencyErrors, AnalyticsLatencyResponses, AnalyticsOverviewData, AnalyticsOverviewErrors, AnalyticsOverviewResponses, AnalyticsTimeseriesData, AnalyticsTimeseriesErrors, AnalyticsTimeseriesResponses, AppsCreateData, AppsCreateErrors, AppsCreateResponses, AppsDeleteData, AppsDeleteErrors, AppsDeleteResponses, AppsGetData, AppsGetErrors, AppsGetResponses, AppsListData, AppsListErrors, AppsListResponses, AppsUpdateData, AppsUpdateErrors, AppsUpdateResponses, AuditListData, AuditListErrors, AuditListResponses, AudittrailGetData, AudittrailGetErrors, AudittrailGetResponses, AuditVerifyData, AuditVerifyErrors, AuditVerifyResponses, CapabilitiesGetData, CapabilitiesGetErrors, CapabilitiesGetResponses, ChannelsCreateData, ChannelsCreateErrors, ChannelsCreateResponses, ChannelsDeleteData, ChannelsDeleteErrors, ChannelsDeleteResponses, ChannelsGetData, ChannelsGetErrors, ChannelsGetResponses, ChannelsListData, ChannelsListErrors, ChannelsListResponses, ChannelsUpdateData, ChannelsUpdateErrors, ChannelsUpdateResponses, CreateEventData, CreateEventErrors, CreateEventResponses, EnvironmentsCreateData, EnvironmentsCreateErrors, EnvironmentsCreateResponses, EnvironmentsDeleteData, EnvironmentsDeleteErrors, EnvironmentsDeleteResponses, EnvironmentsListData, EnvironmentsListErrors, EnvironmentsListResponses, EnvironmentsPromoteData, EnvironmentsPromoteErrors, EnvironmentsPromoteResponses, EnvironmentsUpdateData, EnvironmentsUpdateErrors, EnvironmentsUpdateResponses, ErrorsEventsData, ErrorsEventsErrors, ErrorsEventsResponses, ErrorsGetData, ErrorsGetErrors, ErrorsGetResponses, ErrorsListData, ErrorsListErrors, ErrorsListResponses, ErrorsTriageData, ErrorsTriageErrors, ErrorsTriageResponses, EventsSearchData, EventsSearchErrors, EventsSearchResponses, ExportCreateData, ExportCreateErrors, ExportCreateResponses, ExportDeleteData, ExportDeleteErrors, ExportDeleteResponses, ExportGetData, ExportGetErrors, ExportGetResponses, ExportListData, ExportListDeliveriesData, ExportListDeliveriesErrors, ExportListDeliveriesResponses, ExportListErrors, ExportListResponses, ExportTestData, ExportTestErrors, ExportTestResponses, ExportUpdateData, ExportUpdateErrors, ExportUpdateResponses, FeatureFlagsMeData, FeatureFlagsMeErrors, FeatureFlagsMeResponses, FeedbackCreateData, FeedbackCreateErrors, FeedbackCreateResponses, GetHealthzData, GetHealthzErrors, GetHealthzResponses, LicenseGetData, LicenseGetErrors, LicenseGetResponses, ObservationsAcceptData, ObservationsAcceptErrors, ObservationsAcceptResponses, ObservationsReceiptData, ObservationsReceiptErrors, ObservationsReceiptResponses, OrganizationDeleteData, OrganizationDeleteErrors, OrganizationDeleteResponses, OrganizationGetData, OrganizationGetErrors, OrganizationGetResponses, OrganizationInvitationsAcceptData, OrganizationInvitationsAcceptErrors, OrganizationInvitationsAcceptResponses, OrganizationInvitationsCancelData, OrganizationInvitationsCancelErrors, OrganizationInvitationsCancelResponses, OrganizationInvitationsCreateData, OrganizationInvitationsCreateErrors, OrganizationInvitationsCreateResponses, OrganizationInvitationsListData, OrganizationInvitationsListErrors, OrganizationInvitationsListResponses, OrganizationLeaveData, OrganizationLeaveErrors, OrganizationLeaveResponses, OrganizationMembersListData, OrganizationMembersListErrors, OrganizationMembersListResponses, OrganizationMembersRemoveData, OrganizationMembersRemoveErrors, OrganizationMembersRemoveResponses, OrganizationMembersUpdateRoleData, OrganizationMembersUpdateRoleErrors, OrganizationMembersUpdateRoleResponses, OrganizationTelemetryPolicyGetData, OrganizationTelemetryPolicyGetErrors, OrganizationTelemetryPolicyGetResponses, OrganizationTelemetryPolicyUpdateData, OrganizationTelemetryPolicyUpdateErrors, OrganizationTelemetryPolicyUpdateResponses, OrganizationTransferOwnershipData, OrganizationTransferOwnershipErrors, OrganizationTransferOwnershipResponses, OrganizationUpdateData, OrganizationUpdateErrors, OrganizationUpdateResponses, TemplatesListData, TemplatesListErrors, TemplatesListResponses, TemplatesPublishData, TemplatesPublishErrors, TemplatesPublishResponses, TokensCreateData, TokensCreateErrors, TokensCreateResponses, TokensListData, TokensListErrors, TokensListResponses, TokensRevokeData, TokensRevokeErrors, TokensRevokeResponses, TracesGetData, TracesGetErrors, TracesGetResponses, TracesListData, TracesListErrors, TracesListResponses, UserMeData, UserMeErrors, UserMeOrganizationsData, UserMeOrganizationsErrors, UserMeOrganizationsResponses, UserMeResponses, UserMeSetActiveOrgData, UserMeSetActiveOrgErrors, UserMeSetActiveOrgResponses, UserMeUpdateData, UserMeUpdateErrors, UserMeUpdateResponses, WebhooksCreateEndpointData, WebhooksCreateEndpointErrors, WebhooksCreateEndpointResponses, WebhooksDeleteEndpointData, WebhooksDeleteEndpointErrors, WebhooksDeleteEndpointResponses, WebhooksListDeliveriesData, WebhooksListDeliveriesErrors, WebhooksListDeliveriesResponses, WebhooksListEndpointsData, WebhooksListEndpointsErrors, WebhooksListEndpointsResponses, WorkspacesActivateData, WorkspacesActivateErrors, WorkspacesActivateResponses, WorkspacesCreateData, WorkspacesCreateErrors, WorkspacesCreateResponses, WorkspacesGetData, WorkspacesGetErrors, WorkspacesGetResponses, WorkspacesListData, WorkspacesListErrors, WorkspacesListResponses, WorkspacesPreviewData, WorkspacesPreviewErrors, WorkspacesPreviewResponses, WorkspacesRevisionsData, WorkspacesRevisionsErrors, WorkspacesRevisionsResponses, WorkspacesSaveRevisionData, WorkspacesSaveRevisionErrors, WorkspacesSaveRevisionResponses, WorkspacesSchemaData, WorkspacesSchemaErrors, WorkspacesSchemaResponses, WorkspacesValidateData, WorkspacesValidateErrors, WorkspacesValidateResponses } from './types.gen.js';
+import type { AccessRequestCreateData, AccessRequestCreateErrors, AccessRequestCreateResponses, ActivityAnalyticsData, ActivityAnalyticsErrors, ActivityAnalyticsResponses, ActivityDeleteEntityData, ActivityDeleteEntityErrors, ActivityDeleteEntityResponses, ActivityEntitiesData, ActivityEntitiesErrors, ActivityEntitiesResponses, ActivityHealthData, ActivityHealthErrors, ActivityHealthResponses, ActivityIdentifyData, ActivityIdentifyErrors, ActivityIdentifyResponses, ActivityIncidentsData, ActivityIncidentsErrors, ActivityIncidentsResponses, ActivitySeriesData, ActivitySeriesErrors, ActivitySeriesResponses, ActivitySummaryData, ActivitySummaryErrors, ActivitySummaryResponses, ActivityTimelineData, ActivityTimelineErrors, ActivityTimelineResponses, ActivityViewsData, ActivityViewsErrors, ActivityViewsResponses, AdminAbuseFlagsListData, AdminAbuseFlagsListErrors, AdminAbuseFlagsListResponses, AdminAbuseFlagsReviewData, AdminAbuseFlagsReviewErrors, AdminAbuseFlagsReviewResponses, AdminAbuseFlagsSuspendData, AdminAbuseFlagsSuspendErrors, AdminAbuseFlagsSuspendResponses, AdminAccessRequestsListData, AdminAccessRequestsListErrors, AdminAccessRequestsListResponses, AdminAccessRequestsSetStatusData, AdminAccessRequestsSetStatusErrors, AdminAccessRequestsSetStatusResponses, AdminBillingEventsListData, AdminBillingEventsListErrors, AdminBillingEventsListResponses, AdminFeedbackListData, AdminFeedbackListErrors, AdminFeedbackListResponses, AdminFeedbackSetStatusData, AdminFeedbackSetStatusErrors, AdminFeedbackSetStatusResponses, AdminOrgsDeleteData, AdminOrgsDeleteErrors, AdminOrgsDeleteResponses, AdminOrgsDisableData, AdminOrgsDisableErrors, AdminOrgsDisableResponses, AdminOrgsEnableData, AdminOrgsEnableErrors, AdminOrgsEnableResponses, AdminOrgsGetData, AdminOrgsGetErrors, AdminOrgsGetResponses, AdminOrgsSearchData, AdminOrgsSearchErrors, AdminOrgsSearchResponses, AdminOrgsSetBillingData, AdminOrgsSetBillingErrors, AdminOrgsSetBillingResponses, AdminOrgsSetLimitsData, AdminOrgsSetLimitsErrors, AdminOrgsSetLimitsResponses, AdminOrgsSetPlanData, AdminOrgsSetPlanErrors, AdminOrgsSetPlanResponses, AdminOrgsSetStatusData, AdminOrgsSetStatusErrors, AdminOrgsSetStatusResponses, AdminOrgsSetTrialData, AdminOrgsSetTrialErrors, AdminOrgsSetTrialResponses, AdminOverviewData, AdminOverviewErrors, AdminOverviewResponses, AdminUsersDeleteData, AdminUsersDeleteErrors, AdminUsersDeleteResponses, AdminUsersDisableData, AdminUsersDisableErrors, AdminUsersDisableResponses, AdminUsersEnableData, AdminUsersEnableErrors, AdminUsersEnableResponses, AdminUsersRestoreData, AdminUsersRestoreErrors, AdminUsersRestoreResponses, AdminUsersSearchData, AdminUsersSearchErrors, AdminUsersSearchResponses, AlertsCreateData, AlertsCreateErrors, AlertsCreateResponses, AlertsDeleteData, AlertsDeleteErrors, AlertsDeleteResponses, AlertsListData, AlertsListErrors, AlertsListResponses, AlertsOccurrencesData, AlertsOccurrencesErrors, AlertsOccurrencesResponses, AlertsUpdateData, AlertsUpdateErrors, AlertsUpdateResponses, AnalyticsBreakdownData, AnalyticsBreakdownErrors, AnalyticsBreakdownResponses, AnalyticsDiffData, AnalyticsDiffErrors, AnalyticsDiffResponses, AnalyticsDimensionsData, AnalyticsDimensionsErrors, AnalyticsDimensionsResponses, AnalyticsDimensionValuesData, AnalyticsDimensionValuesErrors, AnalyticsDimensionValuesResponses, AnalyticsHeatmapData, AnalyticsHeatmapErrors, AnalyticsHeatmapResponses, AnalyticsIngestionStatusData, AnalyticsIngestionStatusErrors, AnalyticsIngestionStatusResponses, AnalyticsLatencyData, AnalyticsLatencyErrors, AnalyticsLatencyResponses, AnalyticsOverviewData, AnalyticsOverviewErrors, AnalyticsOverviewResponses, AnalyticsTimeseriesData, AnalyticsTimeseriesErrors, AnalyticsTimeseriesResponses, AppsCreateData, AppsCreateErrors, AppsCreateResponses, AppsDeleteData, AppsDeleteErrors, AppsDeleteResponses, AppsGetData, AppsGetErrors, AppsGetResponses, AppsListData, AppsListErrors, AppsListResponses, AppsUpdateData, AppsUpdateErrors, AppsUpdateResponses, AuditListData, AuditListErrors, AuditListResponses, AudittrailGetData, AudittrailGetErrors, AudittrailGetResponses, AuditVerifyData, AuditVerifyErrors, AuditVerifyResponses, CapabilitiesGetData, CapabilitiesGetErrors, CapabilitiesGetResponses, ChannelsCreateData, ChannelsCreateErrors, ChannelsCreateResponses, ChannelsDeleteData, ChannelsDeleteErrors, ChannelsDeleteResponses, ChannelsGetData, ChannelsGetErrors, ChannelsGetResponses, ChannelsListData, ChannelsListErrors, ChannelsListResponses, ChannelsUpdateData, ChannelsUpdateErrors, ChannelsUpdateResponses, CreateEventData, CreateEventErrors, CreateEventResponses, EnvironmentsCreateData, EnvironmentsCreateErrors, EnvironmentsCreateResponses, EnvironmentsDeleteData, EnvironmentsDeleteErrors, EnvironmentsDeleteResponses, EnvironmentsListData, EnvironmentsListErrors, EnvironmentsListResponses, EnvironmentsPromoteData, EnvironmentsPromoteErrors, EnvironmentsPromoteResponses, EnvironmentsUpdateData, EnvironmentsUpdateErrors, EnvironmentsUpdateResponses, ErrorsEventsData, ErrorsEventsErrors, ErrorsEventsResponses, ErrorsGetData, ErrorsGetErrors, ErrorsGetResponses, ErrorsListData, ErrorsListErrors, ErrorsListResponses, ErrorsTriageData, ErrorsTriageErrors, ErrorsTriageResponses, EventsSearchData, EventsSearchErrors, EventsSearchResponses, ExportCreateData, ExportCreateErrors, ExportCreateResponses, ExportDeleteData, ExportDeleteErrors, ExportDeleteResponses, ExportGetData, ExportGetErrors, ExportGetResponses, ExportListData, ExportListDeliveriesData, ExportListDeliveriesErrors, ExportListDeliveriesResponses, ExportListErrors, ExportListResponses, ExportTestData, ExportTestErrors, ExportTestResponses, ExportUpdateData, ExportUpdateErrors, ExportUpdateResponses, FeatureFlagsMeData, FeatureFlagsMeErrors, FeatureFlagsMeResponses, FeedbackCreateData, FeedbackCreateErrors, FeedbackCreateResponses, GetHealthzData, GetHealthzErrors, GetHealthzResponses, LicenseGetData, LicenseGetErrors, LicenseGetResponses, McpConnectionsData, McpConnectionsErrors, McpConnectionsResponses, ObservationsAcceptData, ObservationsAcceptErrors, ObservationsAcceptResponses, ObservationsReceiptData, ObservationsReceiptErrors, ObservationsReceiptResponses, OrganizationDeleteData, OrganizationDeleteErrors, OrganizationDeleteResponses, OrganizationGetData, OrganizationGetErrors, OrganizationGetResponses, OrganizationInvitationsAcceptData, OrganizationInvitationsAcceptErrors, OrganizationInvitationsAcceptResponses, OrganizationInvitationsCancelData, OrganizationInvitationsCancelErrors, OrganizationInvitationsCancelResponses, OrganizationInvitationsCreateData, OrganizationInvitationsCreateErrors, OrganizationInvitationsCreateResponses, OrganizationInvitationsListData, OrganizationInvitationsListErrors, OrganizationInvitationsListResponses, OrganizationLeaveData, OrganizationLeaveErrors, OrganizationLeaveResponses, OrganizationMembersListData, OrganizationMembersListErrors, OrganizationMembersListResponses, OrganizationMembersRemoveData, OrganizationMembersRemoveErrors, OrganizationMembersRemoveResponses, OrganizationMembersUpdateRoleData, OrganizationMembersUpdateRoleErrors, OrganizationMembersUpdateRoleResponses, OrganizationTelemetryPolicyGetData, OrganizationTelemetryPolicyGetErrors, OrganizationTelemetryPolicyGetResponses, OrganizationTelemetryPolicyUpdateData, OrganizationTelemetryPolicyUpdateErrors, OrganizationTelemetryPolicyUpdateResponses, OrganizationTransferOwnershipData, OrganizationTransferOwnershipErrors, OrganizationTransferOwnershipResponses, OrganizationUpdateData, OrganizationUpdateErrors, OrganizationUpdateResponses, TemplatesListData, TemplatesListErrors, TemplatesListResponses, TemplatesPublishData, TemplatesPublishErrors, TemplatesPublishResponses, TokensCreateData, TokensCreateErrors, TokensCreateResponses, TokensListData, TokensListErrors, TokensListResponses, TokensRevokeData, TokensRevokeErrors, TokensRevokeResponses, TracesGetData, TracesGetErrors, TracesGetResponses, TracesListData, TracesListErrors, TracesListResponses, UserMeData, UserMeErrors, UserMeOrganizationsData, UserMeOrganizationsErrors, UserMeOrganizationsResponses, UserMeResponses, UserMeSetActiveOrgData, UserMeSetActiveOrgErrors, UserMeSetActiveOrgResponses, UserMeUpdateData, UserMeUpdateErrors, UserMeUpdateResponses, WebhooksCreateEndpointData, WebhooksCreateEndpointErrors, WebhooksCreateEndpointResponses, WebhooksDeleteEndpointData, WebhooksDeleteEndpointErrors, WebhooksDeleteEndpointResponses, WebhooksListDeliveriesData, WebhooksListDeliveriesErrors, WebhooksListDeliveriesResponses, WebhooksListEndpointsData, WebhooksListEndpointsErrors, WebhooksListEndpointsResponses, WorkspacesActivateData, WorkspacesActivateDraftData, WorkspacesActivateDraftErrors, WorkspacesActivateDraftResponses, WorkspacesActivateErrors, WorkspacesActivateResponses, WorkspacesApplyDraftOpsData, WorkspacesApplyDraftOpsErrors, WorkspacesApplyDraftOpsResponses, WorkspacesCatalogData, WorkspacesCatalogErrors, WorkspacesCatalogResponses, WorkspacesCreateData, WorkspacesCreateErrors, WorkspacesCreateResponses, WorkspacesDescribeData, WorkspacesDescribeErrors, WorkspacesDescribeResponses, WorkspacesDiscardDraftData, WorkspacesDiscardDraftErrors, WorkspacesDiscardDraftResponses, WorkspacesDraftChangesData, WorkspacesDraftChangesErrors, WorkspacesDraftChangesResponses, WorkspacesDraftData, WorkspacesDraftErrors, WorkspacesDraftResponses, WorkspacesGetData, WorkspacesGetErrors, WorkspacesGetResponses, WorkspacesListData, WorkspacesListErrors, WorkspacesListResponses, WorkspacesPreviewData, WorkspacesPreviewErrors, WorkspacesPreviewResponses, WorkspacesReplaceDraftData, WorkspacesReplaceDraftErrors, WorkspacesReplaceDraftResponses, WorkspacesRevisionsData, WorkspacesRevisionsErrors, WorkspacesRevisionsResponses, WorkspacesSaveRevisionData, WorkspacesSaveRevisionErrors, WorkspacesSaveRevisionResponses, WorkspacesSchemaData, WorkspacesSchemaErrors, WorkspacesSchemaResponses, WorkspacesValidateData, WorkspacesValidateErrors, WorkspacesValidateResponses } from './types.gen.js';
 
 export type Options<TData extends TDataShape = TDataShape, ThrowOnError extends boolean = boolean, TResponse = unknown> = Options2<TData, ThrowOnError, TResponse> & {
     /**
@@ -533,6 +533,11 @@ export const organizationInvitationsAccept = <ThrowOnError extends boolean = fal
 export const licenseGet = <ThrowOnError extends boolean = false>(options?: Options<LicenseGetData, ThrowOnError>) => (options?.client ?? client).get<LicenseGetResponses, LicenseGetErrors, ThrowOnError>({ url: '/license', ...options });
 
 /**
+ * List coding agents that connected over MCP, newest first
+ */
+export const mcpConnections = <ThrowOnError extends boolean = false>(options?: Options<McpConnectionsData, ThrowOnError>) => (options?.client ?? client).get<McpConnectionsResponses, McpConnectionsErrors, ThrowOnError>({ url: '/mcp/connections', ...options });
+
+/**
  * Get the caller's organization
  */
 export const organizationGet = <ThrowOnError extends boolean = false>(options?: Options<OrganizationGetData, ThrowOnError>) => (options?.client ?? client).get<OrganizationGetResponses, OrganizationGetErrors, ThrowOnError>({ url: '/organization', ...options });
@@ -655,7 +660,7 @@ export const tokensCreate = <ThrowOnError extends boolean = false>(options: Opti
 export const tokensRevoke = <ThrowOnError extends boolean = false>(options: Options<TokensRevokeData, ThrowOnError>) => (options.client ?? client).delete<TokensRevokeResponses, TokensRevokeErrors, ThrowOnError>({ url: '/public-ingest-tokens/{tokenId}', ...options });
 
 /**
- * Discover public and organization-private immutable business templates
+ * Discover public and organization-private immutable workspace templates
  */
 export const templatesList = <ThrowOnError extends boolean = false>(options?: Options<TemplatesListData, ThrowOnError>) => (options?.client ?? client).get<TemplatesListResponses, TemplatesListErrors, ThrowOnError>({ url: '/templates', ...options });
 
@@ -787,7 +792,7 @@ export const webhooksDeleteEndpoint = <ThrowOnError extends boolean = false>(opt
 export const workspacesList = <ThrowOnError extends boolean = false>(options?: Options<WorkspacesListData, ThrowOnError>) => (options?.client ?? client).get<WorkspacesListResponses, WorkspacesListErrors, ThrowOnError>({ url: '/workspaces', ...options });
 
 /**
- * Create an organization-owned workspace from a spec
+ * Create a workspace for an application, from a full or blank spec
  */
 export const workspacesCreate = <ThrowOnError extends boolean = false>(options: Options<WorkspacesCreateData, ThrowOnError>) => (options.client ?? client).post<WorkspacesCreateResponses, WorkspacesCreateErrors, ThrowOnError>({
     url: '/workspaces',
@@ -799,7 +804,7 @@ export const workspacesCreate = <ThrowOnError extends boolean = false>(options: 
 });
 
 /**
- * Preview a spec against synthetic metadata-only observations
+ * Preview the entities a spec projects from sample observations; nothing is stored
  */
 export const workspacesPreview = <ThrowOnError extends boolean = false>(options: Options<WorkspacesPreviewData, ThrowOnError>) => (options.client ?? client).post<WorkspacesPreviewResponses, WorkspacesPreviewErrors, ThrowOnError>({
     url: '/workspaces/preview',
@@ -811,12 +816,12 @@ export const workspacesPreview = <ThrowOnError extends boolean = false>(options:
 });
 
 /**
- * Read the versioned declarative workspace JSON Schema
+ * Read the workspace spec JSON Schema
  */
 export const workspacesSchema = <ThrowOnError extends boolean = false>(options?: Options<WorkspacesSchemaData, ThrowOnError>) => (options?.client ?? client).get<WorkspacesSchemaResponses, WorkspacesSchemaErrors, ThrowOnError>({ url: '/workspaces/schema', ...options });
 
 /**
- * Validate a workspace spec without saving or executing it
+ * Validate a workspace spec without saving it; returns every issue
  */
 export const workspacesValidate = <ThrowOnError extends boolean = false>(options: Options<WorkspacesValidateData, ThrowOnError>) => (options.client ?? client).post<WorkspacesValidateResponses, WorkspacesValidateErrors, ThrowOnError>({
     url: '/workspaces/validate',
@@ -845,24 +850,118 @@ export const workspacesActivate = <ThrowOnError extends boolean = false>(options
 });
 
 /**
- * Read exact scoped business entities and concurrent operations
+ * Read projected entities with their profiles; personal attributes are masked without profiles:read
  */
 export const activityEntities = <ThrowOnError extends boolean = false>(options: Options<ActivityEntitiesData, ThrowOnError>) => (options.client ?? client).get<ActivityEntitiesResponses, ActivityEntitiesErrors, ThrowOnError>({ url: '/workspaces/{workspaceId}/activity', ...options });
 
 /**
- * Delete agent evidence and install a replay tombstone
- */
-export const activityDeleteAgent = <ThrowOnError extends boolean = false>(options: Options<ActivityDeleteAgentData, ThrowOnError>) => (options.client ?? client).delete<ActivityDeleteAgentResponses, ActivityDeleteAgentErrors, ThrowOnError>({ url: '/workspaces/{workspaceId}/agents/{agentId}', ...options });
-
-/**
- * Distinct lifecycle milestones and client activation; snapshots never count as joins
+ * Distinct funnel milestones, funnel splits and client breakdowns; snapshots never count
  */
 export const activityAnalytics = <ThrowOnError extends boolean = false>(options: Options<ActivityAnalyticsData, ThrowOnError>) => (options.client ?? client).get<ActivityAnalyticsResponses, ActivityAnalyticsErrors, ThrowOnError>({ url: '/workspaces/{workspaceId}/analytics', ...options });
 
 /**
- * Read independent storage and projection freshness
+ * Events actually received: counts, refs and attribute keys seen (declared and undeclared) and which entities consume each event
+ *
+ * Use it to find events no entity consumes yet and attributes your app sends that the dictionary does not declare.
+ */
+export const workspacesCatalog = <ThrowOnError extends boolean = false>(options: Options<WorkspacesCatalogData, ThrowOnError>) => (options.client ?? client).get<WorkspacesCatalogResponses, WorkspacesCatalogErrors, ThrowOnError>({ url: '/workspaces/{workspaceId}/catalog', ...options });
+
+/**
+ * Start here: explains this workspace in plain language plus the spec format, roles and draft ops an agent uses to change it
+ *
+ * Call this first when you are setting up or changing what axonpush stores for an application.
+ *
+ * axonpush adapts per installation. A workspace spec declares, as data, what this application stores:
+ * - attributes: the data dictionary. Every attribute key the app may send, with a type, an optional role and a personal flag. Undeclared keys are dropped at ingest and counted.
+ * - entities: the things being tracked (for example agent, ticket, order). Each lists the attribute keys it stores (fields), the keys identify() may set (profile), terminal states, and the events that update it.
+ * - funnels, views and alerts: what the dashboard shows and what pages people.
+ *
+ * To change the spec, never rewrite it blindly: read the shared draft (workspaces.draft), send typed edits with workspaces.applyDraftOps using the draft's version, check workspaces.draftChanges, and ask the user to review before workspaces.activateDraft. Use workspaces.catalog to see which events and attributes the app really sends.
+ *
+ * The response contains a plain-language summary of this workspace, the full format reference, the role list and the op catalogue with examples.
+ */
+export const workspacesDescribe = <ThrowOnError extends boolean = false>(options: Options<WorkspacesDescribeData, ThrowOnError>) => (options.client ?? client).get<WorkspacesDescribeResponses, WorkspacesDescribeErrors, ThrowOnError>({ url: '/workspaces/{workspaceId}/describe', ...options });
+
+/**
+ * Discard the shared draft
+ */
+export const workspacesDiscardDraft = <ThrowOnError extends boolean = false>(options: Options<WorkspacesDiscardDraftData, ThrowOnError>) => (options.client ?? client).delete<WorkspacesDiscardDraftResponses, WorkspacesDiscardDraftErrors, ThrowOnError>({ url: '/workspaces/{workspaceId}/draft', ...options });
+
+/**
+ * Read the shared draft of the workspace spec (created from the active spec on first read)
+ *
+ * The draft is shared by the dashboard and coding agents. Edit it with workspaces.applyDraftOps, review with workspaces.draftChanges and activate with workspaces.activateDraft. Call workspaces.describe first to learn the format.
+ */
+export const workspacesDraft = <ThrowOnError extends boolean = false>(options: Options<WorkspacesDraftData, ThrowOnError>) => (options.client ?? client).get<WorkspacesDraftResponses, WorkspacesDraftErrors, ThrowOnError>({ url: '/workspaces/{workspaceId}/draft', ...options });
+
+/**
+ * Replace the whole draft spec (JSON editor); 409 with the current draft on a version mismatch
+ */
+export const workspacesReplaceDraft = <ThrowOnError extends boolean = false>(options: Options<WorkspacesReplaceDraftData, ThrowOnError>) => (options.client ?? client).put<WorkspacesReplaceDraftResponses, WorkspacesReplaceDraftErrors, ThrowOnError>({
+    url: '/workspaces/{workspaceId}/draft',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * Save the draft as a revision and rebuild projections with it; the draft is then cleared
+ *
+ * Fails with 422 listing the issues when the draft has validation errors. Projections rebuild in the background; the workspace's requestedRevision shows progress until it becomes the activeRevision.
+ */
+export const workspacesActivateDraft = <ThrowOnError extends boolean = false>(options: Options<WorkspacesActivateDraftData, ThrowOnError>) => (options.client ?? client).post<WorkspacesActivateDraftResponses, WorkspacesActivateDraftErrors, ThrowOnError>({
+    url: '/workspaces/{workspaceId}/draft/activate',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * List, in plain language, what the draft changes against the current spec
+ */
+export const workspacesDraftChanges = <ThrowOnError extends boolean = false>(options: Options<WorkspacesDraftChangesData, ThrowOnError>) => (options.client ?? client).get<WorkspacesDraftChangesResponses, WorkspacesDraftChangesErrors, ThrowOnError>({ url: '/workspaces/{workspaceId}/draft/changes', ...options });
+
+/**
+ * Apply typed edits to the shared draft atomically
+ *
+ * Ops apply in order and all-or-nothing. The result is validated and returned with its issues and version+1. Ops: workspace.update; attribute.add|update|remove (the data dictionary); entity.add|update|remove; entity.field.add|remove and entity.profile.add|remove (key = attribute); event.add|update|remove (type = entity, match = rule); funnel.*, alert.* (name) and view.* (name = view id). Call workspaces.describe for the full format and examples. On 409, re-read the draft from the error body and reapply.
+ */
+export const workspacesApplyDraftOps = <ThrowOnError extends boolean = false>(options: Options<WorkspacesApplyDraftOpsData, ThrowOnError>) => (options.client ?? client).post<WorkspacesApplyDraftOpsResponses, WorkspacesApplyDraftOpsErrors, ThrowOnError>({
+    url: '/workspaces/{workspaceId}/draft/ops',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * Erase an entity, everything linked to it and its profile, and install a replay tombstone
+ */
+export const activityDeleteEntity = <ThrowOnError extends boolean = false>(options: Options<ActivityDeleteEntityData, ThrowOnError>) => (options.client ?? client).delete<ActivityDeleteEntityResponses, ActivityDeleteEntityErrors, ThrowOnError>({ url: '/workspaces/{workspaceId}/entities/{entityType}/{entityId}', ...options });
+
+/**
+ * Read storage and projection freshness, source heartbeat and undeclared attributes
  */
 export const activityHealth = <ThrowOnError extends boolean = false>(options: Options<ActivityHealthData, ThrowOnError>) => (options.client ?? client).get<ActivityHealthResponses, ActivityHealthErrors, ThrowOnError>({ url: '/workspaces/{workspaceId}/health', ...options });
+
+/**
+ * Attach human-readable profile traits to an entity (merge; null deletes)
+ *
+ * Traits are restricted to the keys the entity lists under profile in the active spec and are validated by their dictionary type. Personal traits are masked on read unless the reader is an owner/admin or holds profiles:read. Use it as group() by identifying whatever entity represents organisations.
+ */
+export const activityIdentify = <ThrowOnError extends boolean = false>(options: Options<ActivityIdentifyData, ThrowOnError>) => (options.client ?? client).post<ActivityIdentifyResponses, ActivityIdentifyErrors, ThrowOnError>({
+    url: '/workspaces/{workspaceId}/identify',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
 
 /**
  * Read lifecycle incidents and recovery without duplicate notifications
@@ -870,7 +969,7 @@ export const activityHealth = <ThrowOnError extends boolean = false>(options: Op
 export const activityIncidents = <ThrowOnError extends boolean = false>(options: Options<ActivityIncidentsData, ThrowOnError>) => (options.client ?? client).get<ActivityIncidentsResponses, ActivityIncidentsErrors, ThrowOnError>({ url: '/workspaces/{workspaceId}/incidents', ...options });
 
 /**
- * Store an idempotent metadata-only batch; projection occurs independently
+ * Store an idempotent metadata-only batch; undeclared attributes are dropped and counted
  */
 export const observationsAccept = <ThrowOnError extends boolean = false>(options: Options<ObservationsAcceptData, ThrowOnError>) => (options.client ?? client).post<ObservationsAcceptResponses, ObservationsAcceptErrors, ThrowOnError>({
     url: '/workspaces/{workspaceId}/observations',
@@ -892,7 +991,7 @@ export const observationsReceipt = <ThrowOnError extends boolean = false>(option
 export const workspacesRevisions = <ThrowOnError extends boolean = false>(options: Options<WorkspacesRevisionsData, ThrowOnError>) => (options.client ?? client).get<WorkspacesRevisionsResponses, WorkspacesRevisionsErrors, ThrowOnError>({ url: '/workspaces/{workspaceId}/revisions', ...options });
 
 /**
- * Save a validated immutable draft revision
+ * Save a validated immutable revision
  */
 export const workspacesSaveRevision = <ThrowOnError extends boolean = false>(options: Options<WorkspacesSaveRevisionData, ThrowOnError>) => (options.client ?? client).post<WorkspacesSaveRevisionResponses, WorkspacesSaveRevisionErrors, ThrowOnError>({
     url: '/workspaces/{workspaceId}/revisions',
@@ -904,16 +1003,21 @@ export const workspacesSaveRevision = <ThrowOnError extends boolean = false>(opt
 });
 
 /**
- * Exact distinct entity counts with a visible 15 minute activity window
+ * Zero-filled time series: observations by the outcome role, distinct funnel entities by furthest stage, or source-to-view lag
+ */
+export const activitySeries = <ThrowOnError extends boolean = false>(options: Options<ActivitySeriesData, ThrowOnError>) => (options.client ?? client).get<ActivitySeriesResponses, ActivitySeriesErrors, ThrowOnError>({ url: '/workspaces/{workspaceId}/series', ...options });
+
+/**
+ * Exact entity counts per state with a 15 minute activity window
  */
 export const activitySummary = <ThrowOnError extends boolean = false>(options: Options<ActivitySummaryData, ThrowOnError>) => (options.client ?? client).get<ActivitySummaryResponses, ActivitySummaryErrors, ThrowOnError>({ url: '/workspaces/{workspaceId}/summary', ...options });
 
 /**
- * Follow chronological source evidence across traces
+ * Follow chronological source evidence; filter with ref=type:id
  */
 export const activityTimeline = <ThrowOnError extends boolean = false>(options: Options<ActivityTimelineData, ThrowOnError>) => (options.client ?? client).get<ActivityTimelineResponses, ActivityTimelineErrors, ThrowOnError>({ url: '/workspaces/{workspaceId}/timeline', ...options });
 
 /**
- * Aggregate configured business widgets over the active entity revision
+ * Aggregate the spec's declared views (KPIs, breakdowns, latency, funnels) over the active revision
  */
-export const activityWidgets = <ThrowOnError extends boolean = false>(options: Options<ActivityWidgetsData, ThrowOnError>) => (options.client ?? client).get<ActivityWidgetsResponses, ActivityWidgetsErrors, ThrowOnError>({ url: '/workspaces/{workspaceId}/widgets', ...options });
+export const activityViews = <ThrowOnError extends boolean = false>(options: Options<ActivityViewsData, ThrowOnError>) => (options.client ?? client).get<ActivityViewsResponses, ActivityViewsErrors, ThrowOnError>({ url: '/workspaces/{workspaceId}/views', ...options });

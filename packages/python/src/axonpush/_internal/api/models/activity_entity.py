@@ -12,6 +12,7 @@ from ..types import UNSET, Unset
 
 if TYPE_CHECKING:
     from ..models.activity_entity_fields import ActivityEntityFields
+    from ..models.activity_entity_profile import ActivityEntityProfile
     from ..models.activity_entity_versions import ActivityEntityVersions
 
 
@@ -22,7 +23,6 @@ T = TypeVar("T", bound="ActivityEntity")
 class ActivityEntity:
     """
     Attributes:
-        evidence (str):
         fields (ActivityEntityFields):
         id (str):
         occurred_at (datetime.datetime):
@@ -30,10 +30,13 @@ class ActivityEntity:
         snapshot (bool):
         type_ (str):
         versions (ActivityEntityVersions):
+        evidence (str | Unset):
         last_activity_at (datetime.datetime | Unset):
+        links (list[str] | None | Unset): type:id of entities this one references, used for filtering and erasure
+        masked (list[str] | None | Unset): Personal attribute keys hidden from this caller
+        profile (ActivityEntityProfile | Unset):
     """
 
-    evidence: str
     fields: ActivityEntityFields
     id: str
     occurred_at: datetime.datetime
@@ -41,13 +44,16 @@ class ActivityEntity:
     snapshot: bool
     type_: str
     versions: ActivityEntityVersions
+    evidence: str | Unset = UNSET
     last_activity_at: datetime.datetime | Unset = UNSET
+    links: list[str] | None | Unset = UNSET
+    masked: list[str] | None | Unset = UNSET
+    profile: ActivityEntityProfile | Unset = UNSET
 
     def to_dict(self) -> dict[str, Any]:
         from ..models.activity_entity_fields import ActivityEntityFields
+        from ..models.activity_entity_profile import ActivityEntityProfile
         from ..models.activity_entity_versions import ActivityEntityVersions
-
-        evidence = self.evidence
 
         fields = self.fields.to_dict()
 
@@ -63,15 +69,38 @@ class ActivityEntity:
 
         versions = self.versions.to_dict()
 
+        evidence = self.evidence
+
         last_activity_at: str | Unset = UNSET
         if not isinstance(self.last_activity_at, Unset):
             last_activity_at = self.last_activity_at.isoformat()
+
+        links: list[str] | None | Unset
+        if isinstance(self.links, Unset):
+            links = UNSET
+        elif isinstance(self.links, list):
+            links = self.links
+
+        else:
+            links = self.links
+
+        masked: list[str] | None | Unset
+        if isinstance(self.masked, Unset):
+            masked = UNSET
+        elif isinstance(self.masked, list):
+            masked = self.masked
+
+        else:
+            masked = self.masked
+
+        profile: dict[str, Any] | Unset = UNSET
+        if not isinstance(self.profile, Unset):
+            profile = self.profile.to_dict()
 
         field_dict: dict[str, Any] = {}
 
         field_dict.update(
             {
-                "evidence": evidence,
                 "fields": fields,
                 "id": id,
                 "occurredAt": occurred_at,
@@ -81,19 +110,26 @@ class ActivityEntity:
                 "versions": versions,
             }
         )
+        if evidence is not UNSET:
+            field_dict["evidence"] = evidence
         if last_activity_at is not UNSET:
             field_dict["lastActivityAt"] = last_activity_at
+        if links is not UNSET:
+            field_dict["links"] = links
+        if masked is not UNSET:
+            field_dict["masked"] = masked
+        if profile is not UNSET:
+            field_dict["profile"] = profile
 
         return field_dict
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         from ..models.activity_entity_fields import ActivityEntityFields
+        from ..models.activity_entity_profile import ActivityEntityProfile
         from ..models.activity_entity_versions import ActivityEntityVersions
 
         d = dict(src_dict)
-        evidence = d.pop("evidence")
-
         fields = ActivityEntityFields.from_dict(d.pop("fields"))
 
         id = d.pop("id")
@@ -108,6 +144,8 @@ class ActivityEntity:
 
         versions = ActivityEntityVersions.from_dict(d.pop("versions"))
 
+        evidence = d.pop("evidence", UNSET)
+
         _last_activity_at = d.pop("lastActivityAt", UNSET)
         last_activity_at: datetime.datetime | Unset
         if isinstance(_last_activity_at, Unset):
@@ -115,8 +153,48 @@ class ActivityEntity:
         else:
             last_activity_at = isoparse(_last_activity_at)
 
+        def _parse_links(data: object) -> list[str] | None | Unset:
+            if data is None:
+                return data
+            if isinstance(data, Unset):
+                return data
+            try:
+                if not isinstance(data, list):
+                    raise TypeError()
+                links_type_0 = cast(list[str], data)
+
+                return links_type_0
+            except (TypeError, ValueError, AttributeError, KeyError):
+                pass
+            return cast(list[str] | None | Unset, data)
+
+        links = _parse_links(d.pop("links", UNSET))
+
+        def _parse_masked(data: object) -> list[str] | None | Unset:
+            if data is None:
+                return data
+            if isinstance(data, Unset):
+                return data
+            try:
+                if not isinstance(data, list):
+                    raise TypeError()
+                masked_type_0 = cast(list[str], data)
+
+                return masked_type_0
+            except (TypeError, ValueError, AttributeError, KeyError):
+                pass
+            return cast(list[str] | None | Unset, data)
+
+        masked = _parse_masked(d.pop("masked", UNSET))
+
+        _profile = d.pop("profile", UNSET)
+        profile: ActivityEntityProfile | Unset
+        if isinstance(_profile, Unset):
+            profile = UNSET
+        else:
+            profile = ActivityEntityProfile.from_dict(_profile)
+
         activity_entity = cls(
-            evidence=evidence,
             fields=fields,
             id=id,
             occurred_at=occurred_at,
@@ -124,7 +202,11 @@ class ActivityEntity:
             snapshot=snapshot,
             type_=type_,
             versions=versions,
+            evidence=evidence,
             last_activity_at=last_activity_at,
+            links=links,
+            masked=masked,
+            profile=profile,
         )
 
         return activity_entity

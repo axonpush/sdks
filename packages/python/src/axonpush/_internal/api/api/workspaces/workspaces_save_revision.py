@@ -64,7 +64,7 @@ def sync_detailed(
     client: AuthenticatedClient | Client,
     body: ActivityWorkspaceSpec,
 ) -> Response[ActivityRevision | ErrorModel]:
-    """Save a validated immutable draft revision
+    """Save a validated immutable revision
 
     Args:
         workspace_id (str):
@@ -96,7 +96,7 @@ def sync(
     client: AuthenticatedClient | Client,
     body: ActivityWorkspaceSpec,
 ) -> ActivityRevision | ErrorModel | None:
-    """Save a validated immutable draft revision
+    """Save a validated immutable revision
 
     Args:
         workspace_id (str):
@@ -123,7 +123,7 @@ async def asyncio_detailed(
     client: AuthenticatedClient | Client,
     body: ActivityWorkspaceSpec,
 ) -> Response[ActivityRevision | ErrorModel]:
-    """Save a validated immutable draft revision
+    """Save a validated immutable revision
 
     Args:
         workspace_id (str):
@@ -153,7 +153,7 @@ async def asyncio(
     client: AuthenticatedClient | Client,
     body: ActivityWorkspaceSpec,
 ) -> ActivityRevision | ErrorModel | None:
-    """Save a validated immutable draft revision
+    """Save a validated immutable revision
 
     Args:
         workspace_id (str):

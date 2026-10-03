@@ -6,9 +6,9 @@ import httpx
 
 from ... import errors
 from ...client import AuthenticatedClient, Client
+from ...models.activity_ingest_report import ActivityIngestReport
 from ...models.error_model import ErrorModel
 from ...models.workspace_ingest_input_body import WorkspaceIngestInputBody
-from ...models.workspace_ingest_output_body import WorkspaceIngestOutputBody
 from ...types import UNSET, Response
 
 
@@ -36,9 +36,9 @@ def _get_kwargs(
 
 def _parse_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> ErrorModel | WorkspaceIngestOutputBody:
+) -> ActivityIngestReport | ErrorModel:
     if response.status_code == 200:
-        response_200 = WorkspaceIngestOutputBody.from_dict(response.json())
+        response_200 = ActivityIngestReport.from_dict(response.json())
 
         return response_200
 
@@ -49,7 +49,7 @@ def _parse_response(
 
 def _build_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> Response[ErrorModel | WorkspaceIngestOutputBody]:
+) -> Response[ActivityIngestReport | ErrorModel]:
     return Response(
         status_code=HTTPStatus(response.status_code),
         content=response.content,
@@ -63,8 +63,8 @@ def sync_detailed(
     *,
     client: AuthenticatedClient | Client,
     body: WorkspaceIngestInputBody,
-) -> Response[ErrorModel | WorkspaceIngestOutputBody]:
-    """Store an idempotent metadata-only batch; projection occurs independently
+) -> Response[ActivityIngestReport | ErrorModel]:
+    """Store an idempotent metadata-only batch; undeclared attributes are dropped and counted
 
     Args:
         workspace_id (str):
@@ -75,7 +75,7 @@ def sync_detailed(
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[ErrorModel | WorkspaceIngestOutputBody]
+        Response[ActivityIngestReport | ErrorModel]
     """
 
     kwargs = _get_kwargs(
@@ -95,8 +95,8 @@ def sync(
     *,
     client: AuthenticatedClient | Client,
     body: WorkspaceIngestInputBody,
-) -> ErrorModel | WorkspaceIngestOutputBody | None:
-    """Store an idempotent metadata-only batch; projection occurs independently
+) -> ActivityIngestReport | ErrorModel | None:
+    """Store an idempotent metadata-only batch; undeclared attributes are dropped and counted
 
     Args:
         workspace_id (str):
@@ -107,7 +107,7 @@ def sync(
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        ErrorModel | WorkspaceIngestOutputBody
+        ActivityIngestReport | ErrorModel
     """
 
     return sync_detailed(
@@ -122,8 +122,8 @@ async def asyncio_detailed(
     *,
     client: AuthenticatedClient | Client,
     body: WorkspaceIngestInputBody,
-) -> Response[ErrorModel | WorkspaceIngestOutputBody]:
-    """Store an idempotent metadata-only batch; projection occurs independently
+) -> Response[ActivityIngestReport | ErrorModel]:
+    """Store an idempotent metadata-only batch; undeclared attributes are dropped and counted
 
     Args:
         workspace_id (str):
@@ -134,7 +134,7 @@ async def asyncio_detailed(
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[ErrorModel | WorkspaceIngestOutputBody]
+        Response[ActivityIngestReport | ErrorModel]
     """
 
     kwargs = _get_kwargs(
@@ -152,8 +152,8 @@ async def asyncio(
     *,
     client: AuthenticatedClient | Client,
     body: WorkspaceIngestInputBody,
-) -> ErrorModel | WorkspaceIngestOutputBody | None:
-    """Store an idempotent metadata-only batch; projection occurs independently
+) -> ActivityIngestReport | ErrorModel | None:
+    """Store an idempotent metadata-only batch; undeclared attributes are dropped and counted
 
     Args:
         workspace_id (str):
@@ -164,7 +164,7 @@ async def asyncio(
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        ErrorModel | WorkspaceIngestOutputBody
+        ActivityIngestReport | ErrorModel
     """
 
     return (

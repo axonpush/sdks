@@ -18,14 +18,13 @@ def _get_kwargs(
     environment: str | Unset = UNSET,
     entity: str | Unset = UNSET,
     entity_id: str | Unset = UNSET,
+    ref: str | Unset = UNSET,
     side: str | Unset = UNSET,
     client_query: str | Unset = UNSET,
-    action: str | Unset = UNSET,
     outcome: str | Unset = UNSET,
     state: str | Unset = UNSET,
     freshness: ActivityAnalyticsFreshness | Unset = UNSET,
     q: str | Unset = UNSET,
-    agent_id: str | Unset = UNSET,
     cursor: str | Unset = UNSET,
     limit: int | Unset = 100,
 ) -> dict[str, Any]:
@@ -38,11 +37,11 @@ def _get_kwargs(
 
     params["entityId"] = entity_id
 
+    params["ref"] = ref
+
     params["side"] = side
 
     params["client"] = client_query
-
-    params["action"] = action
 
     params["outcome"] = outcome
 
@@ -55,8 +54,6 @@ def _get_kwargs(
     params["freshness"] = json_freshness
 
     params["q"] = q
-
-    params["agentId"] = agent_id
 
     params["cursor"] = cursor
 
@@ -106,32 +103,31 @@ def sync_detailed(
     environment: str | Unset = UNSET,
     entity: str | Unset = UNSET,
     entity_id: str | Unset = UNSET,
+    ref: str | Unset = UNSET,
     side: str | Unset = UNSET,
     client_query: str | Unset = UNSET,
-    action: str | Unset = UNSET,
     outcome: str | Unset = UNSET,
     state: str | Unset = UNSET,
     freshness: ActivityAnalyticsFreshness | Unset = UNSET,
     q: str | Unset = UNSET,
-    agent_id: str | Unset = UNSET,
     cursor: str | Unset = UNSET,
     limit: int | Unset = 100,
 ) -> Response[ActivityAnalytics | ErrorModel]:
-    """Distinct lifecycle milestones and client activation; snapshots never count as joins
+    """Distinct funnel milestones, funnel splits and client breakdowns; snapshots never count
 
     Args:
         workspace_id (str):
         environment (str | Unset):
-        entity (str | Unset):
+        entity (str | Unset): Entity type
         entity_id (str | Unset):
-        side (str | Unset):
-        client_query (str | Unset):
-        action (str | Unset):
-        outcome (str | Unset):
+        ref (str | Unset): type:id; entities that are, or link to, this entity. Timeline:
+            observations that reference it
+        side (str | Unset): Filter by the actor_side role
+        client_query (str | Unset): Filter by the client role
+        outcome (str | Unset): Filter by the outcome role
         state (str | Unset):
         freshness (ActivityAnalyticsFreshness | Unset):
-        q (str | Unset):
-        agent_id (str | Unset):
+        q (str | Unset): Matches the entity id and non-personal text fields and profile traits
         cursor (str | Unset):
         limit (int | Unset):  Default: 100.
 
@@ -148,14 +144,13 @@ def sync_detailed(
         environment=environment,
         entity=entity,
         entity_id=entity_id,
+        ref=ref,
         side=side,
         client_query=client_query,
-        action=action,
         outcome=outcome,
         state=state,
         freshness=freshness,
         q=q,
-        agent_id=agent_id,
         cursor=cursor,
         limit=limit,
     )
@@ -174,32 +169,31 @@ def sync(
     environment: str | Unset = UNSET,
     entity: str | Unset = UNSET,
     entity_id: str | Unset = UNSET,
+    ref: str | Unset = UNSET,
     side: str | Unset = UNSET,
     client_query: str | Unset = UNSET,
-    action: str | Unset = UNSET,
     outcome: str | Unset = UNSET,
     state: str | Unset = UNSET,
     freshness: ActivityAnalyticsFreshness | Unset = UNSET,
     q: str | Unset = UNSET,
-    agent_id: str | Unset = UNSET,
     cursor: str | Unset = UNSET,
     limit: int | Unset = 100,
 ) -> ActivityAnalytics | ErrorModel | None:
-    """Distinct lifecycle milestones and client activation; snapshots never count as joins
+    """Distinct funnel milestones, funnel splits and client breakdowns; snapshots never count
 
     Args:
         workspace_id (str):
         environment (str | Unset):
-        entity (str | Unset):
+        entity (str | Unset): Entity type
         entity_id (str | Unset):
-        side (str | Unset):
-        client_query (str | Unset):
-        action (str | Unset):
-        outcome (str | Unset):
+        ref (str | Unset): type:id; entities that are, or link to, this entity. Timeline:
+            observations that reference it
+        side (str | Unset): Filter by the actor_side role
+        client_query (str | Unset): Filter by the client role
+        outcome (str | Unset): Filter by the outcome role
         state (str | Unset):
         freshness (ActivityAnalyticsFreshness | Unset):
-        q (str | Unset):
-        agent_id (str | Unset):
+        q (str | Unset): Matches the entity id and non-personal text fields and profile traits
         cursor (str | Unset):
         limit (int | Unset):  Default: 100.
 
@@ -217,14 +211,13 @@ def sync(
         environment=environment,
         entity=entity,
         entity_id=entity_id,
+        ref=ref,
         side=side,
         client_query=client_query,
-        action=action,
         outcome=outcome,
         state=state,
         freshness=freshness,
         q=q,
-        agent_id=agent_id,
         cursor=cursor,
         limit=limit,
     ).parsed
@@ -237,32 +230,31 @@ async def asyncio_detailed(
     environment: str | Unset = UNSET,
     entity: str | Unset = UNSET,
     entity_id: str | Unset = UNSET,
+    ref: str | Unset = UNSET,
     side: str | Unset = UNSET,
     client_query: str | Unset = UNSET,
-    action: str | Unset = UNSET,
     outcome: str | Unset = UNSET,
     state: str | Unset = UNSET,
     freshness: ActivityAnalyticsFreshness | Unset = UNSET,
     q: str | Unset = UNSET,
-    agent_id: str | Unset = UNSET,
     cursor: str | Unset = UNSET,
     limit: int | Unset = 100,
 ) -> Response[ActivityAnalytics | ErrorModel]:
-    """Distinct lifecycle milestones and client activation; snapshots never count as joins
+    """Distinct funnel milestones, funnel splits and client breakdowns; snapshots never count
 
     Args:
         workspace_id (str):
         environment (str | Unset):
-        entity (str | Unset):
+        entity (str | Unset): Entity type
         entity_id (str | Unset):
-        side (str | Unset):
-        client_query (str | Unset):
-        action (str | Unset):
-        outcome (str | Unset):
+        ref (str | Unset): type:id; entities that are, or link to, this entity. Timeline:
+            observations that reference it
+        side (str | Unset): Filter by the actor_side role
+        client_query (str | Unset): Filter by the client role
+        outcome (str | Unset): Filter by the outcome role
         state (str | Unset):
         freshness (ActivityAnalyticsFreshness | Unset):
-        q (str | Unset):
-        agent_id (str | Unset):
+        q (str | Unset): Matches the entity id and non-personal text fields and profile traits
         cursor (str | Unset):
         limit (int | Unset):  Default: 100.
 
@@ -279,14 +271,13 @@ async def asyncio_detailed(
         environment=environment,
         entity=entity,
         entity_id=entity_id,
+        ref=ref,
         side=side,
         client_query=client_query,
-        action=action,
         outcome=outcome,
         state=state,
         freshness=freshness,
         q=q,
-        agent_id=agent_id,
         cursor=cursor,
         limit=limit,
     )
@@ -303,32 +294,31 @@ async def asyncio(
     environment: str | Unset = UNSET,
     entity: str | Unset = UNSET,
     entity_id: str | Unset = UNSET,
+    ref: str | Unset = UNSET,
     side: str | Unset = UNSET,
     client_query: str | Unset = UNSET,
-    action: str | Unset = UNSET,
     outcome: str | Unset = UNSET,
     state: str | Unset = UNSET,
     freshness: ActivityAnalyticsFreshness | Unset = UNSET,
     q: str | Unset = UNSET,
-    agent_id: str | Unset = UNSET,
     cursor: str | Unset = UNSET,
     limit: int | Unset = 100,
 ) -> ActivityAnalytics | ErrorModel | None:
-    """Distinct lifecycle milestones and client activation; snapshots never count as joins
+    """Distinct funnel milestones, funnel splits and client breakdowns; snapshots never count
 
     Args:
         workspace_id (str):
         environment (str | Unset):
-        entity (str | Unset):
+        entity (str | Unset): Entity type
         entity_id (str | Unset):
-        side (str | Unset):
-        client_query (str | Unset):
-        action (str | Unset):
-        outcome (str | Unset):
+        ref (str | Unset): type:id; entities that are, or link to, this entity. Timeline:
+            observations that reference it
+        side (str | Unset): Filter by the actor_side role
+        client_query (str | Unset): Filter by the client role
+        outcome (str | Unset): Filter by the outcome role
         state (str | Unset):
         freshness (ActivityAnalyticsFreshness | Unset):
-        q (str | Unset):
-        agent_id (str | Unset):
+        q (str | Unset): Matches the entity id and non-personal text fields and profile traits
         cursor (str | Unset):
         limit (int | Unset):  Default: 100.
 
@@ -347,14 +337,13 @@ async def asyncio(
             environment=environment,
             entity=entity,
             entity_id=entity_id,
+            ref=ref,
             side=side,
             client_query=client_query,
-            action=action,
             outcome=outcome,
             state=state,
             freshness=freshness,
             q=q,
-            agent_id=agent_id,
             cursor=cursor,
             limit=limit,
         )

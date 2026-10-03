@@ -18,11 +18,17 @@ class ActivityFunnel:
         entity (str):
         name (str):
         stages (list[str] | None):
+        error_key (str | Unset): Attribute key holding the failure category
+        failure (str | Unset): State that marks a failed attempt; it supersedes stages reached before it, not later ones
+        split_by (str | Unset): Attribute key to split the funnel by
     """
 
     entity: str
     name: str
     stages: list[str] | None
+    error_key: str | Unset = UNSET
+    failure: str | Unset = UNSET
+    split_by: str | Unset = UNSET
 
     def to_dict(self) -> dict[str, Any]:
         entity = self.entity
@@ -36,6 +42,12 @@ class ActivityFunnel:
         else:
             stages = self.stages
 
+        error_key = self.error_key
+
+        failure = self.failure
+
+        split_by = self.split_by
+
         field_dict: dict[str, Any] = {}
 
         field_dict.update(
@@ -45,6 +57,12 @@ class ActivityFunnel:
                 "stages": stages,
             }
         )
+        if error_key is not UNSET:
+            field_dict["errorKey"] = error_key
+        if failure is not UNSET:
+            field_dict["failure"] = failure
+        if split_by is not UNSET:
+            field_dict["splitBy"] = split_by
 
         return field_dict
 
@@ -70,10 +88,19 @@ class ActivityFunnel:
 
         stages = _parse_stages(d.pop("stages"))
 
+        error_key = d.pop("errorKey", UNSET)
+
+        failure = d.pop("failure", UNSET)
+
+        split_by = d.pop("splitBy", UNSET)
+
         activity_funnel = cls(
             entity=entity,
             name=name,
             stages=stages,
+            error_key=error_key,
+            failure=failure,
+            split_by=split_by,
         )
 
         return activity_funnel

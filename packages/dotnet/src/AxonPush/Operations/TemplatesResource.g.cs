@@ -11,7 +11,7 @@ public sealed class TemplatesResource
     private readonly AxonPushTransport _transport;
     internal TemplatesResource(AxonPushTransport transport) => _transport = transport;
 
-    /// <summary>Discover public and organization-private immutable business templates.</summary>
+    /// <summary>Discover public and organization-private immutable workspace templates.</summary>
     public Task<WorkspaceTemplateListOutputBody?> ListAsync(CancellationToken cancellationToken = default)
     {
         var path = $"templates";

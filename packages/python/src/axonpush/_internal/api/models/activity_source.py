@@ -15,29 +15,23 @@ T = TypeVar("T", bound="ActivitySource")
 class ActivitySource:
     """
     Attributes:
-        record_id (str | Unset):
-        record_type (str | Unset):
-        revision (int | Unset):
+        ref (str | Unset): Source record reference, e.g. table:id
+        revision (int | Unset): Monotonic revision of that source record
     """
 
-    record_id: str | Unset = UNSET
-    record_type: str | Unset = UNSET
+    ref: str | Unset = UNSET
     revision: int | Unset = UNSET
 
     def to_dict(self) -> dict[str, Any]:
-        record_id = self.record_id
-
-        record_type = self.record_type
+        ref = self.ref
 
         revision = self.revision
 
         field_dict: dict[str, Any] = {}
 
         field_dict.update({})
-        if record_id is not UNSET:
-            field_dict["record_id"] = record_id
-        if record_type is not UNSET:
-            field_dict["record_type"] = record_type
+        if ref is not UNSET:
+            field_dict["ref"] = ref
         if revision is not UNSET:
             field_dict["revision"] = revision
 
@@ -46,15 +40,12 @@ class ActivitySource:
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         d = dict(src_dict)
-        record_id = d.pop("record_id", UNSET)
-
-        record_type = d.pop("record_type", UNSET)
+        ref = d.pop("ref", UNSET)
 
         revision = d.pop("revision", UNSET)
 
         activity_source = cls(
-            record_id=record_id,
-            record_type=record_type,
+            ref=ref,
             revision=revision,
         )
 

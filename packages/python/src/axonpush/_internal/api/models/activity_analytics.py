@@ -12,8 +12,8 @@ from ..types import UNSET, Unset
 
 if TYPE_CHECKING:
     from ..models.activity_breakdown import ActivityBreakdown
-    from ..models.activity_cohort_count import ActivityCohortCount
     from ..models.activity_funnel_result import ActivityFunnelResult
+    from ..models.activity_funnel_split import ActivityFunnelSplit
 
 
 T = TypeVar("T", bound="ActivityAnalytics")
@@ -23,49 +23,28 @@ T = TypeVar("T", bound="ActivityAnalytics")
 class ActivityAnalytics:
     """
     Attributes:
-        activations (list[ActivityCohortCount] | None):
         as_of (datetime.datetime):
-        attempts (list[ActivityCohortCount] | None):
-        clients (list[ActivityBreakdown] | None):
+        clients (list[ActivityBreakdown] | None): Entities by the client and actor_side roles; empty without a client
+            role
         funnels (list[ActivityFunnelResult] | None):
+        splits (list[ActivityFunnelSplit] | None):
         window_days (int):
         schema (str | Unset): A URL to the JSON Schema for this object.
     """
 
-    activations: list[ActivityCohortCount] | None
     as_of: datetime.datetime
-    attempts: list[ActivityCohortCount] | None
     clients: list[ActivityBreakdown] | None
     funnels: list[ActivityFunnelResult] | None
+    splits: list[ActivityFunnelSplit] | None
     window_days: int
     schema: str | Unset = UNSET
 
     def to_dict(self) -> dict[str, Any]:
         from ..models.activity_breakdown import ActivityBreakdown
-        from ..models.activity_cohort_count import ActivityCohortCount
         from ..models.activity_funnel_result import ActivityFunnelResult
-
-        activations: list[dict[str, Any]] | None
-        if isinstance(self.activations, list):
-            activations = []
-            for activations_type_0_item_data in self.activations:
-                activations_type_0_item = activations_type_0_item_data.to_dict()
-                activations.append(activations_type_0_item)
-
-        else:
-            activations = self.activations
+        from ..models.activity_funnel_split import ActivityFunnelSplit
 
         as_of = self.as_of.isoformat()
-
-        attempts: list[dict[str, Any]] | None
-        if isinstance(self.attempts, list):
-            attempts = []
-            for attempts_type_0_item_data in self.attempts:
-                attempts_type_0_item = attempts_type_0_item_data.to_dict()
-                attempts.append(attempts_type_0_item)
-
-        else:
-            attempts = self.attempts
 
         clients: list[dict[str, Any]] | None
         if isinstance(self.clients, list):
@@ -87,6 +66,16 @@ class ActivityAnalytics:
         else:
             funnels = self.funnels
 
+        splits: list[dict[str, Any]] | None
+        if isinstance(self.splits, list):
+            splits = []
+            for splits_type_0_item_data in self.splits:
+                splits_type_0_item = splits_type_0_item_data.to_dict()
+                splits.append(splits_type_0_item)
+
+        else:
+            splits = self.splits
+
         window_days = self.window_days
 
         schema = self.schema
@@ -95,11 +84,10 @@ class ActivityAnalytics:
 
         field_dict.update(
             {
-                "activations": activations,
                 "asOf": as_of,
-                "attempts": attempts,
                 "clients": clients,
                 "funnels": funnels,
+                "splits": splits,
                 "windowDays": window_days,
             }
         )
@@ -111,54 +99,11 @@ class ActivityAnalytics:
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         from ..models.activity_breakdown import ActivityBreakdown
-        from ..models.activity_cohort_count import ActivityCohortCount
         from ..models.activity_funnel_result import ActivityFunnelResult
+        from ..models.activity_funnel_split import ActivityFunnelSplit
 
         d = dict(src_dict)
-
-        def _parse_activations(data: object) -> list[ActivityCohortCount] | None:
-            if data is None:
-                return data
-            try:
-                if not isinstance(data, list):
-                    raise TypeError()
-                activations_type_0 = []
-                _activations_type_0 = data
-                for activations_type_0_item_data in _activations_type_0:
-                    activations_type_0_item = ActivityCohortCount.from_dict(
-                        activations_type_0_item_data
-                    )
-
-                    activations_type_0.append(activations_type_0_item)
-
-                return activations_type_0
-            except (TypeError, ValueError, AttributeError, KeyError):
-                pass
-            return cast(list[ActivityCohortCount] | None, data)
-
-        activations = _parse_activations(d.pop("activations"))
-
         as_of = isoparse(d.pop("asOf"))
-
-        def _parse_attempts(data: object) -> list[ActivityCohortCount] | None:
-            if data is None:
-                return data
-            try:
-                if not isinstance(data, list):
-                    raise TypeError()
-                attempts_type_0 = []
-                _attempts_type_0 = data
-                for attempts_type_0_item_data in _attempts_type_0:
-                    attempts_type_0_item = ActivityCohortCount.from_dict(attempts_type_0_item_data)
-
-                    attempts_type_0.append(attempts_type_0_item)
-
-                return attempts_type_0
-            except (TypeError, ValueError, AttributeError, KeyError):
-                pass
-            return cast(list[ActivityCohortCount] | None, data)
-
-        attempts = _parse_attempts(d.pop("attempts"))
 
         def _parse_clients(data: object) -> list[ActivityBreakdown] | None:
             if data is None:
@@ -200,16 +145,35 @@ class ActivityAnalytics:
 
         funnels = _parse_funnels(d.pop("funnels"))
 
+        def _parse_splits(data: object) -> list[ActivityFunnelSplit] | None:
+            if data is None:
+                return data
+            try:
+                if not isinstance(data, list):
+                    raise TypeError()
+                splits_type_0 = []
+                _splits_type_0 = data
+                for splits_type_0_item_data in _splits_type_0:
+                    splits_type_0_item = ActivityFunnelSplit.from_dict(splits_type_0_item_data)
+
+                    splits_type_0.append(splits_type_0_item)
+
+                return splits_type_0
+            except (TypeError, ValueError, AttributeError, KeyError):
+                pass
+            return cast(list[ActivityFunnelSplit] | None, data)
+
+        splits = _parse_splits(d.pop("splits"))
+
         window_days = d.pop("windowDays")
 
         schema = d.pop("$schema", UNSET)
 
         activity_analytics = cls(
-            activations=activations,
             as_of=as_of,
-            attempts=attempts,
             clients=clients,
             funnels=funnels,
+            splits=splits,
             window_days=window_days,
             schema=schema,
         )

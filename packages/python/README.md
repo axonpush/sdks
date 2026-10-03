@@ -8,13 +8,39 @@ Publish, trace, and deliver agent events. Drop-in integrations for LangChain, La
 
 > **v1.0.0 is a breaking release.** All IDs are `str` UUIDs; models live under a flat `axonpush.models` namespace; the realtime feature (MQTT / SSE / WebSocket / `connect_realtime`) has been removed. See [`CHANGELOG.md`](CHANGELOG.md) for the migration guide.
 
-## Business operations
+## Agent operations
 
-The SDK provides typed workspace authoring, immutable revisions, pinned templates,
-metadata-only observation ingestion/receipts and exact activity queries. See the
-[shared operations contract](../../AGENT_OPERATIONS.md) for schemas, access,
-privacy, lifecycle alerts and pilot verification. Capture content remains opt-in;
-source lifecycle adapters must apply their own allowlist before buffering.
+Each workspace declares its own data dictionary and entities (usually drafted by
+your coding agent over MCP). Your app then sends observations and profile traits.
+Nothing is sent unless you call these methods.
+
+```python
+client = AxonPush(environment="production")
+
+client.observe(
+    workspace_id,
+    "ticket.escalated",
+    refs={"ticket": "t_42", "agent": "a_7"},
+    attributes={"priority": "high", "queue": "billing"},
+)
+
+client.identify(workspace_id, "agent", "a_7", {"display_name": "Triage bot", "team": None})
+
+# Same call as identify, for organisation-like entities.
+client.group(workspace_id, "company", "c_1", {"name": "Acme"})
+```
+
+`observe` fills in `schema_version`, a UUID `source_event_id` and an ISO
+`occurred_at` when you leave them out, plus the bound trace id when there is one.
+`observe_many(workspace_id, [{"event": ...}, ...])` sends several in batches of
+100. Attribute keys the workspace has not declared are dropped by the server and
+listed in the report's `dropped`. `identify` merges traits; `None` deletes one.
+Both return `None` instead of raising on a connection failure while `fail_open`
+is on (the default). `AsyncAxonPush` has the same methods.
+
+The lower-level `workspaces`, `templates`, `observations` and `activity`
+resources cover drafts, revisions and activity queries. See the
+[shared operations contract](../../AGENT_OPERATIONS.md).
 
 
 ## Install
@@ -119,10 +145,10 @@ The client exposes Stripe-style resource accessors:
 | Accessor | Methods |
 |---|---|
 | `client.events` | `publish`, `search` |
-| `client.workspaces` | `schema`, `validate`, `preview`, `list`, `create`, `get`, `revisions`, `save_revision`, `activate` |
+| `client.workspaces` | `schema`, `validate`, `preview`, `list`, `create`, `get`, `revisions`, `save_revision`, `activate`, `describe`, `catalog`, `draft`, `apply_draft_ops`, `replace_draft`, `draft_changes`, `activate_draft`, `discard_draft` |
 | `client.templates` | `list`, `publish` |
 | `client.observations` | `accept`, `receipt` |
-| `client.activity` | `entities`, `timeline`, `summary`, `analytics`, `widgets`, `health`, `incidents`, `delete_agent` |
+| `client.activity` | `entities`, `timeline`, `summary`, `analytics`, `series`, `views`, `health`, `incidents`, `identify`, `delete_entity` |
 | `client.channels` | `list`, `get`, `create`, `update`, `delete` |
 | `client.apps` | `list`, `get`, `create`, `update`, `delete` |
 | `client.environments` | `list`, `create`, `update`, `delete`, `promote` |

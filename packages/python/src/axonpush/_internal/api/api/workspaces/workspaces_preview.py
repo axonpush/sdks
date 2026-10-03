@@ -60,7 +60,7 @@ def sync_detailed(
     client: AuthenticatedClient | Client,
     body: WorkspacePreviewInputBody,
 ) -> Response[ErrorModel | WorkspaceEntitiesOutputBody]:
-    """Preview a spec against synthetic metadata-only observations
+    """Preview the entities a spec projects from sample observations; nothing is stored
 
     Args:
         body (WorkspacePreviewInputBody):
@@ -89,7 +89,7 @@ def sync(
     client: AuthenticatedClient | Client,
     body: WorkspacePreviewInputBody,
 ) -> ErrorModel | WorkspaceEntitiesOutputBody | None:
-    """Preview a spec against synthetic metadata-only observations
+    """Preview the entities a spec projects from sample observations; nothing is stored
 
     Args:
         body (WorkspacePreviewInputBody):
@@ -113,7 +113,7 @@ async def asyncio_detailed(
     client: AuthenticatedClient | Client,
     body: WorkspacePreviewInputBody,
 ) -> Response[ErrorModel | WorkspaceEntitiesOutputBody]:
-    """Preview a spec against synthetic metadata-only observations
+    """Preview the entities a spec projects from sample observations; nothing is stored
 
     Args:
         body (WorkspacePreviewInputBody):
@@ -140,7 +140,7 @@ async def asyncio(
     client: AuthenticatedClient | Client,
     body: WorkspacePreviewInputBody,
 ) -> ErrorModel | WorkspaceEntitiesOutputBody | None:
-    """Preview a spec against synthetic metadata-only observations
+    """Preview the entities a spec projects from sample observations; nothing is stored
 
     Args:
         body (WorkspacePreviewInputBody):

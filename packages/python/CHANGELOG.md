@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- Add `observe`, `observe_many`, `identify` and `group` on `AxonPush` and `AsyncAxonPush` for the per-installation workspace model: the core observation envelope (`event`, `refs`, `attributes`), batching by 100, profile traits with merge and `None` deletes. Regenerate drafts, catalog, describe, identify and views operations from the contract.
 - Add contract-generated business workspace, template, observation and activity resources; immutable revisions, rebuild activation and rollback, pinned template provenance, receipt/projection separation and lifecycle queries.
 - Preserve original event occurrence time and stable retry identity.
 - Remove gateway routing helpers and runtime moderation/governance/spend enforcement resources from the public SDK surface. Passive tracing, errors, usage and observational alerts remain.

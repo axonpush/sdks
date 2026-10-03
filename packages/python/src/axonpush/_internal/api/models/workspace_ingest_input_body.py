@@ -19,19 +19,17 @@ T = TypeVar("T", bound="WorkspaceIngestInputBody")
 class WorkspaceIngestInputBody:
     """
     Attributes:
-        environment (str):
         observations (list[ActivityObservation] | None):
         schema (str | Unset): A URL to the JSON Schema for this object.
+        environment (str | Unset): Environment slug or id; defaults to each observation's environment
     """
 
-    environment: str
     observations: list[ActivityObservation] | None
     schema: str | Unset = UNSET
+    environment: str | Unset = UNSET
 
     def to_dict(self) -> dict[str, Any]:
         from ..models.activity_observation import ActivityObservation
-
-        environment = self.environment
 
         observations: list[dict[str, Any]] | None
         if isinstance(self.observations, list):
@@ -45,16 +43,19 @@ class WorkspaceIngestInputBody:
 
         schema = self.schema
 
+        environment = self.environment
+
         field_dict: dict[str, Any] = {}
 
         field_dict.update(
             {
-                "environment": environment,
                 "observations": observations,
             }
         )
         if schema is not UNSET:
             field_dict["$schema"] = schema
+        if environment is not UNSET:
+            field_dict["environment"] = environment
 
         return field_dict
 
@@ -63,7 +64,6 @@ class WorkspaceIngestInputBody:
         from ..models.activity_observation import ActivityObservation
 
         d = dict(src_dict)
-        environment = d.pop("environment")
 
         def _parse_observations(data: object) -> list[ActivityObservation] | None:
             if data is None:
@@ -89,10 +89,12 @@ class WorkspaceIngestInputBody:
 
         schema = d.pop("$schema", UNSET)
 
+        environment = d.pop("environment", UNSET)
+
         workspace_ingest_input_body = cls(
-            environment=environment,
             observations=observations,
             schema=schema,
+            environment=environment,
         )
 
         return workspace_ingest_input_body

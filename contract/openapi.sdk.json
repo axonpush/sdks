@@ -141,6 +141,52 @@
         ],
         "type": "object"
       },
+      "ActivateDraftInputBody": {
+        "additionalProperties": false,
+        "properties": {
+          "$schema": {
+            "description": "A URL to the JSON Schema for this object.",
+            "examples": [
+              "https://example.com/schemas/ActivateDraftInputBody.json"
+            ],
+            "format": "uri",
+            "readOnly": true,
+            "type": "string"
+          },
+          "version": {
+            "description": "When set, activate only if the draft is still at this version",
+            "format": "int64",
+            "minimum": 0,
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      },
+      "ActivateDraftOutputBody": {
+        "additionalProperties": false,
+        "properties": {
+          "$schema": {
+            "description": "A URL to the JSON Schema for this object.",
+            "examples": [
+              "https://example.com/schemas/ActivateDraftOutputBody.json"
+            ],
+            "format": "uri",
+            "readOnly": true,
+            "type": "string"
+          },
+          "revision": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "status",
+          "revision"
+        ],
+        "type": "object"
+      },
       "ActivateInputBody": {
         "additionalProperties": false,
         "properties": {
@@ -167,158 +213,6 @@
         ],
         "type": "object"
       },
-      "ActivityActivity": {
-        "additionalProperties": false,
-        "properties": {
-          "action": {
-            "maxLength": 100,
-            "type": "string"
-          },
-          "attempts": {
-            "format": "int64",
-            "maximum": 100,
-            "minimum": 1,
-            "type": "integer"
-          },
-          "duration_ms": {
-            "format": "double",
-            "minimum": 0,
-            "type": "number"
-          },
-          "error_category": {
-            "maxLength": 60,
-            "type": "string"
-          },
-          "evidence": {
-            "enum": [
-              "server_observed",
-              "agent_reported",
-              "derived",
-              "reconstructed"
-            ],
-            "type": "string"
-          },
-          "expected_seconds": {
-            "format": "int64",
-            "maximum": 86400,
-            "minimum": 0,
-            "type": "integer"
-          },
-          "family": {
-            "maxLength": 60,
-            "type": "string"
-          },
-          "input_tokens": {
-            "format": "int64",
-            "minimum": 0,
-            "type": "integer"
-          },
-          "join_method": {
-            "maxLength": 60,
-            "type": "string"
-          },
-          "model": {
-            "maxLength": 120,
-            "type": "string"
-          },
-          "next_actor": {
-            "enum": [
-              "human",
-              "candidate",
-              "company",
-              "none",
-              "unknown"
-            ],
-            "type": "string"
-          },
-          "outcome": {
-            "enum": [
-              "observed",
-              "accepted",
-              "queued",
-              "running",
-              "committed",
-              "completed",
-              "failed",
-              "cancelled",
-              "unknown"
-            ],
-            "type": "string"
-          },
-          "output_tokens": {
-            "format": "int64",
-            "minimum": 0,
-            "type": "integer"
-          },
-          "registration_source": {
-            "maxLength": 60,
-            "type": "string"
-          },
-          "snapshot": {
-            "type": "boolean"
-          },
-          "state": {
-            "maxLength": 60,
-            "type": "string"
-          },
-          "transport": {
-            "maxLength": 60,
-            "type": "string"
-          }
-        },
-        "required": [
-          "family",
-          "outcome",
-          "evidence"
-        ],
-        "type": "object"
-      },
-      "ActivityActor": {
-        "additionalProperties": false,
-        "properties": {
-          "agent_id": {
-            "maxLength": 160,
-            "type": "string"
-          },
-          "initiating_agent_id": {
-            "maxLength": 160,
-            "type": "string"
-          },
-          "participant_side": {
-            "enum": [
-              "candidate",
-              "recruiter",
-              "company",
-              "unknown"
-            ],
-            "type": "string"
-          },
-          "related_agent_ids": {
-            "items": {
-              "type": "string"
-            },
-            "maxItems": 10,
-            "type": [
-              "array",
-              "null"
-            ]
-          },
-          "type": {
-            "enum": [
-              "agent",
-              "human",
-              "worker",
-              "integration",
-              "unknown"
-            ],
-            "type": "string"
-          }
-        },
-        "required": [
-          "type"
-        ],
-        "type": "object"
-      },
       "ActivityAlert": {
         "additionalProperties": false,
         "properties": {
@@ -329,13 +223,31 @@
             "type": "integer"
           },
           "entity": {
+            "maxLength": 120,
             "type": "string"
           },
+          "minCount": {
+            "description": "Fire only when at least this many entities are affected",
+            "format": "int64",
+            "maximum": 100000,
+            "minimum": 0,
+            "type": "integer"
+          },
           "name": {
+            "maxLength": 120,
+            "minLength": 1,
             "type": "string"
           },
           "state": {
+            "maxLength": 120,
             "type": "string"
+          },
+          "windowSeconds": {
+            "description": "Only count entities that changed inside this window",
+            "format": "int64",
+            "maximum": 2592000,
+            "minimum": 0,
+            "type": "integer"
           }
         },
         "required": [
@@ -358,29 +270,12 @@
             "readOnly": true,
             "type": "string"
           },
-          "activations": {
-            "items": {
-              "$ref": "#/components/schemas/ActivityCohortCount"
-            },
-            "type": [
-              "array",
-              "null"
-            ]
-          },
           "asOf": {
             "format": "date-time",
             "type": "string"
           },
-          "attempts": {
-            "items": {
-              "$ref": "#/components/schemas/ActivityCohortCount"
-            },
-            "type": [
-              "array",
-              "null"
-            ]
-          },
           "clients": {
+            "description": "Entities by the client and actor_side roles; empty without a client role",
             "items": {
               "$ref": "#/components/schemas/ActivityBreakdown"
             },
@@ -398,18 +293,135 @@
               "null"
             ]
           },
+          "splits": {
+            "items": {
+              "$ref": "#/components/schemas/ActivityFunnelSplit"
+            },
+            "type": [
+              "array",
+              "null"
+            ]
+          },
           "windowDays": {
             "format": "int64",
             "type": "integer"
           }
         },
         "required": [
-          "activations",
-          "attempts",
           "funnels",
+          "splits",
           "clients",
           "asOf",
           "windowDays"
+        ],
+        "type": "object"
+      },
+      "ActivityAttribute": {
+        "additionalProperties": false,
+        "properties": {
+          "description": {
+            "maxLength": 500,
+            "type": "string"
+          },
+          "entity": {
+            "description": "For a ref: the entity type it points at (used for linking and erasure)",
+            "maxLength": 120,
+            "type": "string"
+          },
+          "failure": {
+            "description": "Outcome values that count as failures",
+            "items": {
+              "type": "string"
+            },
+            "maxItems": 50,
+            "type": [
+              "array",
+              "null"
+            ]
+          },
+          "key": {
+            "description": "Stable attribute key sent in observation attributes and stored on entities",
+            "maxLength": 64,
+            "minLength": 1,
+            "type": "string"
+          },
+          "label": {
+            "maxLength": 120,
+            "type": "string"
+          },
+          "maxLength": {
+            "description": "For text: maximum length, default 200",
+            "format": "int64",
+            "maximum": 1000,
+            "minimum": 0,
+            "type": "integer"
+          },
+          "multiple": {
+            "description": "For a ref: the value is a list of up to 20 identifiers",
+            "type": "boolean"
+          },
+          "pending": {
+            "description": "Outcome values that mean the work is still in progress",
+            "items": {
+              "type": "string"
+            },
+            "maxItems": 50,
+            "type": [
+              "array",
+              "null"
+            ]
+          },
+          "personal": {
+            "description": "Personal data: masked unless the caller is an owner/admin or holds profiles:read",
+            "type": "boolean"
+          },
+          "role": {
+            "description": "Product meaning that generic views, analytics and alerts read through. expected_duration is in seconds.",
+            "enum": [
+              "outcome",
+              "state",
+              "actor_side",
+              "client",
+              "client_confidence",
+              "duration",
+              "expected_duration",
+              "wait_reason",
+              "next_actor",
+              "evidence",
+              "display_name",
+              "display_subtitle",
+              "avatar"
+            ],
+            "type": "string"
+          },
+          "type": {
+            "description": "duration is milliseconds; time is RFC 3339; ref is an opaque identifier",
+            "enum": [
+              "text",
+              "number",
+              "duration",
+              "time",
+              "enum",
+              "ref",
+              "bool"
+            ],
+            "type": "string"
+          },
+          "values": {
+            "description": "Allowed values for an enum",
+            "items": {
+              "type": "string"
+            },
+            "maxItems": 100,
+            "type": [
+              "array",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "key",
+          "type"
         ],
         "type": "object"
       },
@@ -420,114 +432,6 @@
             "format": "int64",
             "type": "integer"
           },
-          "agents": {
-            "format": "int64",
-            "type": "integer"
-          },
-          "client": {
-            "type": "string"
-          },
-          "side": {
-            "type": "string"
-          }
-        },
-        "required": [
-          "client",
-          "side",
-          "agents",
-          "active15m"
-        ],
-        "type": "object"
-      },
-      "ActivityClient": {
-        "additionalProperties": false,
-        "properties": {
-          "attribution_source": {
-            "maxLength": 60,
-            "type": "string"
-          },
-          "confidence": {
-            "enum": [
-              "verified_registration",
-              "authenticated_registration_unverified_vendor",
-              "self_reported",
-              "inferred",
-              "unknown"
-            ],
-            "type": "string"
-          },
-          "conflict": {
-            "type": "boolean"
-          },
-          "evidence": {
-            "items": {
-              "$ref": "#/components/schemas/ActivityClientEvidence"
-            },
-            "maxItems": 4,
-            "type": [
-              "array",
-              "null"
-            ]
-          },
-          "family": {
-            "maxLength": 60,
-            "type": "string"
-          },
-          "reported_name": {
-            "maxLength": 80,
-            "type": "string"
-          },
-          "version": {
-            "maxLength": 40,
-            "type": "string"
-          }
-        },
-        "required": [
-          "family",
-          "confidence"
-        ],
-        "type": "object"
-      },
-      "ActivityClientEvidence": {
-        "additionalProperties": false,
-        "properties": {
-          "confidence": {
-            "enum": [
-              "verified_registration",
-              "authenticated_registration_unverified_vendor",
-              "self_reported",
-              "inferred",
-              "unknown"
-            ],
-            "type": "string"
-          },
-          "family": {
-            "maxLength": 60,
-            "type": "string"
-          },
-          "name": {
-            "maxLength": 80,
-            "type": "string"
-          },
-          "source": {
-            "maxLength": 60,
-            "type": "string"
-          },
-          "version": {
-            "maxLength": 40,
-            "type": "string"
-          }
-        },
-        "required": [
-          "source",
-          "family",
-          "confidence"
-        ],
-        "type": "object"
-      },
-      "ActivityCohortCount": {
-        "additionalProperties": false,
-        "properties": {
           "client": {
             "type": "string"
           },
@@ -535,65 +439,407 @@
             "format": "int64",
             "type": "integer"
           },
+          "entity": {
+            "type": "string"
+          },
           "side": {
             "type": "string"
           }
         },
         "required": [
+          "entity",
           "client",
           "side",
+          "count",
+          "active15m"
+        ],
+        "type": "object"
+      },
+      "ActivityCatalog": {
+        "additionalProperties": false,
+        "properties": {
+          "$schema": {
+            "description": "A URL to the JSON Schema for this object.",
+            "examples": [
+              "https://example.com/schemas/ActivityCatalog.json"
+            ],
+            "format": "uri",
+            "readOnly": true,
+            "type": "string"
+          },
+          "events": {
+            "items": {
+              "$ref": "#/components/schemas/ActivityCatalogEvent"
+            },
+            "type": [
+              "array",
+              "null"
+            ]
+          },
+          "from": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "undeclared": {
+            "description": "Attribute keys sent but not declared, per event (identify drops appear as identify:\u003centity\u003e)",
+            "items": {
+              "$ref": "#/components/schemas/ActivityUndeclared"
+            },
+            "type": [
+              "array",
+              "null"
+            ]
+          },
+          "unmapped": {
+            "description": "Events no entity consumes",
+            "format": "int64",
+            "type": "integer"
+          },
+          "window": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "window",
+          "from",
+          "events",
+          "unmapped",
+          "undeclared"
+        ],
+        "type": "object"
+      },
+      "ActivityCatalogAttribute": {
+        "additionalProperties": false,
+        "properties": {
+          "count": {
+            "description": "Observations carrying the key; for undeclared keys, how many were dropped",
+            "format": "int64",
+            "type": "integer"
+          },
+          "declared": {
+            "type": "boolean"
+          },
+          "key": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "key",
+          "declared",
           "count"
         ],
         "type": "object"
       },
-      "ActivityCorrelation": {
+      "ActivityCatalogEvent": {
         "additionalProperties": false,
         "properties": {
-          "application_id": {
-            "maxLength": 160,
+          "attributes": {
+            "items": {
+              "$ref": "#/components/schemas/ActivityCatalogAttribute"
+            },
+            "type": [
+              "array",
+              "null"
+            ]
+          },
+          "consumers": {
+            "description": "Entity types whose rules match this event; empty means unmapped",
+            "items": {
+              "type": "string"
+            },
+            "type": [
+              "array",
+              "null"
+            ]
+          },
+          "count": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "event": {
             "type": "string"
           },
-          "causation_id": {
-            "maxLength": 160,
+          "lastSeenAt": {
+            "format": "date-time",
             "type": "string"
           },
-          "connection_ref": {
-            "maxLength": 160,
+          "refs": {
+            "description": "Entity types referenced in refs",
+            "items": {
+              "type": "string"
+            },
+            "type": [
+              "array",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "event",
+          "count",
+          "lastSeenAt",
+          "refs",
+          "attributes",
+          "consumers"
+        ],
+        "type": "object"
+      },
+      "ActivityChange": {
+        "additionalProperties": false,
+        "properties": {
+          "kind": {
+            "enum": [
+              "workspace",
+              "attribute",
+              "entity",
+              "field",
+              "profile",
+              "event",
+              "funnel",
+              "view",
+              "alert"
+            ],
             "type": "string"
           },
-          "job_id": {
-            "maxLength": 160,
-            "type": "string"
-          },
-          "join_attempt_id": {
-            "maxLength": 160,
-            "type": "string"
-          },
-          "operation_id": {
-            "maxLength": 160,
-            "type": "string"
-          },
-          "request_id": {
-            "maxLength": 160,
-            "type": "string"
-          },
-          "role_id": {
-            "maxLength": 160,
-            "type": "string"
-          },
-          "span_id": {
-            "maxLength": 160,
-            "type": "string"
-          },
-          "thread_id": {
-            "maxLength": 160,
-            "type": "string"
-          },
-          "trace_id": {
-            "maxLength": 160,
+          "text": {
             "type": "string"
           }
         },
+        "required": [
+          "kind",
+          "text"
+        ],
+        "type": "object"
+      },
+      "ActivityDescription": {
+        "additionalProperties": false,
+        "properties": {
+          "$schema": {
+            "description": "A URL to the JSON Schema for this object.",
+            "examples": [
+              "https://example.com/schemas/ActivityDescription.json"
+            ],
+            "format": "uri",
+            "readOnly": true,
+            "type": "string"
+          },
+          "draft": {
+            "description": "Pending draft status, if any",
+            "type": "string"
+          },
+          "ops": {
+            "items": {
+              "$ref": "#/components/schemas/ActivityOpDoc"
+            },
+            "type": [
+              "array",
+              "null"
+            ]
+          },
+          "reference": {
+            "description": "The spec and observation format",
+            "type": "string"
+          },
+          "roles": {
+            "items": {
+              "$ref": "#/components/schemas/ActivityRoleDoc"
+            },
+            "type": [
+              "array",
+              "null"
+            ]
+          },
+          "summary": {
+            "description": "One plain sentence per part of the current spec",
+            "items": {
+              "type": "string"
+            },
+            "type": [
+              "array",
+              "null"
+            ]
+          },
+          "types": {
+            "items": {
+              "type": "string"
+            },
+            "type": [
+              "array",
+              "null"
+            ]
+          },
+          "workspace": {
+            "$ref": "#/components/schemas/ActivityWorkspace"
+          }
+        },
+        "required": [
+          "workspace",
+          "summary",
+          "reference",
+          "roles",
+          "types",
+          "ops"
+        ],
+        "type": "object"
+      },
+      "ActivityDraft": {
+        "additionalProperties": false,
+        "properties": {
+          "baseRevision": {
+            "description": "Revision the draft started from; changes are listed against the current active or building revision",
+            "type": "string"
+          },
+          "spec": {
+            "$ref": "#/components/schemas/ActivityWorkspaceSpec"
+          },
+          "updatedAt": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "updatedBy": {
+            "type": "string"
+          },
+          "updatedClient": {
+            "description": "MCP client name when the edit came from a coding agent",
+            "type": "string"
+          },
+          "updatedSource": {
+            "enum": [
+              "dashboard",
+              "mcp",
+              "apikey"
+            ],
+            "type": "string"
+          },
+          "version": {
+            "description": "Send this back with ops; it increments on every edit",
+            "format": "int64",
+            "type": "integer"
+          },
+          "workspaceId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "workspaceId",
+          "baseRevision",
+          "spec",
+          "version",
+          "updatedBy",
+          "updatedSource",
+          "updatedAt"
+        ],
+        "type": "object"
+      },
+      "ActivityDraftOp": {
+        "additionalProperties": false,
+        "properties": {
+          "alert": {
+            "$ref": "#/components/schemas/ActivityAlert"
+          },
+          "attribute": {
+            "$ref": "#/components/schemas/ActivityAttribute"
+          },
+          "entity": {
+            "$ref": "#/components/schemas/ActivityEntityDefinition",
+            "description": "entity.add: the full entity. entity.update: label, description and terminal replace; fields, profile and events replace only when given"
+          },
+          "event": {
+            "$ref": "#/components/schemas/ActivityEventRule"
+          },
+          "funnel": {
+            "$ref": "#/components/schemas/ActivityFunnel"
+          },
+          "key": {
+            "description": "Attribute key (attribute.update/remove, entity.field.*, entity.profile.*)",
+            "maxLength": 64,
+            "type": "string"
+          },
+          "match": {
+            "description": "Event rule match (event.update/remove)",
+            "maxLength": 121,
+            "type": "string"
+          },
+          "name": {
+            "description": "Funnel or alert name, or view id (update/remove)",
+            "maxLength": 120,
+            "type": "string"
+          },
+          "op": {
+            "enum": [
+              "workspace.update",
+              "attribute.add",
+              "attribute.update",
+              "attribute.remove",
+              "entity.add",
+              "entity.update",
+              "entity.remove",
+              "entity.field.add",
+              "entity.field.remove",
+              "entity.profile.add",
+              "entity.profile.remove",
+              "event.add",
+              "event.update",
+              "event.remove",
+              "funnel.add",
+              "funnel.update",
+              "funnel.remove",
+              "view.add",
+              "view.update",
+              "view.remove",
+              "alert.add",
+              "alert.update",
+              "alert.remove"
+            ],
+            "type": "string"
+          },
+          "type": {
+            "description": "Entity type the op targets",
+            "maxLength": 120,
+            "type": "string"
+          },
+          "view": {
+            "$ref": "#/components/schemas/ActivityView"
+          },
+          "workspace": {
+            "$ref": "#/components/schemas/ActivityWorkspacePatch"
+          }
+        },
+        "required": [
+          "op"
+        ],
+        "type": "object"
+      },
+      "ActivityDraftView": {
+        "additionalProperties": false,
+        "properties": {
+          "$schema": {
+            "description": "A URL to the JSON Schema for this object.",
+            "examples": [
+              "https://example.com/schemas/ActivityDraftView.json"
+            ],
+            "format": "uri",
+            "readOnly": true,
+            "type": "string"
+          },
+          "draft": {
+            "$ref": "#/components/schemas/ActivityDraft"
+          },
+          "issues": {
+            "description": "Validation issues in the draft; errors block activation, warnings mean a view or feature will render empty",
+            "items": {
+              "$ref": "#/components/schemas/ActivityIssue"
+            },
+            "type": [
+              "array",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "draft",
+          "issues"
+        ],
         "type": "object"
       },
       "ActivityEntity": {
@@ -613,9 +859,33 @@
             "format": "date-time",
             "type": "string"
           },
+          "links": {
+            "description": "type:id of entities this one references, used for filtering and erasure",
+            "items": {
+              "type": "string"
+            },
+            "type": [
+              "array",
+              "null"
+            ]
+          },
+          "masked": {
+            "description": "Personal attribute keys hidden from this caller",
+            "items": {
+              "type": "string"
+            },
+            "type": [
+              "array",
+              "null"
+            ]
+          },
           "occurredAt": {
             "format": "date-time",
             "type": "string"
+          },
+          "profile": {
+            "additionalProperties": {},
+            "type": "object"
           },
           "receivedAt": {
             "format": "date-time",
@@ -641,7 +911,6 @@
           "versions",
           "occurredAt",
           "receivedAt",
-          "evidence",
           "snapshot"
         ],
         "type": "object"
@@ -649,35 +918,133 @@
       "ActivityEntityDefinition": {
         "additionalProperties": false,
         "properties": {
+          "description": {
+            "maxLength": 500,
+            "type": "string"
+          },
+          "events": {
+            "items": {
+              "$ref": "#/components/schemas/ActivityEventRule"
+            },
+            "maxItems": 200,
+            "type": [
+              "array",
+              "null"
+            ]
+          },
           "fields": {
+            "description": "Attribute keys stored on this entity",
             "items": {
               "type": "string"
             },
+            "maxItems": 60,
             "type": [
               "array",
               "null"
             ]
           },
           "label": {
+            "maxLength": 120,
             "type": "string"
           },
-          "terminalStates": {
+          "profile": {
+            "description": "Attribute keys settable through identify",
             "items": {
               "type": "string"
             },
+            "maxItems": 30,
+            "type": [
+              "array",
+              "null"
+            ]
+          },
+          "terminal": {
+            "description": "State values that only a newer revision of the same source record may reopen",
+            "items": {
+              "type": "string"
+            },
+            "maxItems": 30,
             "type": [
               "array",
               "null"
             ]
           },
           "type": {
+            "maxLength": 120,
+            "minLength": 1,
             "type": "string"
           }
         },
         "required": [
-          "type",
-          "label",
-          "fields"
+          "type"
+        ],
+        "type": "object"
+      },
+      "ActivityEventRule": {
+        "additionalProperties": false,
+        "properties": {
+          "erase": {
+            "description": "The event erases the referenced entity, everything linked to it, and its profile",
+            "type": "boolean"
+          },
+          "match": {
+            "description": "Exact event name, or a prefix ending in * (the most specific matching rule wins)",
+            "maxLength": 121,
+            "minLength": 1,
+            "type": "string"
+          },
+          "only": {
+            "description": "Restrict which entity fields this event updates from attributes",
+            "items": {
+              "type": "string"
+            },
+            "maxItems": 60,
+            "type": [
+              "array",
+              "null"
+            ]
+          },
+          "passive": {
+            "description": "The event updates the entity but does not count as activity",
+            "type": "boolean"
+          },
+          "set": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "description": "Literal field values assigned when the rule matches",
+            "type": "object"
+          }
+        },
+        "required": [
+          "match"
+        ],
+        "type": "object"
+      },
+      "ActivityFailureCount": {
+        "additionalProperties": false,
+        "properties": {
+          "category": {
+            "type": "string"
+          },
+          "class": {
+            "enum": [
+              "expected_challenge",
+              "rejected",
+              "service_error",
+              "unclassified"
+            ],
+            "type": "string"
+          },
+          "count": {
+            "format": "int64",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "category",
+          "class",
+          "count"
         ],
         "type": "object"
       },
@@ -711,15 +1078,35 @@
         "additionalProperties": false,
         "properties": {
           "entity": {
+            "maxLength": 120,
+            "type": "string"
+          },
+          "errorKey": {
+            "description": "Attribute key holding the failure category",
+            "maxLength": 64,
+            "type": "string"
+          },
+          "failure": {
+            "description": "State that marks a failed attempt; it supersedes stages reached before it, not later ones",
+            "maxLength": 120,
             "type": "string"
           },
           "name": {
+            "maxLength": 120,
+            "minLength": 1,
+            "type": "string"
+          },
+          "splitBy": {
+            "description": "Attribute key to split the funnel by",
+            "maxLength": 64,
             "type": "string"
           },
           "stages": {
             "items": {
               "type": "string"
             },
+            "maxItems": 20,
+            "minItems": 1,
             "type": [
               "array",
               "null"
@@ -736,6 +1123,9 @@
       "ActivityFunnelResult": {
         "additionalProperties": false,
         "properties": {
+          "entity": {
+            "type": "string"
+          },
           "name": {
             "type": "string"
           },
@@ -751,7 +1141,144 @@
         },
         "required": [
           "name",
+          "entity",
           "stages"
+        ],
+        "type": "object"
+      },
+      "ActivityFunnelSplit": {
+        "additionalProperties": false,
+        "properties": {
+          "entities": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "failureCategories": {
+            "items": {
+              "$ref": "#/components/schemas/ActivityFailureCount"
+            },
+            "type": [
+              "array",
+              "null"
+            ]
+          },
+          "failures": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "funnel": {
+            "type": "string"
+          },
+          "key": {
+            "type": "string"
+          },
+          "rejected": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "serviceErrors": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "stages": {
+            "items": {
+              "$ref": "#/components/schemas/ActivityStageCount"
+            },
+            "type": [
+              "array",
+              "null"
+            ]
+          },
+          "unclassifiedFailures": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "value": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "funnel",
+          "key",
+          "value",
+          "entities",
+          "stages",
+          "failures",
+          "rejected",
+          "serviceErrors",
+          "unclassifiedFailures",
+          "failureCategories"
+        ],
+        "type": "object"
+      },
+      "ActivityHealth": {
+        "additionalProperties": false,
+        "properties": {
+          "$schema": {
+            "description": "A URL to the JSON Schema for this object.",
+            "examples": [
+              "https://example.com/schemas/ActivityHealth.json"
+            ],
+            "format": "uri",
+            "readOnly": true,
+            "type": "string"
+          },
+          "checkedAt": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "lastProjectedAt": {
+            "format": "date-time",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "lastReceivedAt": {
+            "format": "date-time",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "oldestPendingAt": {
+            "format": "date-time",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "pending": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "source": {
+            "additionalProperties": {},
+            "description": "Attributes of the latest declared heartbeat event",
+            "type": "object"
+          },
+          "sourceHeartbeatAt": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "undeclared": {
+            "description": "Attribute keys sent in the last 7 days that the dictionary does not declare; they were dropped",
+            "items": {
+              "$ref": "#/components/schemas/ActivityUndeclared"
+            },
+            "type": [
+              "array",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "pending",
+          "oldestPendingAt",
+          "lastReceivedAt",
+          "lastProjectedAt",
+          "undeclared",
+          "checkedAt"
         ],
         "type": "object"
       },
@@ -798,54 +1325,109 @@
         ],
         "type": "object"
       },
-      "ActivityMapping": {
+      "ActivityIngestReport": {
         "additionalProperties": false,
         "properties": {
-          "entity": {
+          "$schema": {
+            "description": "A URL to the JSON Schema for this object.",
+            "examples": [
+              "https://example.com/schemas/ActivityIngestReport.json"
+            ],
+            "format": "uri",
+            "readOnly": true,
             "type": "string"
           },
-          "event": {
-            "type": "string"
+          "dropCount": {
+            "format": "int64",
+            "type": "integer"
           },
-          "fields": {
-            "additionalProperties": {
+          "dropped": {
+            "description": "Undeclared attribute keys that were dropped and counted",
+            "items": {
               "type": "string"
             },
-            "type": "object"
+            "type": [
+              "array",
+              "null"
+            ]
           },
-          "idPath": {
-            "type": "string"
-          },
-          "values": {
-            "additionalProperties": {
-              "type": "string"
+          "receipts": {
+            "items": {
+              "$ref": "#/components/schemas/ActivityReceipt"
             },
-            "type": "object"
+            "type": [
+              "array",
+              "null"
+            ]
           }
         },
         "required": [
-          "event",
-          "entity",
-          "idPath"
+          "receipts"
+        ],
+        "type": "object"
+      },
+      "ActivityIssue": {
+        "additionalProperties": false,
+        "properties": {
+          "message": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string"
+          },
+          "severity": {
+            "enum": [
+              "error",
+              "warning"
+            ],
+            "type": "string"
+          }
+        },
+        "required": [
+          "severity",
+          "path",
+          "message"
+        ],
+        "type": "object"
+      },
+      "ActivityMetricSeries": {
+        "additionalProperties": false,
+        "properties": {
+          "key": {
+            "type": "string"
+          },
+          "label": {
+            "type": "string"
+          },
+          "points": {
+            "items": {
+              "$ref": "#/components/schemas/ActivitySeriesPoint"
+            },
+            "type": [
+              "array",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "key",
+          "label",
+          "points"
         ],
         "type": "object"
       },
       "ActivityObservation": {
         "additionalProperties": false,
         "properties": {
-          "activity": {
-            "$ref": "#/components/schemas/ActivityActivity"
+          "attributes": {
+            "additionalProperties": {},
+            "type": "object"
           },
-          "actor": {
-            "$ref": "#/components/schemas/ActivityActor"
+          "environment": {
+            "maxLength": 160,
+            "type": "string"
           },
-          "client": {
-            "$ref": "#/components/schemas/ActivityClient"
-          },
-          "correlation": {
-            "$ref": "#/components/schemas/ActivityCorrelation"
-          },
-          "event_name": {
+          "event": {
             "maxLength": 120,
             "minLength": 1,
             "type": "string"
@@ -854,12 +1436,12 @@
             "format": "date-time",
             "type": "string"
           },
-          "pipeline": {
-            "$ref": "#/components/schemas/ActivityPipelineHealth"
-          },
-          "release": {
-            "maxLength": 80,
-            "type": "string"
+          "refs": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "description": "Entity type to opaque identifier",
+            "type": "object"
           },
           "schema_version": {
             "enum": [
@@ -868,9 +1450,9 @@
             "format": "int64",
             "type": "integer"
           },
-          "service": {
-            "maxLength": 80,
-            "type": "string"
+          "snapshot": {
+            "description": "Reconstructed state rather than live activity",
+            "type": "boolean"
           },
           "source": {
             "$ref": "#/components/schemas/ActivitySource"
@@ -879,71 +1461,76 @@
             "maxLength": 160,
             "minLength": 1,
             "type": "string"
+          },
+          "span_id": {
+            "maxLength": 160,
+            "type": "string"
+          },
+          "trace_id": {
+            "maxLength": 160,
+            "type": "string"
           }
         },
         "required": [
           "schema_version",
           "source_event_id",
-          "event_name",
-          "occurred_at",
-          "service",
-          "actor",
-          "client",
-          "correlation",
-          "source",
-          "activity"
+          "event",
+          "occurred_at"
         ],
         "type": "object"
       },
-      "ActivityPipelineHealth": {
+      "ActivityOpDoc": {
         "additionalProperties": false,
         "properties": {
-          "capture_failures": {
-            "format": "int64",
-            "minimum": 0,
-            "type": "integer"
-          },
-          "dead_letters": {
-            "format": "int64",
-            "minimum": 0,
-            "type": "integer"
-          },
-          "dropped_transient": {
-            "format": "int64",
-            "minimum": 0,
-            "type": "integer"
-          },
-          "last_export_at": {
-            "format": "date-time",
+          "description": {
             "type": "string"
           },
-          "pending": {
-            "format": "int64",
-            "minimum": 0,
-            "type": "integer"
-          },
-          "reconciled_at": {
-            "format": "date-time",
+          "example": {
             "type": "string"
           },
-          "reconciled_records": {
-            "format": "int64",
-            "minimum": 0,
-            "type": "integer"
-          },
-          "retries": {
-            "format": "int64",
-            "minimum": 0,
-            "type": "integer"
+          "op": {
+            "type": "string"
           }
         },
         "required": [
-          "pending",
-          "retries",
-          "dead_letters",
-          "dropped_transient",
-          "capture_failures",
-          "reconciled_records"
+          "op",
+          "description",
+          "example"
+        ],
+        "type": "object"
+      },
+      "ActivityProfile": {
+        "additionalProperties": false,
+        "properties": {
+          "entity": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string"
+          },
+          "masked": {
+            "items": {
+              "type": "string"
+            },
+            "type": [
+              "array",
+              "null"
+            ]
+          },
+          "traits": {
+            "additionalProperties": {},
+            "type": "object"
+          },
+          "updatedAt": {
+            "format": "date-time",
+            "type": "string"
+          }
+        },
+        "required": [
+          "entity",
+          "id",
+          "traits",
+          "updatedAt"
         ],
         "type": "object"
       },
@@ -988,6 +1575,15 @@
       "ActivityRecord": {
         "additionalProperties": false,
         "properties": {
+          "masked": {
+            "items": {
+              "type": "string"
+            },
+            "type": [
+              "array",
+              "null"
+            ]
+          },
           "observation": {
             "$ref": "#/components/schemas/ActivityObservation"
           },
@@ -1044,18 +1640,55 @@
         ],
         "type": "object"
       },
+      "ActivityRoleDoc": {
+        "additionalProperties": false,
+        "properties": {
+          "meaning": {
+            "type": "string"
+          },
+          "role": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "role",
+          "meaning"
+        ],
+        "type": "object"
+      },
+      "ActivitySeriesPoint": {
+        "additionalProperties": false,
+        "properties": {
+          "n": {
+            "description": "Sample count behind a lag percentile; zero means the bucket had no evidence",
+            "format": "int64",
+            "type": "integer"
+          },
+          "t": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "v": {
+            "format": "double",
+            "type": "number"
+          }
+        },
+        "required": [
+          "t",
+          "v"
+        ],
+        "type": "object"
+      },
       "ActivitySource": {
         "additionalProperties": false,
         "properties": {
-          "record_id": {
-            "maxLength": 160,
-            "type": "string"
-          },
-          "record_type": {
-            "maxLength": 60,
+          "ref": {
+            "description": "Source record reference, e.g. table:id",
+            "maxLength": 200,
             "type": "string"
           },
           "revision": {
+            "description": "Monotonic revision of that source record",
             "format": "int64",
             "minimum": 0,
             "type": "integer"
@@ -1077,6 +1710,69 @@
         "required": [
           "stage",
           "count"
+        ],
+        "type": "object"
+      },
+      "ActivityStateCount": {
+        "additionalProperties": false,
+        "properties": {
+          "active15m": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "count": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "entity": {
+            "type": "string"
+          },
+          "state": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "entity",
+          "state",
+          "count",
+          "active15m"
+        ],
+        "type": "object"
+      },
+      "ActivitySummary": {
+        "additionalProperties": false,
+        "properties": {
+          "$schema": {
+            "description": "A URL to the JSON Schema for this object.",
+            "examples": [
+              "https://example.com/schemas/ActivitySummary.json"
+            ],
+            "format": "uri",
+            "readOnly": true,
+            "type": "string"
+          },
+          "asOf": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "counts": {
+            "items": {
+              "$ref": "#/components/schemas/ActivityStateCount"
+            },
+            "type": [
+              "array",
+              "null"
+            ]
+          },
+          "windowMinutes": {
+            "format": "int64",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "counts",
+          "windowMinutes",
+          "asOf"
         ],
         "type": "object"
       },
@@ -1133,41 +1829,140 @@
         ],
         "type": "object"
       },
-      "ActivityWidget": {
+      "ActivityUndeclared": {
+        "additionalProperties": false,
+        "properties": {
+          "count": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "event": {
+            "type": "string"
+          },
+          "key": {
+            "type": "string"
+          },
+          "lastSeenAt": {
+            "format": "date-time",
+            "type": "string"
+          }
+        },
+        "required": [
+          "event",
+          "key",
+          "count",
+          "lastSeenAt"
+        ],
+        "type": "object"
+      },
+      "ActivityView": {
         "additionalProperties": false,
         "properties": {
           "entity": {
+            "maxLength": 120,
             "type": "string"
           },
-          "field": {
+          "filter": {
+            "$ref": "#/components/schemas/ActivityViewFilter"
+          },
+          "funnel": {
+            "maxLength": 120,
             "type": "string"
+          },
+          "id": {
+            "maxLength": 64,
+            "minLength": 1,
+            "type": "string"
+          },
+          "key": {
+            "description": "Attribute key to group or measure by, when no role fits",
+            "maxLength": 64,
+            "type": "string"
+          },
+          "open": {
+            "description": "Only entities not in a terminal state",
+            "type": "boolean"
+          },
+          "role": {
+            "description": "Attribute role to group or measure by",
+            "maxLength": 40,
+            "type": "string"
+          },
+          "state": {
+            "description": "Only entities in these states",
+            "items": {
+              "type": "string"
+            },
+            "maxItems": 20,
+            "type": [
+              "array",
+              "null"
+            ]
           },
           "title": {
+            "maxLength": 120,
             "type": "string"
           },
           "type": {
             "enum": [
-              "directory",
-              "timeline",
-              "operations",
-              "workflows",
               "kpi",
-              "funnel",
-              "health",
               "timeseries",
               "breakdown",
-              "latency"
+              "funnel",
+              "latency",
+              "directory",
+              "health"
+            ],
+            "type": "string"
+          },
+          "window": {
+            "description": "Only entities with activity inside the window",
+            "enum": [
+              "15m",
+              "1h",
+              "24h",
+              "7d",
+              "30d"
             ],
             "type": "string"
           }
         },
         "required": [
+          "id",
           "type",
           "title"
         ],
         "type": "object"
       },
-      "ActivityWidgetPoint": {
+      "ActivityViewFilter": {
+        "additionalProperties": false,
+        "properties": {
+          "key": {
+            "maxLength": 64,
+            "type": "string"
+          },
+          "role": {
+            "maxLength": 40,
+            "type": "string"
+          },
+          "values": {
+            "items": {
+              "type": "string"
+            },
+            "maxItems": 20,
+            "minItems": 1,
+            "type": [
+              "array",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "values"
+        ],
+        "type": "object"
+      },
+      "ActivityViewPoint": {
         "additionalProperties": false,
         "properties": {
           "count": {
@@ -1188,36 +1983,48 @@
         ],
         "type": "object"
       },
-      "ActivityWidgetSeries": {
+      "ActivityViewResult": {
         "additionalProperties": false,
         "properties": {
           "entity": {
             "type": "string"
           },
-          "field": {
+          "id": {
+            "type": "string"
+          },
+          "key": {
+            "description": "Attribute key the view resolved its role to",
             "type": "string"
           },
           "points": {
             "items": {
-              "$ref": "#/components/schemas/ActivityWidgetPoint"
+              "$ref": "#/components/schemas/ActivityViewPoint"
             },
             "type": [
               "array",
               "null"
             ]
           },
+          "reason": {
+            "description": "Why the view is empty, e.g. a role the dictionary does not declare",
+            "type": "string"
+          },
           "title": {
             "type": "string"
           },
           "type": {
             "type": "string"
+          },
+          "value": {
+            "description": "KPI count",
+            "format": "int64",
+            "type": "integer"
           }
         },
         "required": [
-          "title",
+          "id",
           "type",
-          "entity",
-          "field",
+          "title",
           "points"
         ],
         "type": "object"
@@ -1275,6 +2082,92 @@
         ],
         "type": "object"
       },
+      "ActivityWorkspacePatch": {
+        "additionalProperties": false,
+        "properties": {
+          "description": {
+            "maxLength": 500,
+            "type": "string"
+          },
+          "heartbeat": {
+            "maxLength": 120,
+            "type": "string"
+          },
+          "name": {
+            "maxLength": 120,
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "ActivityWorkspaceSeries": {
+        "additionalProperties": false,
+        "properties": {
+          "$schema": {
+            "description": "A URL to the JSON Schema for this object.",
+            "examples": [
+              "https://example.com/schemas/ActivityWorkspaceSeries.json"
+            ],
+            "format": "uri",
+            "readOnly": true,
+            "type": "string"
+          },
+          "bucket": {
+            "enum": [
+              "5m",
+              "1h",
+              "1d"
+            ],
+            "type": "string"
+          },
+          "from": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "metric": {
+            "enum": [
+              "outcomes",
+              "funnel",
+              "lag"
+            ],
+            "type": "string"
+          },
+          "reason": {
+            "description": "Why the series is empty when the spec lacks a needed role or funnel",
+            "type": "string"
+          },
+          "series": {
+            "items": {
+              "$ref": "#/components/schemas/ActivityMetricSeries"
+            },
+            "type": [
+              "array",
+              "null"
+            ]
+          },
+          "to": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "window": {
+            "enum": [
+              "1h",
+              "24h",
+              "7d"
+            ],
+            "type": "string"
+          }
+        },
+        "required": [
+          "metric",
+          "window",
+          "bucket",
+          "from",
+          "to",
+          "series"
+        ],
+        "type": "object"
+      },
       "ActivityWorkspaceSpec": {
         "additionalProperties": false,
         "properties": {
@@ -1292,6 +2185,16 @@
               "$ref": "#/components/schemas/ActivityAlert"
             },
             "maxItems": 20,
+            "type": [
+              "array",
+              "null"
+            ]
+          },
+          "attributes": {
+            "items": {
+              "$ref": "#/components/schemas/ActivityAttribute"
+            },
+            "maxItems": 200,
             "type": [
               "array",
               "null"
@@ -1321,15 +2224,10 @@
               "null"
             ]
           },
-          "mappings": {
-            "items": {
-              "$ref": "#/components/schemas/ActivityMapping"
-            },
-            "maxItems": 500,
-            "type": [
-              "array",
-              "null"
-            ]
+          "heartbeat": {
+            "description": "Event name the source emits as a liveness heartbeat; its attributes are shown as source health",
+            "maxLength": 120,
+            "type": "string"
           },
           "name": {
             "maxLength": 120,
@@ -1337,18 +2235,17 @@
             "type": "string"
           },
           "schemaVersion": {
-            "enum": [
-              1
-            ],
             "format": "int64",
+            "maximum": 1,
+            "minimum": 0,
             "type": "integer"
           },
           "template": {
             "$ref": "#/components/schemas/ActivityTemplateRef"
           },
-          "widgets": {
+          "views": {
             "items": {
-              "$ref": "#/components/schemas/ActivityWidget"
+              "$ref": "#/components/schemas/ActivityView"
             },
             "maxItems": 40,
             "type": [
@@ -1358,11 +2255,7 @@
           }
         },
         "required": [
-          "schemaVersion",
-          "name",
-          "entities",
-          "mappings",
-          "widgets"
+          "name"
         ],
         "type": "object"
       },
@@ -1815,6 +2708,52 @@
         ],
         "type": "object"
       },
+      "ChangesOutputBody": {
+        "additionalProperties": false,
+        "properties": {
+          "$schema": {
+            "description": "A URL to the JSON Schema for this object.",
+            "examples": [
+              "https://example.com/schemas/ChangesOutputBody.json"
+            ],
+            "format": "uri",
+            "readOnly": true,
+            "type": "string"
+          },
+          "baseRevision": {
+            "type": "string"
+          },
+          "changes": {
+            "items": {
+              "$ref": "#/components/schemas/ActivityChange"
+            },
+            "type": [
+              "array",
+              "null"
+            ]
+          },
+          "issues": {
+            "items": {
+              "$ref": "#/components/schemas/ActivityIssue"
+            },
+            "type": [
+              "array",
+              "null"
+            ]
+          },
+          "version": {
+            "format": "int64",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "baseRevision",
+          "version",
+          "changes",
+          "issues"
+        ],
+        "type": "object"
+      },
       "ChannelDTO": {
         "additionalProperties": false,
         "properties": {
@@ -1852,6 +2791,70 @@
           "channelId",
           "name",
           "createdAt"
+        ],
+        "type": "object"
+      },
+      "Connection": {
+        "additionalProperties": false,
+        "properties": {
+          "clientKey": {
+            "type": "string"
+          },
+          "clientName": {
+            "type": "string"
+          },
+          "clientVersion": {
+            "type": "string"
+          },
+          "firstSeen": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "lastSeen": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "oauthClientId": {
+            "type": "string"
+          },
+          "userId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "userId",
+          "clientKey",
+          "clientName",
+          "clientVersion",
+          "firstSeen",
+          "lastSeen"
+        ],
+        "type": "object"
+      },
+      "ConnectionsOutputBody": {
+        "additionalProperties": false,
+        "properties": {
+          "$schema": {
+            "description": "A URL to the JSON Schema for this object.",
+            "examples": [
+              "https://example.com/schemas/ConnectionsOutputBody.json"
+            ],
+            "format": "uri",
+            "readOnly": true,
+            "type": "string"
+          },
+          "connections": {
+            "items": {
+              "$ref": "#/components/schemas/Connection"
+            },
+            "type": [
+              "array",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "connections"
         ],
         "type": "object"
       },
@@ -2078,7 +3081,8 @@
             "type": "string"
           },
           "spec": {
-            "$ref": "#/components/schemas/ActivityWorkspaceSpec"
+            "$ref": "#/components/schemas/ActivityWorkspaceSpec",
+            "description": "A blank spec ({\"name\": \"My workspace\"}) is enough; build the rest through the draft"
           }
         },
         "required": [
@@ -3846,6 +4850,75 @@
         ],
         "type": "object"
       },
+      "IdentifyInputBody": {
+        "additionalProperties": false,
+        "properties": {
+          "$schema": {
+            "description": "A URL to the JSON Schema for this object.",
+            "examples": [
+              "https://example.com/schemas/IdentifyInputBody.json"
+            ],
+            "format": "uri",
+            "readOnly": true,
+            "type": "string"
+          },
+          "entity": {
+            "description": "Entity type declared in the active spec",
+            "maxLength": 120,
+            "minLength": 1,
+            "type": "string"
+          },
+          "id": {
+            "description": "Opaque entity identifier, the same value sent in refs",
+            "maxLength": 160,
+            "minLength": 1,
+            "type": "string"
+          },
+          "traits": {
+            "additionalProperties": {},
+            "description": "Keys from the entity's profile list; null deletes a trait",
+            "type": "object"
+          }
+        },
+        "required": [
+          "entity",
+          "id",
+          "traits"
+        ],
+        "type": "object"
+      },
+      "IdentifyOutputBody": {
+        "additionalProperties": false,
+        "properties": {
+          "$schema": {
+            "description": "A URL to the JSON Schema for this object.",
+            "examples": [
+              "https://example.com/schemas/IdentifyOutputBody.json"
+            ],
+            "format": "uri",
+            "readOnly": true,
+            "type": "string"
+          },
+          "dropped": {
+            "description": "Keys not in the entity's profile list; they were dropped and counted",
+            "items": {
+              "type": "string"
+            },
+            "type": [
+              "array",
+              "null"
+            ]
+          },
+          "profile": {
+            "$ref": "#/components/schemas/ActivityProfile"
+          }
+        },
+        "required": [
+          "profile",
+          "dropped"
+        ],
+        "type": "object"
+      },
       "IngestionStatusOutputBody": {
         "additionalProperties": false,
         "properties": {
@@ -4950,6 +6023,42 @@
         ],
         "type": "object"
       },
+      "OpsInputBody": {
+        "additionalProperties": false,
+        "properties": {
+          "$schema": {
+            "description": "A URL to the JSON Schema for this object.",
+            "examples": [
+              "https://example.com/schemas/OpsInputBody.json"
+            ],
+            "format": "uri",
+            "readOnly": true,
+            "type": "string"
+          },
+          "ops": {
+            "items": {
+              "$ref": "#/components/schemas/ActivityDraftOp"
+            },
+            "maxItems": 100,
+            "minItems": 1,
+            "type": [
+              "array",
+              "null"
+            ]
+          },
+          "version": {
+            "description": "The draft version you read; a mismatch returns 409 with the current draft",
+            "format": "int64",
+            "minimum": 1,
+            "type": "integer"
+          }
+        },
+        "required": [
+          "version",
+          "ops"
+        ],
+        "type": "object"
+      },
       "OrgDTO": {
         "additionalProperties": false,
         "properties": {
@@ -5440,6 +6549,34 @@
           "environmentId",
           "active",
           "createdAt"
+        ],
+        "type": "object"
+      },
+      "ReplaceInputBody": {
+        "additionalProperties": false,
+        "properties": {
+          "$schema": {
+            "description": "A URL to the JSON Schema for this object.",
+            "examples": [
+              "https://example.com/schemas/ReplaceInputBody.json"
+            ],
+            "format": "uri",
+            "readOnly": true,
+            "type": "string"
+          },
+          "spec": {
+            "$ref": "#/components/schemas/ActivityWorkspaceSpec"
+          },
+          "version": {
+            "description": "The draft version you edited",
+            "format": "int64",
+            "minimum": 1,
+            "type": "integer"
+          }
+        },
+        "required": [
+          "version",
+          "spec"
         ],
         "type": "object"
       },
@@ -6432,6 +7569,41 @@
         ],
         "type": "object"
       },
+      "ValidateOutputBody": {
+        "additionalProperties": false,
+        "properties": {
+          "$schema": {
+            "description": "A URL to the JSON Schema for this object.",
+            "examples": [
+              "https://example.com/schemas/ValidateOutputBody.json"
+            ],
+            "format": "uri",
+            "readOnly": true,
+            "type": "string"
+          },
+          "issues": {
+            "items": {
+              "$ref": "#/components/schemas/ActivityIssue"
+            },
+            "type": [
+              "array",
+              "null"
+            ]
+          },
+          "status": {
+            "enum": [
+              "valid",
+              "invalid"
+            ],
+            "type": "string"
+          }
+        },
+        "required": [
+          "status",
+          "issues"
+        ],
+        "type": "object"
+      },
       "VerifyResult": {
         "additionalProperties": false,
         "properties": {
@@ -6468,6 +7640,33 @@
         ],
         "type": "object"
       },
+      "ViewsOutputBody": {
+        "additionalProperties": false,
+        "properties": {
+          "$schema": {
+            "description": "A URL to the JSON Schema for this object.",
+            "examples": [
+              "https://example.com/schemas/ViewsOutputBody.json"
+            ],
+            "format": "uri",
+            "readOnly": true,
+            "type": "string"
+          },
+          "views": {
+            "items": {
+              "$ref": "#/components/schemas/ActivityViewResult"
+            },
+            "type": [
+              "array",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "views"
+        ],
+        "type": "object"
+      },
       "WorkspaceEntitiesOutputBody": {
         "additionalProperties": false,
         "properties": {
@@ -6479,6 +7678,16 @@
             "format": "uri",
             "readOnly": true,
             "type": "string"
+          },
+          "dropped": {
+            "description": "Preview only: undeclared attribute keys that were dropped",
+            "items": {
+              "type": "string"
+            },
+            "type": [
+              "array",
+              "null"
+            ]
           },
           "entities": {
             "items": {
@@ -6538,6 +7747,7 @@
             "type": "string"
           },
           "environment": {
+            "description": "Environment slug or id; defaults to each observation's environment",
             "type": "string"
           },
           "observations": {
@@ -6553,35 +7763,7 @@
           }
         },
         "required": [
-          "environment",
           "observations"
-        ],
-        "type": "object"
-      },
-      "WorkspaceIngestOutputBody": {
-        "additionalProperties": false,
-        "properties": {
-          "$schema": {
-            "description": "A URL to the JSON Schema for this object.",
-            "examples": [
-              "https://example.com/schemas/WorkspaceIngestOutputBody.json"
-            ],
-            "format": "uri",
-            "readOnly": true,
-            "type": "string"
-          },
-          "receipts": {
-            "items": {
-              "$ref": "#/components/schemas/ActivityReceipt"
-            },
-            "type": [
-              "array",
-              "null"
-            ]
-          }
-        },
-        "required": [
-          "receipts"
         ],
         "type": "object"
       },
@@ -6716,33 +7898,6 @@
         },
         "required": [
           "events"
-        ],
-        "type": "object"
-      },
-      "WorkspaceWidgetsOutputBody": {
-        "additionalProperties": false,
-        "properties": {
-          "$schema": {
-            "description": "A URL to the JSON Schema for this object.",
-            "examples": [
-              "https://example.com/schemas/WorkspaceWidgetsOutputBody.json"
-            ],
-            "format": "uri",
-            "readOnly": true,
-            "type": "string"
-          },
-          "series": {
-            "items": {
-              "$ref": "#/components/schemas/ActivityWidgetSeries"
-            },
-            "type": [
-              "array",
-              "null"
-            ]
-          }
-        },
-        "required": [
-          "series"
         ],
         "type": "object"
       }
@@ -11103,6 +12258,40 @@
         ]
       }
     },
+    "/mcp/connections": {
+      "get": {
+        "operationId": "mcp.connections",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ConnectionsOutputBody"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "summary": "List coding agents that connected over MCP, newest first",
+        "tags": [
+          "mcp"
+        ],
+        "x-axonpush-scopes": [
+          "observe:read"
+        ]
+      }
+    },
     "/organization": {
       "get": {
         "operationId": "organization.get",
@@ -11818,7 +13007,7 @@
             "description": "Error"
           }
         },
-        "summary": "Discover public and organization-private immutable business templates",
+        "summary": "Discover public and organization-private immutable workspace templates",
         "tags": [
           "templates"
         ],
@@ -12864,7 +14053,7 @@
             "description": "Error"
           }
         },
-        "summary": "Create an organization-owned workspace from a spec",
+        "summary": "Create a workspace for an application, from a full or blank spec",
         "tags": [
           "workspaces"
         ],
@@ -12908,7 +14097,7 @@
             "description": "Error"
           }
         },
-        "summary": "Preview a spec against synthetic metadata-only observations",
+        "summary": "Preview the entities a spec projects from sample observations; nothing is stored",
         "tags": [
           "workspaces"
         ],
@@ -12943,7 +14132,7 @@
             "description": "Error"
           }
         },
-        "summary": "Read the versioned declarative workspace JSON Schema",
+        "summary": "Read the workspace spec JSON Schema",
         "tags": [
           "workspaces"
         ],
@@ -12970,7 +14159,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/WorkspaceStatusOutputBody"
+                  "$ref": "#/components/schemas/ValidateOutputBody"
                 }
               }
             },
@@ -12987,7 +14176,7 @@
             "description": "Error"
           }
         },
-        "summary": "Validate a workspace spec without saving or executing it",
+        "summary": "Validate a workspace spec without saving it; returns every issue",
         "tags": [
           "workspaces"
         ],
@@ -13116,10 +14305,12 @@
             }
           },
           {
+            "description": "Entity type",
             "explode": false,
             "in": "query",
             "name": "entity",
             "schema": {
+              "description": "Entity type",
               "maxLength": 120,
               "type": "string"
             }
@@ -13134,37 +14325,45 @@
             }
           },
           {
+            "description": "type:id; entities that are, or link to, this entity. Timeline: observations that reference it",
+            "explode": false,
+            "in": "query",
+            "name": "ref",
+            "schema": {
+              "description": "type:id; entities that are, or link to, this entity. Timeline: observations that reference it",
+              "maxLength": 300,
+              "type": "string"
+            }
+          },
+          {
+            "description": "Filter by the actor_side role",
             "explode": false,
             "in": "query",
             "name": "side",
             "schema": {
+              "description": "Filter by the actor_side role",
               "maxLength": 60,
               "type": "string"
             }
           },
           {
+            "description": "Filter by the client role",
             "explode": false,
             "in": "query",
             "name": "client",
             "schema": {
+              "description": "Filter by the client role",
               "maxLength": 80,
               "type": "string"
             }
           },
           {
-            "explode": false,
-            "in": "query",
-            "name": "action",
-            "schema": {
-              "maxLength": 100,
-              "type": "string"
-            }
-          },
-          {
+            "description": "Filter by the outcome role",
             "explode": false,
             "in": "query",
             "name": "outcome",
             "schema": {
+              "description": "Filter by the outcome role",
               "maxLength": 60,
               "type": "string"
             }
@@ -13174,7 +14373,7 @@
             "in": "query",
             "name": "state",
             "schema": {
-              "maxLength": 60,
+              "maxLength": 120,
               "type": "string"
             }
           },
@@ -13191,19 +14390,12 @@
             }
           },
           {
+            "description": "Matches the entity id and non-personal text fields and profile traits",
             "explode": false,
             "in": "query",
             "name": "q",
             "schema": {
-              "maxLength": 160,
-              "type": "string"
-            }
-          },
-          {
-            "explode": false,
-            "in": "query",
-            "name": "agentId",
-            "schema": {
+              "description": "Matches the entity id and non-personal text fields and profile traits",
               "maxLength": 160,
               "type": "string"
             }
@@ -13252,72 +14444,12 @@
             "description": "Error"
           }
         },
-        "summary": "Read exact scoped business entities and concurrent operations",
+        "summary": "Read projected entities with their profiles; personal attributes are masked without profiles:read",
         "tags": [
           "activity"
         ],
         "x-axonpush-scopes": [
           "observe:read"
-        ]
-      }
-    },
-    "/workspaces/{workspaceId}/agents/{agentId}": {
-      "delete": {
-        "operationId": "activity.deleteAgent",
-        "parameters": [
-          {
-            "in": "path",
-            "name": "workspaceId",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "in": "path",
-            "name": "agentId",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "explode": false,
-            "in": "query",
-            "name": "environment",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/WorkspaceStatusOutputBody"
-                }
-              }
-            },
-            "description": "OK"
-          },
-          "default": {
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorModel"
-                }
-              }
-            },
-            "description": "Error"
-          }
-        },
-        "summary": "Delete agent evidence and install a replay tombstone",
-        "tags": [
-          "activity"
-        ],
-        "x-axonpush-scopes": [
-          "workspaces:manage"
         ]
       }
     },
@@ -13343,10 +14475,12 @@
             }
           },
           {
+            "description": "Entity type",
             "explode": false,
             "in": "query",
             "name": "entity",
             "schema": {
+              "description": "Entity type",
               "maxLength": 120,
               "type": "string"
             }
@@ -13361,37 +14495,45 @@
             }
           },
           {
+            "description": "type:id; entities that are, or link to, this entity. Timeline: observations that reference it",
+            "explode": false,
+            "in": "query",
+            "name": "ref",
+            "schema": {
+              "description": "type:id; entities that are, or link to, this entity. Timeline: observations that reference it",
+              "maxLength": 300,
+              "type": "string"
+            }
+          },
+          {
+            "description": "Filter by the actor_side role",
             "explode": false,
             "in": "query",
             "name": "side",
             "schema": {
+              "description": "Filter by the actor_side role",
               "maxLength": 60,
               "type": "string"
             }
           },
           {
+            "description": "Filter by the client role",
             "explode": false,
             "in": "query",
             "name": "client",
             "schema": {
+              "description": "Filter by the client role",
               "maxLength": 80,
               "type": "string"
             }
           },
           {
-            "explode": false,
-            "in": "query",
-            "name": "action",
-            "schema": {
-              "maxLength": 100,
-              "type": "string"
-            }
-          },
-          {
+            "description": "Filter by the outcome role",
             "explode": false,
             "in": "query",
             "name": "outcome",
             "schema": {
+              "description": "Filter by the outcome role",
               "maxLength": 60,
               "type": "string"
             }
@@ -13401,7 +14543,7 @@
             "in": "query",
             "name": "state",
             "schema": {
-              "maxLength": 60,
+              "maxLength": 120,
               "type": "string"
             }
           },
@@ -13418,19 +14560,12 @@
             }
           },
           {
+            "description": "Matches the entity id and non-personal text fields and profile traits",
             "explode": false,
             "in": "query",
             "name": "q",
             "schema": {
-              "maxLength": 160,
-              "type": "string"
-            }
-          },
-          {
-            "explode": false,
-            "in": "query",
-            "name": "agentId",
-            "schema": {
+              "description": "Matches the entity id and non-personal text fields and profile traits",
               "maxLength": 160,
               "type": "string"
             }
@@ -13479,12 +14614,490 @@
             "description": "Error"
           }
         },
-        "summary": "Distinct lifecycle milestones and client activation; snapshots never count as joins",
+        "summary": "Distinct funnel milestones, funnel splits and client breakdowns; snapshots never count",
         "tags": [
           "activity"
         ],
         "x-axonpush-scopes": [
           "observe:read"
+        ]
+      }
+    },
+    "/workspaces/{workspaceId}/catalog": {
+      "get": {
+        "description": "Use it to find events no entity consumes yet and attributes your app sends that the dictionary does not declare.",
+        "operationId": "workspaces.catalog",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "workspaceId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "Defaults to every environment the caller may read",
+            "explode": false,
+            "in": "query",
+            "name": "environment",
+            "schema": {
+              "description": "Defaults to every environment the caller may read",
+              "maxLength": 160,
+              "type": "string"
+            }
+          },
+          {
+            "explode": false,
+            "in": "query",
+            "name": "window",
+            "schema": {
+              "default": "24h",
+              "enum": [
+                "1h",
+                "24h",
+                "7d",
+                "30d"
+              ],
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ActivityCatalog"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "summary": "Events actually received: counts, refs and attribute keys seen (declared and undeclared) and which entities consume each event",
+        "tags": [
+          "workspaces"
+        ],
+        "x-axonpush-scopes": [
+          "observe:read"
+        ]
+      }
+    },
+    "/workspaces/{workspaceId}/describe": {
+      "get": {
+        "description": "Call this first when you are setting up or changing what axonpush stores for an application.\n\naxonpush adapts per installation. A workspace spec declares, as data, what this application stores:\n- attributes: the data dictionary. Every attribute key the app may send, with a type, an optional role and a personal flag. Undeclared keys are dropped at ingest and counted.\n- entities: the things being tracked (for example agent, ticket, order). Each lists the attribute keys it stores (fields), the keys identify() may set (profile), terminal states, and the events that update it.\n- funnels, views and alerts: what the dashboard shows and what pages people.\n\nTo change the spec, never rewrite it blindly: read the shared draft (workspaces.draft), send typed edits with workspaces.applyDraftOps using the draft's version, check workspaces.draftChanges, and ask the user to review before workspaces.activateDraft. Use workspaces.catalog to see which events and attributes the app really sends.\n\nThe response contains a plain-language summary of this workspace, the full format reference, the role list and the op catalogue with examples.",
+        "operationId": "workspaces.describe",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "workspaceId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ActivityDescription"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "summary": "Start here: explains this workspace in plain language plus the spec format, roles and draft ops an agent uses to change it",
+        "tags": [
+          "workspaces"
+        ],
+        "x-axonpush-scopes": [
+          "observe:read"
+        ]
+      }
+    },
+    "/workspaces/{workspaceId}/draft": {
+      "delete": {
+        "operationId": "workspaces.discardDraft",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "workspaceId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WorkspaceStatusOutputBody"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "summary": "Discard the shared draft",
+        "tags": [
+          "workspaces"
+        ],
+        "x-axonpush-scopes": [
+          "workspaces:manage"
+        ]
+      },
+      "get": {
+        "description": "The draft is shared by the dashboard and coding agents. Edit it with workspaces.applyDraftOps, review with workspaces.draftChanges and activate with workspaces.activateDraft. Call workspaces.describe first to learn the format.",
+        "operationId": "workspaces.draft",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "workspaceId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ActivityDraftView"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "summary": "Read the shared draft of the workspace spec (created from the active spec on first read)",
+        "tags": [
+          "workspaces"
+        ],
+        "x-axonpush-scopes": [
+          "observe:read"
+        ]
+      },
+      "put": {
+        "operationId": "workspaces.replaceDraft",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "workspaceId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReplaceInputBody"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ActivityDraftView"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "summary": "Replace the whole draft spec (JSON editor); 409 with the current draft on a version mismatch",
+        "tags": [
+          "workspaces"
+        ],
+        "x-axonpush-scopes": [
+          "workspaces:manage"
+        ]
+      }
+    },
+    "/workspaces/{workspaceId}/draft/activate": {
+      "post": {
+        "description": "Fails with 422 listing the issues when the draft has validation errors. Projections rebuild in the background; the workspace's requestedRevision shows progress until it becomes the activeRevision.",
+        "operationId": "workspaces.activateDraft",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "workspaceId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ActivateDraftInputBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ActivateDraftOutputBody"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "summary": "Save the draft as a revision and rebuild projections with it; the draft is then cleared",
+        "tags": [
+          "workspaces"
+        ],
+        "x-axonpush-scopes": [
+          "workspaces:manage"
+        ]
+      }
+    },
+    "/workspaces/{workspaceId}/draft/changes": {
+      "get": {
+        "operationId": "workspaces.draftChanges",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "workspaceId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ChangesOutputBody"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "summary": "List, in plain language, what the draft changes against the current spec",
+        "tags": [
+          "workspaces"
+        ],
+        "x-axonpush-scopes": [
+          "observe:read"
+        ]
+      }
+    },
+    "/workspaces/{workspaceId}/draft/ops": {
+      "post": {
+        "description": "Ops apply in order and all-or-nothing. The result is validated and returned with its issues and version+1. Ops: workspace.update; attribute.add|update|remove (the data dictionary); entity.add|update|remove; entity.field.add|remove and entity.profile.add|remove (key = attribute); event.add|update|remove (type = entity, match = rule); funnel.*, alert.* (name) and view.* (name = view id). Call workspaces.describe for the full format and examples. On 409, re-read the draft from the error body and reapply.",
+        "operationId": "workspaces.applyDraftOps",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "workspaceId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OpsInputBody"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ActivityDraftView"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "summary": "Apply typed edits to the shared draft atomically",
+        "tags": [
+          "workspaces"
+        ],
+        "x-axonpush-scopes": [
+          "workspaces:manage"
+        ]
+      }
+    },
+    "/workspaces/{workspaceId}/entities/{entityType}/{entityId}": {
+      "delete": {
+        "operationId": "activity.deleteEntity",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "workspaceId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "entityType",
+            "required": true,
+            "schema": {
+              "maxLength": 120,
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "entityId",
+            "required": true,
+            "schema": {
+              "maxLength": 160,
+              "type": "string"
+            }
+          },
+          {
+            "explode": false,
+            "in": "query",
+            "name": "environment",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WorkspaceStatusOutputBody"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "summary": "Erase an entity, everything linked to it and its profile, and install a replay tombstone",
+        "tags": [
+          "activity"
+        ],
+        "x-axonpush-scopes": [
+          "workspaces:manage"
         ]
       }
     },
@@ -13510,10 +15123,12 @@
             }
           },
           {
+            "description": "Entity type",
             "explode": false,
             "in": "query",
             "name": "entity",
             "schema": {
+              "description": "Entity type",
               "maxLength": 120,
               "type": "string"
             }
@@ -13528,37 +15143,45 @@
             }
           },
           {
+            "description": "type:id; entities that are, or link to, this entity. Timeline: observations that reference it",
+            "explode": false,
+            "in": "query",
+            "name": "ref",
+            "schema": {
+              "description": "type:id; entities that are, or link to, this entity. Timeline: observations that reference it",
+              "maxLength": 300,
+              "type": "string"
+            }
+          },
+          {
+            "description": "Filter by the actor_side role",
             "explode": false,
             "in": "query",
             "name": "side",
             "schema": {
+              "description": "Filter by the actor_side role",
               "maxLength": 60,
               "type": "string"
             }
           },
           {
+            "description": "Filter by the client role",
             "explode": false,
             "in": "query",
             "name": "client",
             "schema": {
+              "description": "Filter by the client role",
               "maxLength": 80,
               "type": "string"
             }
           },
           {
-            "explode": false,
-            "in": "query",
-            "name": "action",
-            "schema": {
-              "maxLength": 100,
-              "type": "string"
-            }
-          },
-          {
+            "description": "Filter by the outcome role",
             "explode": false,
             "in": "query",
             "name": "outcome",
             "schema": {
+              "description": "Filter by the outcome role",
               "maxLength": 60,
               "type": "string"
             }
@@ -13568,7 +15191,7 @@
             "in": "query",
             "name": "state",
             "schema": {
-              "maxLength": 60,
+              "maxLength": 120,
               "type": "string"
             }
           },
@@ -13585,19 +15208,12 @@
             }
           },
           {
+            "description": "Matches the entity id and non-personal text fields and profile traits",
             "explode": false,
             "in": "query",
             "name": "q",
             "schema": {
-              "maxLength": 160,
-              "type": "string"
-            }
-          },
-          {
-            "explode": false,
-            "in": "query",
-            "name": "agentId",
-            "schema": {
+              "description": "Matches the entity id and non-personal text fields and profile traits",
               "maxLength": 160,
               "type": "string"
             }
@@ -13629,8 +15245,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "additionalProperties": {},
-                  "type": "object"
+                  "$ref": "#/components/schemas/ActivityHealth"
                 }
               }
             },
@@ -13647,12 +15262,67 @@
             "description": "Error"
           }
         },
-        "summary": "Read independent storage and projection freshness",
+        "summary": "Read storage and projection freshness, source heartbeat and undeclared attributes",
         "tags": [
           "activity"
         ],
         "x-axonpush-scopes": [
           "observe:read"
+        ]
+      }
+    },
+    "/workspaces/{workspaceId}/identify": {
+      "post": {
+        "description": "Traits are restricted to the keys the entity lists under profile in the active spec and are validated by their dictionary type. Personal traits are masked on read unless the reader is an owner/admin or holds profiles:read. Use it as group() by identifying whatever entity represents organisations.",
+        "operationId": "activity.identify",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "workspaceId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/IdentifyInputBody"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IdentifyOutputBody"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "summary": "Attach human-readable profile traits to an entity (merge; null deletes)",
+        "tags": [
+          "activity"
+        ],
+        "x-axonpush-scopes": [
+          "events:publish"
         ]
       }
     },
@@ -13678,10 +15348,12 @@
             }
           },
           {
+            "description": "Entity type",
             "explode": false,
             "in": "query",
             "name": "entity",
             "schema": {
+              "description": "Entity type",
               "maxLength": 120,
               "type": "string"
             }
@@ -13696,37 +15368,45 @@
             }
           },
           {
+            "description": "type:id; entities that are, or link to, this entity. Timeline: observations that reference it",
+            "explode": false,
+            "in": "query",
+            "name": "ref",
+            "schema": {
+              "description": "type:id; entities that are, or link to, this entity. Timeline: observations that reference it",
+              "maxLength": 300,
+              "type": "string"
+            }
+          },
+          {
+            "description": "Filter by the actor_side role",
             "explode": false,
             "in": "query",
             "name": "side",
             "schema": {
+              "description": "Filter by the actor_side role",
               "maxLength": 60,
               "type": "string"
             }
           },
           {
+            "description": "Filter by the client role",
             "explode": false,
             "in": "query",
             "name": "client",
             "schema": {
+              "description": "Filter by the client role",
               "maxLength": 80,
               "type": "string"
             }
           },
           {
-            "explode": false,
-            "in": "query",
-            "name": "action",
-            "schema": {
-              "maxLength": 100,
-              "type": "string"
-            }
-          },
-          {
+            "description": "Filter by the outcome role",
             "explode": false,
             "in": "query",
             "name": "outcome",
             "schema": {
+              "description": "Filter by the outcome role",
               "maxLength": 60,
               "type": "string"
             }
@@ -13736,7 +15416,7 @@
             "in": "query",
             "name": "state",
             "schema": {
-              "maxLength": 60,
+              "maxLength": 120,
               "type": "string"
             }
           },
@@ -13753,19 +15433,12 @@
             }
           },
           {
+            "description": "Matches the entity id and non-personal text fields and profile traits",
             "explode": false,
             "in": "query",
             "name": "q",
             "schema": {
-              "maxLength": 160,
-              "type": "string"
-            }
-          },
-          {
-            "explode": false,
-            "in": "query",
-            "name": "agentId",
-            "schema": {
+              "description": "Matches the entity id and non-personal text fields and profile traits",
               "maxLength": 160,
               "type": "string"
             }
@@ -13851,7 +15524,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/WorkspaceIngestOutputBody"
+                  "$ref": "#/components/schemas/ActivityIngestReport"
                 }
               }
             },
@@ -13868,7 +15541,7 @@
             "description": "Error"
           }
         },
-        "summary": "Store an idempotent metadata-only batch; projection occurs independently",
+        "summary": "Store an idempotent metadata-only batch; undeclared attributes are dropped and counted",
         "tags": [
           "ingest"
         ],
@@ -14025,12 +15698,154 @@
             "description": "Error"
           }
         },
-        "summary": "Save a validated immutable draft revision",
+        "summary": "Save a validated immutable revision",
         "tags": [
           "workspaces"
         ],
         "x-axonpush-scopes": [
           "workspaces:manage"
+        ]
+      }
+    },
+    "/workspaces/{workspaceId}/series": {
+      "get": {
+        "operationId": "activity.series",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "workspaceId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "explode": false,
+            "in": "query",
+            "name": "environment",
+            "schema": {
+              "maxLength": 160,
+              "type": "string"
+            }
+          },
+          {
+            "description": "outcomes: observations by the outcome role; funnel: distinct entities by furthest stage; lag: source-to-view percentiles",
+            "explode": false,
+            "in": "query",
+            "name": "metric",
+            "schema": {
+              "default": "outcomes",
+              "description": "outcomes: observations by the outcome role; funnel: distinct entities by furthest stage; lag: source-to-view percentiles",
+              "enum": [
+                "outcomes",
+                "funnel",
+                "lag"
+              ],
+              "type": "string"
+            }
+          },
+          {
+            "explode": false,
+            "in": "query",
+            "name": "window",
+            "schema": {
+              "default": "24h",
+              "enum": [
+                "1h",
+                "24h",
+                "7d"
+              ],
+              "type": "string"
+            }
+          },
+          {
+            "description": "Defaults per window: 1h→5m, 24h→1h, 7d→1h. Allowed: 1h:5m, 24h:5m|1h, 7d:1h|1d",
+            "explode": false,
+            "in": "query",
+            "name": "bucket",
+            "schema": {
+              "description": "Defaults per window: 1h→5m, 24h→1h, 7d→1h. Allowed: 1h:5m, 24h:5m|1h, 7d:1h|1d",
+              "enum": [
+                "5m",
+                "1h",
+                "1d"
+              ],
+              "type": "string"
+            }
+          },
+          {
+            "description": "outcomes: only events that update this entity",
+            "explode": false,
+            "in": "query",
+            "name": "entity",
+            "schema": {
+              "description": "outcomes: only events that update this entity",
+              "maxLength": 120,
+              "type": "string"
+            }
+          },
+          {
+            "description": "funnel: funnel name, default the first declared",
+            "explode": false,
+            "in": "query",
+            "name": "funnel",
+            "schema": {
+              "description": "funnel: funnel name, default the first declared",
+              "maxLength": 120,
+              "type": "string"
+            }
+          },
+          {
+            "description": "Filter by the actor_side role",
+            "explode": false,
+            "in": "query",
+            "name": "side",
+            "schema": {
+              "description": "Filter by the actor_side role",
+              "maxLength": 60,
+              "type": "string"
+            }
+          },
+          {
+            "description": "Filter by the client role",
+            "explode": false,
+            "in": "query",
+            "name": "client",
+            "schema": {
+              "description": "Filter by the client role",
+              "maxLength": 80,
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ActivityWorkspaceSeries"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "summary": "Zero-filled time series: observations by the outcome role, distinct funnel entities by furthest stage, or source-to-view lag",
+        "tags": [
+          "activity"
+        ],
+        "x-axonpush-scopes": [
+          "observe:read"
         ]
       }
     },
@@ -14056,10 +15871,12 @@
             }
           },
           {
+            "description": "Entity type",
             "explode": false,
             "in": "query",
             "name": "entity",
             "schema": {
+              "description": "Entity type",
               "maxLength": 120,
               "type": "string"
             }
@@ -14074,37 +15891,45 @@
             }
           },
           {
+            "description": "type:id; entities that are, or link to, this entity. Timeline: observations that reference it",
+            "explode": false,
+            "in": "query",
+            "name": "ref",
+            "schema": {
+              "description": "type:id; entities that are, or link to, this entity. Timeline: observations that reference it",
+              "maxLength": 300,
+              "type": "string"
+            }
+          },
+          {
+            "description": "Filter by the actor_side role",
             "explode": false,
             "in": "query",
             "name": "side",
             "schema": {
+              "description": "Filter by the actor_side role",
               "maxLength": 60,
               "type": "string"
             }
           },
           {
+            "description": "Filter by the client role",
             "explode": false,
             "in": "query",
             "name": "client",
             "schema": {
+              "description": "Filter by the client role",
               "maxLength": 80,
               "type": "string"
             }
           },
           {
-            "explode": false,
-            "in": "query",
-            "name": "action",
-            "schema": {
-              "maxLength": 100,
-              "type": "string"
-            }
-          },
-          {
+            "description": "Filter by the outcome role",
             "explode": false,
             "in": "query",
             "name": "outcome",
             "schema": {
+              "description": "Filter by the outcome role",
               "maxLength": 60,
               "type": "string"
             }
@@ -14114,7 +15939,7 @@
             "in": "query",
             "name": "state",
             "schema": {
-              "maxLength": 60,
+              "maxLength": 120,
               "type": "string"
             }
           },
@@ -14131,19 +15956,12 @@
             }
           },
           {
+            "description": "Matches the entity id and non-personal text fields and profile traits",
             "explode": false,
             "in": "query",
             "name": "q",
             "schema": {
-              "maxLength": 160,
-              "type": "string"
-            }
-          },
-          {
-            "explode": false,
-            "in": "query",
-            "name": "agentId",
-            "schema": {
+              "description": "Matches the entity id and non-personal text fields and profile traits",
               "maxLength": 160,
               "type": "string"
             }
@@ -14175,8 +15993,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "additionalProperties": {},
-                  "type": "object"
+                  "$ref": "#/components/schemas/ActivitySummary"
                 }
               }
             },
@@ -14193,7 +16010,7 @@
             "description": "Error"
           }
         },
-        "summary": "Exact distinct entity counts with a visible 15 minute activity window",
+        "summary": "Exact entity counts per state with a 15 minute activity window",
         "tags": [
           "activity"
         ],
@@ -14224,10 +16041,12 @@
             }
           },
           {
+            "description": "Entity type",
             "explode": false,
             "in": "query",
             "name": "entity",
             "schema": {
+              "description": "Entity type",
               "maxLength": 120,
               "type": "string"
             }
@@ -14242,37 +16061,45 @@
             }
           },
           {
+            "description": "type:id; entities that are, or link to, this entity. Timeline: observations that reference it",
+            "explode": false,
+            "in": "query",
+            "name": "ref",
+            "schema": {
+              "description": "type:id; entities that are, or link to, this entity. Timeline: observations that reference it",
+              "maxLength": 300,
+              "type": "string"
+            }
+          },
+          {
+            "description": "Filter by the actor_side role",
             "explode": false,
             "in": "query",
             "name": "side",
             "schema": {
+              "description": "Filter by the actor_side role",
               "maxLength": 60,
               "type": "string"
             }
           },
           {
+            "description": "Filter by the client role",
             "explode": false,
             "in": "query",
             "name": "client",
             "schema": {
+              "description": "Filter by the client role",
               "maxLength": 80,
               "type": "string"
             }
           },
           {
-            "explode": false,
-            "in": "query",
-            "name": "action",
-            "schema": {
-              "maxLength": 100,
-              "type": "string"
-            }
-          },
-          {
+            "description": "Filter by the outcome role",
             "explode": false,
             "in": "query",
             "name": "outcome",
             "schema": {
+              "description": "Filter by the outcome role",
               "maxLength": 60,
               "type": "string"
             }
@@ -14282,7 +16109,7 @@
             "in": "query",
             "name": "state",
             "schema": {
-              "maxLength": 60,
+              "maxLength": 120,
               "type": "string"
             }
           },
@@ -14299,19 +16126,12 @@
             }
           },
           {
+            "description": "Matches the entity id and non-personal text fields and profile traits",
             "explode": false,
             "in": "query",
             "name": "q",
             "schema": {
-              "maxLength": 160,
-              "type": "string"
-            }
-          },
-          {
-            "explode": false,
-            "in": "query",
-            "name": "agentId",
-            "schema": {
+              "description": "Matches the entity id and non-personal text fields and profile traits",
               "maxLength": 160,
               "type": "string"
             }
@@ -14360,7 +16180,7 @@
             "description": "Error"
           }
         },
-        "summary": "Follow chronological source evidence across traces",
+        "summary": "Follow chronological source evidence; filter with ref=type:id",
         "tags": [
           "activity"
         ],
@@ -14369,9 +16189,9 @@
         ]
       }
     },
-    "/workspaces/{workspaceId}/widgets": {
+    "/workspaces/{workspaceId}/views": {
       "get": {
-        "operationId": "activity.widgets",
+        "operationId": "activity.views",
         "parameters": [
           {
             "in": "path",
@@ -14391,10 +16211,12 @@
             }
           },
           {
+            "description": "Entity type",
             "explode": false,
             "in": "query",
             "name": "entity",
             "schema": {
+              "description": "Entity type",
               "maxLength": 120,
               "type": "string"
             }
@@ -14409,37 +16231,45 @@
             }
           },
           {
+            "description": "type:id; entities that are, or link to, this entity. Timeline: observations that reference it",
+            "explode": false,
+            "in": "query",
+            "name": "ref",
+            "schema": {
+              "description": "type:id; entities that are, or link to, this entity. Timeline: observations that reference it",
+              "maxLength": 300,
+              "type": "string"
+            }
+          },
+          {
+            "description": "Filter by the actor_side role",
             "explode": false,
             "in": "query",
             "name": "side",
             "schema": {
+              "description": "Filter by the actor_side role",
               "maxLength": 60,
               "type": "string"
             }
           },
           {
+            "description": "Filter by the client role",
             "explode": false,
             "in": "query",
             "name": "client",
             "schema": {
+              "description": "Filter by the client role",
               "maxLength": 80,
               "type": "string"
             }
           },
           {
-            "explode": false,
-            "in": "query",
-            "name": "action",
-            "schema": {
-              "maxLength": 100,
-              "type": "string"
-            }
-          },
-          {
+            "description": "Filter by the outcome role",
             "explode": false,
             "in": "query",
             "name": "outcome",
             "schema": {
+              "description": "Filter by the outcome role",
               "maxLength": 60,
               "type": "string"
             }
@@ -14449,7 +16279,7 @@
             "in": "query",
             "name": "state",
             "schema": {
-              "maxLength": 60,
+              "maxLength": 120,
               "type": "string"
             }
           },
@@ -14466,19 +16296,12 @@
             }
           },
           {
+            "description": "Matches the entity id and non-personal text fields and profile traits",
             "explode": false,
             "in": "query",
             "name": "q",
             "schema": {
-              "maxLength": 160,
-              "type": "string"
-            }
-          },
-          {
-            "explode": false,
-            "in": "query",
-            "name": "agentId",
-            "schema": {
+              "description": "Matches the entity id and non-personal text fields and profile traits",
               "maxLength": 160,
               "type": "string"
             }
@@ -14510,7 +16333,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/WorkspaceWidgetsOutputBody"
+                  "$ref": "#/components/schemas/ViewsOutputBody"
                 }
               }
             },
@@ -14527,7 +16350,7 @@
             "description": "Error"
           }
         },
-        "summary": "Aggregate configured business widgets over the active entity revision",
+        "summary": "Aggregate the spec's declared views (KPIs, breakdowns, latency, funnels) over the active revision",
         "tags": [
           "activity"
         ],

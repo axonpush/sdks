@@ -16,22 +16,26 @@ class ActivityBreakdown:
     """
     Attributes:
         active15m (int):
-        agents (int):
         client (str):
+        count (int):
+        entity (str):
         side (str):
     """
 
     active15m: int
-    agents: int
     client: str
+    count: int
+    entity: str
     side: str
 
     def to_dict(self) -> dict[str, Any]:
         active15m = self.active15m
 
-        agents = self.agents
-
         client = self.client
+
+        count = self.count
+
+        entity = self.entity
 
         side = self.side
 
@@ -40,8 +44,9 @@ class ActivityBreakdown:
         field_dict.update(
             {
                 "active15m": active15m,
-                "agents": agents,
                 "client": client,
+                "count": count,
+                "entity": entity,
                 "side": side,
             }
         )
@@ -53,16 +58,19 @@ class ActivityBreakdown:
         d = dict(src_dict)
         active15m = d.pop("active15m")
 
-        agents = d.pop("agents")
-
         client = d.pop("client")
+
+        count = d.pop("count")
+
+        entity = d.pop("entity")
 
         side = d.pop("side")
 
         activity_breakdown = cls(
             active15m=active15m,
-            agents=agents,
             client=client,
+            count=count,
+            entity=entity,
             side=side,
         )
 

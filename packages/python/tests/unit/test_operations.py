@@ -61,11 +61,10 @@ def test_retry_preserves_identity_occurrence_and_projection_receipts() -> None:
         sent = json.loads(accepted.calls[0].request.content)["observations"][0]
         assert sent["source_event_id"] == FIXTURE["source_event_id"]
         assert sent["occurred_at"] == "2026-10-03T00:00:00+00:00"
-        assert sent["actor"]["related_agent_ids"] == FIXTURE["actor"]["related_agent_ids"]
-        assert sent["client"]["confidence"] == "self_reported"
-        assert sent["client"]["conflict"] is True
-        assert sent["client"]["evidence"] == FIXTURE["client"]["evidence"]
-        assert sent["correlation"] == FIXTURE["correlation"]
+        assert sent["refs"] == FIXTURE["refs"]
+        assert sent["attributes"] == FIXTURE["attributes"]
+        assert sent["source"] == FIXTURE["source"]
+        assert sent["trace_id"] == FIXTURE["trace_id"]
         assert accepted.calls[0].request.headers["x-axonpush-environment"] == "dev"
         assert (
             sdk.observations.receipt(
@@ -105,14 +104,16 @@ async def test_async_exact_lookup_keeps_pagination_and_scope() -> None:
             result = await sdk.activity.entities(
                 "synthetic-workspace",
                 {
-                    "agent_id": "synthetic-candidate-1",
+                    "entity": "ticket",
+                    "entity_id": "synthetic-ticket-1",
                     "environment": "dev",
                     "limit": 2,
                     "cursor": "previous-agent",
                 },
             )
         assert result.next_cursor == "next-agent"
-        assert route.calls[0].request.url.params["agentId"] == "synthetic-candidate-1"
+        assert route.calls[0].request.url.params["entity"] == "ticket"
+        assert route.calls[0].request.url.params["entityId"] == "synthetic-ticket-1"
         assert route.calls[0].request.url.params["limit"] == "2"
         assert route.calls[0].request.url.params["cursor"] == "previous-agent"
 

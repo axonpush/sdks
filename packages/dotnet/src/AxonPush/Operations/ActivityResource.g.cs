@@ -11,152 +11,167 @@ public sealed class ActivityResource
     private readonly AxonPushTransport _transport;
     internal ActivityResource(AxonPushTransport transport) => _transport = transport;
 
-    /// <summary>Read exact scoped business entities and concurrent operations.</summary>
-    public Task<WorkspaceEntitiesOutputBody?> EntitiesAsync(string workspaceId, string? environment = null, string? entity = null, string? entityId = null, string? side = null, string? client = null, string? action = null, string? outcome = null, string? state = null, string? freshness = null, string? q = null, string? agentId = null, string? cursor = null, long? limit = null, CancellationToken cancellationToken = default)
+    /// <summary>Read projected entities with their profiles; personal attributes are masked without profiles:read.</summary>
+    public Task<WorkspaceEntitiesOutputBody?> EntitiesAsync(string workspaceId, string? environment = null, string? entity = null, string? entityId = null, string? @ref = null, string? side = null, string? client = null, string? outcome = null, string? state = null, string? freshness = null, string? q = null, string? cursor = null, long? limit = null, CancellationToken cancellationToken = default)
     {
         var path = $"workspaces/{Uri.EscapeDataString(workspaceId)}/activity";
         path = AddQuery(path, "environment", environment);
         path = AddQuery(path, "entity", entity);
         path = AddQuery(path, "entityId", entityId);
+        path = AddQuery(path, "ref", @ref);
         path = AddQuery(path, "side", side);
         path = AddQuery(path, "client", client);
-        path = AddQuery(path, "action", action);
         path = AddQuery(path, "outcome", outcome);
         path = AddQuery(path, "state", state);
         path = AddQuery(path, "freshness", freshness);
         path = AddQuery(path, "q", q);
-        path = AddQuery(path, "agentId", agentId);
         path = AddQuery(path, "cursor", cursor);
         path = AddQuery(path, "limit", limit);
         return _transport.SendAsync<WorkspaceEntitiesOutputBody>(HttpMethod.Get, path, null, cancellationToken);
     }
 
-    /// <summary>Delete agent evidence and install a replay tombstone.</summary>
-    public Task<WorkspaceStatusOutputBody?> DeleteAgentAsync(string workspaceId, string agentId, string? environment = null, CancellationToken cancellationToken = default)
-    {
-        var path = $"workspaces/{Uri.EscapeDataString(workspaceId)}/agents/{Uri.EscapeDataString(agentId)}";
-        path = AddQuery(path, "environment", environment);
-        return _transport.SendAsync<WorkspaceStatusOutputBody>(HttpMethod.Delete, path, null, cancellationToken);
-    }
-
-    /// <summary>Distinct lifecycle milestones and client activation; snapshots never count as joins.</summary>
-    public Task<ActivityAnalytics?> AnalyticsAsync(string workspaceId, string? environment = null, string? entity = null, string? entityId = null, string? side = null, string? client = null, string? action = null, string? outcome = null, string? state = null, string? freshness = null, string? q = null, string? agentId = null, string? cursor = null, long? limit = null, CancellationToken cancellationToken = default)
+    /// <summary>Distinct funnel milestones, funnel splits and client breakdowns; snapshots never count.</summary>
+    public Task<ActivityAnalytics?> AnalyticsAsync(string workspaceId, string? environment = null, string? entity = null, string? entityId = null, string? @ref = null, string? side = null, string? client = null, string? outcome = null, string? state = null, string? freshness = null, string? q = null, string? cursor = null, long? limit = null, CancellationToken cancellationToken = default)
     {
         var path = $"workspaces/{Uri.EscapeDataString(workspaceId)}/analytics";
         path = AddQuery(path, "environment", environment);
         path = AddQuery(path, "entity", entity);
         path = AddQuery(path, "entityId", entityId);
+        path = AddQuery(path, "ref", @ref);
         path = AddQuery(path, "side", side);
         path = AddQuery(path, "client", client);
-        path = AddQuery(path, "action", action);
         path = AddQuery(path, "outcome", outcome);
         path = AddQuery(path, "state", state);
         path = AddQuery(path, "freshness", freshness);
         path = AddQuery(path, "q", q);
-        path = AddQuery(path, "agentId", agentId);
         path = AddQuery(path, "cursor", cursor);
         path = AddQuery(path, "limit", limit);
         return _transport.SendAsync<ActivityAnalytics>(HttpMethod.Get, path, null, cancellationToken);
     }
 
-    /// <summary>Read independent storage and projection freshness.</summary>
-    public Task<object?> HealthAsync(string workspaceId, string? environment = null, string? entity = null, string? entityId = null, string? side = null, string? client = null, string? action = null, string? outcome = null, string? state = null, string? freshness = null, string? q = null, string? agentId = null, string? cursor = null, long? limit = null, CancellationToken cancellationToken = default)
+    /// <summary>Erase an entity, everything linked to it and its profile, and install a replay tombstone.</summary>
+    public Task<WorkspaceStatusOutputBody?> DeleteEntityAsync(string workspaceId, string entityType, string entityId, string? environment = null, CancellationToken cancellationToken = default)
+    {
+        var path = $"workspaces/{Uri.EscapeDataString(workspaceId)}/entities/{Uri.EscapeDataString(entityType)}/{Uri.EscapeDataString(entityId)}";
+        path = AddQuery(path, "environment", environment);
+        return _transport.SendAsync<WorkspaceStatusOutputBody>(HttpMethod.Delete, path, null, cancellationToken);
+    }
+
+    /// <summary>Read storage and projection freshness, source heartbeat and undeclared attributes.</summary>
+    public Task<ActivityHealth?> HealthAsync(string workspaceId, string? environment = null, string? entity = null, string? entityId = null, string? @ref = null, string? side = null, string? client = null, string? outcome = null, string? state = null, string? freshness = null, string? q = null, string? cursor = null, long? limit = null, CancellationToken cancellationToken = default)
     {
         var path = $"workspaces/{Uri.EscapeDataString(workspaceId)}/health";
         path = AddQuery(path, "environment", environment);
         path = AddQuery(path, "entity", entity);
         path = AddQuery(path, "entityId", entityId);
+        path = AddQuery(path, "ref", @ref);
         path = AddQuery(path, "side", side);
         path = AddQuery(path, "client", client);
-        path = AddQuery(path, "action", action);
         path = AddQuery(path, "outcome", outcome);
         path = AddQuery(path, "state", state);
         path = AddQuery(path, "freshness", freshness);
         path = AddQuery(path, "q", q);
-        path = AddQuery(path, "agentId", agentId);
         path = AddQuery(path, "cursor", cursor);
         path = AddQuery(path, "limit", limit);
-        return _transport.SendAsync<object>(HttpMethod.Get, path, null, cancellationToken);
+        return _transport.SendAsync<ActivityHealth>(HttpMethod.Get, path, null, cancellationToken);
+    }
+
+    /// <summary>Attach human-readable profile traits to an entity (merge; null deletes).</summary>
+    public Task<IdentifyOutputBody?> IdentifyAsync(string workspaceId, IdentifyInputBody body, CancellationToken cancellationToken = default)
+    {
+        var path = $"workspaces/{Uri.EscapeDataString(workspaceId)}/identify";
+        return _transport.SendAsync<IdentifyOutputBody>(HttpMethod.Post, path, body, cancellationToken);
     }
 
     /// <summary>Read lifecycle incidents and recovery without duplicate notifications.</summary>
-    public Task<WorkspaceIncidentsOutputBody?> IncidentsAsync(string workspaceId, string? environment = null, string? entity = null, string? entityId = null, string? side = null, string? client = null, string? action = null, string? outcome = null, string? state = null, string? freshness = null, string? q = null, string? agentId = null, string? cursor = null, long? limit = null, CancellationToken cancellationToken = default)
+    public Task<WorkspaceIncidentsOutputBody?> IncidentsAsync(string workspaceId, string? environment = null, string? entity = null, string? entityId = null, string? @ref = null, string? side = null, string? client = null, string? outcome = null, string? state = null, string? freshness = null, string? q = null, string? cursor = null, long? limit = null, CancellationToken cancellationToken = default)
     {
         var path = $"workspaces/{Uri.EscapeDataString(workspaceId)}/incidents";
         path = AddQuery(path, "environment", environment);
         path = AddQuery(path, "entity", entity);
         path = AddQuery(path, "entityId", entityId);
+        path = AddQuery(path, "ref", @ref);
         path = AddQuery(path, "side", side);
         path = AddQuery(path, "client", client);
-        path = AddQuery(path, "action", action);
         path = AddQuery(path, "outcome", outcome);
         path = AddQuery(path, "state", state);
         path = AddQuery(path, "freshness", freshness);
         path = AddQuery(path, "q", q);
-        path = AddQuery(path, "agentId", agentId);
         path = AddQuery(path, "cursor", cursor);
         path = AddQuery(path, "limit", limit);
         return _transport.SendAsync<WorkspaceIncidentsOutputBody>(HttpMethod.Get, path, null, cancellationToken);
     }
 
-    /// <summary>Exact distinct entity counts with a visible 15 minute activity window.</summary>
-    public Task<object?> SummaryAsync(string workspaceId, string? environment = null, string? entity = null, string? entityId = null, string? side = null, string? client = null, string? action = null, string? outcome = null, string? state = null, string? freshness = null, string? q = null, string? agentId = null, string? cursor = null, long? limit = null, CancellationToken cancellationToken = default)
+    /// <summary>Zero-filled time series: observations by the outcome role, distinct funnel entities by furthest stage, or source-to-view lag.</summary>
+    public Task<ActivityWorkspaceSeries?> SeriesAsync(string workspaceId, string? environment = null, string? metric = null, string? window = null, string? bucket = null, string? entity = null, string? funnel = null, string? side = null, string? client = null, CancellationToken cancellationToken = default)
+    {
+        var path = $"workspaces/{Uri.EscapeDataString(workspaceId)}/series";
+        path = AddQuery(path, "environment", environment);
+        path = AddQuery(path, "metric", metric);
+        path = AddQuery(path, "window", window);
+        path = AddQuery(path, "bucket", bucket);
+        path = AddQuery(path, "entity", entity);
+        path = AddQuery(path, "funnel", funnel);
+        path = AddQuery(path, "side", side);
+        path = AddQuery(path, "client", client);
+        return _transport.SendAsync<ActivityWorkspaceSeries>(HttpMethod.Get, path, null, cancellationToken);
+    }
+
+    /// <summary>Exact entity counts per state with a 15 minute activity window.</summary>
+    public Task<ActivitySummary?> SummaryAsync(string workspaceId, string? environment = null, string? entity = null, string? entityId = null, string? @ref = null, string? side = null, string? client = null, string? outcome = null, string? state = null, string? freshness = null, string? q = null, string? cursor = null, long? limit = null, CancellationToken cancellationToken = default)
     {
         var path = $"workspaces/{Uri.EscapeDataString(workspaceId)}/summary";
         path = AddQuery(path, "environment", environment);
         path = AddQuery(path, "entity", entity);
         path = AddQuery(path, "entityId", entityId);
+        path = AddQuery(path, "ref", @ref);
         path = AddQuery(path, "side", side);
         path = AddQuery(path, "client", client);
-        path = AddQuery(path, "action", action);
         path = AddQuery(path, "outcome", outcome);
         path = AddQuery(path, "state", state);
         path = AddQuery(path, "freshness", freshness);
         path = AddQuery(path, "q", q);
-        path = AddQuery(path, "agentId", agentId);
         path = AddQuery(path, "cursor", cursor);
         path = AddQuery(path, "limit", limit);
-        return _transport.SendAsync<object>(HttpMethod.Get, path, null, cancellationToken);
+        return _transport.SendAsync<ActivitySummary>(HttpMethod.Get, path, null, cancellationToken);
     }
 
-    /// <summary>Follow chronological source evidence across traces.</summary>
-    public Task<WorkspaceTimelineOutputBody?> TimelineAsync(string workspaceId, string? environment = null, string? entity = null, string? entityId = null, string? side = null, string? client = null, string? action = null, string? outcome = null, string? state = null, string? freshness = null, string? q = null, string? agentId = null, string? cursor = null, long? limit = null, CancellationToken cancellationToken = default)
+    /// <summary>Follow chronological source evidence; filter with ref=type:id.</summary>
+    public Task<WorkspaceTimelineOutputBody?> TimelineAsync(string workspaceId, string? environment = null, string? entity = null, string? entityId = null, string? @ref = null, string? side = null, string? client = null, string? outcome = null, string? state = null, string? freshness = null, string? q = null, string? cursor = null, long? limit = null, CancellationToken cancellationToken = default)
     {
         var path = $"workspaces/{Uri.EscapeDataString(workspaceId)}/timeline";
         path = AddQuery(path, "environment", environment);
         path = AddQuery(path, "entity", entity);
         path = AddQuery(path, "entityId", entityId);
+        path = AddQuery(path, "ref", @ref);
         path = AddQuery(path, "side", side);
         path = AddQuery(path, "client", client);
-        path = AddQuery(path, "action", action);
         path = AddQuery(path, "outcome", outcome);
         path = AddQuery(path, "state", state);
         path = AddQuery(path, "freshness", freshness);
         path = AddQuery(path, "q", q);
-        path = AddQuery(path, "agentId", agentId);
         path = AddQuery(path, "cursor", cursor);
         path = AddQuery(path, "limit", limit);
         return _transport.SendAsync<WorkspaceTimelineOutputBody>(HttpMethod.Get, path, null, cancellationToken);
     }
 
-    /// <summary>Aggregate configured business widgets over the active entity revision.</summary>
-    public Task<WorkspaceWidgetsOutputBody?> WidgetsAsync(string workspaceId, string? environment = null, string? entity = null, string? entityId = null, string? side = null, string? client = null, string? action = null, string? outcome = null, string? state = null, string? freshness = null, string? q = null, string? agentId = null, string? cursor = null, long? limit = null, CancellationToken cancellationToken = default)
+    /// <summary>Aggregate the spec's declared views (KPIs, breakdowns, latency, funnels) over the active revision.</summary>
+    public Task<ViewsOutputBody?> ViewsAsync(string workspaceId, string? environment = null, string? entity = null, string? entityId = null, string? @ref = null, string? side = null, string? client = null, string? outcome = null, string? state = null, string? freshness = null, string? q = null, string? cursor = null, long? limit = null, CancellationToken cancellationToken = default)
     {
-        var path = $"workspaces/{Uri.EscapeDataString(workspaceId)}/widgets";
+        var path = $"workspaces/{Uri.EscapeDataString(workspaceId)}/views";
         path = AddQuery(path, "environment", environment);
         path = AddQuery(path, "entity", entity);
         path = AddQuery(path, "entityId", entityId);
+        path = AddQuery(path, "ref", @ref);
         path = AddQuery(path, "side", side);
         path = AddQuery(path, "client", client);
-        path = AddQuery(path, "action", action);
         path = AddQuery(path, "outcome", outcome);
         path = AddQuery(path, "state", state);
         path = AddQuery(path, "freshness", freshness);
         path = AddQuery(path, "q", q);
-        path = AddQuery(path, "agentId", agentId);
         path = AddQuery(path, "cursor", cursor);
         path = AddQuery(path, "limit", limit);
-        return _transport.SendAsync<WorkspaceWidgetsOutputBody>(HttpMethod.Get, path, null, cancellationToken);
+        return _transport.SendAsync<ViewsOutputBody>(HttpMethod.Get, path, null, cancellationToken);
     }
 
     private static string AddQuery(string path, string key, object? value)
