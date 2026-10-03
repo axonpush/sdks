@@ -211,6 +211,80 @@ export type ActivityChange = {
     text: string;
 };
 
+export type ActivityConnectKey = {
+    createdAt: string;
+    id: string;
+    /**
+     * The raw key. Present only when this call minted it; it is never shown again
+     */
+    key?: string;
+    name: string;
+    scopes: Array<string> | null;
+    /**
+     * First characters of the key, to recognise it
+     */
+    start?: string;
+};
+
+export type ActivityConnectOtlp = {
+    /**
+     * OTEL_EXPORTER_OTLP_ENDPOINT; exporters append /v1/traces and /v1/logs
+     */
+    endpoint: string;
+    /**
+     * OTEL_EXPORTER_OTLP_HEADERS value; contains the key
+     */
+    header: string;
+    logsEndpoint: string;
+    tracesEndpoint: string;
+};
+
+export type ActivityConnectResult = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
+    apiUrl: string;
+    /**
+     * True when this call minted a new key
+     */
+    created: boolean;
+    /**
+     * Variables to write to the app's git-ignored env file. Contains the secret only when created is true
+     */
+    env: {
+        [key: string]: string;
+    };
+    /**
+     * Environment slug the key is bound to
+     */
+    environment: string;
+    hint?: string;
+    otlp: ActivityConnectOtlp;
+    publishKey: ActivityConnectKey;
+    purpose: string;
+    /**
+     * Keys revoked by rotate
+     */
+    revokedKeyIds?: Array<string> | null;
+    sdk: ActivityConnectSdk;
+    /**
+     * Sentry SDK DSN; present only when this call minted it
+     */
+    sentryDsn?: string;
+    /**
+     * Why sentryDsn is absent
+     */
+    sentryDsnUnavailable?: string;
+    warnings?: Array<string> | null;
+    workspaceId: string;
+};
+
+export type ActivityConnectSdk = {
+    python: string;
+    typescript: string;
+};
+
 export type ActivityDescription = {
     /**
      * A URL to the JSON Schema for this object.
@@ -226,6 +300,10 @@ export type ActivityDescription = {
      */
     reference: string;
     roles: Array<ActivityRoleDoc> | null;
+    /**
+     * The end-to-end steps to instrument the application, ending with workspaces_connect and a test event
+     */
+    setup: Array<string> | null;
     /**
      * One plain sentence per part of the current spec
      */
@@ -882,6 +960,25 @@ export type ChannelDto = {
     name: string;
     orgId: string;
     updatedAt?: string;
+};
+
+export type ConnectInputBody = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
+    /**
+     * Environment slug or id; defaults to the organisation's default, else production
+     */
+    environment?: string;
+    /**
+     * Separates keys for different processes of one app, e.g. web or worker. Defaults to default
+     */
+    purpose?: string;
+    /**
+     * Revoke this environment and purpose's existing connect key and mint a new one
+     */
+    rotate?: boolean;
 };
 
 export type Connection = {
@@ -2615,6 +2712,43 @@ export type ActivityCatalogWritable = {
     window: string;
 };
 
+export type ActivityConnectResultWritable = {
+    apiUrl: string;
+    /**
+     * True when this call minted a new key
+     */
+    created: boolean;
+    /**
+     * Variables to write to the app's git-ignored env file. Contains the secret only when created is true
+     */
+    env: {
+        [key: string]: string;
+    };
+    /**
+     * Environment slug the key is bound to
+     */
+    environment: string;
+    hint?: string;
+    otlp: ActivityConnectOtlp;
+    publishKey: ActivityConnectKey;
+    purpose: string;
+    /**
+     * Keys revoked by rotate
+     */
+    revokedKeyIds?: Array<string> | null;
+    sdk: ActivityConnectSdk;
+    /**
+     * Sentry SDK DSN; present only when this call minted it
+     */
+    sentryDsn?: string;
+    /**
+     * Why sentryDsn is absent
+     */
+    sentryDsnUnavailable?: string;
+    warnings?: Array<string> | null;
+    workspaceId: string;
+};
+
 export type ActivityDescriptionWritable = {
     /**
      * Pending draft status, if any
@@ -2626,6 +2760,10 @@ export type ActivityDescriptionWritable = {
      */
     reference: string;
     roles: Array<ActivityRoleDoc> | null;
+    /**
+     * The end-to-end steps to instrument the application, ending with workspaces_connect and a test event
+     */
+    setup: Array<string> | null;
     /**
      * One plain sentence per part of the current spec
      */
@@ -2819,6 +2957,21 @@ export type ChannelDtoWritable = {
     name: string;
     orgId: string;
     updatedAt?: string;
+};
+
+export type ConnectInputBodyWritable = {
+    /**
+     * Environment slug or id; defaults to the organisation's default, else production
+     */
+    environment?: string;
+    /**
+     * Separates keys for different processes of one app, e.g. web or worker. Defaults to default
+     */
+    purpose?: string;
+    /**
+     * Revoke this environment and purpose's existing connect key and mint a new one
+     */
+    rotate?: boolean;
 };
 
 export type ConnectionsOutputBodyWritable = {
@@ -7399,6 +7552,33 @@ export type WorkspacesCatalogResponses = {
 };
 
 export type WorkspacesCatalogResponse = WorkspacesCatalogResponses[keyof WorkspacesCatalogResponses];
+
+export type WorkspacesConnectData = {
+    body: ConnectInputBodyWritable;
+    path: {
+        workspaceId: string;
+    };
+    query?: never;
+    url: '/workspaces/{workspaceId}/connect';
+};
+
+export type WorkspacesConnectErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type WorkspacesConnectError = WorkspacesConnectErrors[keyof WorkspacesConnectErrors];
+
+export type WorkspacesConnectResponses = {
+    /**
+     * OK
+     */
+    200: ActivityConnectResult;
+};
+
+export type WorkspacesConnectResponse = WorkspacesConnectResponses[keyof WorkspacesConnectResponses];
 
 export type WorkspacesDescribeData = {
     body?: never;

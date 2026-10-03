@@ -19,6 +19,11 @@ from .activity_catalog_attribute import ActivityCatalogAttribute
 from .activity_catalog_event import ActivityCatalogEvent
 from .activity_change import ActivityChange
 from .activity_change_kind import ActivityChangeKind
+from .activity_connect_key import ActivityConnectKey
+from .activity_connect_otlp import ActivityConnectOTLP
+from .activity_connect_result import ActivityConnectResult
+from .activity_connect_result_env import ActivityConnectResultEnv
+from .activity_connect_sdk import ActivityConnectSDK
 from .activity_description import ActivityDescription
 from .activity_draft import ActivityDraft
 from .activity_draft_op import ActivityDraftOp
@@ -105,6 +110,7 @@ from .breakdown_row_dto import BreakdownRowDTO
 from .capabilities_output_body import CapabilitiesOutputBody
 from .changes_output_body import ChangesOutputBody
 from .channel_dto import ChannelDTO
+from .connect_input_body import ConnectInputBody
 from .connection import Connection
 from .connections_output_body import ConnectionsOutputBody
 from .controls import Controls
@@ -292,6 +298,11 @@ __all__ = (
     "ActivityCatalogEvent",
     "ActivityChange",
     "ActivityChangeKind",
+    "ActivityConnectKey",
+    "ActivityConnectOTLP",
+    "ActivityConnectResult",
+    "ActivityConnectResultEnv",
+    "ActivityConnectSDK",
     "ActivityDescription",
     "ActivityDraft",
     "ActivityDraftOp",
@@ -378,6 +389,7 @@ __all__ = (
     "CapabilitiesOutputBody",
     "ChangesOutputBody",
     "ChannelDTO",
+    "ConnectInputBody",
     "Connection",
     "ConnectionsOutputBody",
     "Controls",

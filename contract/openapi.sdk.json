@@ -611,6 +611,175 @@
         ],
         "type": "object"
       },
+      "ActivityConnectKey": {
+        "additionalProperties": false,
+        "properties": {
+          "createdAt": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string"
+          },
+          "key": {
+            "description": "The raw key. Present only when this call minted it; it is never shown again",
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "scopes": {
+            "items": {
+              "type": "string"
+            },
+            "type": [
+              "array",
+              "null"
+            ]
+          },
+          "start": {
+            "description": "First characters of the key, to recognise it",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "scopes",
+          "createdAt"
+        ],
+        "type": "object"
+      },
+      "ActivityConnectOTLP": {
+        "additionalProperties": false,
+        "properties": {
+          "endpoint": {
+            "description": "OTEL_EXPORTER_OTLP_ENDPOINT; exporters append /v1/traces and /v1/logs",
+            "type": "string"
+          },
+          "header": {
+            "description": "OTEL_EXPORTER_OTLP_HEADERS value; contains the key",
+            "type": "string"
+          },
+          "logsEndpoint": {
+            "type": "string"
+          },
+          "tracesEndpoint": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "endpoint",
+          "tracesEndpoint",
+          "logsEndpoint",
+          "header"
+        ],
+        "type": "object"
+      },
+      "ActivityConnectResult": {
+        "additionalProperties": false,
+        "properties": {
+          "$schema": {
+            "description": "A URL to the JSON Schema for this object.",
+            "examples": [
+              "https://example.com/schemas/ActivityConnectResult.json"
+            ],
+            "format": "uri",
+            "readOnly": true,
+            "type": "string"
+          },
+          "apiUrl": {
+            "type": "string"
+          },
+          "created": {
+            "description": "True when this call minted a new key",
+            "type": "boolean"
+          },
+          "env": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "description": "Variables to write to the app's git-ignored env file. Contains the secret only when created is true",
+            "type": "object"
+          },
+          "environment": {
+            "description": "Environment slug the key is bound to",
+            "type": "string"
+          },
+          "hint": {
+            "type": "string"
+          },
+          "otlp": {
+            "$ref": "#/components/schemas/ActivityConnectOTLP"
+          },
+          "publishKey": {
+            "$ref": "#/components/schemas/ActivityConnectKey"
+          },
+          "purpose": {
+            "type": "string"
+          },
+          "revokedKeyIds": {
+            "description": "Keys revoked by rotate",
+            "items": {
+              "type": "string"
+            },
+            "type": [
+              "array",
+              "null"
+            ]
+          },
+          "sdk": {
+            "$ref": "#/components/schemas/ActivityConnectSDK"
+          },
+          "sentryDsn": {
+            "description": "Sentry SDK DSN; present only when this call minted it",
+            "type": "string"
+          },
+          "sentryDsnUnavailable": {
+            "description": "Why sentryDsn is absent",
+            "type": "string"
+          },
+          "warnings": {
+            "items": {
+              "type": "string"
+            },
+            "type": [
+              "array",
+              "null"
+            ]
+          },
+          "workspaceId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "apiUrl",
+          "workspaceId",
+          "environment",
+          "purpose",
+          "created",
+          "publishKey",
+          "otlp",
+          "env",
+          "sdk"
+        ],
+        "type": "object"
+      },
+      "ActivityConnectSDK": {
+        "additionalProperties": false,
+        "properties": {
+          "python": {
+            "type": "string"
+          },
+          "typescript": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "python",
+          "typescript"
+        ],
+        "type": "object"
+      },
       "ActivityDescription": {
         "additionalProperties": false,
         "properties": {
@@ -649,6 +818,16 @@
               "null"
             ]
           },
+          "setup": {
+            "description": "The end-to-end steps to instrument the application, ending with workspaces_connect and a test event",
+            "items": {
+              "type": "string"
+            },
+            "type": [
+              "array",
+              "null"
+            ]
+          },
           "summary": {
             "description": "One plain sentence per part of the current spec",
             "items": {
@@ -675,6 +854,7 @@
         "required": [
           "workspace",
           "summary",
+          "setup",
           "reference",
           "roles",
           "types",
@@ -2792,6 +2972,35 @@
           "name",
           "createdAt"
         ],
+        "type": "object"
+      },
+      "ConnectInputBody": {
+        "additionalProperties": false,
+        "properties": {
+          "$schema": {
+            "description": "A URL to the JSON Schema for this object.",
+            "examples": [
+              "https://example.com/schemas/ConnectInputBody.json"
+            ],
+            "format": "uri",
+            "readOnly": true,
+            "type": "string"
+          },
+          "environment": {
+            "description": "Environment slug or id; defaults to the organisation's default, else production",
+            "maxLength": 160,
+            "type": "string"
+          },
+          "purpose": {
+            "description": "Separates keys for different processes of one app, e.g. web or worker. Defaults to default",
+            "maxLength": 40,
+            "type": "string"
+          },
+          "rotate": {
+            "description": "Revoke this environment and purpose's existing connect key and mint a new one",
+            "type": "boolean"
+          }
+        },
         "type": "object"
       },
       "Connection": {
@@ -14694,9 +14903,64 @@
         ]
       }
     },
+    "/workspaces/{workspaceId}/connect": {
+      "post": {
+        "description": "Get everything the application needs to send data to this workspace, so nobody copies keys from the dashboard.\n\nCall it after the workspace spec is active (or at least drafted). It mints a key that can only publish (events:publish), bound to this workspace's application and one environment, and returns it once with the API URL, OTLP settings, a Sentry DSN when available, a ready-to-write env map and SDK snippets.\n\nWrite the returned env into the app's local secret file (for example .env.local, or the project's existing secret convention), make sure that file is git-ignored, and never commit, print or paste the key. Then add the SDK observe and identify calls and send a test event.\n\nCalling it again for the same environment and purpose does not mint another key: it returns the existing key's metadata without the secret. If the secret was lost, call again with rotate: true, which revokes the old key and mints a new one.",
+        "operationId": "workspaces.connect",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "workspaceId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ConnectInputBody"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ActivityConnectResult"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "summary": "Mint the application's publish key and return its env, OTLP, Sentry and SDK setup",
+        "tags": [
+          "workspaces"
+        ],
+        "x-axonpush-scopes": [
+          "workspaces:manage"
+        ]
+      }
+    },
     "/workspaces/{workspaceId}/describe": {
       "get": {
-        "description": "Call this first when you are setting up or changing what axonpush stores for an application.\n\naxonpush adapts per installation. A workspace spec declares, as data, what this application stores:\n- attributes: the data dictionary. Every attribute key the app may send, with a type, an optional role and a personal flag. Undeclared keys are dropped at ingest and counted.\n- entities: the things being tracked (for example agent, ticket, order). Each lists the attribute keys it stores (fields), the keys identify() may set (profile), terminal states, and the events that update it.\n- funnels, views and alerts: what the dashboard shows and what pages people.\n\nTo change the spec, never rewrite it blindly: read the shared draft (workspaces.draft), send typed edits with workspaces.applyDraftOps using the draft's version, check workspaces.draftChanges, and ask the user to review before workspaces.activateDraft. Use workspaces.catalog to see which events and attributes the app really sends.\n\nThe response contains a plain-language summary of this workspace, the full format reference, the role list and the op catalogue with examples.",
+        "description": "Call this first when you are setting up or changing what axonpush stores for an application.\n\naxonpush adapts per installation. A workspace spec declares, as data, what this application stores:\n- attributes: the data dictionary. Every attribute key the app may send, with a type, an optional role and a personal flag. Undeclared keys are dropped at ingest and counted.\n- entities: the things being tracked (for example agent, ticket, order). Each lists the attribute keys it stores (fields), the keys identify() may set (profile), terminal states, and the events that update it.\n- funnels, views and alerts: what the dashboard shows and what pages people.\n\nTo change the spec, never rewrite it blindly: read the shared draft (workspaces.draft), send typed edits with workspaces.applyDraftOps using the draft's version, check workspaces.draftChanges, and ask the user to review before workspaces.activateDraft. Use workspaces.catalog to see which events and attributes the app really sends.\n\nSETTING UP AN APPLICATION (the user does not copy anything from the dashboard):\n1. Call workspaces_describe (this tool) and read the codebase to find what is worth tracking.\n2. Draft the data dictionary, entities and events with workspaces_draft and workspaces_applyDraftOps; explain any personal attributes to the user first.\n3. Ask the user to review and activate the draft in the dashboard, or call workspaces_activateDraft if they approve in the chat.\n4. Call workspaces_connect and write the returned env into the app's git-ignored env file (.env.local or the project's secret convention). Never commit, print or paste the key.\n5. Add the SDK observe calls where the events happen and identify calls for profile attributes, reading the env written in the previous step.\n6. Send one test event from the app and confirm it appears in workspaces_catalog.\n\nThe response contains a plain-language summary of this workspace, the setup steps, the full format reference, the role list and the op catalogue with examples.",
         "operationId": "workspaces.describe",
         "parameters": [
           {

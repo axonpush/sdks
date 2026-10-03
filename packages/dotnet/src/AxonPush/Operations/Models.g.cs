@@ -148,6 +148,74 @@ public sealed record ActivityChange
     public string Text { get; init; } = default!;
 }
 
+public sealed record ActivityConnectKey
+{
+    [JsonPropertyName("createdAt")]
+    public string CreatedAt { get; init; } = default!;
+    [JsonPropertyName("id")]
+    public string Id { get; init; } = default!;
+    [JsonPropertyName("key")]
+    public string? Key { get; init; }
+    [JsonPropertyName("name")]
+    public string Name { get; init; } = default!;
+    [JsonPropertyName("scopes")]
+    public IReadOnlyList<string>? Scopes { get; init; } = default!;
+    [JsonPropertyName("start")]
+    public string? Start { get; init; }
+}
+
+public sealed record ActivityConnectOTLP
+{
+    [JsonPropertyName("endpoint")]
+    public string Endpoint { get; init; } = default!;
+    [JsonPropertyName("header")]
+    public string Header { get; init; } = default!;
+    [JsonPropertyName("logsEndpoint")]
+    public string LogsEndpoint { get; init; } = default!;
+    [JsonPropertyName("tracesEndpoint")]
+    public string TracesEndpoint { get; init; } = default!;
+}
+
+public sealed record ActivityConnectResult
+{
+    [JsonPropertyName("apiUrl")]
+    public string ApiUrl { get; init; } = default!;
+    [JsonPropertyName("created")]
+    public bool Created { get; init; }
+    [JsonPropertyName("env")]
+    public IReadOnlyDictionary<string, string> Env { get; init; } = default!;
+    [JsonPropertyName("environment")]
+    public string Environment { get; init; } = default!;
+    [JsonPropertyName("hint")]
+    public string? Hint { get; init; }
+    [JsonPropertyName("otlp")]
+    public ActivityConnectOTLP Otlp { get; init; } = default!;
+    [JsonPropertyName("publishKey")]
+    public ActivityConnectKey PublishKey { get; init; } = default!;
+    [JsonPropertyName("purpose")]
+    public string Purpose { get; init; } = default!;
+    [JsonPropertyName("revokedKeyIds")]
+    public IReadOnlyList<string>? RevokedKeyIds { get; init; }
+    [JsonPropertyName("sdk")]
+    public ActivityConnectSDK Sdk { get; init; } = default!;
+    [JsonPropertyName("sentryDsn")]
+    public string? SentryDsn { get; init; }
+    [JsonPropertyName("sentryDsnUnavailable")]
+    public string? SentryDsnUnavailable { get; init; }
+    [JsonPropertyName("warnings")]
+    public IReadOnlyList<string>? Warnings { get; init; }
+    [JsonPropertyName("workspaceId")]
+    public string WorkspaceId { get; init; } = default!;
+}
+
+public sealed record ActivityConnectSDK
+{
+    [JsonPropertyName("python")]
+    public string Python { get; init; } = default!;
+    [JsonPropertyName("typescript")]
+    public string Typescript { get; init; } = default!;
+}
+
 public sealed record ActivityDescription
 {
     [JsonPropertyName("draft")]
@@ -158,6 +226,8 @@ public sealed record ActivityDescription
     public string Reference { get; init; } = default!;
     [JsonPropertyName("roles")]
     public IReadOnlyList<ActivityRoleDoc>? Roles { get; init; } = default!;
+    [JsonPropertyName("setup")]
+    public IReadOnlyList<string>? Setup { get; init; } = default!;
     [JsonPropertyName("summary")]
     public IReadOnlyList<string>? Summary { get; init; } = default!;
     [JsonPropertyName("types")]
@@ -742,6 +812,16 @@ public sealed record ChangesOutputBody
     public IReadOnlyList<ActivityIssue>? Issues { get; init; } = default!;
     [JsonPropertyName("version")]
     public long Version { get; init; }
+}
+
+public sealed record ConnectInputBody
+{
+    [JsonPropertyName("environment")]
+    public string? Environment { get; init; }
+    [JsonPropertyName("purpose")]
+    public string? Purpose { get; init; }
+    [JsonPropertyName("rotate")]
+    public bool? Rotate { get; init; }
 }
 
 public sealed record CreateInputBody

@@ -4,6 +4,7 @@ import {
   workspacesActivateDraft,
   workspacesApplyDraftOps,
   workspacesCatalog,
+  workspacesConnect,
   workspacesCreate,
   workspacesDescribe,
   workspacesDiscardDraft,
@@ -23,12 +24,14 @@ import type {
   ActivateDraftOutputBody,
   ActivateInputBody,
   ActivityCatalog,
+  ActivityConnectResult,
   ActivityDescription,
   ActivityDraftView,
   ActivityRevision,
   ActivityWorkspace,
   ActivityWorkspaceSpec,
   ChangesOutputBody,
+  ConnectInputBody,
   CreateInputBody,
   OpsInputBody,
   ReplaceInputBody,
@@ -89,6 +92,14 @@ export class WorkspacesResource {
     query: WorkspacesCatalogData["query"] = {},
   ): Promise<ActivityCatalog | null> {
     return this.client.invoke(workspacesCatalog, { path: { workspaceId }, query });
+  }
+
+  /** Mint the application's publish key and return its env, OTLP, Sentry and SDK setup. `POST /workspaces/{workspaceId}/connect` */
+  async connect(
+    workspaceId: string,
+    body: ConnectInputBody,
+  ): Promise<ActivityConnectResult | null> {
+    return this.client.invoke(workspacesConnect, { path: { workspaceId }, body });
   }
 
   /** Start here: explains this workspace in plain language plus the spec format, roles and draft ops an agent uses to change it. `GET /workspaces/{workspaceId}/describe` */

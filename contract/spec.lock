@@ -1,6 +1,6 @@
 {
   "source": "axonpush/server",
-  "sha": "fe9754938daf962c40d86f8e9ca0f5e637422a08",
+  "sha": "d29495ae2be25222a8241b47ed20ed0900227144",
   "ref": "pivot/agent-operations",
-  "sha256": "b232875189c1ba0e34311b6276d38b86db96495af25a4a7d225592cfe0ff43ca"
+  "sha256": "05ca69acef29197435d15df78b82d5366c838cc37dd30de4990694263c2e788d"
 }

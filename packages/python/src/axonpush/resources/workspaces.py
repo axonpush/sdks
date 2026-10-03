@@ -8,12 +8,14 @@ from axonpush._internal.api.models import (
     ActivateDraftOutputBody,
     ActivateInputBody,
     ActivityCatalog,
+    ActivityConnectResult,
     ActivityDescription,
     ActivityDraftView,
     ActivityRevision,
     ActivityWorkspace,
     ActivityWorkspaceSpec,
     ChangesOutputBody,
+    ConnectInputBody,
     CreateInputBody,
     OpsInputBody,
     ReplaceInputBody,
@@ -36,6 +38,7 @@ from axonpush._internal.api.api.workspaces import workspaces_validate as _valida
 from axonpush._internal.api.api.workspaces import workspaces_get as _get_op
 from axonpush._internal.api.api.workspaces import workspaces_activate as _activate_op
 from axonpush._internal.api.api.workspaces import workspaces_catalog as _catalog_op
+from axonpush._internal.api.api.workspaces import workspaces_connect as _connect_op
 from axonpush._internal.api.api.workspaces import workspaces_describe as _describe_op
 from axonpush._internal.api.api.workspaces import workspaces_discard_draft as _discard_draft_op
 from axonpush._internal.api.api.workspaces import workspaces_draft as _draft_op
@@ -90,6 +93,10 @@ class Workspaces:
             workspace_id=workspace_id,
             **{k: v for k, v in (params or {}).items() if v is not None},
         )
+
+    def connect(self, workspace_id: str, body: ConnectInputBody) -> ActivityConnectResult | None:
+        """Mint the application's publish key and return its env, OTLP, Sentry and SDK setup."""
+        return self._client._invoke(_connect_op, workspace_id=workspace_id, body=body)
 
     def describe(self, workspace_id: str) -> ActivityDescription | None:
         """Start here: explains this workspace in plain language plus the spec format, roles and draft ops an agent uses to change it."""
@@ -175,6 +182,12 @@ class AsyncWorkspaces:
             workspace_id=workspace_id,
             **{k: v for k, v in (params or {}).items() if v is not None},
         )
+
+    async def connect(
+        self, workspace_id: str, body: ConnectInputBody
+    ) -> ActivityConnectResult | None:
+        """Mint the application's publish key and return its env, OTLP, Sentry and SDK setup."""
+        return await self._client._invoke(_connect_op, workspace_id=workspace_id, body=body)
 
     async def describe(self, workspace_id: str) -> ActivityDescription | None:
         """Start here: explains this workspace in plain language plus the spec format, roles and draft ops an agent uses to change it."""

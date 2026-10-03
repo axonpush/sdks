@@ -22,6 +22,7 @@ Keep `source_event_id` stable across retries of the same fact; a reused ID with 
 2. Read the shared draft with `workspaces.draft`, then send typed edits with `workspaces.applyDraftOps` and the draft's `version`. A version mismatch returns 409 with the current draft; re-read and reapply.
 3. Check `workspaces.catalog` for the events and attribute keys the app really sends, and `workspaces.draftChanges` for a plain-language change list.
 4. Ask a person to review, then `workspaces.activateDraft`. Projections rebuild in the background.
+5. Call `workspaces.connect` to get the application's credentials: a publish-only key bound to the workspace's app and one environment (shown once), the API URL, OTLP settings, a Sentry DSN when available, an `env` map and SDK snippets. Write `env` to a git-ignored file. A repeat call returns the existing key without its secret; `rotate: true` replaces it.
 
 `workspaces.replaceDraft` replaces the whole draft for JSON editors; `workspaces.discardDraft` throws it away. Reflected MCP tool names replace operation ID dots with underscores, for example `workspaces_applyDraftOps`.
 

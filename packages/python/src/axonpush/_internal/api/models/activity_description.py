@@ -24,6 +24,8 @@ class ActivityDescription:
         ops (list[ActivityOpDoc] | None):
         reference (str): The spec and observation format
         roles (list[ActivityRoleDoc] | None):
+        setup (list[str] | None): The end-to-end steps to instrument the application, ending with workspaces_connect and
+            a test event
         summary (list[str] | None): One plain sentence per part of the current spec
         types (list[str] | None):
         workspace (ActivityWorkspace):
@@ -34,6 +36,7 @@ class ActivityDescription:
     ops: list[ActivityOpDoc] | None
     reference: str
     roles: list[ActivityRoleDoc] | None
+    setup: list[str] | None
     summary: list[str] | None
     types: list[str] | None
     workspace: ActivityWorkspace
@@ -67,6 +70,13 @@ class ActivityDescription:
         else:
             roles = self.roles
 
+        setup: list[str] | None
+        if isinstance(self.setup, list):
+            setup = self.setup
+
+        else:
+            setup = self.setup
+
         summary: list[str] | None
         if isinstance(self.summary, list):
             summary = self.summary
@@ -94,6 +104,7 @@ class ActivityDescription:
                 "ops": ops,
                 "reference": reference,
                 "roles": roles,
+                "setup": setup,
                 "summary": summary,
                 "types": types,
                 "workspace": workspace,
@@ -156,6 +167,21 @@ class ActivityDescription:
 
         roles = _parse_roles(d.pop("roles"))
 
+        def _parse_setup(data: object) -> list[str] | None:
+            if data is None:
+                return data
+            try:
+                if not isinstance(data, list):
+                    raise TypeError()
+                setup_type_0 = cast(list[str], data)
+
+                return setup_type_0
+            except (TypeError, ValueError, AttributeError, KeyError):
+                pass
+            return cast(list[str] | None, data)
+
+        setup = _parse_setup(d.pop("setup"))
+
         def _parse_summary(data: object) -> list[str] | None:
             if data is None:
                 return data
@@ -196,6 +222,7 @@ class ActivityDescription:
             ops=ops,
             reference=reference,
             roles=roles,
+            setup=setup,
             summary=summary,
             types=types,
             workspace=workspace,

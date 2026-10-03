@@ -119,6 +119,7 @@ workspaces.activate
 workspaces.activateDraft
 workspaces.applyDraftOps
 workspaces.catalog
+workspaces.connect
 workspaces.create
 workspaces.describe
 workspaces.discardDraft

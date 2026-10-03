@@ -72,8 +72,20 @@ def sync_detailed(
     ask the user to review before workspaces.activateDraft. Use workspaces.catalog to see which events
     and attributes the app really sends.
 
-    The response contains a plain-language summary of this workspace, the full format reference, the
-    role list and the op catalogue with examples.
+    SETTING UP AN APPLICATION (the user does not copy anything from the dashboard):
+    1. Call workspaces_describe (this tool) and read the codebase to find what is worth tracking.
+    2. Draft the data dictionary, entities and events with workspaces_draft and
+    workspaces_applyDraftOps; explain any personal attributes to the user first.
+    3. Ask the user to review and activate the draft in the dashboard, or call workspaces_activateDraft
+    if they approve in the chat.
+    4. Call workspaces_connect and write the returned env into the app's git-ignored env file
+    (.env.local or the project's secret convention). Never commit, print or paste the key.
+    5. Add the SDK observe calls where the events happen and identify calls for profile attributes,
+    reading the env written in the previous step.
+    6. Send one test event from the app and confirm it appears in workspaces_catalog.
+
+    The response contains a plain-language summary of this workspace, the setup steps, the full format
+    reference, the role list and the op catalogue with examples.
 
     Args:
         workspace_id (str):
@@ -120,8 +132,20 @@ def sync(
     ask the user to review before workspaces.activateDraft. Use workspaces.catalog to see which events
     and attributes the app really sends.
 
-    The response contains a plain-language summary of this workspace, the full format reference, the
-    role list and the op catalogue with examples.
+    SETTING UP AN APPLICATION (the user does not copy anything from the dashboard):
+    1. Call workspaces_describe (this tool) and read the codebase to find what is worth tracking.
+    2. Draft the data dictionary, entities and events with workspaces_draft and
+    workspaces_applyDraftOps; explain any personal attributes to the user first.
+    3. Ask the user to review and activate the draft in the dashboard, or call workspaces_activateDraft
+    if they approve in the chat.
+    4. Call workspaces_connect and write the returned env into the app's git-ignored env file
+    (.env.local or the project's secret convention). Never commit, print or paste the key.
+    5. Add the SDK observe calls where the events happen and identify calls for profile attributes,
+    reading the env written in the previous step.
+    6. Send one test event from the app and confirm it appears in workspaces_catalog.
+
+    The response contains a plain-language summary of this workspace, the setup steps, the full format
+    reference, the role list and the op catalogue with examples.
 
     Args:
         workspace_id (str):
@@ -163,8 +187,20 @@ async def asyncio_detailed(
     ask the user to review before workspaces.activateDraft. Use workspaces.catalog to see which events
     and attributes the app really sends.
 
-    The response contains a plain-language summary of this workspace, the full format reference, the
-    role list and the op catalogue with examples.
+    SETTING UP AN APPLICATION (the user does not copy anything from the dashboard):
+    1. Call workspaces_describe (this tool) and read the codebase to find what is worth tracking.
+    2. Draft the data dictionary, entities and events with workspaces_draft and
+    workspaces_applyDraftOps; explain any personal attributes to the user first.
+    3. Ask the user to review and activate the draft in the dashboard, or call workspaces_activateDraft
+    if they approve in the chat.
+    4. Call workspaces_connect and write the returned env into the app's git-ignored env file
+    (.env.local or the project's secret convention). Never commit, print or paste the key.
+    5. Add the SDK observe calls where the events happen and identify calls for profile attributes,
+    reading the env written in the previous step.
+    6. Send one test event from the app and confirm it appears in workspaces_catalog.
+
+    The response contains a plain-language summary of this workspace, the setup steps, the full format
+    reference, the role list and the op catalogue with examples.
 
     Args:
         workspace_id (str):
@@ -209,8 +245,20 @@ async def asyncio(
     ask the user to review before workspaces.activateDraft. Use workspaces.catalog to see which events
     and attributes the app really sends.
 
-    The response contains a plain-language summary of this workspace, the full format reference, the
-    role list and the op catalogue with examples.
+    SETTING UP AN APPLICATION (the user does not copy anything from the dashboard):
+    1. Call workspaces_describe (this tool) and read the codebase to find what is worth tracking.
+    2. Draft the data dictionary, entities and events with workspaces_draft and
+    workspaces_applyDraftOps; explain any personal attributes to the user first.
+    3. Ask the user to review and activate the draft in the dashboard, or call workspaces_activateDraft
+    if they approve in the chat.
+    4. Call workspaces_connect and write the returned env into the app's git-ignored env file
+    (.env.local or the project's secret convention). Never commit, print or paste the key.
+    5. Add the SDK observe calls where the events happen and identify calls for profile attributes,
+    reading the env written in the previous step.
+    6. Send one test event from the app and confirm it appears in workspaces_catalog.
+
+    The response contains a plain-language summary of this workspace, the setup steps, the full format
+    reference, the role list and the op catalogue with examples.
 
     Args:
         workspace_id (str):

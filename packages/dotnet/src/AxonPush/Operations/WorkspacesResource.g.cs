@@ -69,6 +69,13 @@ public sealed class WorkspacesResource
         return _transport.SendAsync<ActivityCatalog>(HttpMethod.Get, path, null, cancellationToken);
     }
 
+    /// <summary>Mint the application's publish key and return its env, OTLP, Sentry and SDK setup.</summary>
+    public Task<ActivityConnectResult?> ConnectAsync(string workspaceId, ConnectInputBody body, CancellationToken cancellationToken = default)
+    {
+        var path = $"workspaces/{Uri.EscapeDataString(workspaceId)}/connect";
+        return _transport.SendAsync<ActivityConnectResult>(HttpMethod.Post, path, body, cancellationToken);
+    }
+
     /// <summary>Start here: explains this workspace in plain language plus the spec format, roles and draft ops an agent uses to change it.</summary>
     public Task<ActivityDescription?> DescribeAsync(string workspaceId, CancellationToken cancellationToken = default)
     {
