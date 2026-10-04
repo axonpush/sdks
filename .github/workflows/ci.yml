@@ -139,7 +139,12 @@ jobs:
         run: |
           uv run ruff check .
           uv run ruff format --check .
+      - uses: oven-sh/setup-bun@v2
+      - name: Install TypeScript tooling
+        working-directory: .
+        run: bun install --frozen-lockfile
       - name: Resource aliases match operation contracts
+        working-directory: .
         run: bun run packages/typescript/tools/check-resource-contract.ts
       - name: Typecheck
         run: uv run mypy src/axonpush
