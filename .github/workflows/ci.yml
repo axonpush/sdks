@@ -89,7 +89,7 @@ jobs:
     steps:
       - uses: actions/checkout@v7
       - uses: oven-sh/setup-bun@v2
-      - uses: astral-sh/setup-uv@v10
+      - uses: astral-sh/setup-uv@v10.2.0
       - run: bun install --frozen-lockfile
       - name: Regenerate TypeScript client
         working-directory: packages/typescript
@@ -132,7 +132,7 @@ jobs:
         working-directory: packages/python
     steps:
       - uses: actions/checkout@v7
-      - uses: astral-sh/setup-uv@v10
+      - uses: astral-sh/setup-uv@v10.2.0
       - run: uv python install ${{ matrix.python }}
       - run: uv sync --extra dev --extra all
       - name: Lint
@@ -161,7 +161,7 @@ jobs:
         working-directory: packages/python
     steps:
       - uses: actions/checkout@v7
-      - uses: astral-sh/setup-uv@v10
+      - uses: astral-sh/setup-uv@v10.2.0
       # the generated attrs models pull in dateutil; this catches an
       # undeclared transitive dep before it reaches PyPI
       - run: uv build

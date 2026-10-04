@@ -21,7 +21,7 @@ jobs:
           ref: ${{ github.head_ref }}
           token: ${{ secrets.GITHUB_TOKEN }}
       - uses: oven-sh/setup-bun@v2
-      - uses: astral-sh/setup-uv@v10
+      - uses: astral-sh/setup-uv@v10.2.0
       - run: bun install --frozen-lockfile
       - name: Regenerate the TypeScript client
         working-directory: packages/typescript
