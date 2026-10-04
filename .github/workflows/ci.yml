@@ -19,8 +19,8 @@ jobs:
       py: ${{ steps.filter.outputs.py }}
       dotnet: ${{ steps.filter.outputs.dotnet }}
     steps:
-      - uses: actions/checkout@v4
-      - uses: dorny/paths-filter@v3
+      - uses: actions/checkout@v7
+      - uses: dorny/paths-filter@v4
         id: filter
         with:
           filters: |
@@ -40,7 +40,7 @@ jobs:
     name: Package versions agree
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: oven-sh/setup-bun@v2
       - run: bun run tools/check-versions.ts
 
@@ -48,7 +48,7 @@ jobs:
     name: SDK surfaces match
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: oven-sh/setup-bun@v2
       - run: bun run tools/surface-diff.ts
 
@@ -57,7 +57,7 @@ jobs:
     if: needs.changes.outputs.ts == 'true'
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: oven-sh/setup-bun@v2
       - run: bun install --frozen-lockfile
       - name: Lint
@@ -87,9 +87,9 @@ jobs:
     if: needs.changes.outputs.ts == 'true' || needs.changes.outputs.py == 'true'
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: oven-sh/setup-bun@v2
-      - uses: astral-sh/setup-uv@v4
+      - uses: astral-sh/setup-uv@v10
       - run: bun install --frozen-lockfile
       - name: Regenerate TypeScript client
         working-directory: packages/typescript
@@ -131,8 +131,8 @@ jobs:
       run:
         working-directory: packages/python
     steps:
-      - uses: actions/checkout@v4
-      - uses: astral-sh/setup-uv@v4
+      - uses: actions/checkout@v7
+      - uses: astral-sh/setup-uv@v10
       - run: uv python install ${{ matrix.python }}
       - run: uv sync --extra dev --extra all
       - name: Lint
@@ -160,8 +160,8 @@ jobs:
       run:
         working-directory: packages/python
     steps:
-      - uses: actions/checkout@v4
-      - uses: astral-sh/setup-uv@v4
+      - uses: actions/checkout@v7
+      - uses: astral-sh/setup-uv@v10
       # the generated attrs models pull in dateutil; this catches an
       # undeclared transitive dep before it reaches PyPI
       - run: uv build
@@ -178,8 +178,8 @@ jobs:
       run:
         working-directory: packages/dotnet
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-dotnet@v4
+      - uses: actions/checkout@v7
+      - uses: actions/setup-dotnet@v6
         with:
           dotnet-version: "9.0.x"
       - run: dotnet restore

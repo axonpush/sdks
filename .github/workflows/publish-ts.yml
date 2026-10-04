@@ -14,7 +14,7 @@ jobs:
   publish:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: oven-sh/setup-bun@v2
       - run: bun install --frozen-lockfile
       - name: Tag matches package.json
@@ -35,7 +35,7 @@ jobs:
       # Trusted publishing: npm exchanges the workflow's OIDC identity for a
       # short-lived credential, so there is no NPM_TOKEN to store or rotate.
       # Provenance is attached automatically, so no --provenance flag.
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         with:
           node-version: 22
           registry-url: https://registry.npmjs.org
@@ -44,7 +44,7 @@ jobs:
       - name: Publish
         working-directory: packages/typescript
         run: npm publish --access public
-      - uses: softprops/action-gh-release@v2
+      - uses: softprops/action-gh-release@v3
         with:
           files: packages/typescript/dist/*
           generate_release_notes: true
