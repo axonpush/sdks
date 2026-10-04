@@ -540,7 +540,10 @@
               "evidence",
               "display_name",
               "display_subtitle",
-              "avatar"
+              "avatar",
+              "last_action",
+              "connection",
+              "noise"
             ],
             "type": "string"
           },
@@ -1176,6 +1179,24 @@
         ],
         "type": "object"
       },
+      "ActivityEdgeEvidence": {
+        "additionalProperties": false,
+        "properties": {
+          "ref": {
+            "description": "Timeline ref",
+            "type": "string"
+          },
+          "with": {
+            "description": "Timeline with",
+            "type": "string"
+          }
+        },
+        "required": [
+          "ref",
+          "with"
+        ],
+        "type": "object"
+      },
       "ActivityEntity": {
         "additionalProperties": false,
         "properties": {
@@ -1691,6 +1712,10 @@
       "ActivityGraphEdge": {
         "additionalProperties": false,
         "properties": {
+          "evidence": {
+            "$ref": "#/components/schemas/ActivityEdgeEvidence",
+            "description": "Where the records behind this edge are: a timeline query, fetched on demand so the graph stays one cheap read"
+          },
           "from": {
             "description": "type:id of the entity holding the reference",
             "type": "string"
@@ -1702,7 +1727,8 @@
         },
         "required": [
           "from",
-          "to"
+          "to",
+          "evidence"
         ],
         "type": "object"
       },
@@ -15145,6 +15171,7 @@
         ]
       },
       "post": {
+        "description": "A full spec is activated at once. A blank spec (no entities) becomes the shared draft and the workspace stays pending, with no activeRevision, until the draft is activated.",
         "operationId": "workspaces.create",
         "requestBody": {
           "content": {
@@ -15672,6 +15699,17 @@
             }
           },
           {
+            "description": "Timeline only: type:id that a record must also reference, so ref plus with lists the records linking two entities (a graph edge's evidence)",
+            "explode": false,
+            "in": "query",
+            "name": "with",
+            "schema": {
+              "description": "Timeline only: type:id that a record must also reference, so ref plus with lists the records linking two entities (a graph edge's evidence)",
+              "maxLength": 300,
+              "type": "string"
+            }
+          },
+          {
             "description": "Filter by the actor_side role",
             "explode": false,
             "in": "query",
@@ -15705,6 +15743,17 @@
             }
           },
           {
+            "description": "Filter by the last_action role",
+            "explode": false,
+            "in": "query",
+            "name": "action",
+            "schema": {
+              "description": "Filter by the last_action role",
+              "maxLength": 100,
+              "type": "string"
+            }
+          },
+          {
             "explode": false,
             "in": "query",
             "name": "state",
@@ -15714,13 +15763,17 @@
             }
           },
           {
+            "description": "current: live evidence received in the last 15 minutes; stale: quieter than that, or only known from a snapshot; unknown: an open state outlived its expected duration. fresh is an alias of current",
             "explode": false,
             "in": "query",
             "name": "freshness",
             "schema": {
+              "description": "current: live evidence received in the last 15 minutes; stale: quieter than that, or only known from a snapshot; unknown: an open state outlived its expected duration. fresh is an alias of current",
               "enum": [
-                "fresh",
-                "stale"
+                "current",
+                "stale",
+                "unknown",
+                "fresh"
               ],
               "type": "string"
             }
@@ -16443,6 +16496,17 @@
             }
           },
           {
+            "description": "Timeline only: type:id that a record must also reference, so ref plus with lists the records linking two entities (a graph edge's evidence)",
+            "explode": false,
+            "in": "query",
+            "name": "with",
+            "schema": {
+              "description": "Timeline only: type:id that a record must also reference, so ref plus with lists the records linking two entities (a graph edge's evidence)",
+              "maxLength": 300,
+              "type": "string"
+            }
+          },
+          {
             "description": "Filter by the actor_side role",
             "explode": false,
             "in": "query",
@@ -16476,6 +16540,17 @@
             }
           },
           {
+            "description": "Filter by the last_action role",
+            "explode": false,
+            "in": "query",
+            "name": "action",
+            "schema": {
+              "description": "Filter by the last_action role",
+              "maxLength": 100,
+              "type": "string"
+            }
+          },
+          {
             "explode": false,
             "in": "query",
             "name": "state",
@@ -16485,13 +16560,17 @@
             }
           },
           {
+            "description": "current: live evidence received in the last 15 minutes; stale: quieter than that, or only known from a snapshot; unknown: an open state outlived its expected duration. fresh is an alias of current",
             "explode": false,
             "in": "query",
             "name": "freshness",
             "schema": {
+              "description": "current: live evidence received in the last 15 minutes; stale: quieter than that, or only known from a snapshot; unknown: an open state outlived its expected duration. fresh is an alias of current",
               "enum": [
-                "fresh",
-                "stale"
+                "current",
+                "stale",
+                "unknown",
+                "fresh"
               ],
               "type": "string"
             }
@@ -16668,6 +16747,17 @@
             }
           },
           {
+            "description": "Timeline only: type:id that a record must also reference, so ref plus with lists the records linking two entities (a graph edge's evidence)",
+            "explode": false,
+            "in": "query",
+            "name": "with",
+            "schema": {
+              "description": "Timeline only: type:id that a record must also reference, so ref plus with lists the records linking two entities (a graph edge's evidence)",
+              "maxLength": 300,
+              "type": "string"
+            }
+          },
+          {
             "description": "Filter by the actor_side role",
             "explode": false,
             "in": "query",
@@ -16701,6 +16791,17 @@
             }
           },
           {
+            "description": "Filter by the last_action role",
+            "explode": false,
+            "in": "query",
+            "name": "action",
+            "schema": {
+              "description": "Filter by the last_action role",
+              "maxLength": 100,
+              "type": "string"
+            }
+          },
+          {
             "explode": false,
             "in": "query",
             "name": "state",
@@ -16710,13 +16811,17 @@
             }
           },
           {
+            "description": "current: live evidence received in the last 15 minutes; stale: quieter than that, or only known from a snapshot; unknown: an open state outlived its expected duration. fresh is an alias of current",
             "explode": false,
             "in": "query",
             "name": "freshness",
             "schema": {
+              "description": "current: live evidence received in the last 15 minutes; stale: quieter than that, or only known from a snapshot; unknown: an open state outlived its expected duration. fresh is an alias of current",
               "enum": [
-                "fresh",
-                "stale"
+                "current",
+                "stale",
+                "unknown",
+                "fresh"
               ],
               "type": "string"
             }
@@ -17195,6 +17300,17 @@
             }
           },
           {
+            "description": "Timeline only: type:id that a record must also reference, so ref plus with lists the records linking two entities (a graph edge's evidence)",
+            "explode": false,
+            "in": "query",
+            "name": "with",
+            "schema": {
+              "description": "Timeline only: type:id that a record must also reference, so ref plus with lists the records linking two entities (a graph edge's evidence)",
+              "maxLength": 300,
+              "type": "string"
+            }
+          },
+          {
             "description": "Filter by the actor_side role",
             "explode": false,
             "in": "query",
@@ -17228,6 +17344,17 @@
             }
           },
           {
+            "description": "Filter by the last_action role",
+            "explode": false,
+            "in": "query",
+            "name": "action",
+            "schema": {
+              "description": "Filter by the last_action role",
+              "maxLength": 100,
+              "type": "string"
+            }
+          },
+          {
             "explode": false,
             "in": "query",
             "name": "state",
@@ -17237,13 +17364,17 @@
             }
           },
           {
+            "description": "current: live evidence received in the last 15 minutes; stale: quieter than that, or only known from a snapshot; unknown: an open state outlived its expected duration. fresh is an alias of current",
             "explode": false,
             "in": "query",
             "name": "freshness",
             "schema": {
+              "description": "current: live evidence received in the last 15 minutes; stale: quieter than that, or only known from a snapshot; unknown: an open state outlived its expected duration. fresh is an alias of current",
               "enum": [
-                "fresh",
-                "stale"
+                "current",
+                "stale",
+                "unknown",
+                "fresh"
               ],
               "type": "string"
             }
@@ -17365,6 +17496,17 @@
             }
           },
           {
+            "description": "Timeline only: type:id that a record must also reference, so ref plus with lists the records linking two entities (a graph edge's evidence)",
+            "explode": false,
+            "in": "query",
+            "name": "with",
+            "schema": {
+              "description": "Timeline only: type:id that a record must also reference, so ref plus with lists the records linking two entities (a graph edge's evidence)",
+              "maxLength": 300,
+              "type": "string"
+            }
+          },
+          {
             "description": "Filter by the actor_side role",
             "explode": false,
             "in": "query",
@@ -17398,6 +17540,17 @@
             }
           },
           {
+            "description": "Filter by the last_action role",
+            "explode": false,
+            "in": "query",
+            "name": "action",
+            "schema": {
+              "description": "Filter by the last_action role",
+              "maxLength": 100,
+              "type": "string"
+            }
+          },
+          {
             "explode": false,
             "in": "query",
             "name": "state",
@@ -17407,13 +17560,17 @@
             }
           },
           {
+            "description": "current: live evidence received in the last 15 minutes; stale: quieter than that, or only known from a snapshot; unknown: an open state outlived its expected duration. fresh is an alias of current",
             "explode": false,
             "in": "query",
             "name": "freshness",
             "schema": {
+              "description": "current: live evidence received in the last 15 minutes; stale: quieter than that, or only known from a snapshot; unknown: an open state outlived its expected duration. fresh is an alias of current",
               "enum": [
-                "fresh",
-                "stale"
+                "current",
+                "stale",
+                "unknown",
+                "fresh"
               ],
               "type": "string"
             }
@@ -17535,6 +17692,17 @@
             }
           },
           {
+            "description": "Timeline only: type:id that a record must also reference, so ref plus with lists the records linking two entities (a graph edge's evidence)",
+            "explode": false,
+            "in": "query",
+            "name": "with",
+            "schema": {
+              "description": "Timeline only: type:id that a record must also reference, so ref plus with lists the records linking two entities (a graph edge's evidence)",
+              "maxLength": 300,
+              "type": "string"
+            }
+          },
+          {
             "description": "Filter by the actor_side role",
             "explode": false,
             "in": "query",
@@ -17568,6 +17736,17 @@
             }
           },
           {
+            "description": "Filter by the last_action role",
+            "explode": false,
+            "in": "query",
+            "name": "action",
+            "schema": {
+              "description": "Filter by the last_action role",
+              "maxLength": 100,
+              "type": "string"
+            }
+          },
+          {
             "explode": false,
             "in": "query",
             "name": "state",
@@ -17577,13 +17756,17 @@
             }
           },
           {
+            "description": "current: live evidence received in the last 15 minutes; stale: quieter than that, or only known from a snapshot; unknown: an open state outlived its expected duration. fresh is an alias of current",
             "explode": false,
             "in": "query",
             "name": "freshness",
             "schema": {
+              "description": "current: live evidence received in the last 15 minutes; stale: quieter than that, or only known from a snapshot; unknown: an open state outlived its expected duration. fresh is an alias of current",
               "enum": [
-                "fresh",
-                "stale"
+                "current",
+                "stale",
+                "unknown",
+                "fresh"
               ],
               "type": "string"
             }

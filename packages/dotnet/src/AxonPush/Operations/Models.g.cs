@@ -348,6 +348,14 @@ public sealed record ActivityDraftView
     public IReadOnlyList<ActivityIssue>? Issues { get; init; } = default!;
 }
 
+public sealed record ActivityEdgeEvidence
+{
+    [JsonPropertyName("ref")]
+    public string Ref { get; init; } = default!;
+    [JsonPropertyName("with")]
+    public string With { get; init; } = default!;
+}
+
 public sealed record ActivityEntity
 {
     [JsonPropertyName("aggregates")]
@@ -532,6 +540,8 @@ public sealed record ActivityGrant
 
 public sealed record ActivityGraphEdge
 {
+    [JsonPropertyName("evidence")]
+    public ActivityEdgeEvidence Evidence { get; init; } = default!;
     [JsonPropertyName("from")]
     public string From { get; init; } = default!;
     [JsonPropertyName("to")]

@@ -19,9 +19,11 @@ def _get_kwargs(
     entity: str | Unset = UNSET,
     entity_id: str | Unset = UNSET,
     ref: str | Unset = UNSET,
+    with_: str | Unset = UNSET,
     side: str | Unset = UNSET,
     client_query: str | Unset = UNSET,
     outcome: str | Unset = UNSET,
+    action: str | Unset = UNSET,
     state: str | Unset = UNSET,
     freshness: ActivitySummaryFreshness | Unset = UNSET,
     q: str | Unset = UNSET,
@@ -39,11 +41,15 @@ def _get_kwargs(
 
     params["ref"] = ref
 
+    params["with"] = with_
+
     params["side"] = side
 
     params["client"] = client_query
 
     params["outcome"] = outcome
+
+    params["action"] = action
 
     params["state"] = state
 
@@ -104,9 +110,11 @@ def sync_detailed(
     entity: str | Unset = UNSET,
     entity_id: str | Unset = UNSET,
     ref: str | Unset = UNSET,
+    with_: str | Unset = UNSET,
     side: str | Unset = UNSET,
     client_query: str | Unset = UNSET,
     outcome: str | Unset = UNSET,
+    action: str | Unset = UNSET,
     state: str | Unset = UNSET,
     freshness: ActivitySummaryFreshness | Unset = UNSET,
     q: str | Unset = UNSET,
@@ -122,11 +130,16 @@ def sync_detailed(
         entity_id (str | Unset):
         ref (str | Unset): type:id; entities that are, or link to, this entity. Timeline:
             observations that reference it
+        with_ (str | Unset): Timeline only: type:id that a record must also reference, so ref plus
+            with lists the records linking two entities (a graph edge's evidence)
         side (str | Unset): Filter by the actor_side role
         client_query (str | Unset): Filter by the client role
         outcome (str | Unset): Filter by the outcome role
+        action (str | Unset): Filter by the last_action role
         state (str | Unset):
-        freshness (ActivitySummaryFreshness | Unset):
+        freshness (ActivitySummaryFreshness | Unset): current: live evidence received in the last
+            15 minutes; stale: quieter than that, or only known from a snapshot; unknown: an open
+            state outlived its expected duration. fresh is an alias of current
         q (str | Unset): Matches the entity id and non-personal text fields and profile traits
         cursor (str | Unset):
         limit (int | Unset):  Default: 100.
@@ -145,9 +158,11 @@ def sync_detailed(
         entity=entity,
         entity_id=entity_id,
         ref=ref,
+        with_=with_,
         side=side,
         client_query=client_query,
         outcome=outcome,
+        action=action,
         state=state,
         freshness=freshness,
         q=q,
@@ -170,9 +185,11 @@ def sync(
     entity: str | Unset = UNSET,
     entity_id: str | Unset = UNSET,
     ref: str | Unset = UNSET,
+    with_: str | Unset = UNSET,
     side: str | Unset = UNSET,
     client_query: str | Unset = UNSET,
     outcome: str | Unset = UNSET,
+    action: str | Unset = UNSET,
     state: str | Unset = UNSET,
     freshness: ActivitySummaryFreshness | Unset = UNSET,
     q: str | Unset = UNSET,
@@ -188,11 +205,16 @@ def sync(
         entity_id (str | Unset):
         ref (str | Unset): type:id; entities that are, or link to, this entity. Timeline:
             observations that reference it
+        with_ (str | Unset): Timeline only: type:id that a record must also reference, so ref plus
+            with lists the records linking two entities (a graph edge's evidence)
         side (str | Unset): Filter by the actor_side role
         client_query (str | Unset): Filter by the client role
         outcome (str | Unset): Filter by the outcome role
+        action (str | Unset): Filter by the last_action role
         state (str | Unset):
-        freshness (ActivitySummaryFreshness | Unset):
+        freshness (ActivitySummaryFreshness | Unset): current: live evidence received in the last
+            15 minutes; stale: quieter than that, or only known from a snapshot; unknown: an open
+            state outlived its expected duration. fresh is an alias of current
         q (str | Unset): Matches the entity id and non-personal text fields and profile traits
         cursor (str | Unset):
         limit (int | Unset):  Default: 100.
@@ -212,9 +234,11 @@ def sync(
         entity=entity,
         entity_id=entity_id,
         ref=ref,
+        with_=with_,
         side=side,
         client_query=client_query,
         outcome=outcome,
+        action=action,
         state=state,
         freshness=freshness,
         q=q,
@@ -231,9 +255,11 @@ async def asyncio_detailed(
     entity: str | Unset = UNSET,
     entity_id: str | Unset = UNSET,
     ref: str | Unset = UNSET,
+    with_: str | Unset = UNSET,
     side: str | Unset = UNSET,
     client_query: str | Unset = UNSET,
     outcome: str | Unset = UNSET,
+    action: str | Unset = UNSET,
     state: str | Unset = UNSET,
     freshness: ActivitySummaryFreshness | Unset = UNSET,
     q: str | Unset = UNSET,
@@ -249,11 +275,16 @@ async def asyncio_detailed(
         entity_id (str | Unset):
         ref (str | Unset): type:id; entities that are, or link to, this entity. Timeline:
             observations that reference it
+        with_ (str | Unset): Timeline only: type:id that a record must also reference, so ref plus
+            with lists the records linking two entities (a graph edge's evidence)
         side (str | Unset): Filter by the actor_side role
         client_query (str | Unset): Filter by the client role
         outcome (str | Unset): Filter by the outcome role
+        action (str | Unset): Filter by the last_action role
         state (str | Unset):
-        freshness (ActivitySummaryFreshness | Unset):
+        freshness (ActivitySummaryFreshness | Unset): current: live evidence received in the last
+            15 minutes; stale: quieter than that, or only known from a snapshot; unknown: an open
+            state outlived its expected duration. fresh is an alias of current
         q (str | Unset): Matches the entity id and non-personal text fields and profile traits
         cursor (str | Unset):
         limit (int | Unset):  Default: 100.
@@ -272,9 +303,11 @@ async def asyncio_detailed(
         entity=entity,
         entity_id=entity_id,
         ref=ref,
+        with_=with_,
         side=side,
         client_query=client_query,
         outcome=outcome,
+        action=action,
         state=state,
         freshness=freshness,
         q=q,
@@ -295,9 +328,11 @@ async def asyncio(
     entity: str | Unset = UNSET,
     entity_id: str | Unset = UNSET,
     ref: str | Unset = UNSET,
+    with_: str | Unset = UNSET,
     side: str | Unset = UNSET,
     client_query: str | Unset = UNSET,
     outcome: str | Unset = UNSET,
+    action: str | Unset = UNSET,
     state: str | Unset = UNSET,
     freshness: ActivitySummaryFreshness | Unset = UNSET,
     q: str | Unset = UNSET,
@@ -313,11 +348,16 @@ async def asyncio(
         entity_id (str | Unset):
         ref (str | Unset): type:id; entities that are, or link to, this entity. Timeline:
             observations that reference it
+        with_ (str | Unset): Timeline only: type:id that a record must also reference, so ref plus
+            with lists the records linking two entities (a graph edge's evidence)
         side (str | Unset): Filter by the actor_side role
         client_query (str | Unset): Filter by the client role
         outcome (str | Unset): Filter by the outcome role
+        action (str | Unset): Filter by the last_action role
         state (str | Unset):
-        freshness (ActivitySummaryFreshness | Unset):
+        freshness (ActivitySummaryFreshness | Unset): current: live evidence received in the last
+            15 minutes; stale: quieter than that, or only known from a snapshot; unknown: an open
+            state outlived its expected duration. fresh is an alias of current
         q (str | Unset): Matches the entity id and non-personal text fields and profile traits
         cursor (str | Unset):
         limit (int | Unset):  Default: 100.
@@ -338,9 +378,11 @@ async def asyncio(
             entity=entity,
             entity_id=entity_id,
             ref=ref,
+            with_=with_,
             side=side,
             client_query=client_query,
             outcome=outcome,
+            action=action,
             state=state,
             freshness=freshness,
             q=q,

@@ -35,6 +35,7 @@ from .activity_draft_op import ActivityDraftOp
 from .activity_draft_op_op import ActivityDraftOpOp
 from .activity_draft_updated_source import ActivityDraftUpdatedSource
 from .activity_draft_view import ActivityDraftView
+from .activity_edge_evidence import ActivityEdgeEvidence
 from .activity_entities_freshness import ActivityEntitiesFreshness
 from .activity_entity import ActivityEntity
 from .activity_entity_definition import ActivityEntityDefinition
@@ -339,6 +340,7 @@ __all__ = (
     "ActivityDraftOpOp",
     "ActivityDraftUpdatedSource",
     "ActivityDraftView",
+    "ActivityEdgeEvidence",
     "ActivityEntitiesFreshness",
     "ActivityEntity",
     "ActivityEntityDefinition",

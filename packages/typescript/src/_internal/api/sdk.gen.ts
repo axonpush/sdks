@@ -793,6 +793,8 @@ export const workspacesList = <ThrowOnError extends boolean = false>(options?: O
 
 /**
  * Create a workspace for an application, from a full or blank spec
+ *
+ * A full spec is activated at once. A blank spec (no entities) becomes the shared draft and the workspace stays pending, with no activeRevision, until the draft is activated.
  */
 export const workspacesCreate = <ThrowOnError extends boolean = false>(options: Options<WorkspacesCreateData, ThrowOnError>) => (options.client ?? client).post<WorkspacesCreateResponses, WorkspacesCreateErrors, ThrowOnError>({
     url: '/workspaces',

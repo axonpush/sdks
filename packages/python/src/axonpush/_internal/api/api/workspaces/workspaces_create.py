@@ -62,6 +62,9 @@ def sync_detailed(
 ) -> Response[ActivityWorkspace | ErrorModel]:
     """Create a workspace for an application, from a full or blank spec
 
+     A full spec is activated at once. A blank spec (no entities) becomes the shared draft and the
+    workspace stays pending, with no activeRevision, until the draft is activated.
+
     Args:
         body (CreateInputBody):
 
@@ -91,6 +94,9 @@ def sync(
 ) -> ActivityWorkspace | ErrorModel | None:
     """Create a workspace for an application, from a full or blank spec
 
+     A full spec is activated at once. A blank spec (no entities) becomes the shared draft and the
+    workspace stays pending, with no activeRevision, until the draft is activated.
+
     Args:
         body (CreateInputBody):
 
@@ -114,6 +120,9 @@ async def asyncio_detailed(
     body: CreateInputBody,
 ) -> Response[ActivityWorkspace | ErrorModel]:
     """Create a workspace for an application, from a full or blank spec
+
+     A full spec is activated at once. A blank spec (no entities) becomes the shared draft and the
+    workspace stays pending, with no activeRevision, until the draft is activated.
 
     Args:
         body (CreateInputBody):
@@ -141,6 +150,9 @@ async def asyncio(
     body: CreateInputBody,
 ) -> ActivityWorkspace | ErrorModel | None:
     """Create a workspace for an application, from a full or blank spec
+
+     A full spec is activated at once. A blank spec (no entities) becomes the shared draft and the
+    workspace stays pending, with no activeRevision, until the draft is activated.
 
     Args:
         body (CreateInputBody):

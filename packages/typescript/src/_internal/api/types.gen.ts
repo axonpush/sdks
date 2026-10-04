@@ -225,7 +225,7 @@ export type ActivityAttribute = {
     /**
      * Product meaning that generic views, analytics and alerts read through. expected_duration is in seconds.
      */
-    role?: 'outcome' | 'state' | 'actor_side' | 'client' | 'client_confidence' | 'duration' | 'expected_duration' | 'wait_reason' | 'next_actor' | 'evidence' | 'display_name' | 'display_subtitle' | 'avatar';
+    role?: 'outcome' | 'state' | 'actor_side' | 'client' | 'client_confidence' | 'duration' | 'expected_duration' | 'wait_reason' | 'next_actor' | 'evidence' | 'display_name' | 'display_subtitle' | 'avatar' | 'last_action' | 'connection' | 'noise';
     /**
      * A scoping key: access grants may restrict members and API keys to records carrying listed values of this attribute (for example a company ref)
      */
@@ -458,6 +458,17 @@ export type ActivityDraftView = {
     issues: Array<ActivityIssue> | null;
 };
 
+export type ActivityEdgeEvidence = {
+    /**
+     * Timeline ref
+     */
+    ref: string;
+    /**
+     * Timeline with
+     */
+    with: string;
+};
+
 export type ActivityEntity = {
     /**
      * Per-row counts over the entity's rollup types
@@ -647,6 +658,10 @@ export type ActivityGrant = {
 };
 
 export type ActivityGraphEdge = {
+    /**
+     * Where the records behind this edge are: a timeline query, fetched on demand so the graph stays one cheap read
+     */
+    evidence: ActivityEdgeEvidence;
     /**
      * type:id of the entity holding the reference
      */
@@ -7969,6 +7984,10 @@ export type ActivityEntitiesData = {
          */
         ref?: string;
         /**
+         * Timeline only: type:id that a record must also reference, so ref plus with lists the records linking two entities (a graph edge's evidence)
+         */
+        with?: string;
+        /**
          * Filter by the actor_side role
          */
         side?: string;
@@ -7980,8 +7999,15 @@ export type ActivityEntitiesData = {
          * Filter by the outcome role
          */
         outcome?: string;
+        /**
+         * Filter by the last_action role
+         */
+        action?: string;
         state?: string;
-        freshness?: 'fresh' | 'stale';
+        /**
+         * current: live evidence received in the last 15 minutes; stale: quieter than that, or only known from a snapshot; unknown: an open state outlived its expected duration. fresh is an alias of current
+         */
+        freshness?: 'current' | 'stale' | 'unknown' | 'fresh';
         /**
          * Matches the entity id and non-personal text fields and profile traits
          */
@@ -8340,6 +8366,10 @@ export type ActivityHealthData = {
          */
         ref?: string;
         /**
+         * Timeline only: type:id that a record must also reference, so ref plus with lists the records linking two entities (a graph edge's evidence)
+         */
+        with?: string;
+        /**
          * Filter by the actor_side role
          */
         side?: string;
@@ -8351,8 +8381,15 @@ export type ActivityHealthData = {
          * Filter by the outcome role
          */
         outcome?: string;
+        /**
+         * Filter by the last_action role
+         */
+        action?: string;
         state?: string;
-        freshness?: 'fresh' | 'stale';
+        /**
+         * current: live evidence received in the last 15 minutes; stale: quieter than that, or only known from a snapshot; unknown: an open state outlived its expected duration. fresh is an alias of current
+         */
+        freshness?: 'current' | 'stale' | 'unknown' | 'fresh';
         /**
          * Matches the entity id and non-personal text fields and profile traits
          */
@@ -8425,6 +8462,10 @@ export type ActivityIncidentsData = {
          */
         ref?: string;
         /**
+         * Timeline only: type:id that a record must also reference, so ref plus with lists the records linking two entities (a graph edge's evidence)
+         */
+        with?: string;
+        /**
          * Filter by the actor_side role
          */
         side?: string;
@@ -8436,8 +8477,15 @@ export type ActivityIncidentsData = {
          * Filter by the outcome role
          */
         outcome?: string;
+        /**
+         * Filter by the last_action role
+         */
+        action?: string;
         state?: string;
-        freshness?: 'fresh' | 'stale';
+        /**
+         * current: live evidence received in the last 15 minutes; stale: quieter than that, or only known from a snapshot; unknown: an open state outlived its expected duration. fresh is an alias of current
+         */
+        freshness?: 'current' | 'stale' | 'unknown' | 'fresh';
         /**
          * Matches the entity id and non-personal text fields and profile traits
          */
@@ -8651,6 +8699,10 @@ export type ActivitySummaryData = {
          */
         ref?: string;
         /**
+         * Timeline only: type:id that a record must also reference, so ref plus with lists the records linking two entities (a graph edge's evidence)
+         */
+        with?: string;
+        /**
          * Filter by the actor_side role
          */
         side?: string;
@@ -8662,8 +8714,15 @@ export type ActivitySummaryData = {
          * Filter by the outcome role
          */
         outcome?: string;
+        /**
+         * Filter by the last_action role
+         */
+        action?: string;
         state?: string;
-        freshness?: 'fresh' | 'stale';
+        /**
+         * current: live evidence received in the last 15 minutes; stale: quieter than that, or only known from a snapshot; unknown: an open state outlived its expected duration. fresh is an alias of current
+         */
+        freshness?: 'current' | 'stale' | 'unknown' | 'fresh';
         /**
          * Matches the entity id and non-personal text fields and profile traits
          */
@@ -8709,6 +8768,10 @@ export type ActivityTimelineData = {
          */
         ref?: string;
         /**
+         * Timeline only: type:id that a record must also reference, so ref plus with lists the records linking two entities (a graph edge's evidence)
+         */
+        with?: string;
+        /**
          * Filter by the actor_side role
          */
         side?: string;
@@ -8720,8 +8783,15 @@ export type ActivityTimelineData = {
          * Filter by the outcome role
          */
         outcome?: string;
+        /**
+         * Filter by the last_action role
+         */
+        action?: string;
         state?: string;
-        freshness?: 'fresh' | 'stale';
+        /**
+         * current: live evidence received in the last 15 minutes; stale: quieter than that, or only known from a snapshot; unknown: an open state outlived its expected duration. fresh is an alias of current
+         */
+        freshness?: 'current' | 'stale' | 'unknown' | 'fresh';
         /**
          * Matches the entity id and non-personal text fields and profile traits
          */
@@ -8767,6 +8837,10 @@ export type ActivityViewsData = {
          */
         ref?: string;
         /**
+         * Timeline only: type:id that a record must also reference, so ref plus with lists the records linking two entities (a graph edge's evidence)
+         */
+        with?: string;
+        /**
          * Filter by the actor_side role
          */
         side?: string;
@@ -8778,8 +8852,15 @@ export type ActivityViewsData = {
          * Filter by the outcome role
          */
         outcome?: string;
+        /**
+         * Filter by the last_action role
+         */
+        action?: string;
         state?: string;
-        freshness?: 'fresh' | 'stale';
+        /**
+         * current: live evidence received in the last 15 minutes; stale: quieter than that, or only known from a snapshot; unknown: an open state outlived its expected duration. fresh is an alias of current
+         */
+        freshness?: 'current' | 'stale' | 'unknown' | 'fresh';
         /**
          * Matches the entity id and non-personal text fields and profile traits
          */
