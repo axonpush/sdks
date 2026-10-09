@@ -4754,6 +4754,14 @@
       "DiffCohortDTO": {
         "additionalProperties": false,
         "properties": {
+          "activityClass": {
+            "enum": [
+              "business",
+              "system",
+              "all"
+            ],
+            "type": "string"
+          },
           "apiKey": {
             "type": "string"
           },
@@ -5353,6 +5361,9 @@
       "EventDTO": {
         "additionalProperties": false,
         "properties": {
+          "activityClass": {
+            "type": "string"
+          },
           "agentId": {
             "type": "string"
           },
@@ -7839,6 +7850,47 @@
         ],
         "type": "object"
       },
+      "SessionBootstrap": {
+        "additionalProperties": false,
+        "properties": {
+          "$schema": {
+            "description": "A URL to the JSON Schema for this object.",
+            "examples": [
+              "https://example.com/schemas/SessionBootstrap.json"
+            ],
+            "format": "uri",
+            "readOnly": true,
+            "type": "string"
+          },
+          "capabilities": {
+            "description": "Body of GET /capabilities"
+          },
+          "environments": {
+            "description": "Body of GET /environments"
+          },
+          "failed": {
+            "additionalProperties": {
+              "format": "int64",
+              "type": "integer"
+            },
+            "description": "HTTP status of each part that failed, by field",
+            "type": "object"
+          },
+          "featureFlags": {
+            "description": "Body of GET /feature-flags/me"
+          },
+          "me": {
+            "description": "Body of GET /user/me"
+          },
+          "organizations": {
+            "description": "Body of GET /users/me/organizations"
+          },
+          "workspaces": {
+            "description": "Body of GET /workspaces"
+          }
+        },
+        "type": "object"
+      },
       "SetAccessRequestStatusInputBody": {
         "additionalProperties": false,
         "properties": {
@@ -8264,6 +8316,9 @@
       "TraceSummaryDTO": {
         "additionalProperties": false,
         "properties": {
+          "activityClass": {
+            "type": "string"
+          },
           "costUsd": {
             "format": "double",
             "type": "number"
@@ -8340,6 +8395,7 @@
           }
         },
         "required": [
+          "activityClass",
           "traceId",
           "startedAt",
           "endedAt",
@@ -10197,6 +10253,16 @@
         "operationId": "analytics.breakdown",
         "parameters": [
           {
+            "description": "Bypass the 15-second summary cache",
+            "explode": false,
+            "in": "query",
+            "name": "fresh",
+            "schema": {
+              "description": "Bypass the 15-second summary cache",
+              "type": "boolean"
+            }
+          },
+          {
             "description": "Window start (RFC3339); defaults to 24h before until",
             "explode": false,
             "in": "query",
@@ -10264,6 +10330,21 @@
               "description": "Top-N entries (default 50, max 500)",
               "format": "int64",
               "type": "integer"
+            }
+          },
+          {
+            "description": "Business or system activity; omitted includes all",
+            "explode": false,
+            "in": "query",
+            "name": "activityClass",
+            "schema": {
+              "description": "Business or system activity; omitted includes all",
+              "enum": [
+                "business",
+                "system",
+                "all"
+              ],
+              "type": "string"
             }
           },
           {
@@ -10406,7 +10487,14 @@
                 }
               }
             },
-            "description": "OK"
+            "description": "OK",
+            "headers": {
+              "X-Axonpush-As-Of": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
           },
           "default": {
             "content": {
@@ -10654,6 +10742,21 @@
             }
           },
           {
+            "description": "Business or system activity; omitted includes all",
+            "explode": false,
+            "in": "query",
+            "name": "activityClass",
+            "schema": {
+              "description": "Business or system activity; omitted includes all",
+              "enum": [
+                "business",
+                "system",
+                "all"
+              ],
+              "type": "string"
+            }
+          },
+          {
             "description": "Filter by event source (e.g. gateway)",
             "explode": false,
             "in": "query",
@@ -10861,6 +10964,16 @@
         "operationId": "analytics.latency",
         "parameters": [
           {
+            "description": "Bypass the 15-second summary cache",
+            "explode": false,
+            "in": "query",
+            "name": "fresh",
+            "schema": {
+              "description": "Bypass the 15-second summary cache",
+              "type": "boolean"
+            }
+          },
+          {
             "description": "Window start (RFC3339); defaults to 24h before until",
             "explode": false,
             "in": "query",
@@ -10877,6 +10990,21 @@
             "name": "until",
             "schema": {
               "description": "Window end (RFC3339); defaults to now",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Business or system activity; omitted includes all",
+            "explode": false,
+            "in": "query",
+            "name": "activityClass",
+            "schema": {
+              "description": "Business or system activity; omitted includes all",
+              "enum": [
+                "business",
+                "system",
+                "all"
+              ],
               "type": "string"
             }
           },
@@ -11020,7 +11148,14 @@
                 }
               }
             },
-            "description": "OK"
+            "description": "OK",
+            "headers": {
+              "X-Axonpush-As-Of": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
           },
           "default": {
             "content": {
@@ -11043,6 +11178,16 @@
       "get": {
         "operationId": "analytics.overview",
         "parameters": [
+          {
+            "description": "Bypass the 15-second summary cache",
+            "explode": false,
+            "in": "query",
+            "name": "fresh",
+            "schema": {
+              "description": "Bypass the 15-second summary cache",
+              "type": "boolean"
+            }
+          },
           {
             "description": "Window start (RFC3339); defaults to 24h before until",
             "explode": false,
@@ -11106,6 +11251,21 @@
               "description": "Top-N entries per breakdown (default 50, max 500)",
               "format": "int64",
               "type": "integer"
+            }
+          },
+          {
+            "description": "Business or system activity; omitted includes all",
+            "explode": false,
+            "in": "query",
+            "name": "activityClass",
+            "schema": {
+              "description": "Business or system activity; omitted includes all",
+              "enum": [
+                "business",
+                "system",
+                "all"
+              ],
+              "type": "string"
             }
           },
           {
@@ -11248,7 +11408,14 @@
                 }
               }
             },
-            "description": "OK"
+            "description": "OK",
+            "headers": {
+              "X-Axonpush-As-Of": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
           },
           "default": {
             "content": {
@@ -11271,6 +11438,16 @@
       "get": {
         "operationId": "analytics.timeseries",
         "parameters": [
+          {
+            "description": "Bypass the 15-second summary cache",
+            "explode": false,
+            "in": "query",
+            "name": "fresh",
+            "schema": {
+              "description": "Bypass the 15-second summary cache",
+              "type": "boolean"
+            }
+          },
           {
             "description": "Window start (RFC3339); defaults to 24h before until",
             "explode": false,
@@ -11301,6 +11478,21 @@
               "enum": [
                 "hour",
                 "day"
+              ],
+              "type": "string"
+            }
+          },
+          {
+            "description": "Business or system activity; omitted includes all",
+            "explode": false,
+            "in": "query",
+            "name": "activityClass",
+            "schema": {
+              "description": "Business or system activity; omitted includes all",
+              "enum": [
+                "business",
+                "system",
+                "all"
               ],
               "type": "string"
             }
@@ -11445,7 +11637,14 @@
                 }
               }
             },
-            "description": "OK"
+            "description": "OK",
+            "headers": {
+              "X-Axonpush-As-Of": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
           },
           "default": {
             "content": {
@@ -14133,6 +14332,38 @@
         ]
       }
     },
+    "/session/bootstrap": {
+      "get": {
+        "description": "User, organizations, capabilities, feature flags, environments and workspaces, each exactly as its own endpoint returns it.",
+        "operationId": "session.bootstrap",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SessionBootstrap"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "summary": "Get the dashboard's startup reads in one request",
+        "tags": [
+          "session"
+        ]
+      }
+    },
     "/templates": {
       "get": {
         "operationId": "templates.list",
@@ -14213,6 +14444,21 @@
       "get": {
         "operationId": "traces.list",
         "parameters": [
+          {
+            "description": "Business or system activity; omitted includes all",
+            "explode": false,
+            "in": "query",
+            "name": "activityClass",
+            "schema": {
+              "description": "Business or system activity; omitted includes all",
+              "enum": [
+                "business",
+                "system",
+                "all"
+              ],
+              "type": "string"
+            }
+          },
           {
             "description": "Window start (RFC3339); defaults to 24h before until",
             "explode": false,
@@ -15651,6 +15897,16 @@
         "operationId": "activity.entities",
         "parameters": [
           {
+            "description": "Bypass the 15-second summary cache",
+            "explode": false,
+            "in": "query",
+            "name": "fresh",
+            "schema": {
+              "description": "Bypass the 15-second summary cache",
+              "type": "boolean"
+            }
+          },
+          {
             "in": "path",
             "name": "workspaceId",
             "required": true,
@@ -15847,6 +16103,16 @@
         "operationId": "activity.analytics",
         "parameters": [
           {
+            "description": "Bypass the 15-second summary cache",
+            "explode": false,
+            "in": "query",
+            "name": "fresh",
+            "schema": {
+              "description": "Bypass the 15-second summary cache",
+              "type": "boolean"
+            }
+          },
+          {
             "in": "path",
             "name": "workspaceId",
             "required": true,
@@ -15888,7 +16154,14 @@
                 }
               }
             },
-            "description": "OK"
+            "description": "OK",
+            "headers": {
+              "X-Axonpush-As-Of": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
           },
           "default": {
             "content": {
@@ -16448,6 +16721,16 @@
         "operationId": "activity.health",
         "parameters": [
           {
+            "description": "Bypass the 15-second summary cache",
+            "explode": false,
+            "in": "query",
+            "name": "fresh",
+            "schema": {
+              "description": "Bypass the 15-second summary cache",
+              "type": "boolean"
+            }
+          },
+          {
             "in": "path",
             "name": "workspaceId",
             "required": true,
@@ -16617,7 +16900,14 @@
                 }
               }
             },
-            "description": "OK"
+            "description": "OK",
+            "headers": {
+              "X-Axonpush-As-Of": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
           },
           "default": {
             "content": {
@@ -16698,6 +16988,16 @@
       "get": {
         "operationId": "activity.incidents",
         "parameters": [
+          {
+            "description": "Bypass the 15-second summary cache",
+            "explode": false,
+            "in": "query",
+            "name": "fresh",
+            "schema": {
+              "description": "Bypass the 15-second summary cache",
+              "type": "boolean"
+            }
+          },
           {
             "in": "path",
             "name": "workspaceId",
@@ -17106,6 +17406,16 @@
         "operationId": "activity.series",
         "parameters": [
           {
+            "description": "Bypass the 15-second summary cache",
+            "explode": false,
+            "in": "query",
+            "name": "fresh",
+            "schema": {
+              "description": "Bypass the 15-second summary cache",
+              "type": "boolean"
+            }
+          },
+          {
             "in": "path",
             "name": "workspaceId",
             "required": true,
@@ -17225,7 +17535,14 @@
                 }
               }
             },
-            "description": "OK"
+            "description": "OK",
+            "headers": {
+              "X-Axonpush-As-Of": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
           },
           "default": {
             "content": {
@@ -17251,6 +17568,16 @@
       "get": {
         "operationId": "activity.summary",
         "parameters": [
+          {
+            "description": "Bypass the 15-second summary cache",
+            "explode": false,
+            "in": "query",
+            "name": "fresh",
+            "schema": {
+              "description": "Bypass the 15-second summary cache",
+              "type": "boolean"
+            }
+          },
           {
             "in": "path",
             "name": "workspaceId",
@@ -17421,7 +17748,14 @@
                 }
               }
             },
-            "description": "OK"
+            "description": "OK",
+            "headers": {
+              "X-Axonpush-As-Of": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
           },
           "default": {
             "content": {
@@ -17447,6 +17781,16 @@
       "get": {
         "operationId": "activity.timeline",
         "parameters": [
+          {
+            "description": "Bypass the 15-second summary cache",
+            "explode": false,
+            "in": "query",
+            "name": "fresh",
+            "schema": {
+              "description": "Bypass the 15-second summary cache",
+              "type": "boolean"
+            }
+          },
           {
             "in": "path",
             "name": "workspaceId",
@@ -17644,6 +17988,16 @@
         "operationId": "activity.views",
         "parameters": [
           {
+            "description": "Bypass the 15-second summary cache",
+            "explode": false,
+            "in": "query",
+            "name": "fresh",
+            "schema": {
+              "description": "Bypass the 15-second summary cache",
+              "type": "boolean"
+            }
+          },
+          {
             "in": "path",
             "name": "workspaceId",
             "required": true,
@@ -17813,7 +18167,14 @@
                 }
               }
             },
-            "description": "OK"
+            "description": "OK",
+            "headers": {
+              "X-Axonpush-As-Of": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
           },
           "default": {
             "content": {
