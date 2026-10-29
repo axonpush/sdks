@@ -1,6 +1,6 @@
 {
   "source": "axonpush/server",
-  "sha": "88af27824a5c80bbf9354a481f1d889596680f24",
+  "sha": "e1d94bc331a1941ff33c6faf2440ce6b7799bcb6",
   "ref": "feat/unified-telemetry",
-  "sha256": "09d9f2017aeeffe3111a1806eb1479c0e7f83e354d364d1cd3e4b55119cdddb1"
+  "sha256": "1a8077250899e2633c2591159aa56288fc3d7f4e5c03c2690df0056a3dd53a92"
 }

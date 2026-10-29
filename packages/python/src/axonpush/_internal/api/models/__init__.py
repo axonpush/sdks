@@ -179,6 +179,7 @@ from .dimension_values_output_body import DimensionValuesOutputBody
 from .dimensions_output_body import DimensionsOutputBody
 from .endpoint_dto import EndpointDTO
 from .environment_dto import EnvironmentDTO
+from .erase_evidence_output_body import EraseEvidenceOutputBody
 from .error_detail import ErrorDetail
 from .error_issue_dto import ErrorIssueDTO
 from .error_model import ErrorModel
@@ -264,6 +265,7 @@ from .search_orgs_output_body import SearchOrgsOutputBody
 from .search_users_output_body import SearchUsersOutputBody
 from .session_bootstrap import SessionBootstrap
 from .session_bootstrap_failed import SessionBootstrapFailed
+from .session_evidence_body import SessionEvidenceBody
 from .set_access_request_status_input_body import SetAccessRequestStatusInputBody
 from .set_active_org_input_body import SetActiveOrgInputBody
 from .set_billing_input_body import SetBillingInputBody
@@ -502,6 +504,7 @@ __all__ = (
     "DimensionValuesOutputBody",
     "EndpointDTO",
     "EnvironmentDTO",
+    "EraseEvidenceOutputBody",
     "ErrorDetail",
     "ErrorIssueDTO",
     "ErrorModel",
@@ -587,6 +590,7 @@ __all__ = (
     "SearchUsersOutputBody",
     "SessionBootstrap",
     "SessionBootstrapFailed",
+    "SessionEvidenceBody",
     "SetAccessRequestStatusInputBody",
     "SetActiveOrgInputBody",
     "SetBillingInputBody",

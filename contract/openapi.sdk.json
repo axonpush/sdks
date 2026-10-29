@@ -5133,6 +5133,27 @@
         ],
         "type": "object"
       },
+      "EraseEvidenceOutputBody": {
+        "additionalProperties": false,
+        "properties": {
+          "$schema": {
+            "description": "A URL to the JSON Schema for this object.",
+            "examples": [
+              "https://example.com/schemas/EraseEvidenceOutputBody.json"
+            ],
+            "format": "uri",
+            "readOnly": true,
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "status"
+        ],
+        "type": "object"
+      },
       "ErrorDetail": {
         "additionalProperties": false,
         "properties": {
@@ -5361,6 +5382,15 @@
       "EventDTO": {
         "additionalProperties": false,
         "properties": {
+          "$schema": {
+            "description": "A URL to the JSON Schema for this object.",
+            "examples": [
+              "https://example.com/schemas/EventDTO.json"
+            ],
+            "format": "uri",
+            "readOnly": true,
+            "type": "string"
+          },
           "activityClass": {
             "type": "string"
           },
@@ -5386,7 +5416,7 @@
             "type": "string"
           },
           "contentState": {
-            "description": "available, unavailable, or absent; describes stored payload availability",
+            "description": "available, unavailable, absent, restricted, expired, or not_loaded; describes stored payload availability",
             "type": "string"
           },
           "costSource": {
@@ -7926,6 +7956,42 @@
             "description": "Body of GET /workspaces"
           }
         },
+        "type": "object"
+      },
+      "SessionEvidenceBody": {
+        "additionalProperties": false,
+        "properties": {
+          "$schema": {
+            "description": "A URL to the JSON Schema for this object.",
+            "examples": [
+              "https://example.com/schemas/SessionEvidenceBody.json"
+            ],
+            "format": "uri",
+            "readOnly": true,
+            "type": "string"
+          },
+          "events": {
+            "items": {
+              "$ref": "#/components/schemas/EventDTO"
+            },
+            "type": [
+              "array",
+              "null"
+            ]
+          },
+          "hasMore": {
+            "type": "boolean"
+          },
+          "nextOffset": {
+            "format": "int64",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "events",
+          "hasMore",
+          "nextOffset"
+        ],
         "type": "object"
       },
       "SetAccessRequestStatusInputBody": {
@@ -14560,6 +14626,205 @@
         "summary": "Get the dashboard's startup reads in one request",
         "tags": [
           "session"
+        ]
+      }
+    },
+    "/telemetry/events/{eventId}/content": {
+      "get": {
+        "operationId": "telemetry.content",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "eventId",
+            "required": true,
+            "schema": {
+              "maxLength": 256,
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EventDTO"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "summary": "Read audited interaction content; recordings also require replay:read",
+        "tags": [
+          "telemetry"
+        ],
+        "x-axonpush-scopes": [
+          "content:read"
+        ]
+      }
+    },
+    "/telemetry/sessions/{sessionId}": {
+      "get": {
+        "operationId": "telemetry.timeline",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "sessionId",
+            "required": true,
+            "schema": {
+              "maxLength": 256,
+              "type": "string"
+            }
+          },
+          {
+            "explode": false,
+            "in": "query",
+            "name": "appId",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "explode": false,
+            "in": "query",
+            "name": "environmentId",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "explode": false,
+            "in": "query",
+            "name": "limit",
+            "schema": {
+              "default": 100,
+              "format": "int64",
+              "maximum": 500,
+              "minimum": 1,
+              "type": "integer"
+            }
+          },
+          {
+            "explode": false,
+            "in": "query",
+            "name": "offset",
+            "schema": {
+              "format": "int64",
+              "maximum": 100000,
+              "minimum": 0,
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SessionEvidenceBody"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "summary": "Read a session's chronological interaction metadata",
+        "tags": [
+          "telemetry"
+        ],
+        "x-axonpush-scopes": [
+          "observe:read"
+        ]
+      }
+    },
+    "/telemetry/subjects/{subjectType}/{subjectId}": {
+      "delete": {
+        "operationId": "telemetry.erase",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "subjectType",
+            "required": true,
+            "schema": {
+              "maxLength": 64,
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "subjectId",
+            "required": true,
+            "schema": {
+              "maxLength": 256,
+              "type": "string"
+            }
+          },
+          {
+            "explode": false,
+            "in": "query",
+            "name": "appId",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "explode": false,
+            "in": "query",
+            "name": "environmentId",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EraseEvidenceOutputBody"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "summary": "Erase subject evidence and prevent delayed ingestion restoring it",
+        "tags": [
+          "telemetry"
+        ],
+        "x-axonpush-scopes": [
+          "content:erase"
         ]
       }
     },

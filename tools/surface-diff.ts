@@ -112,7 +112,7 @@ for (const resource of resources) {
 }
 
 const dotnet = dotnetOperationsSurface();
-for (const resource of ["activity", "observations", "templates", "workspaces"]) {
+for (const resource of ["activity", "observations", "templates", "workspaces", "telemetry"]) {
   const expected = ts.get(resource);
   const actual = dotnet.get(resource);
   if (

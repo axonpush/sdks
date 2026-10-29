@@ -101,6 +101,9 @@ organization.telemetryPolicy.update
 organization.transferOwnership
 organization.update
 session.bootstrap
+telemetry.content
+telemetry.erase
+telemetry.timeline
 templates.list
 templates.publish
 tokens.create

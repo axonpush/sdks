@@ -24,13 +24,15 @@ class EventDTO:
         org_id (str):
         payload_spilled (bool):
         source (str):
+        schema (str | Unset): A URL to the JSON Schema for this object.
         activity_class (str | Unset):
         agent_id (str | Unset):
         agent_name (str | Unset):
         attributes (Any | Unset):
         cache_read_tokens (int | Unset):
         cache_write_tokens (int | Unset):
-        content_state (str | Unset): available, unavailable, or absent; describes stored payload availability
+        content_state (str | Unset): available, unavailable, absent, restricted, expired, or not_loaded; describes
+            stored payload availability
         cost_source (str | Unset):
         cost_usd (float | Unset):
         duration_ms (float | Unset):
@@ -70,6 +72,7 @@ class EventDTO:
     org_id: str
     payload_spilled: bool
     source: str
+    schema: str | Unset = UNSET
     activity_class: str | Unset = UNSET
     agent_id: str | Unset = UNSET
     agent_name: str | Unset = UNSET
@@ -124,6 +127,8 @@ class EventDTO:
         payload_spilled = self.payload_spilled
 
         source = self.source
+
+        schema = self.schema
 
         activity_class = self.activity_class
 
@@ -210,6 +215,8 @@ class EventDTO:
                 "source": source,
             }
         )
+        if schema is not UNSET:
+            field_dict["$schema"] = schema
         if activity_class is not UNSET:
             field_dict["activityClass"] = activity_class
         if agent_id is not UNSET:
@@ -304,6 +311,8 @@ class EventDTO:
 
         source = d.pop("source")
 
+        schema = d.pop("$schema", UNSET)
+
         activity_class = d.pop("activityClass", UNSET)
 
         agent_id = d.pop("agentId", UNSET)
@@ -384,6 +393,7 @@ class EventDTO:
             org_id=org_id,
             payload_spilled=payload_spilled,
             source=source,
+            schema=schema,
             activity_class=activity_class,
             agent_id=agent_id,
             agent_name=agent_name,

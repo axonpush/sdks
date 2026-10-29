@@ -127,3 +127,5 @@ export { WebhooksResource } from "./resources/webhooks.js";
 export { WorkspacesResource } from "./resources/workspaces.js";
 export { currentTrace, getOrCreateTrace, TraceContext } from "./tracing.js";
 export { __version__ } from "./version.js";
+
+export { TelemetryResource } from "./resources/telemetry.js";

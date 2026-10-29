@@ -14,7 +14,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 spec = json.loads((ROOT / "contract/openapi.sdk.json").read_text())
 schemas = spec["components"]["schemas"]
-groups = {"workspaces": "Workspaces", "templates": "Templates", "observations": "Observations", "activity": "Activity"}
+groups = {"workspaces": "Workspaces", "templates": "Templates", "observations": "Observations", "activity": "Activity", "telemetry": "Telemetry"}
 ops: dict[str, list[dict]] = {g: [] for g in groups}
 
 
@@ -93,7 +93,7 @@ for group, cls in groups.items():
                 args.append('params: Mapping[str, Any] | None = None')
                 call.append('**{k: v for k, v in (params or {}).items() if v is not None}')
             py += ['', f'    {"async " if asynchronous else ""}def {snake(x["name"])}({", ".join(args)}) -> {x["response"] or "Any"} | None:', '        """' + x['summary'] + '."""', f'        return {"await " if asynchronous else ""}self._client._invoke(_{snake(x["name"])}_op{", " if call else ""}{", ".join(call)})']
-    (ROOT / f'packages/typescript/src/resources/{group}.ts').write_text('\n'.join(ts))
+    (ROOT / f'packages/typescript/src/resources/{group}.ts').write_text('\n'.join(ts).replace('EventDTO', 'EventDto'))
     (ROOT / f'packages/python/src/axonpush/resources/{group}.py').write_text('\n'.join(py) + '\n')
 
 # .NET has no general generated OpenAPI client. Emit just this shared operations

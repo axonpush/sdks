@@ -1804,6 +1804,14 @@ export type EnvironmentDto = {
     updatedAt?: string;
 };
 
+export type EraseEvidenceOutputBody = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
+    status: string;
+};
+
 export type ErrorDetail = {
     /**
      * Where the error occurred, e.g. 'body.items[3].tags' or 'path.thing-id'
@@ -1911,6 +1919,10 @@ export type EventBody = {
 };
 
 export type EventDto = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
     activityClass?: string;
     agentId?: string;
     agentName?: string;
@@ -1920,7 +1932,7 @@ export type EventDto = {
     cacheWriteTokens?: number;
     channelId: string;
     /**
-     * available, unavailable, or absent; describes stored payload availability
+     * available, unavailable, absent, restricted, expired, or not_loaded; describes stored payload availability
      */
     contentState?: string;
     costSource?: string;
@@ -2714,6 +2726,16 @@ export type SessionBootstrap = {
      * Body of GET /workspaces
      */
     workspaces?: unknown;
+};
+
+export type SessionEvidenceBody = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
+    events: Array<EventDto> | null;
+    hasMore: boolean;
+    nextOffset: number;
 };
 
 export type SetAccessRequestStatusInputBody = {
@@ -3736,6 +3758,10 @@ export type EnvironmentDtoWritable = {
     updatedAt?: string;
 };
 
+export type EraseEvidenceOutputBodyWritable = {
+    status: string;
+};
+
 export type ErrorModelWritable = {
     /**
      * A human-readable explanation specific to this occurrence of the problem.
@@ -3800,6 +3826,56 @@ export type EventBodyWritable = {
     traceId?: string;
 };
 
+export type EventDtoWritable = {
+    activityClass?: string;
+    agentId?: string;
+    agentName?: string;
+    appId: string;
+    attributes?: unknown;
+    cacheReadTokens?: number;
+    cacheWriteTokens?: number;
+    channelId: string;
+    /**
+     * available, unavailable, absent, restricted, expired, or not_loaded; describes stored payload availability
+     */
+    contentState?: string;
+    costSource?: string;
+    costUsd?: number;
+    createdAt: string;
+    durationMs?: number;
+    environmentId?: string;
+    errorMessage?: string;
+    errorType?: string;
+    eventId: string;
+    eventType: string;
+    finishReason?: string;
+    inputTokens?: number;
+    metadata?: unknown;
+    occurredAt: string;
+    operationName?: string;
+    orgId: string;
+    outputTokens?: number;
+    parentSpanId?: string;
+    payload?: unknown;
+    payloadSpilled: boolean;
+    providerName?: string;
+    reasoningTokens?: number;
+    requestModel?: string;
+    resourceAttributes?: unknown;
+    responseModel?: string;
+    semanticKind?: string;
+    serviceName?: string;
+    sessionId?: string;
+    source: string;
+    spanId?: string;
+    status?: string;
+    toolName?: string;
+    totalTokens?: number;
+    traceId?: string;
+    ttftMs?: number;
+    userId?: string;
+};
+
 export type EventOutputBodyWritable = {
     eventId: string;
     status: string;
@@ -3825,7 +3901,7 @@ export type GetOutputBodyWritable = {
 };
 
 export type GetTraceOutputBodyWritable = {
-    spans: Array<EventDto> | null;
+    spans: Array<EventDtoWritable> | null;
     traceId: string;
 };
 
@@ -3925,7 +4001,7 @@ export type IssueDetailDtoWritable = {
     occurrences: Array<IssueBucketDto> | null;
     resolvedAt?: string;
     resolvedInRelease?: string;
-    sampleEvent?: EventDto;
+    sampleEvent?: EventDtoWritable;
     snoozeUntil?: string;
     stack: Array<StackFrameDto> | null;
     tags: Array<TagDistributionDto> | null;
@@ -3997,7 +4073,7 @@ export type ListEnvironmentsOutputBodyWritable = {
 };
 
 export type ListErrorEventsOutputBodyWritable = {
-    events: Array<EventDto> | null;
+    events: Array<EventDtoWritable> | null;
 };
 
 export type ListErrorsOutputBodyWritable = {
@@ -4132,7 +4208,7 @@ export type RevisionListOutputBodyWritable = {
 };
 
 export type SearchEventsOutputBodyWritable = {
-    events: Array<EventDto> | null;
+    events: Array<EventDtoWritable> | null;
 };
 
 export type SearchOrgsOutputBodyWritable = {
@@ -4174,6 +4250,12 @@ export type SessionBootstrapWritable = {
      * Body of GET /workspaces
      */
     workspaces?: unknown;
+};
+
+export type SessionEvidenceBodyWritable = {
+    events: Array<EventDtoWritable> | null;
+    hasMore: boolean;
+    nextOffset: number;
 };
 
 export type SetAccessRequestStatusInputBodyWritable = {
@@ -7343,6 +7425,96 @@ export type SessionBootstrapResponses = {
 };
 
 export type SessionBootstrapResponse = SessionBootstrapResponses[keyof SessionBootstrapResponses];
+
+export type TelemetryContentData = {
+    body?: never;
+    path: {
+        eventId: string;
+    };
+    query?: never;
+    url: '/telemetry/events/{eventId}/content';
+};
+
+export type TelemetryContentErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type TelemetryContentError = TelemetryContentErrors[keyof TelemetryContentErrors];
+
+export type TelemetryContentResponses = {
+    /**
+     * OK
+     */
+    200: EventDto;
+};
+
+export type TelemetryContentResponse = TelemetryContentResponses[keyof TelemetryContentResponses];
+
+export type TelemetryTimelineData = {
+    body?: never;
+    path: {
+        sessionId: string;
+    };
+    query?: {
+        appId?: string;
+        environmentId?: string;
+        limit?: number;
+        offset?: number;
+    };
+    url: '/telemetry/sessions/{sessionId}';
+};
+
+export type TelemetryTimelineErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type TelemetryTimelineError = TelemetryTimelineErrors[keyof TelemetryTimelineErrors];
+
+export type TelemetryTimelineResponses = {
+    /**
+     * OK
+     */
+    200: SessionEvidenceBody;
+};
+
+export type TelemetryTimelineResponse = TelemetryTimelineResponses[keyof TelemetryTimelineResponses];
+
+export type TelemetryEraseData = {
+    body?: never;
+    path: {
+        subjectType: string;
+        subjectId: string;
+    };
+    query?: {
+        appId?: string;
+        environmentId?: string;
+    };
+    url: '/telemetry/subjects/{subjectType}/{subjectId}';
+};
+
+export type TelemetryEraseErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type TelemetryEraseError = TelemetryEraseErrors[keyof TelemetryEraseErrors];
+
+export type TelemetryEraseResponses = {
+    /**
+     * OK
+     */
+    200: EraseEvidenceOutputBody;
+};
+
+export type TelemetryEraseResponse = TelemetryEraseResponses[keyof TelemetryEraseResponses];
 
 export type TemplatesListData = {
     body?: never;
