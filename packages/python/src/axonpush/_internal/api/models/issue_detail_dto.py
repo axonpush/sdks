@@ -12,6 +12,7 @@ if TYPE_CHECKING:
     from ..models.breadcrumb_dto import BreadcrumbDTO
     from ..models.error_issue_dto import ErrorIssueDTO
     from ..models.event_dto import EventDTO
+    from ..models.exception_dto import ExceptionDTO
     from ..models.issue_bucket_dto import IssueBucketDTO
     from ..models.stack_frame_dto import StackFrameDTO
     from ..models.tag_distribution_dto import TagDistributionDTO
@@ -31,6 +32,7 @@ class IssueDetailDTO:
         stack (list[StackFrameDTO] | None):
         tags (list[TagDistributionDTO] | None):
         schema (str | Unset): A URL to the JSON Schema for this object.
+        exception_chain (list[ExceptionDTO] | None | Unset):
         resolved_at (str | Unset):
         resolved_in_release (str | Unset):
         sample_event (EventDTO | Unset):
@@ -44,6 +46,7 @@ class IssueDetailDTO:
     stack: list[StackFrameDTO] | None
     tags: list[TagDistributionDTO] | None
     schema: str | Unset = UNSET
+    exception_chain: list[ExceptionDTO] | None | Unset = UNSET
     resolved_at: str | Unset = UNSET
     resolved_in_release: str | Unset = UNSET
     sample_event: EventDTO | Unset = UNSET
@@ -53,6 +56,7 @@ class IssueDetailDTO:
         from ..models.breadcrumb_dto import BreadcrumbDTO
         from ..models.error_issue_dto import ErrorIssueDTO
         from ..models.event_dto import EventDTO
+        from ..models.exception_dto import ExceptionDTO
         from ..models.issue_bucket_dto import IssueBucketDTO
         from ..models.stack_frame_dto import StackFrameDTO
         from ..models.tag_distribution_dto import TagDistributionDTO
@@ -108,6 +112,18 @@ class IssueDetailDTO:
 
         schema = self.schema
 
+        exception_chain: list[dict[str, Any]] | None | Unset
+        if isinstance(self.exception_chain, Unset):
+            exception_chain = UNSET
+        elif isinstance(self.exception_chain, list):
+            exception_chain = []
+            for exception_chain_type_0_item_data in self.exception_chain:
+                exception_chain_type_0_item = exception_chain_type_0_item_data.to_dict()
+                exception_chain.append(exception_chain_type_0_item)
+
+        else:
+            exception_chain = self.exception_chain
+
         resolved_at = self.resolved_at
 
         resolved_in_release = self.resolved_in_release
@@ -132,6 +148,8 @@ class IssueDetailDTO:
         )
         if schema is not UNSET:
             field_dict["$schema"] = schema
+        if exception_chain is not UNSET:
+            field_dict["exceptionChain"] = exception_chain
         if resolved_at is not UNSET:
             field_dict["resolvedAt"] = resolved_at
         if resolved_in_release is not UNSET:
@@ -148,6 +166,7 @@ class IssueDetailDTO:
         from ..models.breadcrumb_dto import BreadcrumbDTO
         from ..models.error_issue_dto import ErrorIssueDTO
         from ..models.event_dto import EventDTO
+        from ..models.exception_dto import ExceptionDTO
         from ..models.issue_bucket_dto import IssueBucketDTO
         from ..models.stack_frame_dto import StackFrameDTO
         from ..models.tag_distribution_dto import TagDistributionDTO
@@ -253,6 +272,30 @@ class IssueDetailDTO:
 
         schema = d.pop("$schema", UNSET)
 
+        def _parse_exception_chain(data: object) -> list[ExceptionDTO] | None | Unset:
+            if data is None:
+                return data
+            if isinstance(data, Unset):
+                return data
+            try:
+                if not isinstance(data, list):
+                    raise TypeError()
+                exception_chain_type_0 = []
+                _exception_chain_type_0 = data
+                for exception_chain_type_0_item_data in _exception_chain_type_0:
+                    exception_chain_type_0_item = ExceptionDTO.from_dict(
+                        exception_chain_type_0_item_data
+                    )
+
+                    exception_chain_type_0.append(exception_chain_type_0_item)
+
+                return exception_chain_type_0
+            except (TypeError, ValueError, AttributeError, KeyError):
+                pass
+            return cast(list[ExceptionDTO] | None | Unset, data)
+
+        exception_chain = _parse_exception_chain(d.pop("exceptionChain", UNSET))
+
         resolved_at = d.pop("resolvedAt", UNSET)
 
         resolved_in_release = d.pop("resolvedInRelease", UNSET)
@@ -274,6 +317,7 @@ class IssueDetailDTO:
             stack=stack,
             tags=tags,
             schema=schema,
+            exception_chain=exception_chain,
             resolved_at=resolved_at,
             resolved_in_release=resolved_in_release,
             sample_event=sample_event,

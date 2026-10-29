@@ -1669,6 +1669,7 @@ export type DiffAttributeDto = {
 };
 
 export type DiffCohortDto = {
+    activityClass?: 'business' | 'system' | 'all';
     apiKey?: string;
     app?: string;
     channel?: string;
@@ -1910,6 +1911,7 @@ export type EventBody = {
 };
 
 export type EventDto = {
+    activityClass?: string;
     agentId?: string;
     agentName?: string;
     appId: string;
@@ -1917,6 +1919,10 @@ export type EventDto = {
     cacheReadTokens?: number;
     cacheWriteTokens?: number;
     channelId: string;
+    /**
+     * available, unavailable, or absent; describes stored payload availability
+     */
+    contentState?: string;
     costSource?: string;
     costUsd?: number;
     createdAt: string;
@@ -1961,6 +1967,12 @@ export type EventOutputBody = {
     readonly $schema?: string;
     eventId: string;
     status: string;
+};
+
+export type ExceptionDto = {
+    message?: string;
+    stack: Array<StackFrameDto> | null;
+    type?: string;
 };
 
 export type ExportDeliveryDto = {
@@ -2175,6 +2187,7 @@ export type IssueDetailDto = {
     readonly $schema?: string;
     affectedTraceIds: Array<string> | null;
     breadcrumbs: Array<BreadcrumbDto> | null;
+    exceptionChain?: Array<ExceptionDto> | null;
     issue: ErrorIssueDto;
     occurrences: Array<IssueBucketDto> | null;
     resolvedAt?: string;
@@ -2666,6 +2679,43 @@ export type SearchUsersOutputBody = {
     users: Array<UserDto> | null;
 };
 
+export type SessionBootstrap = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
+    /**
+     * Body of GET /capabilities
+     */
+    capabilities?: unknown;
+    /**
+     * Body of GET /environments
+     */
+    environments?: unknown;
+    /**
+     * HTTP status of each part that failed, by field
+     */
+    failed?: {
+        [key: string]: number;
+    };
+    /**
+     * Body of GET /feature-flags/me
+     */
+    featureFlags?: unknown;
+    /**
+     * Body of GET /user/me
+     */
+    me?: unknown;
+    /**
+     * Body of GET /users/me/organizations
+     */
+    organizations?: unknown;
+    /**
+     * Body of GET /workspaces
+     */
+    workspaces?: unknown;
+};
+
 export type SetAccessRequestStatusInputBody = {
     /**
      * A URL to the JSON Schema for this object.
@@ -2756,6 +2806,9 @@ export type StackFrameDto = {
     line?: number;
     postContext?: Array<string> | null;
     preContext?: Array<string> | null;
+    variables?: {
+        [key: string]: unknown;
+    };
 };
 
 export type TagDistributionDto = {
@@ -2811,7 +2864,49 @@ export type TimeseriesPointDto = {
     traceCount: number;
 };
 
+export type TraceGroupDto = {
+    activityClass: string;
+    appId: string;
+    environment: string;
+    failed: boolean;
+    firstErrorType: string;
+    firstSeen: string;
+    groupKey: string;
+    lastSeen: string;
+    maxDurationMs: number;
+    minDurationMs: number;
+    outcome: string;
+    representativeTraceId: string;
+    rootSpanName: string;
+    serviceName: string;
+    traceCount: number;
+};
+
+export type TraceGroupMembersOutputBody = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
+    totalTraces: number;
+    traces: Array<TraceSummaryDto> | null;
+};
+
+export type TraceGroupsBody = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
+    failedTraces: number;
+    finishedTraces: number;
+    groups: Array<TraceGroupDto> | null;
+    since: string;
+    totalGroups: number;
+    totalTraces: number;
+    until: string;
+};
+
 export type TraceSummaryDto = {
+    activityClass: string;
     costUsd: number;
     customer: string;
     durationMs: number;
@@ -3825,6 +3920,7 @@ export type InvitationDtoWritable = {
 export type IssueDetailDtoWritable = {
     affectedTraceIds: Array<string> | null;
     breadcrumbs: Array<BreadcrumbDto> | null;
+    exceptionChain?: Array<ExceptionDto> | null;
     issue: ErrorIssueDto;
     occurrences: Array<IssueBucketDto> | null;
     resolvedAt?: string;
@@ -4047,6 +4143,39 @@ export type SearchUsersOutputBodyWritable = {
     users: Array<UserDto> | null;
 };
 
+export type SessionBootstrapWritable = {
+    /**
+     * Body of GET /capabilities
+     */
+    capabilities?: unknown;
+    /**
+     * Body of GET /environments
+     */
+    environments?: unknown;
+    /**
+     * HTTP status of each part that failed, by field
+     */
+    failed?: {
+        [key: string]: number;
+    };
+    /**
+     * Body of GET /feature-flags/me
+     */
+    featureFlags?: unknown;
+    /**
+     * Body of GET /user/me
+     */
+    me?: unknown;
+    /**
+     * Body of GET /users/me/organizations
+     */
+    organizations?: unknown;
+    /**
+     * Body of GET /workspaces
+     */
+    workspaces?: unknown;
+};
+
 export type SetAccessRequestStatusInputBodyWritable = {
     status: string;
 };
@@ -4110,6 +4239,21 @@ export type TestOutputBodyWritable = {
 export type TimeseriesOutputBodyWritable = {
     bucket: string;
     points: Array<TimeseriesPointDto> | null;
+};
+
+export type TraceGroupMembersOutputBodyWritable = {
+    totalTraces: number;
+    traces: Array<TraceSummaryDto> | null;
+};
+
+export type TraceGroupsBodyWritable = {
+    failedTraces: number;
+    finishedTraces: number;
+    groups: Array<TraceGroupDto> | null;
+    since: string;
+    totalGroups: number;
+    totalTraces: number;
+    until: string;
 };
 
 export type TransferOwnershipInputBodyWritable = {
@@ -4948,6 +5092,10 @@ export type AnalyticsBreakdownData = {
     path?: never;
     query?: {
         /**
+         * Bypass the 15-second summary cache
+         */
+        fresh?: boolean;
+        /**
          * Window start (RFC3339); defaults to 24h before until
          */
         since?: string;
@@ -4967,6 +5115,10 @@ export type AnalyticsBreakdownData = {
          * Top-N entries (default 50, max 500)
          */
         limit?: number;
+        /**
+         * Business or system activity; omitted includes all
+         */
+        activityClass?: 'business' | 'system' | 'all';
         /**
          * Filter by event source (e.g. gateway)
          */
@@ -5163,6 +5315,10 @@ export type AnalyticsHeatmapData = {
          */
         scale?: 'log' | 'linear';
         /**
+         * Business or system activity; omitted includes all
+         */
+        activityClass?: 'business' | 'system' | 'all';
+        /**
          * Filter by event source (e.g. gateway)
          */
         source?: string;
@@ -5271,6 +5427,10 @@ export type AnalyticsLatencyData = {
     path?: never;
     query?: {
         /**
+         * Bypass the 15-second summary cache
+         */
+        fresh?: boolean;
+        /**
          * Window start (RFC3339); defaults to 24h before until
          */
         since?: string;
@@ -5278,6 +5438,10 @@ export type AnalyticsLatencyData = {
          * Window end (RFC3339); defaults to now
          */
         until?: string;
+        /**
+         * Business or system activity; omitted includes all
+         */
+        activityClass?: 'business' | 'system' | 'all';
         /**
          * Filter by event source (e.g. gateway)
          */
@@ -5357,6 +5521,10 @@ export type AnalyticsOverviewData = {
     path?: never;
     query?: {
         /**
+         * Bypass the 15-second summary cache
+         */
+        fresh?: boolean;
+        /**
          * Window start (RFC3339); defaults to 24h before until
          */
         since?: string;
@@ -5380,6 +5548,10 @@ export type AnalyticsOverviewData = {
          * Top-N entries per breakdown (default 50, max 500)
          */
         limit?: number;
+        /**
+         * Business or system activity; omitted includes all
+         */
+        activityClass?: 'business' | 'system' | 'all';
         /**
          * Filter by event source (e.g. gateway)
          */
@@ -5459,6 +5631,10 @@ export type AnalyticsTimeseriesData = {
     path?: never;
     query?: {
         /**
+         * Bypass the 15-second summary cache
+         */
+        fresh?: boolean;
+        /**
          * Window start (RFC3339); defaults to 24h before until
          */
         since?: string;
@@ -5470,6 +5646,10 @@ export type AnalyticsTimeseriesData = {
          * Time bucket granularity (default hour)
          */
         bucket?: 'hour' | 'day';
+        /**
+         * Business or system activity; omitted includes all
+         */
+        activityClass?: 'business' | 'system' | 'all';
         /**
          * Filter by event source (e.g. gateway)
          */
@@ -7139,6 +7319,31 @@ export type TokensRevokeResponses = {
 
 export type TokensRevokeResponse = TokensRevokeResponses[keyof TokensRevokeResponses];
 
+export type SessionBootstrapData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/session/bootstrap';
+};
+
+export type SessionBootstrapErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type SessionBootstrapError = SessionBootstrapErrors[keyof SessionBootstrapErrors];
+
+export type SessionBootstrapResponses = {
+    /**
+     * OK
+     */
+    200: SessionBootstrap;
+};
+
+export type SessionBootstrapResponse = SessionBootstrapResponses[keyof SessionBootstrapResponses];
+
 export type TemplatesListData = {
     body?: never;
     path?: never;
@@ -7189,10 +7394,264 @@ export type TemplatesPublishResponses = {
 
 export type TemplatesPublishResponse = TemplatesPublishResponses[keyof TemplatesPublishResponses];
 
+export type TracesGroupsData = {
+    body?: never;
+    path?: never;
+    query?: {
+        /**
+         * Business or system activity; omitted includes all
+         */
+        activityClass?: 'business' | 'system' | 'all';
+        /**
+         * Window start (RFC3339); defaults to 24h before until
+         */
+        since?: string;
+        /**
+         * Window end (RFC3339); defaults to now
+         */
+        until?: string;
+        /**
+         * Max traces to return (default 50, max 500)
+         */
+        limit?: number;
+        /**
+         * Rows to skip for paging
+         */
+        offset?: number;
+        /**
+         * Free-text search over span content/metadata
+         */
+        q?: string;
+        /**
+         * Keep traces with a span from any of these services
+         */
+        service?: Array<string> | null;
+        /**
+         * Keep traces with a span with any of these operations / span names
+         */
+        operation?: Array<string> | null;
+        /**
+         * Keep traces with a span using any of these models (request or response)
+         */
+        model?: Array<string> | null;
+        /**
+         * Keep traces with a span from any of these model providers
+         */
+        provider?: Array<string> | null;
+        /**
+         * Keep traces with a span from any of these agents
+         */
+        agent?: Array<string> | null;
+        /**
+         * Keep traces with a span invoking any of these tools
+         */
+        tool?: Array<string> | null;
+        /**
+         * Keep traces with a span from any of these ingest sources
+         */
+        source?: Array<string> | null;
+        /**
+         * Keep traces with a span from any of these application ids
+         */
+        app?: Array<string> | null;
+        /**
+         * Keep traces with a span from any of these environments (slug or id)
+         */
+        environment?: Array<string> | null;
+        /**
+         * Keep traces with a span from any of these API key ids
+         */
+        apiKey?: Array<string> | null;
+        /**
+         * Keep traces with a span from any of these release/build tags
+         */
+        release?: Array<string> | null;
+        /**
+         * Keep traces with a span of any of these statuses (e.g. ok/error)
+         */
+        status?: Array<string> | null;
+        /**
+         * Keep traces with a span from any of these session ids
+         */
+        session?: Array<string> | null;
+        /**
+         * Keep traces with a span from any of these end-user ids
+         */
+        user?: Array<string> | null;
+        /**
+         * Keep traces with a span of any of these semantic kinds (e.g. llm)
+         */
+        semanticKind?: Array<string> | null;
+        /**
+         * Keep only traces containing an error span
+         */
+        errorsOnly?: boolean;
+        /**
+         * Keep only traces at least this many ms long
+         */
+        minDurationMs?: number;
+        /**
+         * Row ordering: last_seen_desc (default), last_seen_asc, duration_desc, cost_desc, tokens_desc
+         */
+        sort?: 'last_seen_desc' | 'last_seen_asc' | 'duration_desc' | 'cost_desc' | 'tokens_desc';
+        /**
+         * Bypass the 15-second summary cache
+         */
+        fresh?: boolean;
+    };
+    url: '/trace-groups';
+};
+
+export type TracesGroupsErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type TracesGroupsError = TracesGroupsErrors[keyof TracesGroupsErrors];
+
+export type TracesGroupsResponses = {
+    /**
+     * OK
+     */
+    200: TraceGroupsBody;
+};
+
+export type TracesGroupsResponse = TracesGroupsResponses[keyof TracesGroupsResponses];
+
+export type TracesGroupMembersData = {
+    body?: never;
+    path: {
+        groupKey: string;
+    };
+    query?: {
+        /**
+         * Business or system activity; omitted includes all
+         */
+        activityClass?: 'business' | 'system' | 'all';
+        /**
+         * Window start (RFC3339); defaults to 24h before until
+         */
+        since?: string;
+        /**
+         * Window end (RFC3339); defaults to now
+         */
+        until?: string;
+        /**
+         * Max traces to return (default 50, max 500)
+         */
+        limit?: number;
+        /**
+         * Rows to skip for paging
+         */
+        offset?: number;
+        /**
+         * Free-text search over span content/metadata
+         */
+        q?: string;
+        /**
+         * Keep traces with a span from any of these services
+         */
+        service?: Array<string> | null;
+        /**
+         * Keep traces with a span with any of these operations / span names
+         */
+        operation?: Array<string> | null;
+        /**
+         * Keep traces with a span using any of these models (request or response)
+         */
+        model?: Array<string> | null;
+        /**
+         * Keep traces with a span from any of these model providers
+         */
+        provider?: Array<string> | null;
+        /**
+         * Keep traces with a span from any of these agents
+         */
+        agent?: Array<string> | null;
+        /**
+         * Keep traces with a span invoking any of these tools
+         */
+        tool?: Array<string> | null;
+        /**
+         * Keep traces with a span from any of these ingest sources
+         */
+        source?: Array<string> | null;
+        /**
+         * Keep traces with a span from any of these application ids
+         */
+        app?: Array<string> | null;
+        /**
+         * Keep traces with a span from any of these environments (slug or id)
+         */
+        environment?: Array<string> | null;
+        /**
+         * Keep traces with a span from any of these API key ids
+         */
+        apiKey?: Array<string> | null;
+        /**
+         * Keep traces with a span from any of these release/build tags
+         */
+        release?: Array<string> | null;
+        /**
+         * Keep traces with a span of any of these statuses (e.g. ok/error)
+         */
+        status?: Array<string> | null;
+        /**
+         * Keep traces with a span from any of these session ids
+         */
+        session?: Array<string> | null;
+        /**
+         * Keep traces with a span from any of these end-user ids
+         */
+        user?: Array<string> | null;
+        /**
+         * Keep traces with a span of any of these semantic kinds (e.g. llm)
+         */
+        semanticKind?: Array<string> | null;
+        /**
+         * Keep only traces containing an error span
+         */
+        errorsOnly?: boolean;
+        /**
+         * Keep only traces at least this many ms long
+         */
+        minDurationMs?: number;
+        /**
+         * Row ordering: last_seen_desc (default), last_seen_asc, duration_desc, cost_desc, tokens_desc
+         */
+        sort?: 'last_seen_desc' | 'last_seen_asc' | 'duration_desc' | 'cost_desc' | 'tokens_desc';
+    };
+    url: '/trace-groups/{groupKey}/traces';
+};
+
+export type TracesGroupMembersErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type TracesGroupMembersError = TracesGroupMembersErrors[keyof TracesGroupMembersErrors];
+
+export type TracesGroupMembersResponses = {
+    /**
+     * OK
+     */
+    200: TraceGroupMembersOutputBody;
+};
+
+export type TracesGroupMembersResponse = TracesGroupMembersResponses[keyof TracesGroupMembersResponses];
+
 export type TracesListData = {
     body?: never;
     path?: never;
     query?: {
+        /**
+         * Business or system activity; omitted includes all
+         */
+        activityClass?: 'business' | 'system' | 'all';
         /**
          * Window start (RFC3339); defaults to 24h before until
          */
@@ -7973,6 +8432,10 @@ export type ActivityEntitiesData = {
         workspaceId: string;
     };
     query?: {
+        /**
+         * Bypass the 15-second summary cache
+         */
+        fresh?: boolean;
         environment?: string;
         /**
          * Entity type
@@ -8042,6 +8505,10 @@ export type ActivityAnalyticsData = {
         workspaceId: string;
     };
     query?: {
+        /**
+         * Bypass the 15-second summary cache
+         */
+        fresh?: boolean;
         environment?: string;
         /**
          * 90d reads de-identified daily rollups and is refused for scoped access
@@ -8355,6 +8822,10 @@ export type ActivityHealthData = {
         workspaceId: string;
     };
     query?: {
+        /**
+         * Bypass the 15-second summary cache
+         */
+        fresh?: boolean;
         environment?: string;
         /**
          * Entity type
@@ -8451,6 +8922,10 @@ export type ActivityIncidentsData = {
         workspaceId: string;
     };
     query?: {
+        /**
+         * Bypass the 15-second summary cache
+         */
+        fresh?: boolean;
         environment?: string;
         /**
          * Entity type
@@ -8631,6 +9106,10 @@ export type ActivitySeriesData = {
         workspaceId: string;
     };
     query?: {
+        /**
+         * Bypass the 15-second summary cache
+         */
+        fresh?: boolean;
         environment?: string;
         /**
          * outcomes: observations by the outcome role; funnel: distinct entities by furthest stage; lag: source-to-view percentiles
@@ -8688,6 +9167,10 @@ export type ActivitySummaryData = {
         workspaceId: string;
     };
     query?: {
+        /**
+         * Bypass the 15-second summary cache
+         */
+        fresh?: boolean;
         environment?: string;
         /**
          * Entity type
@@ -8757,6 +9240,10 @@ export type ActivityTimelineData = {
         workspaceId: string;
     };
     query?: {
+        /**
+         * Bypass the 15-second summary cache
+         */
+        fresh?: boolean;
         environment?: string;
         /**
          * Entity type
@@ -8826,6 +9313,10 @@ export type ActivityViewsData = {
         workspaceId: string;
     };
     query?: {
+        /**
+         * Bypass the 15-second summary cache
+         */
+        fresh?: boolean;
         environment?: string;
         /**
          * Entity type

@@ -114,12 +114,17 @@ from .activity_workspace_series_window import ActivityWorkspaceSeriesWindow
 from .activity_workspace_spec import ActivityWorkspaceSpec
 from .alert_occurrence_dto import AlertOccurrenceDTO
 from .alert_rule_dto import AlertRuleDTO
+from .analytics_breakdown_activity_class import AnalyticsBreakdownActivityClass
 from .analytics_breakdown_dimension import AnalyticsBreakdownDimension
 from .analytics_capability import AnalyticsCapability
+from .analytics_heatmap_activity_class import AnalyticsHeatmapActivityClass
 from .analytics_heatmap_bucket import AnalyticsHeatmapBucket
 from .analytics_heatmap_scale import AnalyticsHeatmapScale
+from .analytics_latency_activity_class import AnalyticsLatencyActivityClass
+from .analytics_overview_activity_class import AnalyticsOverviewActivityClass
 from .analytics_overview_bucket import AnalyticsOverviewBucket
 from .analytics_overview_output_body import AnalyticsOverviewOutputBody
+from .analytics_timeseries_activity_class import AnalyticsTimeseriesActivityClass
 from .analytics_timeseries_bucket import AnalyticsTimeseriesBucket
 from .api_key_scope import ApiKeyScope
 from .app_dto import AppDTO
@@ -164,6 +169,7 @@ from .delivery_dto import DeliveryDTO
 from .destination_dto import DestinationDTO
 from .diff_attribute_dto import DiffAttributeDTO
 from .diff_cohort_dto import DiffCohortDTO
+from .diff_cohort_dto_activity_class import DiffCohortDTOActivityClass
 from .diff_input_body import DiffInputBody
 from .diff_output_body import DiffOutputBody
 from .diff_value_dto import DiffValueDTO
@@ -182,6 +188,7 @@ from .event_body_metadata import EventBodyMetadata
 from .event_body_payload import EventBodyPayload
 from .event_dto import EventDTO
 from .event_output_body import EventOutputBody
+from .exception_dto import ExceptionDTO
 from .export_delivery_dto import ExportDeliveryDTO
 from .feature_flags import FeatureFlags
 from .feedback_dto import FeedbackDTO
@@ -255,6 +262,8 @@ from .revision_list_output_body import RevisionListOutputBody
 from .search_events_output_body import SearchEventsOutputBody
 from .search_orgs_output_body import SearchOrgsOutputBody
 from .search_users_output_body import SearchUsersOutputBody
+from .session_bootstrap import SessionBootstrap
+from .session_bootstrap_failed import SessionBootstrapFailed
 from .set_access_request_status_input_body import SetAccessRequestStatusInputBody
 from .set_active_org_input_body import SetActiveOrgInputBody
 from .set_billing_input_body import SetBillingInputBody
@@ -264,13 +273,22 @@ from .set_plan_input_body import SetPlanInputBody
 from .set_status_input_body import SetStatusInputBody
 from .set_trial_input_body import SetTrialInputBody
 from .stack_frame_dto import StackFrameDTO
+from .stack_frame_dto_variables import StackFrameDTOVariables
 from .tag_distribution_dto import TagDistributionDTO
 from .tag_value_count_dto import TagValueCountDTO
 from .telemetry_policy_output_body import TelemetryPolicyOutputBody
 from .test_output_body import TestOutputBody
 from .timeseries_output_body import TimeseriesOutputBody
 from .timeseries_point_dto import TimeseriesPointDTO
+from .trace_group_dto import TraceGroupDTO
+from .trace_group_members_output_body import TraceGroupMembersOutputBody
+from .trace_groups_body import TraceGroupsBody
 from .trace_summary_dto import TraceSummaryDTO
+from .traces_group_members_activity_class import TracesGroupMembersActivityClass
+from .traces_group_members_sort import TracesGroupMembersSort
+from .traces_groups_activity_class import TracesGroupsActivityClass
+from .traces_groups_sort import TracesGroupsSort
+from .traces_list_activity_class import TracesListActivityClass
 from .traces_list_sort import TracesListSort
 from .transfer_ownership_input_body import TransferOwnershipInputBody
 from .update_app_input_body import UpdateAppInputBody
@@ -419,12 +437,17 @@ __all__ = (
     "ActivityWorkspaceSpec",
     "AlertOccurrenceDTO",
     "AlertRuleDTO",
+    "AnalyticsBreakdownActivityClass",
     "AnalyticsBreakdownDimension",
     "AnalyticsCapability",
+    "AnalyticsHeatmapActivityClass",
     "AnalyticsHeatmapBucket",
     "AnalyticsHeatmapScale",
+    "AnalyticsLatencyActivityClass",
+    "AnalyticsOverviewActivityClass",
     "AnalyticsOverviewBucket",
     "AnalyticsOverviewOutputBody",
+    "AnalyticsTimeseriesActivityClass",
     "AnalyticsTimeseriesBucket",
     "ApiKeyScope",
     "AppDTO",
@@ -469,6 +492,7 @@ __all__ = (
     "DestinationDTO",
     "DiffAttributeDTO",
     "DiffCohortDTO",
+    "DiffCohortDTOActivityClass",
     "DiffInputBody",
     "DiffOutputBody",
     "DiffValueDTO",
@@ -487,6 +511,7 @@ __all__ = (
     "EventBodyPayload",
     "EventDTO",
     "EventOutputBody",
+    "ExceptionDTO",
     "ExportDeliveryDTO",
     "FeatureFlags",
     "FeedbackDTO",
@@ -560,6 +585,8 @@ __all__ = (
     "SearchEventsOutputBody",
     "SearchOrgsOutputBody",
     "SearchUsersOutputBody",
+    "SessionBootstrap",
+    "SessionBootstrapFailed",
     "SetAccessRequestStatusInputBody",
     "SetActiveOrgInputBody",
     "SetBillingInputBody",
@@ -569,12 +596,21 @@ __all__ = (
     "SetStatusInputBody",
     "SetTrialInputBody",
     "StackFrameDTO",
+    "StackFrameDTOVariables",
     "TagDistributionDTO",
     "TagValueCountDTO",
     "TelemetryPolicyOutputBody",
     "TestOutputBody",
     "TimeseriesOutputBody",
     "TimeseriesPointDTO",
+    "TraceGroupDTO",
+    "TraceGroupMembersOutputBody",
+    "TraceGroupsBody",
+    "TracesGroupMembersActivityClass",
+    "TracesGroupMembersSort",
+    "TracesGroupsActivityClass",
+    "TracesGroupsSort",
+    "TracesListActivityClass",
     "TracesListSort",
     "TraceSummaryDTO",
     "TransferOwnershipInputBody",

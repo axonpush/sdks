@@ -6,6 +6,7 @@ from typing import TYPE_CHECKING, Any, BinaryIO, Generator, TextIO, TypeVar
 from attrs import define as _attrs_define
 from attrs import field as _attrs_field
 
+from ..models.diff_cohort_dto_activity_class import DiffCohortDTOActivityClass
 from ..types import UNSET, Unset
 
 T = TypeVar("T", bound="DiffCohortDTO")
@@ -15,6 +16,7 @@ T = TypeVar("T", bound="DiffCohortDTO")
 class DiffCohortDTO:
     """
     Attributes:
+        activity_class (DiffCohortDTOActivityClass | Unset):
         api_key (str | Unset):
         app (str | Unset):
         channel (str | Unset):
@@ -35,6 +37,7 @@ class DiffCohortDTO:
         user (str | Unset):
     """
 
+    activity_class: DiffCohortDTOActivityClass | Unset = UNSET
     api_key: str | Unset = UNSET
     app: str | Unset = UNSET
     channel: str | Unset = UNSET
@@ -55,6 +58,10 @@ class DiffCohortDTO:
     user: str | Unset = UNSET
 
     def to_dict(self) -> dict[str, Any]:
+        activity_class: str | Unset = UNSET
+        if not isinstance(self.activity_class, Unset):
+            activity_class = self.activity_class.value
+
         api_key = self.api_key
 
         app = self.app
@@ -94,6 +101,8 @@ class DiffCohortDTO:
         field_dict: dict[str, Any] = {}
 
         field_dict.update({})
+        if activity_class is not UNSET:
+            field_dict["activityClass"] = activity_class
         if api_key is not UNSET:
             field_dict["apiKey"] = api_key
         if app is not UNSET:
@@ -136,6 +145,13 @@ class DiffCohortDTO:
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         d = dict(src_dict)
+        _activity_class = d.pop("activityClass", UNSET)
+        activity_class: DiffCohortDTOActivityClass | Unset
+        if isinstance(_activity_class, Unset):
+            activity_class = UNSET
+        else:
+            activity_class = DiffCohortDTOActivityClass(_activity_class)
+
         api_key = d.pop("apiKey", UNSET)
 
         app = d.pop("app", UNSET)
@@ -173,6 +189,7 @@ class DiffCohortDTO:
         user = d.pop("user", UNSET)
 
         diff_cohort_dto = cls(
+            activity_class=activity_class,
             api_key=api_key,
             app=app,
             channel=channel,

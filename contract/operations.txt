@@ -100,12 +100,15 @@ organization.telemetryPolicy.get
 organization.telemetryPolicy.update
 organization.transferOwnership
 organization.update
+session.bootstrap
 templates.list
 templates.publish
 tokens.create
 tokens.list
 tokens.revoke
 traces.get
+traces.groupMembers
+traces.groups
 traces.list
 user.me
 user.me.organizations

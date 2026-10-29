@@ -6,6 +6,7 @@ import httpx
 
 from ... import errors
 from ...client import AuthenticatedClient, Client
+from ...models.analytics_heatmap_activity_class import AnalyticsHeatmapActivityClass
 from ...models.analytics_heatmap_bucket import AnalyticsHeatmapBucket
 from ...models.analytics_heatmap_scale import AnalyticsHeatmapScale
 from ...models.error_model import ErrorModel
@@ -20,6 +21,7 @@ def _get_kwargs(
     bucket: AnalyticsHeatmapBucket | Unset = UNSET,
     buckets: int | Unset = UNSET,
     scale: AnalyticsHeatmapScale | Unset = UNSET,
+    activity_class: AnalyticsHeatmapActivityClass | Unset = UNSET,
     source: str | Unset = UNSET,
     model: str | Unset = UNSET,
     provider: str | Unset = UNSET,
@@ -54,6 +56,12 @@ def _get_kwargs(
         json_scale = scale.value
 
     params["scale"] = json_scale
+
+    json_activity_class: str | Unset = UNSET
+    if not isinstance(activity_class, Unset):
+        json_activity_class = activity_class.value
+
+    params["activityClass"] = json_activity_class
 
     params["source"] = source
 
@@ -124,6 +132,7 @@ def sync_detailed(
     bucket: AnalyticsHeatmapBucket | Unset = UNSET,
     buckets: int | Unset = UNSET,
     scale: AnalyticsHeatmapScale | Unset = UNSET,
+    activity_class: AnalyticsHeatmapActivityClass | Unset = UNSET,
     source: str | Unset = UNSET,
     model: str | Unset = UNSET,
     provider: str | Unset = UNSET,
@@ -150,6 +159,8 @@ def sync_detailed(
         bucket (AnalyticsHeatmapBucket | Unset): Time bucket granularity (default hour)
         buckets (int | Unset): Number of duration bands (default 25, max 100)
         scale (AnalyticsHeatmapScale | Unset): Duration band scale (default log)
+        activity_class (AnalyticsHeatmapActivityClass | Unset): Business or system activity;
+            omitted includes all
         source (str | Unset): Filter by event source (e.g. gateway)
         model (str | Unset): Filter by request/response model
         provider (str | Unset): Filter by model provider
@@ -179,6 +190,7 @@ def sync_detailed(
         bucket=bucket,
         buckets=buckets,
         scale=scale,
+        activity_class=activity_class,
         source=source,
         model=model,
         provider=provider,
@@ -209,6 +221,7 @@ def sync(
     bucket: AnalyticsHeatmapBucket | Unset = UNSET,
     buckets: int | Unset = UNSET,
     scale: AnalyticsHeatmapScale | Unset = UNSET,
+    activity_class: AnalyticsHeatmapActivityClass | Unset = UNSET,
     source: str | Unset = UNSET,
     model: str | Unset = UNSET,
     provider: str | Unset = UNSET,
@@ -235,6 +248,8 @@ def sync(
         bucket (AnalyticsHeatmapBucket | Unset): Time bucket granularity (default hour)
         buckets (int | Unset): Number of duration bands (default 25, max 100)
         scale (AnalyticsHeatmapScale | Unset): Duration band scale (default log)
+        activity_class (AnalyticsHeatmapActivityClass | Unset): Business or system activity;
+            omitted includes all
         source (str | Unset): Filter by event source (e.g. gateway)
         model (str | Unset): Filter by request/response model
         provider (str | Unset): Filter by model provider
@@ -265,6 +280,7 @@ def sync(
         bucket=bucket,
         buckets=buckets,
         scale=scale,
+        activity_class=activity_class,
         source=source,
         model=model,
         provider=provider,
@@ -289,6 +305,7 @@ async def asyncio_detailed(
     bucket: AnalyticsHeatmapBucket | Unset = UNSET,
     buckets: int | Unset = UNSET,
     scale: AnalyticsHeatmapScale | Unset = UNSET,
+    activity_class: AnalyticsHeatmapActivityClass | Unset = UNSET,
     source: str | Unset = UNSET,
     model: str | Unset = UNSET,
     provider: str | Unset = UNSET,
@@ -315,6 +332,8 @@ async def asyncio_detailed(
         bucket (AnalyticsHeatmapBucket | Unset): Time bucket granularity (default hour)
         buckets (int | Unset): Number of duration bands (default 25, max 100)
         scale (AnalyticsHeatmapScale | Unset): Duration band scale (default log)
+        activity_class (AnalyticsHeatmapActivityClass | Unset): Business or system activity;
+            omitted includes all
         source (str | Unset): Filter by event source (e.g. gateway)
         model (str | Unset): Filter by request/response model
         provider (str | Unset): Filter by model provider
@@ -344,6 +363,7 @@ async def asyncio_detailed(
         bucket=bucket,
         buckets=buckets,
         scale=scale,
+        activity_class=activity_class,
         source=source,
         model=model,
         provider=provider,
@@ -372,6 +392,7 @@ async def asyncio(
     bucket: AnalyticsHeatmapBucket | Unset = UNSET,
     buckets: int | Unset = UNSET,
     scale: AnalyticsHeatmapScale | Unset = UNSET,
+    activity_class: AnalyticsHeatmapActivityClass | Unset = UNSET,
     source: str | Unset = UNSET,
     model: str | Unset = UNSET,
     provider: str | Unset = UNSET,
@@ -398,6 +419,8 @@ async def asyncio(
         bucket (AnalyticsHeatmapBucket | Unset): Time bucket granularity (default hour)
         buckets (int | Unset): Number of duration bands (default 25, max 100)
         scale (AnalyticsHeatmapScale | Unset): Duration band scale (default log)
+        activity_class (AnalyticsHeatmapActivityClass | Unset): Business or system activity;
+            omitted includes all
         source (str | Unset): Filter by event source (e.g. gateway)
         model (str | Unset): Filter by request/response model
         provider (str | Unset): Filter by model provider
@@ -429,6 +452,7 @@ async def asyncio(
             bucket=bucket,
             buckets=buckets,
             scale=scale,
+            activity_class=activity_class,
             source=source,
             model=model,
             provider=provider,

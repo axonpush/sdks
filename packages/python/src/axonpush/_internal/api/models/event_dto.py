@@ -24,11 +24,13 @@ class EventDTO:
         org_id (str):
         payload_spilled (bool):
         source (str):
+        activity_class (str | Unset):
         agent_id (str | Unset):
         agent_name (str | Unset):
         attributes (Any | Unset):
         cache_read_tokens (int | Unset):
         cache_write_tokens (int | Unset):
+        content_state (str | Unset): available, unavailable, or absent; describes stored payload availability
         cost_source (str | Unset):
         cost_usd (float | Unset):
         duration_ms (float | Unset):
@@ -68,11 +70,13 @@ class EventDTO:
     org_id: str
     payload_spilled: bool
     source: str
+    activity_class: str | Unset = UNSET
     agent_id: str | Unset = UNSET
     agent_name: str | Unset = UNSET
     attributes: Any | Unset = UNSET
     cache_read_tokens: int | Unset = UNSET
     cache_write_tokens: int | Unset = UNSET
+    content_state: str | Unset = UNSET
     cost_source: str | Unset = UNSET
     cost_usd: float | Unset = UNSET
     duration_ms: float | Unset = UNSET
@@ -121,6 +125,8 @@ class EventDTO:
 
         source = self.source
 
+        activity_class = self.activity_class
+
         agent_id = self.agent_id
 
         agent_name = self.agent_name
@@ -130,6 +136,8 @@ class EventDTO:
         cache_read_tokens = self.cache_read_tokens
 
         cache_write_tokens = self.cache_write_tokens
+
+        content_state = self.content_state
 
         cost_source = self.cost_source
 
@@ -202,6 +210,8 @@ class EventDTO:
                 "source": source,
             }
         )
+        if activity_class is not UNSET:
+            field_dict["activityClass"] = activity_class
         if agent_id is not UNSET:
             field_dict["agentId"] = agent_id
         if agent_name is not UNSET:
@@ -212,6 +222,8 @@ class EventDTO:
             field_dict["cacheReadTokens"] = cache_read_tokens
         if cache_write_tokens is not UNSET:
             field_dict["cacheWriteTokens"] = cache_write_tokens
+        if content_state is not UNSET:
+            field_dict["contentState"] = content_state
         if cost_source is not UNSET:
             field_dict["costSource"] = cost_source
         if cost_usd is not UNSET:
@@ -292,6 +304,8 @@ class EventDTO:
 
         source = d.pop("source")
 
+        activity_class = d.pop("activityClass", UNSET)
+
         agent_id = d.pop("agentId", UNSET)
 
         agent_name = d.pop("agentName", UNSET)
@@ -301,6 +315,8 @@ class EventDTO:
         cache_read_tokens = d.pop("cacheReadTokens", UNSET)
 
         cache_write_tokens = d.pop("cacheWriteTokens", UNSET)
+
+        content_state = d.pop("contentState", UNSET)
 
         cost_source = d.pop("costSource", UNSET)
 
@@ -368,11 +384,13 @@ class EventDTO:
             org_id=org_id,
             payload_spilled=payload_spilled,
             source=source,
+            activity_class=activity_class,
             agent_id=agent_id,
             agent_name=agent_name,
             attributes=attributes,
             cache_read_tokens=cache_read_tokens,
             cache_write_tokens=cache_write_tokens,
+            content_state=content_state,
             cost_source=cost_source,
             cost_usd=cost_usd,
             duration_ms=duration_ms,

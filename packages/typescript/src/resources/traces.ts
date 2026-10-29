@@ -1,5 +1,17 @@
-import { tracesGet, tracesList } from "../_internal/api/sdk.gen.js";
-import type { GetTraceOutputBody, ListTracesOutputBody } from "../_internal/api/types.gen.js";
+import {
+  tracesGet,
+  tracesGroupMembers,
+  tracesGroups,
+  tracesList,
+} from "../_internal/api/sdk.gen.js";
+import type {
+  GetTraceOutputBody,
+  ListTracesOutputBody,
+  TraceGroupMembersOutputBody,
+  TraceGroupsBody,
+  TracesGroupMembersData,
+  TracesGroupsData,
+} from "../_internal/api/types.gen.js";
 import type { ResourceClient } from "./_client.js";
 
 /** Query parameters for {@link TracesResource.list}. `GET /traces` */
@@ -22,6 +34,17 @@ export interface TraceListParams {
  */
 export class TracesResource {
   constructor(private readonly client: ResourceClient) {}
+
+  async groups(query: TracesGroupsData["query"] = {}): Promise<TraceGroupsBody | null> {
+    return this.client.invoke(tracesGroups, { query });
+  }
+
+  async groupMembers(
+    groupKey: string,
+    query: TracesGroupMembersData["query"] = {},
+  ): Promise<TraceGroupMembersOutputBody | null> {
+    return this.client.invoke(tracesGroupMembers, { path: { groupKey }, query });
+  }
 
   /**
    * List traces newest-first. `GET /traces`
