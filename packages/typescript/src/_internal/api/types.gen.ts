@@ -1893,6 +1893,10 @@ export type EventBody = {
      */
     eventType?: string;
     /**
+     * Original content expiry; may shorten but cannot extend the 30-day retention window
+     */
+    expiresAt?: string;
+    /**
      * Event identifier / operation name
      */
     identifier: string;
@@ -3800,6 +3804,10 @@ export type EventBodyWritable = {
      * Canonical event type; defaults to custom
      */
     eventType?: string;
+    /**
+     * Original content expiry; may shorten but cannot extend the 30-day retention window
+     */
+    expiresAt?: string;
     /**
      * Event identifier / operation name
      */
