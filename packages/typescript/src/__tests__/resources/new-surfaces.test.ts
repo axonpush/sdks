@@ -5,6 +5,7 @@ import { AlertsResource } from "../../resources/alerts.js";
 import { AnalyticsResource } from "../../resources/analytics.js";
 import { ErrorsResource } from "../../resources/errors.js";
 import { OrganizationsResource } from "../../resources/organizations.js";
+import { TracesResource } from "../../resources/traces.js";
 
 vi.mock("../../_internal/api/sdk.gen.js", async () => {
   const real = await vi.importActual<Record<string, unknown>>("../../_internal/api/sdk.gen.js");
@@ -133,5 +134,25 @@ describe("OrganizationsResource additions", () => {
     await new OrganizationsResource(client).acceptInvitation({ code: "abc" });
     expect(calls[0]?.op).toBe(ops.organizationInvitationsAccept);
     expect(calls[0]?.args).toEqual({ body: { code: "abc" } });
+  });
+});
+
+describe("bounded trace reads", () => {
+  it("passes explicit page options without loading follow-up pages", async () => {
+    const { client, calls } = makeClient(
+      new Map([
+        [ops.tracesGet, { traceId: "trace", spans: [], hasMore: true, nextCursor: "next" }],
+      ]),
+    );
+    const result = await new TracesResource(client).get("trace", {
+      limit: 100,
+      cursor: "previous",
+    });
+    expect(calls).toHaveLength(1);
+    expect(calls[0]?.args).toEqual({
+      path: { traceId: "trace" },
+      query: { limit: 100, cursor: "previous" },
+    });
+    expect(result?.nextCursor).toBe("next");
   });
 });

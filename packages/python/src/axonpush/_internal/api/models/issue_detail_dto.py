@@ -32,6 +32,7 @@ class IssueDetailDTO:
         stack (list[StackFrameDTO] | None):
         tags (list[TagDistributionDTO] | None):
         schema (str | Unset): A URL to the JSON Schema for this object.
+        breadcrumbs_truncated (bool | Unset):
         exception_chain (list[ExceptionDTO] | None | Unset):
         resolved_at (str | Unset):
         resolved_in_release (str | Unset):
@@ -46,6 +47,7 @@ class IssueDetailDTO:
     stack: list[StackFrameDTO] | None
     tags: list[TagDistributionDTO] | None
     schema: str | Unset = UNSET
+    breadcrumbs_truncated: bool | Unset = UNSET
     exception_chain: list[ExceptionDTO] | None | Unset = UNSET
     resolved_at: str | Unset = UNSET
     resolved_in_release: str | Unset = UNSET
@@ -112,6 +114,8 @@ class IssueDetailDTO:
 
         schema = self.schema
 
+        breadcrumbs_truncated = self.breadcrumbs_truncated
+
         exception_chain: list[dict[str, Any]] | None | Unset
         if isinstance(self.exception_chain, Unset):
             exception_chain = UNSET
@@ -148,6 +152,8 @@ class IssueDetailDTO:
         )
         if schema is not UNSET:
             field_dict["$schema"] = schema
+        if breadcrumbs_truncated is not UNSET:
+            field_dict["breadcrumbsTruncated"] = breadcrumbs_truncated
         if exception_chain is not UNSET:
             field_dict["exceptionChain"] = exception_chain
         if resolved_at is not UNSET:
@@ -272,6 +278,8 @@ class IssueDetailDTO:
 
         schema = d.pop("$schema", UNSET)
 
+        breadcrumbs_truncated = d.pop("breadcrumbsTruncated", UNSET)
+
         def _parse_exception_chain(data: object) -> list[ExceptionDTO] | None | Unset:
             if data is None:
                 return data
@@ -317,6 +325,7 @@ class IssueDetailDTO:
             stack=stack,
             tags=tags,
             schema=schema,
+            breadcrumbs_truncated=breadcrumbs_truncated,
             exception_chain=exception_chain,
             resolved_at=resolved_at,
             resolved_in_release=resolved_in_release,

@@ -182,6 +182,12 @@ for name in sorted(needed):
 for group, cls in groups.items():
     lines = [header, 'using System.Globalization;', 'using AxonPush.Internal;', '', 'namespace AxonPush.Operations;', '', 'public sealed class ' + cls + 'Resource', '{', '    private readonly AxonPushTransport _transport;', '    internal ' + cls + 'Resource(AxonPushTransport transport) => _transport = transport;']
     for x in ops[group]:
+        # Preserve the previously published positional cancellation-token overload
+        # when cursor/filter options are added to session timeline reads.
+        if x['oid'] == 'telemetry.timeline':
+            lines += ['', '    /// <summary>Compatibility overload for positional cancellation tokens.</summary>',
+                      '    public Task<SessionEvidenceBody?> TimelineAsync(string sessionId, string? appId, string? environmentId, long? limit, long? offset, CancellationToken cancellationToken)',
+                      '        => TimelineAsync(sessionId, appId, environmentId, limit, offset, null, null, cancellationToken);']
         params = [p for p in x['params'] if p['in'] == 'path']
         queries = [p for p in x['params'] if p['in'] == 'query']
         args = ['string ' + p['name'] for p in params]

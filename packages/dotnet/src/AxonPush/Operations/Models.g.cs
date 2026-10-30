@@ -1286,6 +1286,8 @@ public sealed record SessionEvidenceBody
     public IReadOnlyList<EventDTO>? Events { get; init; } = default!;
     [JsonPropertyName("hasMore")]
     public bool HasMore { get; init; }
+    [JsonPropertyName("nextCursor")]
+    public string? NextCursor { get; init; }
     [JsonPropertyName("nextOffset")]
     public long NextOffset { get; init; }
 }
