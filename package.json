@@ -8,6 +8,7 @@
     "lint": "biome check .",
     "lint:fix": "biome check --write .",
     "check:versions": "bun run tools/check-versions.ts",
+    "check:facades": "python tools/generate-resource-facades.py --check",
     "check:contract": "bun run tools/check-contract.ts",
     "parity": "bun run tools/surface-diff.ts"
   },

@@ -98,11 +98,22 @@ def build_log_payload(
     }
     if time_unix_nano is not None:
         payload["timeUnixNano"] = time_unix_nano
-    if attributes:
-        payload["attributes"] = _stringify_values(attributes)
+    payload = record_with_attributes(payload, attributes)
     if resource:
         payload["resource"] = _stringify_values(resource)
     return payload
+
+
+def record_with_attributes(
+    fields: Dict[str, Any], attributes: Optional[Dict[str, Any]], *, required: bool = False
+) -> Dict[str, Any]:
+    """Adapt attributes for the legacy event plane shared by logs and spans.
+
+    This intentionally keeps the event API dictionary shape, not OTLP AnyValue.
+    """
+    if attributes or required:
+        fields["attributes"] = _stringify_values(attributes or {})
+    return fields
 
 
 def _serializable_body(value: Any) -> Any:

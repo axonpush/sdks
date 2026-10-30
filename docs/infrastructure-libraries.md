@@ -36,3 +36,30 @@ Existing capture-policy paths use 256 Unicode code points for redacted previews,
 further bounded by maxContentLength. The suffix is outside that content budget.
 Secret-key redaction is independent. Truncating a preview is not a guarantee that
 arbitrary secrets embedded inside a string have been removed.
+
+## Resource and telemetry compatibility adapters
+
+The Python resource facades now keep their synchronous compatibility behavior in
+`tools/resource-facades/`. `tools/generate-resource-facades.py` uses the existing
+openapi-python-client operation signatures to add every current parameter and
+convert accepted string enums through the generated enum classes. It generates
+both synchronous and asynchronous facades, preserving body builders and unwrapped
+return values. It does not interpret OpenAPI schema types. Unsupported non-enum
+query model shapes fail generation. Run it after regenerating the base client;
+`tools/generate-operations.py` invokes it automatically. `bun run check:facades`
+checks for drift in a temporary directory without modifying resource files. Signature and real
+serialization tests verify both facades against that generated client.
+
+TypeScript resources already use Hey API-generated parameter types. Their public
+compatibility methods remain intact. The native GenAI helper resolves the official
+OpenTelemetry `SpanKind.CLIENT` instead of confusing API and protobuf enum values.
+
+Native OTLP already delegates serialization and batching to official exporters.
+The legacy span exporters deliberately continue publishing `app.span` events to
+`/event`: switching those classes to OTLP would change routing, capture policy,
+metadata, and event receipts. Their dictionary-shaped attributes are not OTLP
+AnyValue messages. Python log, span-event, and span-link records now share the
+legacy attribute compatibility adapter; the remaining per-language span mapping
+is retained to preserve this wire contract. Legacy Python/TypeScript span kinds
+now use OTLP protobuf values 1–5, matching .NET and the server OTLP normalizer,
+instead of writing the zero-based language API enum directly.

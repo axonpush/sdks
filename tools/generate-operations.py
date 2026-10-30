@@ -212,3 +212,6 @@ subprocess.run(["bun", "--no-env-file", "x", "biome", "check", "--write", *[f"pa
 python_paths = [f"src/axonpush/resources/{g}.py" for g in groups]
 subprocess.run(["uv", "run", "ruff", "check", "--fix", *python_paths], cwd=ROOT / "packages/python", check=True)
 subprocess.run(["uv", "run", "ruff", "format", *python_paths], cwd=ROOT / "packages/python", check=True)
+
+# Refresh compatibility facades from their single synchronous source.
+subprocess.run(["python", str(ROOT / "tools/generate-resource-facades.py")], cwd=ROOT, check=True)

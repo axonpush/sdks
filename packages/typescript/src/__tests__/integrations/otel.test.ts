@@ -131,3 +131,18 @@ describe("AxonPushSpanExporter", () => {
     expect(published).toHaveLength(1);
   });
 });
+
+it.each([
+  [0, 1],
+  [1, 2],
+  [2, 3],
+  [3, 4],
+  [4, 5],
+])("maps API kind %i to OTLP event kind %i", async (kind, expected) => {
+  const { client, published } = makeFakeClient();
+  const exporter = new AxonPushSpanExporter({ client, channelId: "ch-1" });
+  exporter.export([makeFakeSpan({ kind })], () => {});
+  await exporter.forceFlush();
+  expect(published[0]?.payload.kind).toBe(expected);
+  await exporter.shutdown();
+});

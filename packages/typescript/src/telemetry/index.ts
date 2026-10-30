@@ -48,6 +48,7 @@
  * (or wrap the handler with `flushAfterInvocation`).
  */
 
+import { createRequire } from "node:module";
 import { type ResolvedSettings, resolveSettings } from "../config.js";
 import { detectServerless, flushAfterInvocation } from "../integrations/_publisher.js";
 import { logger as sdkLogger } from "../logger.js";
@@ -336,8 +337,8 @@ function forceFlush(processor: OtelProcessor, timeoutMs: number): Promise<boolea
 
 // --- GenAI semantic-convention helpers -------------------------------------
 
-/** `SpanKind.CLIENT` from `@opentelemetry/api` (stable across versions). */
-const SPAN_KIND_CLIENT = 3;
+// Resolve optional OTel only when a telemetry helper is called.
+const requireOtel = createRequire(import.meta.url);
 
 export interface GenaiSpanOptions {
   operation: string;
@@ -368,9 +369,10 @@ export function genaiSpan(tracer: Tracer, options: GenaiSpanOptions): TelemetryS
   }
   if (options.agentName) attributes["gen_ai.agent.name"] = options.agentName;
 
-  // SpanKind.CLIENT is stably 3 across OTel API versions; hard-coded so this
-  // helper needs no reference to the (optional) `@opentelemetry/api` enum.
-  return tracer.startSpan(name, { kind: SPAN_KIND_CLIENT, attributes });
+  const { SpanKind } = requireOtel("@opentelemetry/api") as {
+    SpanKind: { CLIENT: number };
+  };
+  return tracer.startSpan(name, { kind: SpanKind.CLIENT, attributes });
 }
 
 export interface GenaiResponseOptions {

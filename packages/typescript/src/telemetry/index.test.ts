@@ -1,6 +1,7 @@
 import http from "node:http";
 import type { AddressInfo } from "node:net";
 import zlib from "node:zlib";
+import { SpanKind } from "@opentelemetry/api";
 import { NodeTracerProvider } from "@opentelemetry/sdk-trace-node";
 import { afterEach, describe, expect, it } from "vitest";
 import {
@@ -263,4 +264,19 @@ describe("configureTelemetry (OTLP export)", () => {
     const matching = spans.filter((s) => s.attributes["gen_ai.request.model"] === "gpt-idem");
     expect(matching).toHaveLength(1);
   });
+});
+
+// API and protobuf enum numbers differ; use the API constant when starting spans.
+it("starts GenAI calls with the official CLIENT kind", () => {
+  let actual: number | undefined;
+  genaiSpan(
+    {
+      startSpan: (_name, options) => {
+        actual = options?.kind;
+        return { setAttribute() {}, addEvent() {}, end() {} };
+      },
+    },
+    { operation: "chat", requestModel: "synthetic" },
+  );
+  expect(actual).toBe(SpanKind.CLIENT);
 });
