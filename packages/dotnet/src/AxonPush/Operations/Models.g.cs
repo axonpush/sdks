@@ -1118,6 +1118,104 @@ public sealed record CreateInputBody
     public ActivityWorkspaceSpec Spec { get; init; } = default!;
 }
 
+public sealed record EraseEvidenceOutputBody
+{
+    [JsonPropertyName("status")]
+    public string Status { get; init; } = default!;
+}
+
+public sealed record EventDTO
+{
+    [JsonPropertyName("activityClass")]
+    public string? ActivityClass { get; init; }
+    [JsonPropertyName("agentId")]
+    public string? AgentId { get; init; }
+    [JsonPropertyName("agentName")]
+    public string? AgentName { get; init; }
+    [JsonPropertyName("appId")]
+    public string AppId { get; init; } = default!;
+    [JsonPropertyName("attributes")]
+    public JsonElement? Attributes { get; init; }
+    [JsonPropertyName("cacheReadTokens")]
+    public long? CacheReadTokens { get; init; }
+    [JsonPropertyName("cacheWriteTokens")]
+    public long? CacheWriteTokens { get; init; }
+    [JsonPropertyName("channelId")]
+    public string ChannelId { get; init; } = default!;
+    [JsonPropertyName("contentState")]
+    public string? ContentState { get; init; }
+    [JsonPropertyName("costSource")]
+    public string? CostSource { get; init; }
+    [JsonPropertyName("costUsd")]
+    public double? CostUsd { get; init; }
+    [JsonPropertyName("createdAt")]
+    public string CreatedAt { get; init; } = default!;
+    [JsonPropertyName("durationMs")]
+    public double? DurationMs { get; init; }
+    [JsonPropertyName("environmentId")]
+    public string? EnvironmentId { get; init; }
+    [JsonPropertyName("errorMessage")]
+    public string? ErrorMessage { get; init; }
+    [JsonPropertyName("errorType")]
+    public string? ErrorType { get; init; }
+    [JsonPropertyName("eventId")]
+    public string EventId { get; init; } = default!;
+    [JsonPropertyName("eventType")]
+    public string EventType { get; init; } = default!;
+    [JsonPropertyName("finishReason")]
+    public string? FinishReason { get; init; }
+    [JsonPropertyName("inputTokens")]
+    public long? InputTokens { get; init; }
+    [JsonPropertyName("metadata")]
+    public JsonElement? Metadata { get; init; }
+    [JsonPropertyName("occurredAt")]
+    public string OccurredAt { get; init; } = default!;
+    [JsonPropertyName("operationName")]
+    public string? OperationName { get; init; }
+    [JsonPropertyName("orgId")]
+    public string OrgId { get; init; } = default!;
+    [JsonPropertyName("outputTokens")]
+    public long? OutputTokens { get; init; }
+    [JsonPropertyName("parentSpanId")]
+    public string? ParentSpanId { get; init; }
+    [JsonPropertyName("payload")]
+    public JsonElement? Payload { get; init; }
+    [JsonPropertyName("payloadSpilled")]
+    public bool PayloadSpilled { get; init; }
+    [JsonPropertyName("providerName")]
+    public string? ProviderName { get; init; }
+    [JsonPropertyName("reasoningTokens")]
+    public long? ReasoningTokens { get; init; }
+    [JsonPropertyName("requestModel")]
+    public string? RequestModel { get; init; }
+    [JsonPropertyName("resourceAttributes")]
+    public JsonElement? ResourceAttributes { get; init; }
+    [JsonPropertyName("responseModel")]
+    public string? ResponseModel { get; init; }
+    [JsonPropertyName("semanticKind")]
+    public string? SemanticKind { get; init; }
+    [JsonPropertyName("serviceName")]
+    public string? ServiceName { get; init; }
+    [JsonPropertyName("sessionId")]
+    public string? SessionId { get; init; }
+    [JsonPropertyName("source")]
+    public string Source { get; init; } = default!;
+    [JsonPropertyName("spanId")]
+    public string? SpanId { get; init; }
+    [JsonPropertyName("status")]
+    public string? Status { get; init; }
+    [JsonPropertyName("toolName")]
+    public string? ToolName { get; init; }
+    [JsonPropertyName("totalTokens")]
+    public long? TotalTokens { get; init; }
+    [JsonPropertyName("traceId")]
+    public string? TraceId { get; init; }
+    [JsonPropertyName("ttftMs")]
+    public double? TtftMs { get; init; }
+    [JsonPropertyName("userId")]
+    public string? UserId { get; init; }
+}
+
 public sealed record GrantInputBody
 {
     [JsonPropertyName("key")]
@@ -1180,6 +1278,16 @@ public sealed record RevisionListOutputBody
 {
     [JsonPropertyName("revisions")]
     public IReadOnlyList<ActivityRevision>? Revisions { get; init; } = default!;
+}
+
+public sealed record SessionEvidenceBody
+{
+    [JsonPropertyName("events")]
+    public IReadOnlyList<EventDTO>? Events { get; init; } = default!;
+    [JsonPropertyName("hasMore")]
+    public bool HasMore { get; init; }
+    [JsonPropertyName("nextOffset")]
+    public long NextOffset { get; init; }
 }
 
 public sealed record ValidateOutputBody

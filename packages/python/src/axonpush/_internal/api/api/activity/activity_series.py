@@ -17,6 +17,7 @@ from ...types import UNSET, Response, Unset
 def _get_kwargs(
     workspace_id: str,
     *,
+    fresh: bool | Unset = UNSET,
     environment: str | Unset = UNSET,
     metric: ActivitySeriesMetric | Unset = ActivitySeriesMetric.OUTCOMES,
     window: ActivitySeriesWindow | Unset = ActivitySeriesWindow.VALUE_1,
@@ -28,6 +29,8 @@ def _get_kwargs(
 ) -> dict[str, Any]:
 
     params: dict[str, Any] = {}
+
+    params["fresh"] = fresh
 
     params["environment"] = environment
 
@@ -98,6 +101,7 @@ def sync_detailed(
     workspace_id: str,
     *,
     client: AuthenticatedClient | Client,
+    fresh: bool | Unset = UNSET,
     environment: str | Unset = UNSET,
     metric: ActivitySeriesMetric | Unset = ActivitySeriesMetric.OUTCOMES,
     window: ActivitySeriesWindow | Unset = ActivitySeriesWindow.VALUE_1,
@@ -112,6 +116,7 @@ def sync_detailed(
 
     Args:
         workspace_id (str):
+        fresh (bool | Unset): Bypass the 15-second summary cache
         environment (str | Unset):
         metric (ActivitySeriesMetric | Unset): outcomes: observations by the outcome role; funnel:
             distinct entities by furthest stage; lag: source-to-view percentiles Default:
@@ -135,6 +140,7 @@ def sync_detailed(
 
     kwargs = _get_kwargs(
         workspace_id=workspace_id,
+        fresh=fresh,
         environment=environment,
         metric=metric,
         window=window,
@@ -156,6 +162,7 @@ def sync(
     workspace_id: str,
     *,
     client: AuthenticatedClient | Client,
+    fresh: bool | Unset = UNSET,
     environment: str | Unset = UNSET,
     metric: ActivitySeriesMetric | Unset = ActivitySeriesMetric.OUTCOMES,
     window: ActivitySeriesWindow | Unset = ActivitySeriesWindow.VALUE_1,
@@ -170,6 +177,7 @@ def sync(
 
     Args:
         workspace_id (str):
+        fresh (bool | Unset): Bypass the 15-second summary cache
         environment (str | Unset):
         metric (ActivitySeriesMetric | Unset): outcomes: observations by the outcome role; funnel:
             distinct entities by furthest stage; lag: source-to-view percentiles Default:
@@ -194,6 +202,7 @@ def sync(
     return sync_detailed(
         workspace_id=workspace_id,
         client=client,
+        fresh=fresh,
         environment=environment,
         metric=metric,
         window=window,
@@ -209,6 +218,7 @@ async def asyncio_detailed(
     workspace_id: str,
     *,
     client: AuthenticatedClient | Client,
+    fresh: bool | Unset = UNSET,
     environment: str | Unset = UNSET,
     metric: ActivitySeriesMetric | Unset = ActivitySeriesMetric.OUTCOMES,
     window: ActivitySeriesWindow | Unset = ActivitySeriesWindow.VALUE_1,
@@ -223,6 +233,7 @@ async def asyncio_detailed(
 
     Args:
         workspace_id (str):
+        fresh (bool | Unset): Bypass the 15-second summary cache
         environment (str | Unset):
         metric (ActivitySeriesMetric | Unset): outcomes: observations by the outcome role; funnel:
             distinct entities by furthest stage; lag: source-to-view percentiles Default:
@@ -246,6 +257,7 @@ async def asyncio_detailed(
 
     kwargs = _get_kwargs(
         workspace_id=workspace_id,
+        fresh=fresh,
         environment=environment,
         metric=metric,
         window=window,
@@ -265,6 +277,7 @@ async def asyncio(
     workspace_id: str,
     *,
     client: AuthenticatedClient | Client,
+    fresh: bool | Unset = UNSET,
     environment: str | Unset = UNSET,
     metric: ActivitySeriesMetric | Unset = ActivitySeriesMetric.OUTCOMES,
     window: ActivitySeriesWindow | Unset = ActivitySeriesWindow.VALUE_1,
@@ -279,6 +292,7 @@ async def asyncio(
 
     Args:
         workspace_id (str):
+        fresh (bool | Unset): Bypass the 15-second summary cache
         environment (str | Unset):
         metric (ActivitySeriesMetric | Unset): outcomes: observations by the outcome role; funnel:
             distinct entities by furthest stage; lag: source-to-view percentiles Default:
@@ -304,6 +318,7 @@ async def asyncio(
         await asyncio_detailed(
             workspace_id=workspace_id,
             client=client,
+            fresh=fresh,
             environment=environment,
             metric=metric,
             window=window,

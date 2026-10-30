@@ -8,6 +8,10 @@ from attrs import field as _attrs_field
 
 from ..types import UNSET, Unset
 
+if TYPE_CHECKING:
+    from ..models.stack_frame_dto_variables import StackFrameDTOVariables
+
+
 T = TypeVar("T", bound="StackFrameDTO")
 
 
@@ -22,6 +26,7 @@ class StackFrameDTO:
         line (int | Unset):
         post_context (list[str] | None | Unset):
         pre_context (list[str] | None | Unset):
+        variables (StackFrameDTOVariables | Unset):
     """
 
     in_app: bool
@@ -31,8 +36,11 @@ class StackFrameDTO:
     line: int | Unset = UNSET
     post_context: list[str] | None | Unset = UNSET
     pre_context: list[str] | None | Unset = UNSET
+    variables: StackFrameDTOVariables | Unset = UNSET
 
     def to_dict(self) -> dict[str, Any]:
+        from ..models.stack_frame_dto_variables import StackFrameDTOVariables
+
         in_app = self.in_app
 
         context_line = self.context_line
@@ -61,6 +69,10 @@ class StackFrameDTO:
         else:
             pre_context = self.pre_context
 
+        variables: dict[str, Any] | Unset = UNSET
+        if not isinstance(self.variables, Unset):
+            variables = self.variables.to_dict()
+
         field_dict: dict[str, Any] = {}
 
         field_dict.update(
@@ -80,11 +92,15 @@ class StackFrameDTO:
             field_dict["postContext"] = post_context
         if pre_context is not UNSET:
             field_dict["preContext"] = pre_context
+        if variables is not UNSET:
+            field_dict["variables"] = variables
 
         return field_dict
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
+        from ..models.stack_frame_dto_variables import StackFrameDTOVariables
+
         d = dict(src_dict)
         in_app = d.pop("inApp")
 
@@ -130,6 +146,13 @@ class StackFrameDTO:
 
         pre_context = _parse_pre_context(d.pop("preContext", UNSET))
 
+        _variables = d.pop("variables", UNSET)
+        variables: StackFrameDTOVariables | Unset
+        if isinstance(_variables, Unset):
+            variables = UNSET
+        else:
+            variables = StackFrameDTOVariables.from_dict(_variables)
+
         stack_frame_dto = cls(
             in_app=in_app,
             context_line=context_line,
@@ -138,6 +161,7 @@ class StackFrameDTO:
             line=line,
             post_context=post_context,
             pre_context=pre_context,
+            variables=variables,
         )
 
         return stack_frame_dto

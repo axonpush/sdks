@@ -15,6 +15,7 @@ T = TypeVar("T", bound="TraceSummaryDTO")
 class TraceSummaryDTO:
     """
     Attributes:
+        activity_class (str):
         cost_usd (float):
         customer (str):
         duration_ms (float):
@@ -36,6 +37,7 @@ class TraceSummaryDTO:
         workflow (str):
     """
 
+    activity_class: str
     cost_usd: float
     customer: str
     duration_ms: float
@@ -57,6 +59,8 @@ class TraceSummaryDTO:
     workflow: str
 
     def to_dict(self) -> dict[str, Any]:
+        activity_class = self.activity_class
+
         cost_usd = self.cost_usd
 
         customer = self.customer
@@ -109,6 +113,7 @@ class TraceSummaryDTO:
 
         field_dict.update(
             {
+                "activityClass": activity_class,
                 "costUsd": cost_usd,
                 "customer": customer,
                 "durationMs": duration_ms,
@@ -136,6 +141,8 @@ class TraceSummaryDTO:
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         d = dict(src_dict)
+        activity_class = d.pop("activityClass")
+
         cost_usd = d.pop("costUsd")
 
         customer = d.pop("customer")
@@ -201,6 +208,7 @@ class TraceSummaryDTO:
         workflow = d.pop("workflow")
 
         trace_summary_dto = cls(
+            activity_class=activity_class,
             cost_usd=cost_usd,
             customer=customer,
             duration_ms=duration_ms,

@@ -29,6 +29,8 @@ class EventBody:
         channel_id (str | Unset): Target channel id; when omitted, the org's default channel is used
         dedup_key (str | Unset):
         event_type (str | Unset): Canonical event type; defaults to custom
+        expires_at (datetime.datetime | Unset): Original content expiry; may shorten but cannot extend the 30-day
+            retention window
         metadata (EventBodyMetadata | Unset):
         occurred_at (datetime.datetime | Unset): Original source time; retries must preserve it
         parent_span_id (str | Unset):
@@ -44,6 +46,7 @@ class EventBody:
     channel_id: str | Unset = UNSET
     dedup_key: str | Unset = UNSET
     event_type: str | Unset = UNSET
+    expires_at: datetime.datetime | Unset = UNSET
     metadata: EventBodyMetadata | Unset = UNSET
     occurred_at: datetime.datetime | Unset = UNSET
     parent_span_id: str | Unset = UNSET
@@ -68,6 +71,10 @@ class EventBody:
         dedup_key = self.dedup_key
 
         event_type = self.event_type
+
+        expires_at: str | Unset = UNSET
+        if not isinstance(self.expires_at, Unset):
+            expires_at = self.expires_at.isoformat()
 
         metadata: dict[str, Any] | Unset = UNSET
         if not isinstance(self.metadata, Unset):
@@ -103,6 +110,8 @@ class EventBody:
             field_dict["dedupKey"] = dedup_key
         if event_type is not UNSET:
             field_dict["eventType"] = event_type
+        if expires_at is not UNSET:
+            field_dict["expiresAt"] = expires_at
         if metadata is not UNSET:
             field_dict["metadata"] = metadata
         if occurred_at is not UNSET:
@@ -138,6 +147,13 @@ class EventBody:
 
         event_type = d.pop("eventType", UNSET)
 
+        _expires_at = d.pop("expiresAt", UNSET)
+        expires_at: datetime.datetime | Unset
+        if isinstance(_expires_at, Unset):
+            expires_at = UNSET
+        else:
+            expires_at = isoparse(_expires_at)
+
         _metadata = d.pop("metadata", UNSET)
         metadata: EventBodyMetadata | Unset
         if isinstance(_metadata, Unset):
@@ -168,6 +184,7 @@ class EventBody:
             channel_id=channel_id,
             dedup_key=dedup_key,
             event_type=event_type,
+            expires_at=expires_at,
             metadata=metadata,
             occurred_at=occurred_at,
             parent_span_id=parent_span_id,

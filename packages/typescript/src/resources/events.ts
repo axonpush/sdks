@@ -46,6 +46,8 @@ export interface PublishParams {
   dedupKey?: string;
   /** Original source event time (RFC3339), preserved across retries. */
   occurredAt?: string;
+  /** Original content expiry; the server may shorten it to its retention limit. */
+  expiresAt?: string;
   /**
    * Ignored by the backend — ingest is always asynchronous. Kept for
    * back-compat with callers that still pass it.
@@ -135,6 +137,7 @@ export class EventsResource {
       ...(params.parentSpanId !== undefined ? { parentSpanId: params.parentSpanId } : {}),
       ...(params.dedupKey !== undefined ? { dedupKey: params.dedupKey } : {}),
       ...(params.occurredAt !== undefined ? { occurredAt: params.occurredAt } : {}),
+      ...(params.expiresAt !== undefined ? { expiresAt: params.expiresAt } : {}),
       ...(rawMeta !== undefined
         ? { metadata: this.client.redactTelemetry?.(rawMeta) ?? rawMeta }
         : {}),

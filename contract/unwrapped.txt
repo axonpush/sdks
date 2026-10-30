@@ -73,3 +73,6 @@ tokens.revoke
 admin.orgs.delete
 admin.users.delete
 admin.users.restore
+
+# Dashboard session bootstrap; not an API-key SDK operation.
+session.bootstrap

@@ -6,6 +6,7 @@ import httpx
 
 from ... import errors
 from ...client import AuthenticatedClient, Client
+from ...models.analytics_timeseries_activity_class import AnalyticsTimeseriesActivityClass
 from ...models.analytics_timeseries_bucket import AnalyticsTimeseriesBucket
 from ...models.error_model import ErrorModel
 from ...models.timeseries_output_body import TimeseriesOutputBody
@@ -14,9 +15,11 @@ from ...types import UNSET, Response, Unset
 
 def _get_kwargs(
     *,
+    fresh: bool | Unset = UNSET,
     since: str | Unset = UNSET,
     until: str | Unset = UNSET,
     bucket: AnalyticsTimeseriesBucket | Unset = UNSET,
+    activity_class: AnalyticsTimeseriesActivityClass | Unset = UNSET,
     source: str | Unset = UNSET,
     model: str | Unset = UNSET,
     provider: str | Unset = UNSET,
@@ -34,6 +37,8 @@ def _get_kwargs(
 
     params: dict[str, Any] = {}
 
+    params["fresh"] = fresh
+
     params["since"] = since
 
     params["until"] = until
@@ -43,6 +48,12 @@ def _get_kwargs(
         json_bucket = bucket.value
 
     params["bucket"] = json_bucket
+
+    json_activity_class: str | Unset = UNSET
+    if not isinstance(activity_class, Unset):
+        json_activity_class = activity_class.value
+
+    params["activityClass"] = json_activity_class
 
     params["source"] = source
 
@@ -108,9 +119,11 @@ def _build_response(
 def sync_detailed(
     *,
     client: AuthenticatedClient | Client,
+    fresh: bool | Unset = UNSET,
     since: str | Unset = UNSET,
     until: str | Unset = UNSET,
     bucket: AnalyticsTimeseriesBucket | Unset = UNSET,
+    activity_class: AnalyticsTimeseriesActivityClass | Unset = UNSET,
     source: str | Unset = UNSET,
     model: str | Unset = UNSET,
     provider: str | Unset = UNSET,
@@ -128,9 +141,12 @@ def sync_detailed(
     """Time-bucketed traffic (counts, tokens, cost, latency, TTFT)
 
     Args:
+        fresh (bool | Unset): Bypass the 15-second summary cache
         since (str | Unset): Window start (RFC3339); defaults to 24h before until
         until (str | Unset): Window end (RFC3339); defaults to now
         bucket (AnalyticsTimeseriesBucket | Unset): Time bucket granularity (default hour)
+        activity_class (AnalyticsTimeseriesActivityClass | Unset): Business or system activity;
+            omitted includes all
         source (str | Unset): Filter by event source (e.g. gateway)
         model (str | Unset): Filter by request/response model
         provider (str | Unset): Filter by model provider
@@ -155,9 +171,11 @@ def sync_detailed(
     """
 
     kwargs = _get_kwargs(
+        fresh=fresh,
         since=since,
         until=until,
         bucket=bucket,
+        activity_class=activity_class,
         source=source,
         model=model,
         provider=provider,
@@ -183,9 +201,11 @@ def sync_detailed(
 def sync(
     *,
     client: AuthenticatedClient | Client,
+    fresh: bool | Unset = UNSET,
     since: str | Unset = UNSET,
     until: str | Unset = UNSET,
     bucket: AnalyticsTimeseriesBucket | Unset = UNSET,
+    activity_class: AnalyticsTimeseriesActivityClass | Unset = UNSET,
     source: str | Unset = UNSET,
     model: str | Unset = UNSET,
     provider: str | Unset = UNSET,
@@ -203,9 +223,12 @@ def sync(
     """Time-bucketed traffic (counts, tokens, cost, latency, TTFT)
 
     Args:
+        fresh (bool | Unset): Bypass the 15-second summary cache
         since (str | Unset): Window start (RFC3339); defaults to 24h before until
         until (str | Unset): Window end (RFC3339); defaults to now
         bucket (AnalyticsTimeseriesBucket | Unset): Time bucket granularity (default hour)
+        activity_class (AnalyticsTimeseriesActivityClass | Unset): Business or system activity;
+            omitted includes all
         source (str | Unset): Filter by event source (e.g. gateway)
         model (str | Unset): Filter by request/response model
         provider (str | Unset): Filter by model provider
@@ -231,9 +254,11 @@ def sync(
 
     return sync_detailed(
         client=client,
+        fresh=fresh,
         since=since,
         until=until,
         bucket=bucket,
+        activity_class=activity_class,
         source=source,
         model=model,
         provider=provider,
@@ -253,9 +278,11 @@ def sync(
 async def asyncio_detailed(
     *,
     client: AuthenticatedClient | Client,
+    fresh: bool | Unset = UNSET,
     since: str | Unset = UNSET,
     until: str | Unset = UNSET,
     bucket: AnalyticsTimeseriesBucket | Unset = UNSET,
+    activity_class: AnalyticsTimeseriesActivityClass | Unset = UNSET,
     source: str | Unset = UNSET,
     model: str | Unset = UNSET,
     provider: str | Unset = UNSET,
@@ -273,9 +300,12 @@ async def asyncio_detailed(
     """Time-bucketed traffic (counts, tokens, cost, latency, TTFT)
 
     Args:
+        fresh (bool | Unset): Bypass the 15-second summary cache
         since (str | Unset): Window start (RFC3339); defaults to 24h before until
         until (str | Unset): Window end (RFC3339); defaults to now
         bucket (AnalyticsTimeseriesBucket | Unset): Time bucket granularity (default hour)
+        activity_class (AnalyticsTimeseriesActivityClass | Unset): Business or system activity;
+            omitted includes all
         source (str | Unset): Filter by event source (e.g. gateway)
         model (str | Unset): Filter by request/response model
         provider (str | Unset): Filter by model provider
@@ -300,9 +330,11 @@ async def asyncio_detailed(
     """
 
     kwargs = _get_kwargs(
+        fresh=fresh,
         since=since,
         until=until,
         bucket=bucket,
+        activity_class=activity_class,
         source=source,
         model=model,
         provider=provider,
@@ -326,9 +358,11 @@ async def asyncio_detailed(
 async def asyncio(
     *,
     client: AuthenticatedClient | Client,
+    fresh: bool | Unset = UNSET,
     since: str | Unset = UNSET,
     until: str | Unset = UNSET,
     bucket: AnalyticsTimeseriesBucket | Unset = UNSET,
+    activity_class: AnalyticsTimeseriesActivityClass | Unset = UNSET,
     source: str | Unset = UNSET,
     model: str | Unset = UNSET,
     provider: str | Unset = UNSET,
@@ -346,9 +380,12 @@ async def asyncio(
     """Time-bucketed traffic (counts, tokens, cost, latency, TTFT)
 
     Args:
+        fresh (bool | Unset): Bypass the 15-second summary cache
         since (str | Unset): Window start (RFC3339); defaults to 24h before until
         until (str | Unset): Window end (RFC3339); defaults to now
         bucket (AnalyticsTimeseriesBucket | Unset): Time bucket granularity (default hour)
+        activity_class (AnalyticsTimeseriesActivityClass | Unset): Business or system activity;
+            omitted includes all
         source (str | Unset): Filter by event source (e.g. gateway)
         model (str | Unset): Filter by request/response model
         provider (str | Unset): Filter by model provider
@@ -375,9 +412,11 @@ async def asyncio(
     return (
         await asyncio_detailed(
             client=client,
+            fresh=fresh,
             since=since,
             until=until,
             bucket=bucket,
+            activity_class=activity_class,
             source=source,
             model=model,
             provider=provider,

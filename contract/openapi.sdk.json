@@ -4754,6 +4754,14 @@
       "DiffCohortDTO": {
         "additionalProperties": false,
         "properties": {
+          "activityClass": {
+            "enum": [
+              "business",
+              "system",
+              "all"
+            ],
+            "type": "string"
+          },
           "apiKey": {
             "type": "string"
           },
@@ -5125,6 +5133,27 @@
         ],
         "type": "object"
       },
+      "EraseEvidenceOutputBody": {
+        "additionalProperties": false,
+        "properties": {
+          "$schema": {
+            "description": "A URL to the JSON Schema for this object.",
+            "examples": [
+              "https://example.com/schemas/EraseEvidenceOutputBody.json"
+            ],
+            "format": "uri",
+            "readOnly": true,
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "status"
+        ],
+        "type": "object"
+      },
       "ErrorDetail": {
         "additionalProperties": false,
         "properties": {
@@ -5312,6 +5341,11 @@
             "description": "Canonical event type; defaults to custom",
             "type": "string"
           },
+          "expiresAt": {
+            "description": "Original content expiry; may shorten but cannot extend the 30-day retention window",
+            "format": "date-time",
+            "type": "string"
+          },
           "identifier": {
             "description": "Event identifier / operation name",
             "type": "string"
@@ -5353,6 +5387,18 @@
       "EventDTO": {
         "additionalProperties": false,
         "properties": {
+          "$schema": {
+            "description": "A URL to the JSON Schema for this object.",
+            "examples": [
+              "https://example.com/schemas/EventDTO.json"
+            ],
+            "format": "uri",
+            "readOnly": true,
+            "type": "string"
+          },
+          "activityClass": {
+            "type": "string"
+          },
           "agentId": {
             "type": "string"
           },
@@ -5372,6 +5418,10 @@
             "type": "integer"
           },
           "channelId": {
+            "type": "string"
+          },
+          "contentState": {
+            "description": "available, unavailable, absent, restricted, expired, or not_loaded; describes stored payload availability",
             "type": "string"
           },
           "costSource": {
@@ -5516,6 +5566,30 @@
         "required": [
           "eventId",
           "status"
+        ],
+        "type": "object"
+      },
+      "ExceptionDTO": {
+        "additionalProperties": false,
+        "properties": {
+          "message": {
+            "type": "string"
+          },
+          "stack": {
+            "items": {
+              "$ref": "#/components/schemas/StackFrameDTO"
+            },
+            "type": [
+              "array",
+              "null"
+            ]
+          },
+          "type": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "stack"
         ],
         "type": "object"
       },
@@ -6183,6 +6257,15 @@
           "breadcrumbs": {
             "items": {
               "$ref": "#/components/schemas/BreadcrumbDTO"
+            },
+            "type": [
+              "array",
+              "null"
+            ]
+          },
+          "exceptionChain": {
+            "items": {
+              "$ref": "#/components/schemas/ExceptionDTO"
             },
             "type": [
               "array",
@@ -7839,6 +7922,83 @@
         ],
         "type": "object"
       },
+      "SessionBootstrap": {
+        "additionalProperties": false,
+        "properties": {
+          "$schema": {
+            "description": "A URL to the JSON Schema for this object.",
+            "examples": [
+              "https://example.com/schemas/SessionBootstrap.json"
+            ],
+            "format": "uri",
+            "readOnly": true,
+            "type": "string"
+          },
+          "capabilities": {
+            "description": "Body of GET /capabilities"
+          },
+          "environments": {
+            "description": "Body of GET /environments"
+          },
+          "failed": {
+            "additionalProperties": {
+              "format": "int64",
+              "type": "integer"
+            },
+            "description": "HTTP status of each part that failed, by field",
+            "type": "object"
+          },
+          "featureFlags": {
+            "description": "Body of GET /feature-flags/me"
+          },
+          "me": {
+            "description": "Body of GET /user/me"
+          },
+          "organizations": {
+            "description": "Body of GET /users/me/organizations"
+          },
+          "workspaces": {
+            "description": "Body of GET /workspaces"
+          }
+        },
+        "type": "object"
+      },
+      "SessionEvidenceBody": {
+        "additionalProperties": false,
+        "properties": {
+          "$schema": {
+            "description": "A URL to the JSON Schema for this object.",
+            "examples": [
+              "https://example.com/schemas/SessionEvidenceBody.json"
+            ],
+            "format": "uri",
+            "readOnly": true,
+            "type": "string"
+          },
+          "events": {
+            "items": {
+              "$ref": "#/components/schemas/EventDTO"
+            },
+            "type": [
+              "array",
+              "null"
+            ]
+          },
+          "hasMore": {
+            "type": "boolean"
+          },
+          "nextOffset": {
+            "format": "int64",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "events",
+          "hasMore",
+          "nextOffset"
+        ],
+        "type": "object"
+      },
       "SetAccessRequestStatusInputBody": {
         "additionalProperties": false,
         "properties": {
@@ -8063,6 +8223,10 @@
               "array",
               "null"
             ]
+          },
+          "variables": {
+            "additionalProperties": {},
+            "type": "object"
           }
         },
         "required": [
@@ -8261,9 +8425,170 @@
         ],
         "type": "object"
       },
+      "TraceGroupDTO": {
+        "additionalProperties": false,
+        "properties": {
+          "activityClass": {
+            "type": "string"
+          },
+          "appId": {
+            "type": "string"
+          },
+          "environment": {
+            "type": "string"
+          },
+          "failed": {
+            "type": "boolean"
+          },
+          "firstErrorType": {
+            "type": "string"
+          },
+          "firstSeen": {
+            "type": "string"
+          },
+          "groupKey": {
+            "type": "string"
+          },
+          "lastSeen": {
+            "type": "string"
+          },
+          "maxDurationMs": {
+            "format": "double",
+            "type": "number"
+          },
+          "minDurationMs": {
+            "format": "double",
+            "type": "number"
+          },
+          "outcome": {
+            "type": "string"
+          },
+          "representativeTraceId": {
+            "type": "string"
+          },
+          "rootSpanName": {
+            "type": "string"
+          },
+          "serviceName": {
+            "type": "string"
+          },
+          "traceCount": {
+            "format": "int64",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "groupKey",
+          "appId",
+          "environment",
+          "activityClass",
+          "serviceName",
+          "rootSpanName",
+          "outcome",
+          "failed",
+          "firstErrorType",
+          "traceCount",
+          "firstSeen",
+          "lastSeen",
+          "minDurationMs",
+          "maxDurationMs",
+          "representativeTraceId"
+        ],
+        "type": "object"
+      },
+      "TraceGroupMembersOutputBody": {
+        "additionalProperties": false,
+        "properties": {
+          "$schema": {
+            "description": "A URL to the JSON Schema for this object.",
+            "examples": [
+              "https://example.com/schemas/TraceGroupMembersOutputBody.json"
+            ],
+            "format": "uri",
+            "readOnly": true,
+            "type": "string"
+          },
+          "totalTraces": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "traces": {
+            "items": {
+              "$ref": "#/components/schemas/TraceSummaryDTO"
+            },
+            "type": [
+              "array",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "traces",
+          "totalTraces"
+        ],
+        "type": "object"
+      },
+      "TraceGroupsBody": {
+        "additionalProperties": false,
+        "properties": {
+          "$schema": {
+            "description": "A URL to the JSON Schema for this object.",
+            "examples": [
+              "https://example.com/schemas/TraceGroupsBody.json"
+            ],
+            "format": "uri",
+            "readOnly": true,
+            "type": "string"
+          },
+          "failedTraces": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "finishedTraces": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "groups": {
+            "items": {
+              "$ref": "#/components/schemas/TraceGroupDTO"
+            },
+            "type": [
+              "array",
+              "null"
+            ]
+          },
+          "since": {
+            "type": "string"
+          },
+          "totalGroups": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "totalTraces": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "until": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "groups",
+          "totalGroups",
+          "totalTraces",
+          "failedTraces",
+          "finishedTraces",
+          "since",
+          "until"
+        ],
+        "type": "object"
+      },
       "TraceSummaryDTO": {
         "additionalProperties": false,
         "properties": {
+          "activityClass": {
+            "type": "string"
+          },
           "costUsd": {
             "format": "double",
             "type": "number"
@@ -8340,6 +8665,7 @@
           }
         },
         "required": [
+          "activityClass",
           "traceId",
           "startedAt",
           "endedAt",
@@ -10197,6 +10523,16 @@
         "operationId": "analytics.breakdown",
         "parameters": [
           {
+            "description": "Bypass the 15-second summary cache",
+            "explode": false,
+            "in": "query",
+            "name": "fresh",
+            "schema": {
+              "description": "Bypass the 15-second summary cache",
+              "type": "boolean"
+            }
+          },
+          {
             "description": "Window start (RFC3339); defaults to 24h before until",
             "explode": false,
             "in": "query",
@@ -10264,6 +10600,21 @@
               "description": "Top-N entries (default 50, max 500)",
               "format": "int64",
               "type": "integer"
+            }
+          },
+          {
+            "description": "Business or system activity; omitted includes all",
+            "explode": false,
+            "in": "query",
+            "name": "activityClass",
+            "schema": {
+              "description": "Business or system activity; omitted includes all",
+              "enum": [
+                "business",
+                "system",
+                "all"
+              ],
+              "type": "string"
             }
           },
           {
@@ -10406,7 +10757,14 @@
                 }
               }
             },
-            "description": "OK"
+            "description": "OK",
+            "headers": {
+              "X-Axonpush-As-Of": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
           },
           "default": {
             "content": {
@@ -10654,6 +11012,21 @@
             }
           },
           {
+            "description": "Business or system activity; omitted includes all",
+            "explode": false,
+            "in": "query",
+            "name": "activityClass",
+            "schema": {
+              "description": "Business or system activity; omitted includes all",
+              "enum": [
+                "business",
+                "system",
+                "all"
+              ],
+              "type": "string"
+            }
+          },
+          {
             "description": "Filter by event source (e.g. gateway)",
             "explode": false,
             "in": "query",
@@ -10861,6 +11234,16 @@
         "operationId": "analytics.latency",
         "parameters": [
           {
+            "description": "Bypass the 15-second summary cache",
+            "explode": false,
+            "in": "query",
+            "name": "fresh",
+            "schema": {
+              "description": "Bypass the 15-second summary cache",
+              "type": "boolean"
+            }
+          },
+          {
             "description": "Window start (RFC3339); defaults to 24h before until",
             "explode": false,
             "in": "query",
@@ -10877,6 +11260,21 @@
             "name": "until",
             "schema": {
               "description": "Window end (RFC3339); defaults to now",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Business or system activity; omitted includes all",
+            "explode": false,
+            "in": "query",
+            "name": "activityClass",
+            "schema": {
+              "description": "Business or system activity; omitted includes all",
+              "enum": [
+                "business",
+                "system",
+                "all"
+              ],
               "type": "string"
             }
           },
@@ -11020,7 +11418,14 @@
                 }
               }
             },
-            "description": "OK"
+            "description": "OK",
+            "headers": {
+              "X-Axonpush-As-Of": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
           },
           "default": {
             "content": {
@@ -11043,6 +11448,16 @@
       "get": {
         "operationId": "analytics.overview",
         "parameters": [
+          {
+            "description": "Bypass the 15-second summary cache",
+            "explode": false,
+            "in": "query",
+            "name": "fresh",
+            "schema": {
+              "description": "Bypass the 15-second summary cache",
+              "type": "boolean"
+            }
+          },
           {
             "description": "Window start (RFC3339); defaults to 24h before until",
             "explode": false,
@@ -11106,6 +11521,21 @@
               "description": "Top-N entries per breakdown (default 50, max 500)",
               "format": "int64",
               "type": "integer"
+            }
+          },
+          {
+            "description": "Business or system activity; omitted includes all",
+            "explode": false,
+            "in": "query",
+            "name": "activityClass",
+            "schema": {
+              "description": "Business or system activity; omitted includes all",
+              "enum": [
+                "business",
+                "system",
+                "all"
+              ],
+              "type": "string"
             }
           },
           {
@@ -11248,7 +11678,14 @@
                 }
               }
             },
-            "description": "OK"
+            "description": "OK",
+            "headers": {
+              "X-Axonpush-As-Of": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
           },
           "default": {
             "content": {
@@ -11271,6 +11708,16 @@
       "get": {
         "operationId": "analytics.timeseries",
         "parameters": [
+          {
+            "description": "Bypass the 15-second summary cache",
+            "explode": false,
+            "in": "query",
+            "name": "fresh",
+            "schema": {
+              "description": "Bypass the 15-second summary cache",
+              "type": "boolean"
+            }
+          },
           {
             "description": "Window start (RFC3339); defaults to 24h before until",
             "explode": false,
@@ -11301,6 +11748,21 @@
               "enum": [
                 "hour",
                 "day"
+              ],
+              "type": "string"
+            }
+          },
+          {
+            "description": "Business or system activity; omitted includes all",
+            "explode": false,
+            "in": "query",
+            "name": "activityClass",
+            "schema": {
+              "description": "Business or system activity; omitted includes all",
+              "enum": [
+                "business",
+                "system",
+                "all"
               ],
               "type": "string"
             }
@@ -11445,7 +11907,14 @@
                 }
               }
             },
-            "description": "OK"
+            "description": "OK",
+            "headers": {
+              "X-Axonpush-As-Of": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
           },
           "default": {
             "content": {
@@ -14133,6 +14602,237 @@
         ]
       }
     },
+    "/session/bootstrap": {
+      "get": {
+        "description": "User, organizations, capabilities, feature flags, environments and workspaces, each exactly as its own endpoint returns it.",
+        "operationId": "session.bootstrap",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SessionBootstrap"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "summary": "Get the dashboard's startup reads in one request",
+        "tags": [
+          "session"
+        ]
+      }
+    },
+    "/telemetry/events/{eventId}/content": {
+      "get": {
+        "operationId": "telemetry.content",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "eventId",
+            "required": true,
+            "schema": {
+              "maxLength": 256,
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EventDTO"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "summary": "Read audited interaction content; recordings also require replay:read",
+        "tags": [
+          "telemetry"
+        ],
+        "x-axonpush-scopes": [
+          "content:read"
+        ]
+      }
+    },
+    "/telemetry/sessions/{sessionId}": {
+      "get": {
+        "operationId": "telemetry.timeline",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "sessionId",
+            "required": true,
+            "schema": {
+              "maxLength": 256,
+              "type": "string"
+            }
+          },
+          {
+            "explode": false,
+            "in": "query",
+            "name": "appId",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "explode": false,
+            "in": "query",
+            "name": "environmentId",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "explode": false,
+            "in": "query",
+            "name": "limit",
+            "schema": {
+              "default": 100,
+              "format": "int64",
+              "maximum": 500,
+              "minimum": 1,
+              "type": "integer"
+            }
+          },
+          {
+            "explode": false,
+            "in": "query",
+            "name": "offset",
+            "schema": {
+              "format": "int64",
+              "maximum": 100000,
+              "minimum": 0,
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SessionEvidenceBody"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "summary": "Read a session's chronological interaction metadata",
+        "tags": [
+          "telemetry"
+        ],
+        "x-axonpush-scopes": [
+          "observe:read"
+        ]
+      }
+    },
+    "/telemetry/subjects/{subjectType}/{subjectId}": {
+      "delete": {
+        "operationId": "telemetry.erase",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "subjectType",
+            "required": true,
+            "schema": {
+              "maxLength": 64,
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "subjectId",
+            "required": true,
+            "schema": {
+              "maxLength": 256,
+              "type": "string"
+            }
+          },
+          {
+            "explode": false,
+            "in": "query",
+            "name": "appId",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "explode": false,
+            "in": "query",
+            "name": "environmentId",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EraseEvidenceOutputBody"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "summary": "Erase subject evidence and prevent delayed ingestion restoring it",
+        "tags": [
+          "telemetry"
+        ],
+        "x-axonpush-scopes": [
+          "content:erase"
+        ]
+      }
+    },
     "/templates": {
       "get": {
         "operationId": "templates.list",
@@ -14209,10 +14909,809 @@
         ]
       }
     },
+    "/trace-groups": {
+      "get": {
+        "operationId": "traces.groups",
+        "parameters": [
+          {
+            "description": "Business or system activity; omitted includes all",
+            "explode": false,
+            "in": "query",
+            "name": "activityClass",
+            "schema": {
+              "description": "Business or system activity; omitted includes all",
+              "enum": [
+                "business",
+                "system",
+                "all"
+              ],
+              "type": "string"
+            }
+          },
+          {
+            "description": "Window start (RFC3339); defaults to 24h before until",
+            "explode": false,
+            "in": "query",
+            "name": "since",
+            "schema": {
+              "description": "Window start (RFC3339); defaults to 24h before until",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Window end (RFC3339); defaults to now",
+            "explode": false,
+            "in": "query",
+            "name": "until",
+            "schema": {
+              "description": "Window end (RFC3339); defaults to now",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Max traces to return (default 50, max 500)",
+            "explode": false,
+            "in": "query",
+            "name": "limit",
+            "schema": {
+              "description": "Max traces to return (default 50, max 500)",
+              "format": "int64",
+              "type": "integer"
+            }
+          },
+          {
+            "description": "Rows to skip for paging",
+            "explode": false,
+            "in": "query",
+            "name": "offset",
+            "schema": {
+              "description": "Rows to skip for paging",
+              "format": "int64",
+              "minimum": 0,
+              "type": "integer"
+            }
+          },
+          {
+            "description": "Free-text search over span content/metadata",
+            "explode": false,
+            "in": "query",
+            "name": "q",
+            "schema": {
+              "description": "Free-text search over span content/metadata",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Keep traces with a span from any of these services",
+            "explode": true,
+            "in": "query",
+            "name": "service",
+            "schema": {
+              "description": "Keep traces with a span from any of these services",
+              "items": {
+                "type": "string"
+              },
+              "type": [
+                "array",
+                "null"
+              ]
+            }
+          },
+          {
+            "description": "Keep traces with a span with any of these operations / span names",
+            "explode": true,
+            "in": "query",
+            "name": "operation",
+            "schema": {
+              "description": "Keep traces with a span with any of these operations / span names",
+              "items": {
+                "type": "string"
+              },
+              "type": [
+                "array",
+                "null"
+              ]
+            }
+          },
+          {
+            "description": "Keep traces with a span using any of these models (request or response)",
+            "explode": true,
+            "in": "query",
+            "name": "model",
+            "schema": {
+              "description": "Keep traces with a span using any of these models (request or response)",
+              "items": {
+                "type": "string"
+              },
+              "type": [
+                "array",
+                "null"
+              ]
+            }
+          },
+          {
+            "description": "Keep traces with a span from any of these model providers",
+            "explode": true,
+            "in": "query",
+            "name": "provider",
+            "schema": {
+              "description": "Keep traces with a span from any of these model providers",
+              "items": {
+                "type": "string"
+              },
+              "type": [
+                "array",
+                "null"
+              ]
+            }
+          },
+          {
+            "description": "Keep traces with a span from any of these agents",
+            "explode": true,
+            "in": "query",
+            "name": "agent",
+            "schema": {
+              "description": "Keep traces with a span from any of these agents",
+              "items": {
+                "type": "string"
+              },
+              "type": [
+                "array",
+                "null"
+              ]
+            }
+          },
+          {
+            "description": "Keep traces with a span invoking any of these tools",
+            "explode": true,
+            "in": "query",
+            "name": "tool",
+            "schema": {
+              "description": "Keep traces with a span invoking any of these tools",
+              "items": {
+                "type": "string"
+              },
+              "type": [
+                "array",
+                "null"
+              ]
+            }
+          },
+          {
+            "description": "Keep traces with a span from any of these ingest sources",
+            "explode": true,
+            "in": "query",
+            "name": "source",
+            "schema": {
+              "description": "Keep traces with a span from any of these ingest sources",
+              "items": {
+                "type": "string"
+              },
+              "type": [
+                "array",
+                "null"
+              ]
+            }
+          },
+          {
+            "description": "Keep traces with a span from any of these application ids",
+            "explode": true,
+            "in": "query",
+            "name": "app",
+            "schema": {
+              "description": "Keep traces with a span from any of these application ids",
+              "items": {
+                "type": "string"
+              },
+              "type": [
+                "array",
+                "null"
+              ]
+            }
+          },
+          {
+            "description": "Keep traces with a span from any of these environments (slug or id)",
+            "explode": true,
+            "in": "query",
+            "name": "environment",
+            "schema": {
+              "description": "Keep traces with a span from any of these environments (slug or id)",
+              "items": {
+                "type": "string"
+              },
+              "type": [
+                "array",
+                "null"
+              ]
+            }
+          },
+          {
+            "description": "Keep traces with a span from any of these API key ids",
+            "explode": true,
+            "in": "query",
+            "name": "apiKey",
+            "schema": {
+              "description": "Keep traces with a span from any of these API key ids",
+              "items": {
+                "type": "string"
+              },
+              "type": [
+                "array",
+                "null"
+              ]
+            }
+          },
+          {
+            "description": "Keep traces with a span from any of these release/build tags",
+            "explode": true,
+            "in": "query",
+            "name": "release",
+            "schema": {
+              "description": "Keep traces with a span from any of these release/build tags",
+              "items": {
+                "type": "string"
+              },
+              "type": [
+                "array",
+                "null"
+              ]
+            }
+          },
+          {
+            "description": "Keep traces with a span of any of these statuses (e.g. ok/error)",
+            "explode": true,
+            "in": "query",
+            "name": "status",
+            "schema": {
+              "description": "Keep traces with a span of any of these statuses (e.g. ok/error)",
+              "items": {
+                "type": "string"
+              },
+              "type": [
+                "array",
+                "null"
+              ]
+            }
+          },
+          {
+            "description": "Keep traces with a span from any of these session ids",
+            "explode": true,
+            "in": "query",
+            "name": "session",
+            "schema": {
+              "description": "Keep traces with a span from any of these session ids",
+              "items": {
+                "type": "string"
+              },
+              "type": [
+                "array",
+                "null"
+              ]
+            }
+          },
+          {
+            "description": "Keep traces with a span from any of these end-user ids",
+            "explode": true,
+            "in": "query",
+            "name": "user",
+            "schema": {
+              "description": "Keep traces with a span from any of these end-user ids",
+              "items": {
+                "type": "string"
+              },
+              "type": [
+                "array",
+                "null"
+              ]
+            }
+          },
+          {
+            "description": "Keep traces with a span of any of these semantic kinds (e.g. llm)",
+            "explode": true,
+            "in": "query",
+            "name": "semanticKind",
+            "schema": {
+              "description": "Keep traces with a span of any of these semantic kinds (e.g. llm)",
+              "items": {
+                "type": "string"
+              },
+              "type": [
+                "array",
+                "null"
+              ]
+            }
+          },
+          {
+            "description": "Keep only traces containing an error span",
+            "explode": false,
+            "in": "query",
+            "name": "errorsOnly",
+            "schema": {
+              "description": "Keep only traces containing an error span",
+              "type": "boolean"
+            }
+          },
+          {
+            "description": "Keep only traces at least this many ms long",
+            "explode": false,
+            "in": "query",
+            "name": "minDurationMs",
+            "schema": {
+              "description": "Keep only traces at least this many ms long",
+              "format": "double",
+              "type": "number"
+            }
+          },
+          {
+            "description": "Row ordering: last_seen_desc (default), last_seen_asc, duration_desc, cost_desc, tokens_desc",
+            "explode": false,
+            "in": "query",
+            "name": "sort",
+            "schema": {
+              "description": "Row ordering: last_seen_desc (default), last_seen_asc, duration_desc, cost_desc, tokens_desc",
+              "enum": [
+                "last_seen_desc",
+                "last_seen_asc",
+                "duration_desc",
+                "cost_desc",
+                "tokens_desc"
+              ],
+              "type": "string"
+            }
+          },
+          {
+            "description": "Bypass the 15-second summary cache",
+            "explode": false,
+            "in": "query",
+            "name": "fresh",
+            "schema": {
+              "description": "Bypass the 15-second summary cache",
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TraceGroupsBody"
+                }
+              }
+            },
+            "description": "OK",
+            "headers": {
+              "X-Axonpush-As-Of": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "default": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "summary": "Group traces by root operation and result",
+        "tags": [
+          "traces"
+        ]
+      }
+    },
+    "/trace-groups/{groupKey}/traces": {
+      "get": {
+        "operationId": "traces.groupMembers",
+        "parameters": [
+          {
+            "description": "Business or system activity; omitted includes all",
+            "explode": false,
+            "in": "query",
+            "name": "activityClass",
+            "schema": {
+              "description": "Business or system activity; omitted includes all",
+              "enum": [
+                "business",
+                "system",
+                "all"
+              ],
+              "type": "string"
+            }
+          },
+          {
+            "description": "Window start (RFC3339); defaults to 24h before until",
+            "explode": false,
+            "in": "query",
+            "name": "since",
+            "schema": {
+              "description": "Window start (RFC3339); defaults to 24h before until",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Window end (RFC3339); defaults to now",
+            "explode": false,
+            "in": "query",
+            "name": "until",
+            "schema": {
+              "description": "Window end (RFC3339); defaults to now",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Max traces to return (default 50, max 500)",
+            "explode": false,
+            "in": "query",
+            "name": "limit",
+            "schema": {
+              "description": "Max traces to return (default 50, max 500)",
+              "format": "int64",
+              "type": "integer"
+            }
+          },
+          {
+            "description": "Rows to skip for paging",
+            "explode": false,
+            "in": "query",
+            "name": "offset",
+            "schema": {
+              "description": "Rows to skip for paging",
+              "format": "int64",
+              "minimum": 0,
+              "type": "integer"
+            }
+          },
+          {
+            "description": "Free-text search over span content/metadata",
+            "explode": false,
+            "in": "query",
+            "name": "q",
+            "schema": {
+              "description": "Free-text search over span content/metadata",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Keep traces with a span from any of these services",
+            "explode": true,
+            "in": "query",
+            "name": "service",
+            "schema": {
+              "description": "Keep traces with a span from any of these services",
+              "items": {
+                "type": "string"
+              },
+              "type": [
+                "array",
+                "null"
+              ]
+            }
+          },
+          {
+            "description": "Keep traces with a span with any of these operations / span names",
+            "explode": true,
+            "in": "query",
+            "name": "operation",
+            "schema": {
+              "description": "Keep traces with a span with any of these operations / span names",
+              "items": {
+                "type": "string"
+              },
+              "type": [
+                "array",
+                "null"
+              ]
+            }
+          },
+          {
+            "description": "Keep traces with a span using any of these models (request or response)",
+            "explode": true,
+            "in": "query",
+            "name": "model",
+            "schema": {
+              "description": "Keep traces with a span using any of these models (request or response)",
+              "items": {
+                "type": "string"
+              },
+              "type": [
+                "array",
+                "null"
+              ]
+            }
+          },
+          {
+            "description": "Keep traces with a span from any of these model providers",
+            "explode": true,
+            "in": "query",
+            "name": "provider",
+            "schema": {
+              "description": "Keep traces with a span from any of these model providers",
+              "items": {
+                "type": "string"
+              },
+              "type": [
+                "array",
+                "null"
+              ]
+            }
+          },
+          {
+            "description": "Keep traces with a span from any of these agents",
+            "explode": true,
+            "in": "query",
+            "name": "agent",
+            "schema": {
+              "description": "Keep traces with a span from any of these agents",
+              "items": {
+                "type": "string"
+              },
+              "type": [
+                "array",
+                "null"
+              ]
+            }
+          },
+          {
+            "description": "Keep traces with a span invoking any of these tools",
+            "explode": true,
+            "in": "query",
+            "name": "tool",
+            "schema": {
+              "description": "Keep traces with a span invoking any of these tools",
+              "items": {
+                "type": "string"
+              },
+              "type": [
+                "array",
+                "null"
+              ]
+            }
+          },
+          {
+            "description": "Keep traces with a span from any of these ingest sources",
+            "explode": true,
+            "in": "query",
+            "name": "source",
+            "schema": {
+              "description": "Keep traces with a span from any of these ingest sources",
+              "items": {
+                "type": "string"
+              },
+              "type": [
+                "array",
+                "null"
+              ]
+            }
+          },
+          {
+            "description": "Keep traces with a span from any of these application ids",
+            "explode": true,
+            "in": "query",
+            "name": "app",
+            "schema": {
+              "description": "Keep traces with a span from any of these application ids",
+              "items": {
+                "type": "string"
+              },
+              "type": [
+                "array",
+                "null"
+              ]
+            }
+          },
+          {
+            "description": "Keep traces with a span from any of these environments (slug or id)",
+            "explode": true,
+            "in": "query",
+            "name": "environment",
+            "schema": {
+              "description": "Keep traces with a span from any of these environments (slug or id)",
+              "items": {
+                "type": "string"
+              },
+              "type": [
+                "array",
+                "null"
+              ]
+            }
+          },
+          {
+            "description": "Keep traces with a span from any of these API key ids",
+            "explode": true,
+            "in": "query",
+            "name": "apiKey",
+            "schema": {
+              "description": "Keep traces with a span from any of these API key ids",
+              "items": {
+                "type": "string"
+              },
+              "type": [
+                "array",
+                "null"
+              ]
+            }
+          },
+          {
+            "description": "Keep traces with a span from any of these release/build tags",
+            "explode": true,
+            "in": "query",
+            "name": "release",
+            "schema": {
+              "description": "Keep traces with a span from any of these release/build tags",
+              "items": {
+                "type": "string"
+              },
+              "type": [
+                "array",
+                "null"
+              ]
+            }
+          },
+          {
+            "description": "Keep traces with a span of any of these statuses (e.g. ok/error)",
+            "explode": true,
+            "in": "query",
+            "name": "status",
+            "schema": {
+              "description": "Keep traces with a span of any of these statuses (e.g. ok/error)",
+              "items": {
+                "type": "string"
+              },
+              "type": [
+                "array",
+                "null"
+              ]
+            }
+          },
+          {
+            "description": "Keep traces with a span from any of these session ids",
+            "explode": true,
+            "in": "query",
+            "name": "session",
+            "schema": {
+              "description": "Keep traces with a span from any of these session ids",
+              "items": {
+                "type": "string"
+              },
+              "type": [
+                "array",
+                "null"
+              ]
+            }
+          },
+          {
+            "description": "Keep traces with a span from any of these end-user ids",
+            "explode": true,
+            "in": "query",
+            "name": "user",
+            "schema": {
+              "description": "Keep traces with a span from any of these end-user ids",
+              "items": {
+                "type": "string"
+              },
+              "type": [
+                "array",
+                "null"
+              ]
+            }
+          },
+          {
+            "description": "Keep traces with a span of any of these semantic kinds (e.g. llm)",
+            "explode": true,
+            "in": "query",
+            "name": "semanticKind",
+            "schema": {
+              "description": "Keep traces with a span of any of these semantic kinds (e.g. llm)",
+              "items": {
+                "type": "string"
+              },
+              "type": [
+                "array",
+                "null"
+              ]
+            }
+          },
+          {
+            "description": "Keep only traces containing an error span",
+            "explode": false,
+            "in": "query",
+            "name": "errorsOnly",
+            "schema": {
+              "description": "Keep only traces containing an error span",
+              "type": "boolean"
+            }
+          },
+          {
+            "description": "Keep only traces at least this many ms long",
+            "explode": false,
+            "in": "query",
+            "name": "minDurationMs",
+            "schema": {
+              "description": "Keep only traces at least this many ms long",
+              "format": "double",
+              "type": "number"
+            }
+          },
+          {
+            "description": "Row ordering: last_seen_desc (default), last_seen_asc, duration_desc, cost_desc, tokens_desc",
+            "explode": false,
+            "in": "query",
+            "name": "sort",
+            "schema": {
+              "description": "Row ordering: last_seen_desc (default), last_seen_asc, duration_desc, cost_desc, tokens_desc",
+              "enum": [
+                "last_seen_desc",
+                "last_seen_asc",
+                "duration_desc",
+                "cost_desc",
+                "tokens_desc"
+              ],
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "groupKey",
+            "required": true,
+            "schema": {
+              "maxLength": 16384,
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TraceGroupMembersOutputBody"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "summary": "List traces belonging to an exact request/result group",
+        "tags": [
+          "traces"
+        ]
+      }
+    },
     "/traces": {
       "get": {
         "operationId": "traces.list",
         "parameters": [
+          {
+            "description": "Business or system activity; omitted includes all",
+            "explode": false,
+            "in": "query",
+            "name": "activityClass",
+            "schema": {
+              "description": "Business or system activity; omitted includes all",
+              "enum": [
+                "business",
+                "system",
+                "all"
+              ],
+              "type": "string"
+            }
+          },
           {
             "description": "Window start (RFC3339); defaults to 24h before until",
             "explode": false,
@@ -15651,6 +17150,16 @@
         "operationId": "activity.entities",
         "parameters": [
           {
+            "description": "Bypass the 15-second summary cache",
+            "explode": false,
+            "in": "query",
+            "name": "fresh",
+            "schema": {
+              "description": "Bypass the 15-second summary cache",
+              "type": "boolean"
+            }
+          },
+          {
             "in": "path",
             "name": "workspaceId",
             "required": true,
@@ -15847,6 +17356,16 @@
         "operationId": "activity.analytics",
         "parameters": [
           {
+            "description": "Bypass the 15-second summary cache",
+            "explode": false,
+            "in": "query",
+            "name": "fresh",
+            "schema": {
+              "description": "Bypass the 15-second summary cache",
+              "type": "boolean"
+            }
+          },
+          {
             "in": "path",
             "name": "workspaceId",
             "required": true,
@@ -15888,7 +17407,14 @@
                 }
               }
             },
-            "description": "OK"
+            "description": "OK",
+            "headers": {
+              "X-Axonpush-As-Of": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
           },
           "default": {
             "content": {
@@ -16448,6 +17974,16 @@
         "operationId": "activity.health",
         "parameters": [
           {
+            "description": "Bypass the 15-second summary cache",
+            "explode": false,
+            "in": "query",
+            "name": "fresh",
+            "schema": {
+              "description": "Bypass the 15-second summary cache",
+              "type": "boolean"
+            }
+          },
+          {
             "in": "path",
             "name": "workspaceId",
             "required": true,
@@ -16617,7 +18153,14 @@
                 }
               }
             },
-            "description": "OK"
+            "description": "OK",
+            "headers": {
+              "X-Axonpush-As-Of": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
           },
           "default": {
             "content": {
@@ -16698,6 +18241,16 @@
       "get": {
         "operationId": "activity.incidents",
         "parameters": [
+          {
+            "description": "Bypass the 15-second summary cache",
+            "explode": false,
+            "in": "query",
+            "name": "fresh",
+            "schema": {
+              "description": "Bypass the 15-second summary cache",
+              "type": "boolean"
+            }
+          },
           {
             "in": "path",
             "name": "workspaceId",
@@ -17106,6 +18659,16 @@
         "operationId": "activity.series",
         "parameters": [
           {
+            "description": "Bypass the 15-second summary cache",
+            "explode": false,
+            "in": "query",
+            "name": "fresh",
+            "schema": {
+              "description": "Bypass the 15-second summary cache",
+              "type": "boolean"
+            }
+          },
+          {
             "in": "path",
             "name": "workspaceId",
             "required": true,
@@ -17225,7 +18788,14 @@
                 }
               }
             },
-            "description": "OK"
+            "description": "OK",
+            "headers": {
+              "X-Axonpush-As-Of": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
           },
           "default": {
             "content": {
@@ -17251,6 +18821,16 @@
       "get": {
         "operationId": "activity.summary",
         "parameters": [
+          {
+            "description": "Bypass the 15-second summary cache",
+            "explode": false,
+            "in": "query",
+            "name": "fresh",
+            "schema": {
+              "description": "Bypass the 15-second summary cache",
+              "type": "boolean"
+            }
+          },
           {
             "in": "path",
             "name": "workspaceId",
@@ -17421,7 +19001,14 @@
                 }
               }
             },
-            "description": "OK"
+            "description": "OK",
+            "headers": {
+              "X-Axonpush-As-Of": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
           },
           "default": {
             "content": {
@@ -17447,6 +19034,16 @@
       "get": {
         "operationId": "activity.timeline",
         "parameters": [
+          {
+            "description": "Bypass the 15-second summary cache",
+            "explode": false,
+            "in": "query",
+            "name": "fresh",
+            "schema": {
+              "description": "Bypass the 15-second summary cache",
+              "type": "boolean"
+            }
+          },
           {
             "in": "path",
             "name": "workspaceId",
@@ -17644,6 +19241,16 @@
         "operationId": "activity.views",
         "parameters": [
           {
+            "description": "Bypass the 15-second summary cache",
+            "explode": false,
+            "in": "query",
+            "name": "fresh",
+            "schema": {
+              "description": "Bypass the 15-second summary cache",
+              "type": "boolean"
+            }
+          },
+          {
             "in": "path",
             "name": "workspaceId",
             "required": true,
@@ -17813,7 +19420,14 @@
                 }
               }
             },
-            "description": "OK"
+            "description": "OK",
+            "headers": {
+              "X-Axonpush-As-Of": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
           },
           "default": {
             "content": {

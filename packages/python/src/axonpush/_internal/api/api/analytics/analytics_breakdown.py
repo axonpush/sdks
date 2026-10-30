@@ -6,6 +6,7 @@ import httpx
 
 from ... import errors
 from ...client import AuthenticatedClient, Client
+from ...models.analytics_breakdown_activity_class import AnalyticsBreakdownActivityClass
 from ...models.analytics_breakdown_dimension import AnalyticsBreakdownDimension
 from ...models.breakdown_output_body import BreakdownOutputBody
 from ...models.error_model import ErrorModel
@@ -14,11 +15,13 @@ from ...types import UNSET, Response, Unset
 
 def _get_kwargs(
     *,
+    fresh: bool | Unset = UNSET,
     since: str | Unset = UNSET,
     until: str | Unset = UNSET,
     dimension: AnalyticsBreakdownDimension | Unset = UNSET,
     tag_key: str | Unset = UNSET,
     limit: int | Unset = UNSET,
+    activity_class: AnalyticsBreakdownActivityClass | Unset = UNSET,
     source: str | Unset = UNSET,
     model: str | Unset = UNSET,
     provider: str | Unset = UNSET,
@@ -36,6 +39,8 @@ def _get_kwargs(
 
     params: dict[str, Any] = {}
 
+    params["fresh"] = fresh
+
     params["since"] = since
 
     params["until"] = until
@@ -49,6 +54,12 @@ def _get_kwargs(
     params["tagKey"] = tag_key
 
     params["limit"] = limit
+
+    json_activity_class: str | Unset = UNSET
+    if not isinstance(activity_class, Unset):
+        json_activity_class = activity_class.value
+
+    params["activityClass"] = json_activity_class
 
     params["source"] = source
 
@@ -114,11 +125,13 @@ def _build_response(
 def sync_detailed(
     *,
     client: AuthenticatedClient | Client,
+    fresh: bool | Unset = UNSET,
     since: str | Unset = UNSET,
     until: str | Unset = UNSET,
     dimension: AnalyticsBreakdownDimension | Unset = UNSET,
     tag_key: str | Unset = UNSET,
     limit: int | Unset = UNSET,
+    activity_class: AnalyticsBreakdownActivityClass | Unset = UNSET,
     source: str | Unset = UNSET,
     model: str | Unset = UNSET,
     provider: str | Unset = UNSET,
@@ -136,11 +149,14 @@ def sync_detailed(
     """Top-N breakdown by model, provider, status, source, app, key, user, agent, tool, or tag
 
     Args:
+        fresh (bool | Unset): Bypass the 15-second summary cache
         since (str | Unset): Window start (RFC3339); defaults to 24h before until
         until (str | Unset): Window end (RFC3339); defaults to now
         dimension (AnalyticsBreakdownDimension | Unset): Breakdown dimension (default model)
         tag_key (str | Unset): Attribute key to group by when dimension=tag
         limit (int | Unset): Top-N entries (default 50, max 500)
+        activity_class (AnalyticsBreakdownActivityClass | Unset): Business or system activity;
+            omitted includes all
         source (str | Unset): Filter by event source (e.g. gateway)
         model (str | Unset): Filter by request/response model
         provider (str | Unset): Filter by model provider
@@ -165,11 +181,13 @@ def sync_detailed(
     """
 
     kwargs = _get_kwargs(
+        fresh=fresh,
         since=since,
         until=until,
         dimension=dimension,
         tag_key=tag_key,
         limit=limit,
+        activity_class=activity_class,
         source=source,
         model=model,
         provider=provider,
@@ -195,11 +213,13 @@ def sync_detailed(
 def sync(
     *,
     client: AuthenticatedClient | Client,
+    fresh: bool | Unset = UNSET,
     since: str | Unset = UNSET,
     until: str | Unset = UNSET,
     dimension: AnalyticsBreakdownDimension | Unset = UNSET,
     tag_key: str | Unset = UNSET,
     limit: int | Unset = UNSET,
+    activity_class: AnalyticsBreakdownActivityClass | Unset = UNSET,
     source: str | Unset = UNSET,
     model: str | Unset = UNSET,
     provider: str | Unset = UNSET,
@@ -217,11 +237,14 @@ def sync(
     """Top-N breakdown by model, provider, status, source, app, key, user, agent, tool, or tag
 
     Args:
+        fresh (bool | Unset): Bypass the 15-second summary cache
         since (str | Unset): Window start (RFC3339); defaults to 24h before until
         until (str | Unset): Window end (RFC3339); defaults to now
         dimension (AnalyticsBreakdownDimension | Unset): Breakdown dimension (default model)
         tag_key (str | Unset): Attribute key to group by when dimension=tag
         limit (int | Unset): Top-N entries (default 50, max 500)
+        activity_class (AnalyticsBreakdownActivityClass | Unset): Business or system activity;
+            omitted includes all
         source (str | Unset): Filter by event source (e.g. gateway)
         model (str | Unset): Filter by request/response model
         provider (str | Unset): Filter by model provider
@@ -247,11 +270,13 @@ def sync(
 
     return sync_detailed(
         client=client,
+        fresh=fresh,
         since=since,
         until=until,
         dimension=dimension,
         tag_key=tag_key,
         limit=limit,
+        activity_class=activity_class,
         source=source,
         model=model,
         provider=provider,
@@ -271,11 +296,13 @@ def sync(
 async def asyncio_detailed(
     *,
     client: AuthenticatedClient | Client,
+    fresh: bool | Unset = UNSET,
     since: str | Unset = UNSET,
     until: str | Unset = UNSET,
     dimension: AnalyticsBreakdownDimension | Unset = UNSET,
     tag_key: str | Unset = UNSET,
     limit: int | Unset = UNSET,
+    activity_class: AnalyticsBreakdownActivityClass | Unset = UNSET,
     source: str | Unset = UNSET,
     model: str | Unset = UNSET,
     provider: str | Unset = UNSET,
@@ -293,11 +320,14 @@ async def asyncio_detailed(
     """Top-N breakdown by model, provider, status, source, app, key, user, agent, tool, or tag
 
     Args:
+        fresh (bool | Unset): Bypass the 15-second summary cache
         since (str | Unset): Window start (RFC3339); defaults to 24h before until
         until (str | Unset): Window end (RFC3339); defaults to now
         dimension (AnalyticsBreakdownDimension | Unset): Breakdown dimension (default model)
         tag_key (str | Unset): Attribute key to group by when dimension=tag
         limit (int | Unset): Top-N entries (default 50, max 500)
+        activity_class (AnalyticsBreakdownActivityClass | Unset): Business or system activity;
+            omitted includes all
         source (str | Unset): Filter by event source (e.g. gateway)
         model (str | Unset): Filter by request/response model
         provider (str | Unset): Filter by model provider
@@ -322,11 +352,13 @@ async def asyncio_detailed(
     """
 
     kwargs = _get_kwargs(
+        fresh=fresh,
         since=since,
         until=until,
         dimension=dimension,
         tag_key=tag_key,
         limit=limit,
+        activity_class=activity_class,
         source=source,
         model=model,
         provider=provider,
@@ -350,11 +382,13 @@ async def asyncio_detailed(
 async def asyncio(
     *,
     client: AuthenticatedClient | Client,
+    fresh: bool | Unset = UNSET,
     since: str | Unset = UNSET,
     until: str | Unset = UNSET,
     dimension: AnalyticsBreakdownDimension | Unset = UNSET,
     tag_key: str | Unset = UNSET,
     limit: int | Unset = UNSET,
+    activity_class: AnalyticsBreakdownActivityClass | Unset = UNSET,
     source: str | Unset = UNSET,
     model: str | Unset = UNSET,
     provider: str | Unset = UNSET,
@@ -372,11 +406,14 @@ async def asyncio(
     """Top-N breakdown by model, provider, status, source, app, key, user, agent, tool, or tag
 
     Args:
+        fresh (bool | Unset): Bypass the 15-second summary cache
         since (str | Unset): Window start (RFC3339); defaults to 24h before until
         until (str | Unset): Window end (RFC3339); defaults to now
         dimension (AnalyticsBreakdownDimension | Unset): Breakdown dimension (default model)
         tag_key (str | Unset): Attribute key to group by when dimension=tag
         limit (int | Unset): Top-N entries (default 50, max 500)
+        activity_class (AnalyticsBreakdownActivityClass | Unset): Business or system activity;
+            omitted includes all
         source (str | Unset): Filter by event source (e.g. gateway)
         model (str | Unset): Filter by request/response model
         provider (str | Unset): Filter by model provider
@@ -403,11 +440,13 @@ async def asyncio(
     return (
         await asyncio_detailed(
             client=client,
+            fresh=fresh,
             since=since,
             until=until,
             dimension=dimension,
             tag_key=tag_key,
             limit=limit,
+            activity_class=activity_class,
             source=source,
             model=model,
             provider=provider,

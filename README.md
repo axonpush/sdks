@@ -95,3 +95,26 @@ This repo is the merge of `axonpush/ts-sdk`, `axonpush/python-sdk` and
 survives. `git log packages/typescript/src/client.ts` reaches back to the
 original first commit. The old repos are archived, and their original tags stay
 resolvable there as the provenance for anything already published.
+
+### Session evidence
+
+The `telemetry` resource exposes chronological metadata, audited content, and
+subject erasure through the same per-client transport:
+
+```typescript
+const page = await client.telemetry.timeline(sessionId, { limit: 100 });
+const event = await client.telemetry.content(eventId);
+await client.telemetry.erase("user", userId, { appId });
+```
+
+Python provides `client.telemetry.timeline(session_id, params={"limit": 100})`,
+`content(event_id)`, and `erase("user", user_id, params={"app_id": app_id})` on both
+sync and async clients. .NET exposes `client.Telemetry.TimelineAsync`,
+`ContentAsync`, and `EraseAsync`.
+
+Timeline reads need `observe:read`; content needs `content:read` and recordings
+also need `replay:read`. Erasure needs `content:erase`. The server enforces tenant,
+app, environment and activity access grants. Follow `hasMore`/`nextOffset` instead
+of fetching all content eagerly. A missing/unavailable payload is an explicit
+state, not an empty successful interaction. These methods require the matching
+server telemetry migration and API deployment.
