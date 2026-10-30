@@ -9,6 +9,7 @@ import type {
   ListTracesOutputBody,
   TraceGroupMembersOutputBody,
   TraceGroupsBody,
+  TracesGetData,
   TracesGroupMembersData,
   TracesGroupsData,
 } from "../_internal/api/types.gen.js";
@@ -63,13 +64,16 @@ export class TracesResource {
   }
 
   /**
-   * Fetch a single trace with its spans. `GET /traces/{traceId}`
+   * Fetch one bounded page of a trace's spans. `GET /traces/{traceId}`
    *
    * @param traceId - Trace UUID.
    * @returns Trace envelope `{ traceId, spans }`, or `null` on fail-open error.
    */
-  async get(traceId: string): Promise<GetTraceOutputBody | null> {
-    return this.client.invoke(tracesGet, { path: { traceId } });
+  async get(
+    traceId: string,
+    query: TracesGetData["query"] = {},
+  ): Promise<GetTraceOutputBody | null> {
+    return this.client.invoke(tracesGet, { path: { traceId }, query });
   }
 }
 

@@ -2052,6 +2052,8 @@ export type GetTraceOutputBody = {
      * A URL to the JSON Schema for this object.
      */
     readonly $schema?: string;
+    hasMore: boolean;
+    nextCursor?: string;
     spans: Array<EventDto> | null;
     traceId: string;
 };
@@ -2203,6 +2205,7 @@ export type IssueDetailDto = {
     readonly $schema?: string;
     affectedTraceIds: Array<string> | null;
     breadcrumbs: Array<BreadcrumbDto> | null;
+    breadcrumbsTruncated?: boolean;
     exceptionChain?: Array<ExceptionDto> | null;
     issue: ErrorIssueDto;
     occurrences: Array<IssueBucketDto> | null;
@@ -2739,6 +2742,7 @@ export type SessionEvidenceBody = {
     readonly $schema?: string;
     events: Array<EventDto> | null;
     hasMore: boolean;
+    nextCursor?: string;
     nextOffset: number;
 };
 
@@ -3909,6 +3913,8 @@ export type GetOutputBodyWritable = {
 };
 
 export type GetTraceOutputBodyWritable = {
+    hasMore: boolean;
+    nextCursor?: string;
     spans: Array<EventDtoWritable> | null;
     traceId: string;
 };
@@ -4004,6 +4010,7 @@ export type InvitationDtoWritable = {
 export type IssueDetailDtoWritable = {
     affectedTraceIds: Array<string> | null;
     breadcrumbs: Array<BreadcrumbDto> | null;
+    breadcrumbsTruncated?: boolean;
     exceptionChain?: Array<ExceptionDto> | null;
     issue: ErrorIssueDto;
     occurrences: Array<IssueBucketDto> | null;
@@ -4263,6 +4270,7 @@ export type SessionBootstrapWritable = {
 export type SessionEvidenceBodyWritable = {
     events: Array<EventDtoWritable> | null;
     hasMore: boolean;
+    nextCursor?: string;
     nextOffset: number;
 };
 
@@ -7470,7 +7478,18 @@ export type TelemetryTimelineData = {
         appId?: string;
         environmentId?: string;
         limit?: number;
+        /**
+         * Legacy offset pagination; omit when using cursor
+         */
         offset?: number;
+        /**
+         * Continue after the preceding page; preferred over offset
+         */
+        cursor?: string;
+        /**
+         * Return only browser replay chunk metadata
+         */
+        replayOnly?: boolean;
     };
     url: '/telemetry/sessions/{sessionId}';
 };
@@ -7951,7 +7970,16 @@ export type TracesGetData = {
     path: {
         traceId: string;
     };
-    query?: never;
+    query?: {
+        /**
+         * Span page size (default 500)
+         */
+        limit?: number;
+        /**
+         * Continuation cursor from the previous page
+         */
+        cursor?: string;
+    };
     url: '/traces/{traceId}';
 };
 

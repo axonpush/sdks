@@ -18,14 +18,20 @@ public sealed class TelemetryResource
         return _transport.SendAsync<EventDTO>(HttpMethod.Get, path, null, cancellationToken);
     }
 
+    /// <summary>Compatibility overload for positional cancellation tokens.</summary>
+    public Task<SessionEvidenceBody?> TimelineAsync(string sessionId, string? appId, string? environmentId, long? limit, long? offset, CancellationToken cancellationToken)
+        => TimelineAsync(sessionId, appId, environmentId, limit, offset, null, null, cancellationToken);
+
     /// <summary>Read a session's chronological interaction metadata.</summary>
-    public Task<SessionEvidenceBody?> TimelineAsync(string sessionId, string? appId = null, string? environmentId = null, long? limit = null, long? offset = null, CancellationToken cancellationToken = default)
+    public Task<SessionEvidenceBody?> TimelineAsync(string sessionId, string? appId = null, string? environmentId = null, long? limit = null, long? offset = null, string? cursor = null, bool? replayOnly = null, CancellationToken cancellationToken = default)
     {
         var path = $"telemetry/sessions/{Uri.EscapeDataString(sessionId)}";
         path = AddQuery(path, "appId", appId);
         path = AddQuery(path, "environmentId", environmentId);
         path = AddQuery(path, "limit", limit);
         path = AddQuery(path, "offset", offset);
+        path = AddQuery(path, "cursor", cursor);
+        path = AddQuery(path, "replayOnly", replayOnly);
         return _transport.SendAsync<SessionEvidenceBody>(HttpMethod.Get, path, null, cancellationToken);
     }
 

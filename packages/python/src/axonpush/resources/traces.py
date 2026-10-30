@@ -64,9 +64,12 @@ class Traces:
         }
         return self._client._invoke(_list_op, **kwargs)
 
-    def get(self, trace_id: str) -> GetTraceOutputBody | None:
-        """Fetch a single trace with its events. ``GET /traces/{traceId}``."""
-        return self._client._invoke(_get_op, trace_id=trace_id)
+    def get(
+        self, trace_id: str, *, limit: int | None = None, cursor: str | None = None
+    ) -> GetTraceOutputBody | None:
+        """Fetch one span page. Follow ``next_cursor`` explicitly when ``has_more``."""
+        params = {k: v for k, v in {"limit": limit, "cursor": cursor}.items() if v is not None}
+        return self._client._invoke(_get_op, trace_id=trace_id, **params)
 
 
 class AsyncTraces:
@@ -107,6 +110,9 @@ class AsyncTraces:
         }
         return await self._client._invoke(_list_op, **kwargs)
 
-    async def get(self, trace_id: str) -> GetTraceOutputBody | None:
+    async def get(
+        self, trace_id: str, *, limit: int | None = None, cursor: str | None = None
+    ) -> GetTraceOutputBody | None:
         """See :meth:`Traces.get`."""
-        return await self._client._invoke(_get_op, trace_id=trace_id)
+        params = {k: v for k, v in {"limit": limit, "cursor": cursor}.items() if v is not None}
+        return await self._client._invoke(_get_op, trace_id=trace_id, **params)

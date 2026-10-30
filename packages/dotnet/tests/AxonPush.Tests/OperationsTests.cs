@@ -22,6 +22,24 @@ public sealed class OperationsTests
     }
 
     [Fact]
+    public async Task SessionTimeline_PreservesTokenOverloadAndSupportsCursorFilter()
+    {
+        var paths = new List<string>();
+        var handler = new Handler((request) =>
+        {
+            paths.Add(request.RequestUri!.OriginalString);
+            return Task.FromResult(new HttpResponseMessage(HttpStatusCode.OK) { Content = new StringContent("{\"events\":[],\"hasMore\":false,\"nextOffset\":0}") });
+        });
+        using var http = new HttpClient(handler) { BaseAddress = new Uri("http://operations.example.test/") };
+        using var sdk = new AxonPushClient(new AxonPushOptions { ApiKey = "ak_synthetic", TenantId = "synthetic-org", MaxRetries = 0 }, http);
+        await sdk.Telemetry.TimelineAsync("session", null, null, 100, 0, CancellationToken.None);
+        await sdk.Telemetry.TimelineAsync("session", cursor: "cursor+a", replayOnly: true);
+        Assert.DoesNotContain("cursor=", paths[0]);
+        Assert.Contains("cursor=cursor%2Ba", paths[1]);
+        Assert.Contains("replayOnly=True", paths[1]);
+    }
+
+    [Fact]
     public async Task Acceptance_RetryIdentityAndOriginalOccurrenceArePreserved()
     {
         var fixture = JsonSerializer.Deserialize<ActivityObservation>(File.ReadAllText(FixturePath()), AxonPushJsonOptions.Default)!;

@@ -5797,6 +5797,12 @@
             "readOnly": true,
             "type": "string"
           },
+          "hasMore": {
+            "type": "boolean"
+          },
+          "nextCursor": {
+            "type": "string"
+          },
           "spans": {
             "items": {
               "$ref": "#/components/schemas/EventDTO"
@@ -5812,7 +5818,8 @@
         },
         "required": [
           "traceId",
-          "spans"
+          "spans",
+          "hasMore"
         ],
         "type": "object"
       },
@@ -6262,6 +6269,9 @@
               "array",
               "null"
             ]
+          },
+          "breadcrumbsTruncated": {
+            "type": "boolean"
           },
           "exceptionChain": {
             "items": {
@@ -7986,6 +7996,9 @@
           },
           "hasMore": {
             "type": "boolean"
+          },
+          "nextCursor": {
+            "type": "string"
           },
           "nextOffset": {
             "format": "int64",
@@ -14721,14 +14734,37 @@
             }
           },
           {
+            "description": "Legacy offset pagination; omit when using cursor",
             "explode": false,
             "in": "query",
             "name": "offset",
             "schema": {
+              "description": "Legacy offset pagination; omit when using cursor",
               "format": "int64",
               "maximum": 100000,
               "minimum": 0,
               "type": "integer"
+            }
+          },
+          {
+            "description": "Continue after the preceding page; preferred over offset",
+            "explode": false,
+            "in": "query",
+            "name": "cursor",
+            "schema": {
+              "description": "Continue after the preceding page; preferred over offset",
+              "maxLength": 2048,
+              "type": "string"
+            }
+          },
+          {
+            "description": "Return only browser replay chunk metadata",
+            "explode": false,
+            "in": "query",
+            "name": "replayOnly",
+            "schema": {
+              "description": "Return only browser replay chunk metadata",
+              "type": "boolean"
             }
           }
         ],
@@ -14967,6 +15003,7 @@
             "schema": {
               "description": "Rows to skip for paging",
               "format": "int64",
+              "maximum": 10000,
               "minimum": 0,
               "type": "integer"
             }
@@ -15363,6 +15400,7 @@
             "schema": {
               "description": "Rows to skip for paging",
               "format": "int64",
+              "maximum": 10000,
               "minimum": 0,
               "type": "integer"
             }
@@ -15751,6 +15789,7 @@
             "schema": {
               "description": "Rows to skip for paging",
               "format": "int64",
+              "maximum": 10000,
               "minimum": 0,
               "type": "integer"
             }
@@ -16081,6 +16120,30 @@
             "name": "traceId",
             "required": true,
             "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "Span page size (default 500)",
+            "explode": false,
+            "in": "query",
+            "name": "limit",
+            "schema": {
+              "description": "Span page size (default 500)",
+              "format": "int64",
+              "maximum": 500,
+              "minimum": 1,
+              "type": "integer"
+            }
+          },
+          {
+            "description": "Continuation cursor from the previous page",
+            "explode": false,
+            "in": "query",
+            "name": "cursor",
+            "schema": {
+              "description": "Continuation cursor from the previous page",
+              "maxLength": 2048,
               "type": "string"
             }
           }

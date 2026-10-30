@@ -18,6 +18,8 @@ def _get_kwargs(
     environment_id: str | Unset = UNSET,
     limit: int | Unset = 100,
     offset: int | Unset = UNSET,
+    cursor: str | Unset = UNSET,
+    replay_only: bool | Unset = UNSET,
 ) -> dict[str, Any]:
 
     params: dict[str, Any] = {}
@@ -29,6 +31,10 @@ def _get_kwargs(
     params["limit"] = limit
 
     params["offset"] = offset
+
+    params["cursor"] = cursor
+
+    params["replayOnly"] = replay_only
 
     params = {k: v for k, v in params.items() if v is not UNSET and v is not None}
 
@@ -75,6 +81,8 @@ def sync_detailed(
     environment_id: str | Unset = UNSET,
     limit: int | Unset = 100,
     offset: int | Unset = UNSET,
+    cursor: str | Unset = UNSET,
+    replay_only: bool | Unset = UNSET,
 ) -> Response[ErrorModel | SessionEvidenceBody]:
     """Read a session's chronological interaction metadata
 
@@ -83,7 +91,9 @@ def sync_detailed(
         app_id (str | Unset):
         environment_id (str | Unset):
         limit (int | Unset):  Default: 100.
-        offset (int | Unset):
+        offset (int | Unset): Legacy offset pagination; omit when using cursor
+        cursor (str | Unset): Continue after the preceding page; preferred over offset
+        replay_only (bool | Unset): Return only browser replay chunk metadata
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -99,6 +109,8 @@ def sync_detailed(
         environment_id=environment_id,
         limit=limit,
         offset=offset,
+        cursor=cursor,
+        replay_only=replay_only,
     )
 
     response = client.get_httpx_client().request(
@@ -116,6 +128,8 @@ def sync(
     environment_id: str | Unset = UNSET,
     limit: int | Unset = 100,
     offset: int | Unset = UNSET,
+    cursor: str | Unset = UNSET,
+    replay_only: bool | Unset = UNSET,
 ) -> ErrorModel | SessionEvidenceBody | None:
     """Read a session's chronological interaction metadata
 
@@ -124,7 +138,9 @@ def sync(
         app_id (str | Unset):
         environment_id (str | Unset):
         limit (int | Unset):  Default: 100.
-        offset (int | Unset):
+        offset (int | Unset): Legacy offset pagination; omit when using cursor
+        cursor (str | Unset): Continue after the preceding page; preferred over offset
+        replay_only (bool | Unset): Return only browser replay chunk metadata
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -141,6 +157,8 @@ def sync(
         environment_id=environment_id,
         limit=limit,
         offset=offset,
+        cursor=cursor,
+        replay_only=replay_only,
     ).parsed
 
 
@@ -152,6 +170,8 @@ async def asyncio_detailed(
     environment_id: str | Unset = UNSET,
     limit: int | Unset = 100,
     offset: int | Unset = UNSET,
+    cursor: str | Unset = UNSET,
+    replay_only: bool | Unset = UNSET,
 ) -> Response[ErrorModel | SessionEvidenceBody]:
     """Read a session's chronological interaction metadata
 
@@ -160,7 +180,9 @@ async def asyncio_detailed(
         app_id (str | Unset):
         environment_id (str | Unset):
         limit (int | Unset):  Default: 100.
-        offset (int | Unset):
+        offset (int | Unset): Legacy offset pagination; omit when using cursor
+        cursor (str | Unset): Continue after the preceding page; preferred over offset
+        replay_only (bool | Unset): Return only browser replay chunk metadata
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -176,6 +198,8 @@ async def asyncio_detailed(
         environment_id=environment_id,
         limit=limit,
         offset=offset,
+        cursor=cursor,
+        replay_only=replay_only,
     )
 
     response = await client.get_async_httpx_client().request(**kwargs)
@@ -191,6 +215,8 @@ async def asyncio(
     environment_id: str | Unset = UNSET,
     limit: int | Unset = 100,
     offset: int | Unset = UNSET,
+    cursor: str | Unset = UNSET,
+    replay_only: bool | Unset = UNSET,
 ) -> ErrorModel | SessionEvidenceBody | None:
     """Read a session's chronological interaction metadata
 
@@ -199,7 +225,9 @@ async def asyncio(
         app_id (str | Unset):
         environment_id (str | Unset):
         limit (int | Unset):  Default: 100.
-        offset (int | Unset):
+        offset (int | Unset): Legacy offset pagination; omit when using cursor
+        cursor (str | Unset): Continue after the preceding page; preferred over offset
+        replay_only (bool | Unset): Return only browser replay chunk metadata
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -217,5 +245,7 @@ async def asyncio(
             environment_id=environment_id,
             limit=limit,
             offset=offset,
+            cursor=cursor,
+            replay_only=replay_only,
         )
     ).parsed

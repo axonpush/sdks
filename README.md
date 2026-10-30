@@ -118,3 +118,16 @@ app, environment and activity access grants. Follow `hasMore`/`nextOffset` inste
 of fetching all content eagerly. A missing/unavailable payload is an explicit
 state, not an empty successful interaction. These methods require the matching
 server telemetry migration and API deployment.
+
+### Bounded evidence reads
+
+Trace reads return at most 500 spans per page. TypeScript accepts
+`client.traces.get(traceId, { limit: 100, cursor: previous.nextCursor })`;
+Python accepts `client.traces.get(trace_id, limit=100, cursor=previous.next_cursor)`.
+Follow the returned cursor only when `hasMore` / `has_more` is true. The SDKs do
+not automatically fetch all pages.
+
+Session timeline calls accept `cursor` and `replayOnly` (`replay_only` in Python).
+Use `replayOnly: true` to query recording chunks without walking ordinary session
+events. Do not combine a cursor with an offset. Content still requires explicit,
+audited reads. These changes do not bump package versions or publish a release.

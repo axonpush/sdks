@@ -23,12 +23,14 @@ class SessionEvidenceBody:
         has_more (bool):
         next_offset (int):
         schema (str | Unset): A URL to the JSON Schema for this object.
+        next_cursor (str | Unset):
     """
 
     events: list[EventDTO] | None
     has_more: bool
     next_offset: int
     schema: str | Unset = UNSET
+    next_cursor: str | Unset = UNSET
 
     def to_dict(self) -> dict[str, Any]:
         from ..models.event_dto import EventDTO
@@ -49,6 +51,8 @@ class SessionEvidenceBody:
 
         schema = self.schema
 
+        next_cursor = self.next_cursor
+
         field_dict: dict[str, Any] = {}
 
         field_dict.update(
@@ -60,6 +64,8 @@ class SessionEvidenceBody:
         )
         if schema is not UNSET:
             field_dict["$schema"] = schema
+        if next_cursor is not UNSET:
+            field_dict["nextCursor"] = next_cursor
 
         return field_dict
 
@@ -95,11 +101,14 @@ class SessionEvidenceBody:
 
         schema = d.pop("$schema", UNSET)
 
+        next_cursor = d.pop("nextCursor", UNSET)
+
         session_evidence_body = cls(
             events=events,
             has_more=has_more,
             next_offset=next_offset,
             schema=schema,
+            next_cursor=next_cursor,
         )
 
         return session_evidence_body
