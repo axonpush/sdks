@@ -15,6 +15,7 @@ from ...types import UNSET, Response, Unset
 def _get_kwargs(
     workspace_id: str,
     *,
+    fresh: bool | Unset = UNSET,
     environment: str | Unset = UNSET,
     entity: str | Unset = UNSET,
     entity_id: str | Unset = UNSET,
@@ -32,6 +33,8 @@ def _get_kwargs(
 ) -> dict[str, Any]:
 
     params: dict[str, Any] = {}
+
+    params["fresh"] = fresh
 
     params["environment"] = environment
 
@@ -106,6 +109,7 @@ def sync_detailed(
     workspace_id: str,
     *,
     client: AuthenticatedClient | Client,
+    fresh: bool | Unset = UNSET,
     environment: str | Unset = UNSET,
     entity: str | Unset = UNSET,
     entity_id: str | Unset = UNSET,
@@ -125,6 +129,7 @@ def sync_detailed(
 
     Args:
         workspace_id (str):
+        fresh (bool | Unset): Bypass the 15-second summary cache
         environment (str | Unset):
         entity (str | Unset): Entity type
         entity_id (str | Unset):
@@ -154,6 +159,7 @@ def sync_detailed(
 
     kwargs = _get_kwargs(
         workspace_id=workspace_id,
+        fresh=fresh,
         environment=environment,
         entity=entity,
         entity_id=entity_id,
@@ -181,6 +187,7 @@ def sync(
     workspace_id: str,
     *,
     client: AuthenticatedClient | Client,
+    fresh: bool | Unset = UNSET,
     environment: str | Unset = UNSET,
     entity: str | Unset = UNSET,
     entity_id: str | Unset = UNSET,
@@ -200,6 +207,7 @@ def sync(
 
     Args:
         workspace_id (str):
+        fresh (bool | Unset): Bypass the 15-second summary cache
         environment (str | Unset):
         entity (str | Unset): Entity type
         entity_id (str | Unset):
@@ -230,6 +238,7 @@ def sync(
     return sync_detailed(
         workspace_id=workspace_id,
         client=client,
+        fresh=fresh,
         environment=environment,
         entity=entity,
         entity_id=entity_id,
@@ -251,6 +260,7 @@ async def asyncio_detailed(
     workspace_id: str,
     *,
     client: AuthenticatedClient | Client,
+    fresh: bool | Unset = UNSET,
     environment: str | Unset = UNSET,
     entity: str | Unset = UNSET,
     entity_id: str | Unset = UNSET,
@@ -270,6 +280,7 @@ async def asyncio_detailed(
 
     Args:
         workspace_id (str):
+        fresh (bool | Unset): Bypass the 15-second summary cache
         environment (str | Unset):
         entity (str | Unset): Entity type
         entity_id (str | Unset):
@@ -299,6 +310,7 @@ async def asyncio_detailed(
 
     kwargs = _get_kwargs(
         workspace_id=workspace_id,
+        fresh=fresh,
         environment=environment,
         entity=entity,
         entity_id=entity_id,
@@ -324,6 +336,7 @@ async def asyncio(
     workspace_id: str,
     *,
     client: AuthenticatedClient | Client,
+    fresh: bool | Unset = UNSET,
     environment: str | Unset = UNSET,
     entity: str | Unset = UNSET,
     entity_id: str | Unset = UNSET,
@@ -343,6 +356,7 @@ async def asyncio(
 
     Args:
         workspace_id (str):
+        fresh (bool | Unset): Bypass the 15-second summary cache
         environment (str | Unset):
         entity (str | Unset): Entity type
         entity_id (str | Unset):
@@ -374,6 +388,7 @@ async def asyncio(
         await asyncio_detailed(
             workspace_id=workspace_id,
             client=client,
+            fresh=fresh,
             environment=environment,
             entity=entity,
             entity_id=entity_id,

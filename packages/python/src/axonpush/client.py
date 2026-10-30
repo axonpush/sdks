@@ -47,6 +47,7 @@ if TYPE_CHECKING:
     from axonpush.resources.templates import Templates, AsyncTemplates
     from axonpush.resources.observations import Observations, AsyncObservations
     from axonpush.resources.activity import Activity, AsyncActivity
+    from axonpush.resources.telemetry import Telemetry, AsyncTelemetry
 
 
 R = TypeVar("R")
@@ -320,6 +321,11 @@ class AxonPush:
     def observations(self) -> Observations:
         """Typed observations operations (lazy import)."""
         return cast("Observations", self._resource("observations", "Observations"))
+
+    @property
+    def telemetry(self) -> Telemetry:
+        """Session timelines, audited content and subject erasure."""
+        return cast("Telemetry", self._resource("telemetry", "Telemetry"))
 
     @property
     def activity(self) -> Activity:
@@ -635,6 +641,11 @@ class AsyncAxonPush:
     def observations(self) -> AsyncObservations:
         """Typed observations operations (lazy import)."""
         return cast("AsyncObservations", self._resource("observations", "AsyncObservations"))
+
+    @property
+    def telemetry(self) -> AsyncTelemetry:
+        """Session timelines, audited content and subject erasure."""
+        return cast("AsyncTelemetry", self._resource("telemetry", "AsyncTelemetry"))
 
     @property
     def activity(self) -> AsyncActivity:

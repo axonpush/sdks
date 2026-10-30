@@ -27,6 +27,7 @@ public sealed class AxonPushClient : IDisposable, IAsyncDisposable
         Templates = new TemplatesResource(_transport);
         Observations = new ObservationsResource(_transport);
         Activity = new ActivityResource(_transport);
+        Telemetry = new TelemetryResource(_transport);
 
     }
 
@@ -36,6 +37,7 @@ public sealed class AxonPushClient : IDisposable, IAsyncDisposable
     public TemplatesResource Templates { get; }
     public ObservationsResource Observations { get; }
     public ActivityResource Activity { get; }
+    public TelemetryResource Telemetry { get; }
 
 
     public void Dispose()

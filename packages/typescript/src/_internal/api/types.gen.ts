@@ -1669,6 +1669,7 @@ export type DiffAttributeDto = {
 };
 
 export type DiffCohortDto = {
+    activityClass?: 'business' | 'system' | 'all';
     apiKey?: string;
     app?: string;
     channel?: string;
@@ -1803,6 +1804,14 @@ export type EnvironmentDto = {
     updatedAt?: string;
 };
 
+export type EraseEvidenceOutputBody = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
+    status: string;
+};
+
 export type ErrorDetail = {
     /**
      * Where the error occurred, e.g. 'body.items[3].tags' or 'path.thing-id'
@@ -1884,6 +1893,10 @@ export type EventBody = {
      */
     eventType?: string;
     /**
+     * Original content expiry; may shorten but cannot extend the 30-day retention window
+     */
+    expiresAt?: string;
+    /**
      * Event identifier / operation name
      */
     identifier: string;
@@ -1910,6 +1923,11 @@ export type EventBody = {
 };
 
 export type EventDto = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
+    activityClass?: string;
     agentId?: string;
     agentName?: string;
     appId: string;
@@ -1917,6 +1935,10 @@ export type EventDto = {
     cacheReadTokens?: number;
     cacheWriteTokens?: number;
     channelId: string;
+    /**
+     * available, unavailable, absent, restricted, expired, or not_loaded; describes stored payload availability
+     */
+    contentState?: string;
     costSource?: string;
     costUsd?: number;
     createdAt: string;
@@ -1961,6 +1983,12 @@ export type EventOutputBody = {
     readonly $schema?: string;
     eventId: string;
     status: string;
+};
+
+export type ExceptionDto = {
+    message?: string;
+    stack: Array<StackFrameDto> | null;
+    type?: string;
 };
 
 export type ExportDeliveryDto = {
@@ -2024,6 +2052,8 @@ export type GetTraceOutputBody = {
      * A URL to the JSON Schema for this object.
      */
     readonly $schema?: string;
+    hasMore: boolean;
+    nextCursor?: string;
     spans: Array<EventDto> | null;
     traceId: string;
 };
@@ -2175,6 +2205,8 @@ export type IssueDetailDto = {
     readonly $schema?: string;
     affectedTraceIds: Array<string> | null;
     breadcrumbs: Array<BreadcrumbDto> | null;
+    breadcrumbsTruncated?: boolean;
+    exceptionChain?: Array<ExceptionDto> | null;
     issue: ErrorIssueDto;
     occurrences: Array<IssueBucketDto> | null;
     resolvedAt?: string;
@@ -2666,6 +2698,54 @@ export type SearchUsersOutputBody = {
     users: Array<UserDto> | null;
 };
 
+export type SessionBootstrap = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
+    /**
+     * Body of GET /capabilities
+     */
+    capabilities?: unknown;
+    /**
+     * Body of GET /environments
+     */
+    environments?: unknown;
+    /**
+     * HTTP status of each part that failed, by field
+     */
+    failed?: {
+        [key: string]: number;
+    };
+    /**
+     * Body of GET /feature-flags/me
+     */
+    featureFlags?: unknown;
+    /**
+     * Body of GET /user/me
+     */
+    me?: unknown;
+    /**
+     * Body of GET /users/me/organizations
+     */
+    organizations?: unknown;
+    /**
+     * Body of GET /workspaces
+     */
+    workspaces?: unknown;
+};
+
+export type SessionEvidenceBody = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
+    events: Array<EventDto> | null;
+    hasMore: boolean;
+    nextCursor?: string;
+    nextOffset: number;
+};
+
 export type SetAccessRequestStatusInputBody = {
     /**
      * A URL to the JSON Schema for this object.
@@ -2756,6 +2836,9 @@ export type StackFrameDto = {
     line?: number;
     postContext?: Array<string> | null;
     preContext?: Array<string> | null;
+    variables?: {
+        [key: string]: unknown;
+    };
 };
 
 export type TagDistributionDto = {
@@ -2811,7 +2894,49 @@ export type TimeseriesPointDto = {
     traceCount: number;
 };
 
+export type TraceGroupDto = {
+    activityClass: string;
+    appId: string;
+    environment: string;
+    failed: boolean;
+    firstErrorType: string;
+    firstSeen: string;
+    groupKey: string;
+    lastSeen: string;
+    maxDurationMs: number;
+    minDurationMs: number;
+    outcome: string;
+    representativeTraceId: string;
+    rootSpanName: string;
+    serviceName: string;
+    traceCount: number;
+};
+
+export type TraceGroupMembersOutputBody = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
+    totalTraces: number;
+    traces: Array<TraceSummaryDto> | null;
+};
+
+export type TraceGroupsBody = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
+    failedTraces: number;
+    finishedTraces: number;
+    groups: Array<TraceGroupDto> | null;
+    since: string;
+    totalGroups: number;
+    totalTraces: number;
+    until: string;
+};
+
 export type TraceSummaryDto = {
+    activityClass: string;
     costUsd: number;
     customer: string;
     durationMs: number;
@@ -3641,6 +3766,10 @@ export type EnvironmentDtoWritable = {
     updatedAt?: string;
 };
 
+export type EraseEvidenceOutputBodyWritable = {
+    status: string;
+};
+
 export type ErrorModelWritable = {
     /**
      * A human-readable explanation specific to this occurrence of the problem.
@@ -3680,6 +3809,10 @@ export type EventBodyWritable = {
      */
     eventType?: string;
     /**
+     * Original content expiry; may shorten but cannot extend the 30-day retention window
+     */
+    expiresAt?: string;
+    /**
      * Event identifier / operation name
      */
     identifier: string;
@@ -3703,6 +3836,56 @@ export type EventBodyWritable = {
      */
     sync?: boolean;
     traceId?: string;
+};
+
+export type EventDtoWritable = {
+    activityClass?: string;
+    agentId?: string;
+    agentName?: string;
+    appId: string;
+    attributes?: unknown;
+    cacheReadTokens?: number;
+    cacheWriteTokens?: number;
+    channelId: string;
+    /**
+     * available, unavailable, absent, restricted, expired, or not_loaded; describes stored payload availability
+     */
+    contentState?: string;
+    costSource?: string;
+    costUsd?: number;
+    createdAt: string;
+    durationMs?: number;
+    environmentId?: string;
+    errorMessage?: string;
+    errorType?: string;
+    eventId: string;
+    eventType: string;
+    finishReason?: string;
+    inputTokens?: number;
+    metadata?: unknown;
+    occurredAt: string;
+    operationName?: string;
+    orgId: string;
+    outputTokens?: number;
+    parentSpanId?: string;
+    payload?: unknown;
+    payloadSpilled: boolean;
+    providerName?: string;
+    reasoningTokens?: number;
+    requestModel?: string;
+    resourceAttributes?: unknown;
+    responseModel?: string;
+    semanticKind?: string;
+    serviceName?: string;
+    sessionId?: string;
+    source: string;
+    spanId?: string;
+    status?: string;
+    toolName?: string;
+    totalTokens?: number;
+    traceId?: string;
+    ttftMs?: number;
+    userId?: string;
 };
 
 export type EventOutputBodyWritable = {
@@ -3730,7 +3913,9 @@ export type GetOutputBodyWritable = {
 };
 
 export type GetTraceOutputBodyWritable = {
-    spans: Array<EventDto> | null;
+    hasMore: boolean;
+    nextCursor?: string;
+    spans: Array<EventDtoWritable> | null;
     traceId: string;
 };
 
@@ -3825,11 +4010,13 @@ export type InvitationDtoWritable = {
 export type IssueDetailDtoWritable = {
     affectedTraceIds: Array<string> | null;
     breadcrumbs: Array<BreadcrumbDto> | null;
+    breadcrumbsTruncated?: boolean;
+    exceptionChain?: Array<ExceptionDto> | null;
     issue: ErrorIssueDto;
     occurrences: Array<IssueBucketDto> | null;
     resolvedAt?: string;
     resolvedInRelease?: string;
-    sampleEvent?: EventDto;
+    sampleEvent?: EventDtoWritable;
     snoozeUntil?: string;
     stack: Array<StackFrameDto> | null;
     tags: Array<TagDistributionDto> | null;
@@ -3901,7 +4088,7 @@ export type ListEnvironmentsOutputBodyWritable = {
 };
 
 export type ListErrorEventsOutputBodyWritable = {
-    events: Array<EventDto> | null;
+    events: Array<EventDtoWritable> | null;
 };
 
 export type ListErrorsOutputBodyWritable = {
@@ -4036,7 +4223,7 @@ export type RevisionListOutputBodyWritable = {
 };
 
 export type SearchEventsOutputBodyWritable = {
-    events: Array<EventDto> | null;
+    events: Array<EventDtoWritable> | null;
 };
 
 export type SearchOrgsOutputBodyWritable = {
@@ -4045,6 +4232,46 @@ export type SearchOrgsOutputBodyWritable = {
 
 export type SearchUsersOutputBodyWritable = {
     users: Array<UserDto> | null;
+};
+
+export type SessionBootstrapWritable = {
+    /**
+     * Body of GET /capabilities
+     */
+    capabilities?: unknown;
+    /**
+     * Body of GET /environments
+     */
+    environments?: unknown;
+    /**
+     * HTTP status of each part that failed, by field
+     */
+    failed?: {
+        [key: string]: number;
+    };
+    /**
+     * Body of GET /feature-flags/me
+     */
+    featureFlags?: unknown;
+    /**
+     * Body of GET /user/me
+     */
+    me?: unknown;
+    /**
+     * Body of GET /users/me/organizations
+     */
+    organizations?: unknown;
+    /**
+     * Body of GET /workspaces
+     */
+    workspaces?: unknown;
+};
+
+export type SessionEvidenceBodyWritable = {
+    events: Array<EventDtoWritable> | null;
+    hasMore: boolean;
+    nextCursor?: string;
+    nextOffset: number;
 };
 
 export type SetAccessRequestStatusInputBodyWritable = {
@@ -4110,6 +4337,21 @@ export type TestOutputBodyWritable = {
 export type TimeseriesOutputBodyWritable = {
     bucket: string;
     points: Array<TimeseriesPointDto> | null;
+};
+
+export type TraceGroupMembersOutputBodyWritable = {
+    totalTraces: number;
+    traces: Array<TraceSummaryDto> | null;
+};
+
+export type TraceGroupsBodyWritable = {
+    failedTraces: number;
+    finishedTraces: number;
+    groups: Array<TraceGroupDto> | null;
+    since: string;
+    totalGroups: number;
+    totalTraces: number;
+    until: string;
 };
 
 export type TransferOwnershipInputBodyWritable = {
@@ -4948,6 +5190,10 @@ export type AnalyticsBreakdownData = {
     path?: never;
     query?: {
         /**
+         * Bypass the 15-second summary cache
+         */
+        fresh?: boolean;
+        /**
          * Window start (RFC3339); defaults to 24h before until
          */
         since?: string;
@@ -4967,6 +5213,10 @@ export type AnalyticsBreakdownData = {
          * Top-N entries (default 50, max 500)
          */
         limit?: number;
+        /**
+         * Business or system activity; omitted includes all
+         */
+        activityClass?: 'business' | 'system' | 'all';
         /**
          * Filter by event source (e.g. gateway)
          */
@@ -5163,6 +5413,10 @@ export type AnalyticsHeatmapData = {
          */
         scale?: 'log' | 'linear';
         /**
+         * Business or system activity; omitted includes all
+         */
+        activityClass?: 'business' | 'system' | 'all';
+        /**
          * Filter by event source (e.g. gateway)
          */
         source?: string;
@@ -5271,6 +5525,10 @@ export type AnalyticsLatencyData = {
     path?: never;
     query?: {
         /**
+         * Bypass the 15-second summary cache
+         */
+        fresh?: boolean;
+        /**
          * Window start (RFC3339); defaults to 24h before until
          */
         since?: string;
@@ -5278,6 +5536,10 @@ export type AnalyticsLatencyData = {
          * Window end (RFC3339); defaults to now
          */
         until?: string;
+        /**
+         * Business or system activity; omitted includes all
+         */
+        activityClass?: 'business' | 'system' | 'all';
         /**
          * Filter by event source (e.g. gateway)
          */
@@ -5357,6 +5619,10 @@ export type AnalyticsOverviewData = {
     path?: never;
     query?: {
         /**
+         * Bypass the 15-second summary cache
+         */
+        fresh?: boolean;
+        /**
          * Window start (RFC3339); defaults to 24h before until
          */
         since?: string;
@@ -5380,6 +5646,10 @@ export type AnalyticsOverviewData = {
          * Top-N entries per breakdown (default 50, max 500)
          */
         limit?: number;
+        /**
+         * Business or system activity; omitted includes all
+         */
+        activityClass?: 'business' | 'system' | 'all';
         /**
          * Filter by event source (e.g. gateway)
          */
@@ -5459,6 +5729,10 @@ export type AnalyticsTimeseriesData = {
     path?: never;
     query?: {
         /**
+         * Bypass the 15-second summary cache
+         */
+        fresh?: boolean;
+        /**
          * Window start (RFC3339); defaults to 24h before until
          */
         since?: string;
@@ -5470,6 +5744,10 @@ export type AnalyticsTimeseriesData = {
          * Time bucket granularity (default hour)
          */
         bucket?: 'hour' | 'day';
+        /**
+         * Business or system activity; omitted includes all
+         */
+        activityClass?: 'business' | 'system' | 'all';
         /**
          * Filter by event source (e.g. gateway)
          */
@@ -7139,6 +7417,132 @@ export type TokensRevokeResponses = {
 
 export type TokensRevokeResponse = TokensRevokeResponses[keyof TokensRevokeResponses];
 
+export type SessionBootstrapData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/session/bootstrap';
+};
+
+export type SessionBootstrapErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type SessionBootstrapError = SessionBootstrapErrors[keyof SessionBootstrapErrors];
+
+export type SessionBootstrapResponses = {
+    /**
+     * OK
+     */
+    200: SessionBootstrap;
+};
+
+export type SessionBootstrapResponse = SessionBootstrapResponses[keyof SessionBootstrapResponses];
+
+export type TelemetryContentData = {
+    body?: never;
+    path: {
+        eventId: string;
+    };
+    query?: never;
+    url: '/telemetry/events/{eventId}/content';
+};
+
+export type TelemetryContentErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type TelemetryContentError = TelemetryContentErrors[keyof TelemetryContentErrors];
+
+export type TelemetryContentResponses = {
+    /**
+     * OK
+     */
+    200: EventDto;
+};
+
+export type TelemetryContentResponse = TelemetryContentResponses[keyof TelemetryContentResponses];
+
+export type TelemetryTimelineData = {
+    body?: never;
+    path: {
+        sessionId: string;
+    };
+    query?: {
+        appId?: string;
+        environmentId?: string;
+        limit?: number;
+        /**
+         * Legacy offset pagination; omit when using cursor
+         */
+        offset?: number;
+        /**
+         * Continue after the preceding page; preferred over offset
+         */
+        cursor?: string;
+        /**
+         * Return only browser replay chunk metadata
+         */
+        replayOnly?: boolean;
+    };
+    url: '/telemetry/sessions/{sessionId}';
+};
+
+export type TelemetryTimelineErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type TelemetryTimelineError = TelemetryTimelineErrors[keyof TelemetryTimelineErrors];
+
+export type TelemetryTimelineResponses = {
+    /**
+     * OK
+     */
+    200: SessionEvidenceBody;
+};
+
+export type TelemetryTimelineResponse = TelemetryTimelineResponses[keyof TelemetryTimelineResponses];
+
+export type TelemetryEraseData = {
+    body?: never;
+    path: {
+        subjectType: string;
+        subjectId: string;
+    };
+    query?: {
+        appId?: string;
+        environmentId?: string;
+    };
+    url: '/telemetry/subjects/{subjectType}/{subjectId}';
+};
+
+export type TelemetryEraseErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type TelemetryEraseError = TelemetryEraseErrors[keyof TelemetryEraseErrors];
+
+export type TelemetryEraseResponses = {
+    /**
+     * OK
+     */
+    200: EraseEvidenceOutputBody;
+};
+
+export type TelemetryEraseResponse = TelemetryEraseResponses[keyof TelemetryEraseResponses];
+
 export type TemplatesListData = {
     body?: never;
     path?: never;
@@ -7189,10 +7593,264 @@ export type TemplatesPublishResponses = {
 
 export type TemplatesPublishResponse = TemplatesPublishResponses[keyof TemplatesPublishResponses];
 
+export type TracesGroupsData = {
+    body?: never;
+    path?: never;
+    query?: {
+        /**
+         * Business or system activity; omitted includes all
+         */
+        activityClass?: 'business' | 'system' | 'all';
+        /**
+         * Window start (RFC3339); defaults to 24h before until
+         */
+        since?: string;
+        /**
+         * Window end (RFC3339); defaults to now
+         */
+        until?: string;
+        /**
+         * Max traces to return (default 50, max 500)
+         */
+        limit?: number;
+        /**
+         * Rows to skip for paging
+         */
+        offset?: number;
+        /**
+         * Free-text search over span content/metadata
+         */
+        q?: string;
+        /**
+         * Keep traces with a span from any of these services
+         */
+        service?: Array<string> | null;
+        /**
+         * Keep traces with a span with any of these operations / span names
+         */
+        operation?: Array<string> | null;
+        /**
+         * Keep traces with a span using any of these models (request or response)
+         */
+        model?: Array<string> | null;
+        /**
+         * Keep traces with a span from any of these model providers
+         */
+        provider?: Array<string> | null;
+        /**
+         * Keep traces with a span from any of these agents
+         */
+        agent?: Array<string> | null;
+        /**
+         * Keep traces with a span invoking any of these tools
+         */
+        tool?: Array<string> | null;
+        /**
+         * Keep traces with a span from any of these ingest sources
+         */
+        source?: Array<string> | null;
+        /**
+         * Keep traces with a span from any of these application ids
+         */
+        app?: Array<string> | null;
+        /**
+         * Keep traces with a span from any of these environments (slug or id)
+         */
+        environment?: Array<string> | null;
+        /**
+         * Keep traces with a span from any of these API key ids
+         */
+        apiKey?: Array<string> | null;
+        /**
+         * Keep traces with a span from any of these release/build tags
+         */
+        release?: Array<string> | null;
+        /**
+         * Keep traces with a span of any of these statuses (e.g. ok/error)
+         */
+        status?: Array<string> | null;
+        /**
+         * Keep traces with a span from any of these session ids
+         */
+        session?: Array<string> | null;
+        /**
+         * Keep traces with a span from any of these end-user ids
+         */
+        user?: Array<string> | null;
+        /**
+         * Keep traces with a span of any of these semantic kinds (e.g. llm)
+         */
+        semanticKind?: Array<string> | null;
+        /**
+         * Keep only traces containing an error span
+         */
+        errorsOnly?: boolean;
+        /**
+         * Keep only traces at least this many ms long
+         */
+        minDurationMs?: number;
+        /**
+         * Row ordering: last_seen_desc (default), last_seen_asc, duration_desc, cost_desc, tokens_desc
+         */
+        sort?: 'last_seen_desc' | 'last_seen_asc' | 'duration_desc' | 'cost_desc' | 'tokens_desc';
+        /**
+         * Bypass the 15-second summary cache
+         */
+        fresh?: boolean;
+    };
+    url: '/trace-groups';
+};
+
+export type TracesGroupsErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type TracesGroupsError = TracesGroupsErrors[keyof TracesGroupsErrors];
+
+export type TracesGroupsResponses = {
+    /**
+     * OK
+     */
+    200: TraceGroupsBody;
+};
+
+export type TracesGroupsResponse = TracesGroupsResponses[keyof TracesGroupsResponses];
+
+export type TracesGroupMembersData = {
+    body?: never;
+    path: {
+        groupKey: string;
+    };
+    query?: {
+        /**
+         * Business or system activity; omitted includes all
+         */
+        activityClass?: 'business' | 'system' | 'all';
+        /**
+         * Window start (RFC3339); defaults to 24h before until
+         */
+        since?: string;
+        /**
+         * Window end (RFC3339); defaults to now
+         */
+        until?: string;
+        /**
+         * Max traces to return (default 50, max 500)
+         */
+        limit?: number;
+        /**
+         * Rows to skip for paging
+         */
+        offset?: number;
+        /**
+         * Free-text search over span content/metadata
+         */
+        q?: string;
+        /**
+         * Keep traces with a span from any of these services
+         */
+        service?: Array<string> | null;
+        /**
+         * Keep traces with a span with any of these operations / span names
+         */
+        operation?: Array<string> | null;
+        /**
+         * Keep traces with a span using any of these models (request or response)
+         */
+        model?: Array<string> | null;
+        /**
+         * Keep traces with a span from any of these model providers
+         */
+        provider?: Array<string> | null;
+        /**
+         * Keep traces with a span from any of these agents
+         */
+        agent?: Array<string> | null;
+        /**
+         * Keep traces with a span invoking any of these tools
+         */
+        tool?: Array<string> | null;
+        /**
+         * Keep traces with a span from any of these ingest sources
+         */
+        source?: Array<string> | null;
+        /**
+         * Keep traces with a span from any of these application ids
+         */
+        app?: Array<string> | null;
+        /**
+         * Keep traces with a span from any of these environments (slug or id)
+         */
+        environment?: Array<string> | null;
+        /**
+         * Keep traces with a span from any of these API key ids
+         */
+        apiKey?: Array<string> | null;
+        /**
+         * Keep traces with a span from any of these release/build tags
+         */
+        release?: Array<string> | null;
+        /**
+         * Keep traces with a span of any of these statuses (e.g. ok/error)
+         */
+        status?: Array<string> | null;
+        /**
+         * Keep traces with a span from any of these session ids
+         */
+        session?: Array<string> | null;
+        /**
+         * Keep traces with a span from any of these end-user ids
+         */
+        user?: Array<string> | null;
+        /**
+         * Keep traces with a span of any of these semantic kinds (e.g. llm)
+         */
+        semanticKind?: Array<string> | null;
+        /**
+         * Keep only traces containing an error span
+         */
+        errorsOnly?: boolean;
+        /**
+         * Keep only traces at least this many ms long
+         */
+        minDurationMs?: number;
+        /**
+         * Row ordering: last_seen_desc (default), last_seen_asc, duration_desc, cost_desc, tokens_desc
+         */
+        sort?: 'last_seen_desc' | 'last_seen_asc' | 'duration_desc' | 'cost_desc' | 'tokens_desc';
+    };
+    url: '/trace-groups/{groupKey}/traces';
+};
+
+export type TracesGroupMembersErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type TracesGroupMembersError = TracesGroupMembersErrors[keyof TracesGroupMembersErrors];
+
+export type TracesGroupMembersResponses = {
+    /**
+     * OK
+     */
+    200: TraceGroupMembersOutputBody;
+};
+
+export type TracesGroupMembersResponse = TracesGroupMembersResponses[keyof TracesGroupMembersResponses];
+
 export type TracesListData = {
     body?: never;
     path?: never;
     query?: {
+        /**
+         * Business or system activity; omitted includes all
+         */
+        activityClass?: 'business' | 'system' | 'all';
         /**
          * Window start (RFC3339); defaults to 24h before until
          */
@@ -7312,7 +7970,16 @@ export type TracesGetData = {
     path: {
         traceId: string;
     };
-    query?: never;
+    query?: {
+        /**
+         * Span page size (default 500)
+         */
+        limit?: number;
+        /**
+         * Continuation cursor from the previous page
+         */
+        cursor?: string;
+    };
     url: '/traces/{traceId}';
 };
 
@@ -7973,6 +8640,10 @@ export type ActivityEntitiesData = {
         workspaceId: string;
     };
     query?: {
+        /**
+         * Bypass the 15-second summary cache
+         */
+        fresh?: boolean;
         environment?: string;
         /**
          * Entity type
@@ -8042,6 +8713,10 @@ export type ActivityAnalyticsData = {
         workspaceId: string;
     };
     query?: {
+        /**
+         * Bypass the 15-second summary cache
+         */
+        fresh?: boolean;
         environment?: string;
         /**
          * 90d reads de-identified daily rollups and is refused for scoped access
@@ -8355,6 +9030,10 @@ export type ActivityHealthData = {
         workspaceId: string;
     };
     query?: {
+        /**
+         * Bypass the 15-second summary cache
+         */
+        fresh?: boolean;
         environment?: string;
         /**
          * Entity type
@@ -8451,6 +9130,10 @@ export type ActivityIncidentsData = {
         workspaceId: string;
     };
     query?: {
+        /**
+         * Bypass the 15-second summary cache
+         */
+        fresh?: boolean;
         environment?: string;
         /**
          * Entity type
@@ -8631,6 +9314,10 @@ export type ActivitySeriesData = {
         workspaceId: string;
     };
     query?: {
+        /**
+         * Bypass the 15-second summary cache
+         */
+        fresh?: boolean;
         environment?: string;
         /**
          * outcomes: observations by the outcome role; funnel: distinct entities by furthest stage; lag: source-to-view percentiles
@@ -8688,6 +9375,10 @@ export type ActivitySummaryData = {
         workspaceId: string;
     };
     query?: {
+        /**
+         * Bypass the 15-second summary cache
+         */
+        fresh?: boolean;
         environment?: string;
         /**
          * Entity type
@@ -8757,6 +9448,10 @@ export type ActivityTimelineData = {
         workspaceId: string;
     };
     query?: {
+        /**
+         * Bypass the 15-second summary cache
+         */
+        fresh?: boolean;
         environment?: string;
         /**
          * Entity type
@@ -8826,6 +9521,10 @@ export type ActivityViewsData = {
         workspaceId: string;
     };
     query?: {
+        /**
+         * Bypass the 15-second summary cache
+         */
+        fresh?: boolean;
         environment?: string;
         /**
          * Entity type

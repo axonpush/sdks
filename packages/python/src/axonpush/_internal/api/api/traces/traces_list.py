@@ -8,12 +8,14 @@ from ... import errors
 from ...client import AuthenticatedClient, Client
 from ...models.error_model import ErrorModel
 from ...models.list_traces_output_body import ListTracesOutputBody
+from ...models.traces_list_activity_class import TracesListActivityClass
 from ...models.traces_list_sort import TracesListSort
 from ...types import UNSET, Response, Unset
 
 
 def _get_kwargs(
     *,
+    activity_class: TracesListActivityClass | Unset = UNSET,
     since: str | Unset = UNSET,
     until: str | Unset = UNSET,
     limit: int | Unset = UNSET,
@@ -40,6 +42,12 @@ def _get_kwargs(
 ) -> dict[str, Any]:
 
     params: dict[str, Any] = {}
+
+    json_activity_class: str | Unset = UNSET
+    if not isinstance(activity_class, Unset):
+        json_activity_class = activity_class.value
+
+    params["activityClass"] = json_activity_class
 
     params["since"] = since
 
@@ -249,6 +257,7 @@ def _build_response(
 def sync_detailed(
     *,
     client: AuthenticatedClient | Client,
+    activity_class: TracesListActivityClass | Unset = UNSET,
     since: str | Unset = UNSET,
     until: str | Unset = UNSET,
     limit: int | Unset = UNSET,
@@ -276,6 +285,8 @@ def sync_detailed(
     """List traces over a time window
 
     Args:
+        activity_class (TracesListActivityClass | Unset): Business or system activity; omitted
+            includes all
         since (str | Unset): Window start (RFC3339); defaults to 24h before until
         until (str | Unset): Window end (RFC3339); defaults to now
         limit (int | Unset): Max traces to return (default 50, max 500)
@@ -318,6 +329,7 @@ def sync_detailed(
     """
 
     kwargs = _get_kwargs(
+        activity_class=activity_class,
         since=since,
         until=until,
         limit=limit,
@@ -353,6 +365,7 @@ def sync_detailed(
 def sync(
     *,
     client: AuthenticatedClient | Client,
+    activity_class: TracesListActivityClass | Unset = UNSET,
     since: str | Unset = UNSET,
     until: str | Unset = UNSET,
     limit: int | Unset = UNSET,
@@ -380,6 +393,8 @@ def sync(
     """List traces over a time window
 
     Args:
+        activity_class (TracesListActivityClass | Unset): Business or system activity; omitted
+            includes all
         since (str | Unset): Window start (RFC3339); defaults to 24h before until
         until (str | Unset): Window end (RFC3339); defaults to now
         limit (int | Unset): Max traces to return (default 50, max 500)
@@ -423,6 +438,7 @@ def sync(
 
     return sync_detailed(
         client=client,
+        activity_class=activity_class,
         since=since,
         until=until,
         limit=limit,
@@ -452,6 +468,7 @@ def sync(
 async def asyncio_detailed(
     *,
     client: AuthenticatedClient | Client,
+    activity_class: TracesListActivityClass | Unset = UNSET,
     since: str | Unset = UNSET,
     until: str | Unset = UNSET,
     limit: int | Unset = UNSET,
@@ -479,6 +496,8 @@ async def asyncio_detailed(
     """List traces over a time window
 
     Args:
+        activity_class (TracesListActivityClass | Unset): Business or system activity; omitted
+            includes all
         since (str | Unset): Window start (RFC3339); defaults to 24h before until
         until (str | Unset): Window end (RFC3339); defaults to now
         limit (int | Unset): Max traces to return (default 50, max 500)
@@ -521,6 +540,7 @@ async def asyncio_detailed(
     """
 
     kwargs = _get_kwargs(
+        activity_class=activity_class,
         since=since,
         until=until,
         limit=limit,
@@ -554,6 +574,7 @@ async def asyncio_detailed(
 async def asyncio(
     *,
     client: AuthenticatedClient | Client,
+    activity_class: TracesListActivityClass | Unset = UNSET,
     since: str | Unset = UNSET,
     until: str | Unset = UNSET,
     limit: int | Unset = UNSET,
@@ -581,6 +602,8 @@ async def asyncio(
     """List traces over a time window
 
     Args:
+        activity_class (TracesListActivityClass | Unset): Business or system activity; omitted
+            includes all
         since (str | Unset): Window start (RFC3339); defaults to 24h before until
         until (str | Unset): Window end (RFC3339); defaults to now
         limit (int | Unset): Max traces to return (default 50, max 500)
@@ -625,6 +648,7 @@ async def asyncio(
     return (
         await asyncio_detailed(
             client=client,
+            activity_class=activity_class,
             since=since,
             until=until,
             limit=limit,

@@ -34,7 +34,8 @@ const pascal = (name: string) => {
 let count = 0;
 for (const id of operationIds) {
   const [group, method] = id.split(".");
-  if (!["workspaces", "templates", "observations", "activity"].includes(group)) continue;
+  if (!["workspaces", "templates", "observations", "activity", "telemetry"].includes(group))
+    continue;
   for (const [file, token] of [
     [`packages/typescript/src/resources/${group}.ts`, `${camel(id)},`],
     [`packages/python/src/axonpush/resources/${group}.py`, snake(id)],

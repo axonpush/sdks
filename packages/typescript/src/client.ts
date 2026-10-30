@@ -21,6 +21,7 @@ import { ErrorsResource } from "./resources/errors.js";
 import { EventsResource } from "./resources/events.js";
 import { ObservationsResource } from "./resources/observations.js";
 import { OrganizationsResource } from "./resources/organizations.js";
+import { TelemetryResource } from "./resources/telemetry.js";
 import { TemplatesResource } from "./resources/templates.js";
 import { TracesResource } from "./resources/traces.js";
 import { WebhooksResource } from "./resources/webhooks.js";
@@ -45,6 +46,7 @@ export class AxonPush {
   readonly templates: TemplatesResource;
   readonly observations: ObservationsResource;
   readonly activity: ActivityResource;
+  readonly telemetry: TelemetryResource;
   /** Events resource — `publish`, `search`. */
   readonly events: EventsResource;
   /** Channels resource — `list`, `get`, `create`, `update`, `delete`. */
@@ -84,6 +86,7 @@ export class AxonPush {
     this.templates = new TemplatesResource(this);
     this.observations = new ObservationsResource(this);
     this.activity = new ActivityResource(this);
+    this.telemetry = new TelemetryResource(this);
     this.events = new EventsResource(this);
     this.channels = new ChannelsResource(this);
     this.apps = new AppsResource(this);

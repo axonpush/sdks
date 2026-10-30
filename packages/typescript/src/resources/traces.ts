@@ -1,5 +1,18 @@
-import { tracesGet, tracesList } from "../_internal/api/sdk.gen.js";
-import type { GetTraceOutputBody, ListTracesOutputBody } from "../_internal/api/types.gen.js";
+import {
+  tracesGet,
+  tracesGroupMembers,
+  tracesGroups,
+  tracesList,
+} from "../_internal/api/sdk.gen.js";
+import type {
+  GetTraceOutputBody,
+  ListTracesOutputBody,
+  TraceGroupMembersOutputBody,
+  TraceGroupsBody,
+  TracesGetData,
+  TracesGroupMembersData,
+  TracesGroupsData,
+} from "../_internal/api/types.gen.js";
 import type { ResourceClient } from "./_client.js";
 
 /** Query parameters for {@link TracesResource.list}. `GET /traces` */
@@ -23,6 +36,17 @@ export interface TraceListParams {
 export class TracesResource {
   constructor(private readonly client: ResourceClient) {}
 
+  async groups(query: TracesGroupsData["query"] = {}): Promise<TraceGroupsBody | null> {
+    return this.client.invoke(tracesGroups, { query });
+  }
+
+  async groupMembers(
+    groupKey: string,
+    query: TracesGroupMembersData["query"] = {},
+  ): Promise<TraceGroupMembersOutputBody | null> {
+    return this.client.invoke(tracesGroupMembers, { path: { groupKey }, query });
+  }
+
   /**
    * List traces newest-first. `GET /traces`
    *
@@ -40,13 +64,16 @@ export class TracesResource {
   }
 
   /**
-   * Fetch a single trace with its spans. `GET /traces/{traceId}`
+   * Fetch one bounded page of a trace's spans. `GET /traces/{traceId}`
    *
    * @param traceId - Trace UUID.
    * @returns Trace envelope `{ traceId, spans }`, or `null` on fail-open error.
    */
-  async get(traceId: string): Promise<GetTraceOutputBody | null> {
-    return this.client.invoke(tracesGet, { path: { traceId } });
+  async get(
+    traceId: string,
+    query: TracesGetData["query"] = {},
+  ): Promise<GetTraceOutputBody | null> {
+    return this.client.invoke(tracesGet, { path: { traceId }, query });
   }
 }
 

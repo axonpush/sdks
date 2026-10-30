@@ -34,6 +34,9 @@ public sealed record PublishRequest
     /// <summary>Original source occurrence time.</summary>
     public DateTimeOffset? OccurredAt { get; init; }
 
+    [JsonPropertyName("expiresAt")]
+    public DateTimeOffset? ExpiresAt { get; init; }
+
     /// <summary>Event-type discriminator. Defaults to <see cref="EventType.AppSpan"/>.</summary>
     public string EventType { get; init; } = AxonPush.EventType.AppSpan;
 

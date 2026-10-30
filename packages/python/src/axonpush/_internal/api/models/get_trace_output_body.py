@@ -19,17 +19,23 @@ T = TypeVar("T", bound="GetTraceOutputBody")
 class GetTraceOutputBody:
     """
     Attributes:
+        has_more (bool):
         spans (list[EventDTO] | None):
         trace_id (str):
         schema (str | Unset): A URL to the JSON Schema for this object.
+        next_cursor (str | Unset):
     """
 
+    has_more: bool
     spans: list[EventDTO] | None
     trace_id: str
     schema: str | Unset = UNSET
+    next_cursor: str | Unset = UNSET
 
     def to_dict(self) -> dict[str, Any]:
         from ..models.event_dto import EventDTO
+
+        has_more = self.has_more
 
         spans: list[dict[str, Any]] | None
         if isinstance(self.spans, list):
@@ -45,16 +51,21 @@ class GetTraceOutputBody:
 
         schema = self.schema
 
+        next_cursor = self.next_cursor
+
         field_dict: dict[str, Any] = {}
 
         field_dict.update(
             {
+                "hasMore": has_more,
                 "spans": spans,
                 "traceId": trace_id,
             }
         )
         if schema is not UNSET:
             field_dict["$schema"] = schema
+        if next_cursor is not UNSET:
+            field_dict["nextCursor"] = next_cursor
 
         return field_dict
 
@@ -63,6 +74,7 @@ class GetTraceOutputBody:
         from ..models.event_dto import EventDTO
 
         d = dict(src_dict)
+        has_more = d.pop("hasMore")
 
         def _parse_spans(data: object) -> list[EventDTO] | None:
             if data is None:
@@ -88,10 +100,14 @@ class GetTraceOutputBody:
 
         schema = d.pop("$schema", UNSET)
 
+        next_cursor = d.pop("nextCursor", UNSET)
+
         get_trace_output_body = cls(
+            has_more=has_more,
             spans=spans,
             trace_id=trace_id,
             schema=schema,
+            next_cursor=next_cursor,
         )
 
         return get_trace_output_body

@@ -50,6 +50,7 @@ def _build_event_body(
     prompt_version_id: str | None,
     redact: Callable[[Any], Any] | None = None,
     occurred_at: datetime | None = None,
+    expires_at: datetime | None = None,
 ) -> EventBody:
     """Assemble the generated :class:`EventBody` with ``UNSET`` for omitted optionals."""
     trace = get_or_create_trace(trace_id)
@@ -82,6 +83,7 @@ def _build_event_body(
         parent_span_id=parent_span_id if parent_span_id is not None else UNSET,
         dedup_key=dedup_key if dedup_key is not None else UNSET,
         occurred_at=occurred_at if occurred_at is not None else UNSET,
+        expires_at=expires_at if expires_at is not None else UNSET,
         event_type=_coerce_event_type(event_type),  # type: ignore[arg-type]
         metadata=metadata_dto,  # type: ignore[arg-type]
     )
@@ -114,6 +116,7 @@ class Events:
         prompt_id: str | None = None,
         prompt_version_id: str | None = None,
         occurred_at: datetime | None = None,
+        expires_at: datetime | None = None,
     ) -> Event | None:
         """Publish a single event to a channel via ``POST /event``.
 
@@ -153,6 +156,7 @@ class Events:
             prompt_version_id=prompt_version_id,
             redact=_client_redactor(self._client),
             occurred_at=occurred_at,
+            expires_at=expires_at,
         )
         return self._client._invoke(_create_op, body=body)
 
@@ -251,6 +255,7 @@ class AsyncEvents:
         prompt_id: str | None = None,
         prompt_version_id: str | None = None,
         occurred_at: datetime | None = None,
+        expires_at: datetime | None = None,
     ) -> Event | None:
         """Publish a single event to a channel. See :meth:`Events.publish`."""
         body = _build_event_body(
@@ -268,6 +273,7 @@ class AsyncEvents:
             prompt_version_id=prompt_version_id,
             redact=_client_redactor(self._client),
             occurred_at=occurred_at,
+            expires_at=expires_at,
         )
         return await self._client._invoke(_create_op, body=body)
 
