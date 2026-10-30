@@ -120,6 +120,7 @@ export { ErrorsResource } from "./resources/errors.js";
 export { EventsResource } from "./resources/events.js";
 export { ObservationsResource } from "./resources/observations.js";
 export { OrganizationsResource } from "./resources/organizations.js";
+export { TelemetryResource } from "./resources/telemetry.js";
 export { TemplatesResource } from "./resources/templates.js";
 // TracesV2Resource is a back-compat alias for TracesResource.
 export { TracesResource, TracesV2Resource } from "./resources/traces.js";
@@ -127,5 +128,3 @@ export { WebhooksResource } from "./resources/webhooks.js";
 export { WorkspacesResource } from "./resources/workspaces.js";
 export { currentTrace, getOrCreateTrace, TraceContext } from "./tracing.js";
 export { __version__ } from "./version.js";
-
-export { TelemetryResource } from "./resources/telemetry.js";
