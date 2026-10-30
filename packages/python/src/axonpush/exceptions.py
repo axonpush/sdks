@@ -133,10 +133,21 @@ def _safe_json(response: Any) -> dict[str, Any] | None:
 def _parse_retry_after(raw: str | None) -> float | None:
     if not raw:
         return None
+    import math
+    from datetime import datetime, timezone
+    from email.utils import parsedate_to_datetime
+
     try:
-        return float(raw)
+        seconds = float(raw)
+        return seconds if math.isfinite(seconds) and seconds >= 0 else None
     except ValueError:
-        return None
+        try:
+            when = parsedate_to_datetime(raw)
+            if when.tzinfo is None:
+                when = when.replace(tzinfo=timezone.utc)
+            return max(0.0, (when - datetime.now(timezone.utc)).total_seconds())
+        except (ValueError, TypeError, OverflowError):
+            return None
 
 
 def from_response(

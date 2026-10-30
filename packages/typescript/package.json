@@ -40,7 +40,10 @@
     "test:ui": "vitest --ui"
   },
   "dependencies": {
-    "consola": "^3.4.2"
+    "consola": "^3.4.2",
+    "p-queue": "^9",
+    "p-retry": "^7",
+    "zod": "^4.6.7"
   },
   "devDependencies": {
     "@biomejs/biome": "^2.4.10",

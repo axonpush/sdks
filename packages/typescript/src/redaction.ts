@@ -6,13 +6,17 @@ const CONTENT_KEY =
   /^(?:(?:(?:gen_ai|llm|ai)\.(?:(?:input|output|content)\.)?)?(?:prompts?|messages?|completions?|input|output|response|tool[-_.]?(?:arguments?|results?|output)|retrieval[-_.]?(?:documents?|content))|(?:gen_ai|llm|ai)\.tool(?:\.call)?\.(?:arguments?|results?|output))$/i;
 
 export function redactTelemetry<T>(value: T, settings: ResolvedSettings): T {
-  const visit = (current: unknown): unknown => {
+  const visit = (current: unknown, inContent = false): unknown => {
     if (typeof current === "string") {
-      return current.length > settings.maxContentLength
-        ? `${current.slice(0, settings.maxContentLength)}…[TRUNCATED]`
+      const limit = inContent
+        ? Math.min(256, settings.maxContentLength)
+        : settings.maxContentLength;
+      const chars = Array.from(current);
+      return chars.length > limit
+        ? `${chars.slice(0, limit).join("")}…${inContent && limit < settings.maxContentLength ? "[REDACTED_PREVIEW]" : "[TRUNCATED]"}`
         : current;
     }
-    if (Array.isArray(current)) return current.map(visit);
+    if (Array.isArray(current)) return current.map((item) => visit(item, inContent));
     if (!current || typeof current !== "object") return current;
     const output: Record<string, unknown> = {};
     for (const [key, child] of Object.entries(current as Record<string, unknown>)) {
@@ -23,7 +27,10 @@ export function redactTelemetry<T>(value: T, settings: ResolvedSettings): T {
       ) {
         output[key] = "[REDACTED]";
       } else {
-        output[key] = visit(child);
+        output[key] = visit(
+          child,
+          inContent || (settings.contentCaptureMode === "redacted" && CONTENT_KEY.test(key)),
+        );
       }
     }
     return output;

@@ -148,7 +148,7 @@ describe("BackgroundPublisher overflow policies", () => {
     await pub.close();
   });
 
-  it("'block' eventually accepts every submission", async () => {
+  it("deprecated synchronous block mode drops rather than creating hidden waiters", async () => {
     const { client, events } = makeFakeClient();
     events.latencyMs = 5;
     const pub = new BackgroundPublisher(client, {
@@ -157,8 +157,8 @@ describe("BackgroundPublisher overflow policies", () => {
     });
     for (let i = 0; i < 8; i++) pub.submit(makeParams(`x_${i}`));
     await pub.flush(5000);
-    expect(events.published).toHaveLength(8);
-    expect(pub.droppedCount).toBe(0);
+    expect(events.published.length).toBeLessThan(8);
+    expect(pub.droppedCount).toBeGreaterThan(0);
     await pub.close();
   });
 

@@ -22,8 +22,17 @@ gets published, and so on.
 from __future__ import annotations
 
 import asyncio
+import contextvars
+from tenacity import (
+    Retrying,
+    AsyncRetrying,
+    retry_if_exception,
+    stop_after_attempt,
+    stop_before_delay,
+    wait_exponential_jitter,
+)
 import time
-from typing import Any, Awaitable, Callable, Protocol
+from typing import Any, Awaitable, Callable, Iterator, Protocol
 
 import httpx
 
@@ -114,6 +123,35 @@ def _auth_headers(settings: Settings) -> dict[str, str]:
 
 
 def _inject_request_headers(request: httpx.Request) -> None:
+    state = _retry_safe.get()
+    if state is not None:
+        import json
+
+        safe = request.method in ("GET", "HEAD")
+        if request.method == "POST":
+            try:
+                body = json.loads(request.content)
+                if request.url.path == "/event":
+                    safe = isinstance(body.get("dedupKey"), str) and bool(body["dedupKey"])
+                elif request.url.path.startswith("/workspaces/") and request.url.path.endswith(
+                    "/observations"
+                ):
+                    items = body.get("observations")
+                    safe = isinstance(items, list) and all(
+                        isinstance(item.get("source_event_id"), str) and item["source_event_id"]
+                        for item in items
+                    )
+            except (ValueError, TypeError, AttributeError):
+                safe = False
+        state[0] = safe
+    deadline = _deadline.get()
+    if deadline is not None:
+        remaining = deadline - time.monotonic()
+        if remaining <= 0:
+            raise APIConnectionError("AxonPush invocation timed out")
+        request.extensions["timeout"] = {
+            kind: remaining for kind in ("connect", "read", "write", "pool")
+        }
     ctx = current_trace()
     if ctx is not None:
         span_id = ctx.next_span_id()
@@ -128,7 +166,27 @@ async def _async_inject_request_headers(request: httpx.Request) -> None:
     _inject_request_headers(request)
 
 
+class _DeadlineStream(httpx.SyncByteStream):
+    def __init__(self, stream: httpx.SyncByteStream, deadline: float) -> None:
+        self.stream, self.deadline = stream, deadline
+
+    def __iter__(self) -> Iterator[bytes]:
+        try:
+            for chunk in self.stream:
+                if time.monotonic() >= self.deadline:
+                    raise httpx.ReadTimeout("AxonPush invocation timed out")
+                yield chunk
+        finally:
+            self.stream.close()
+
+    def close(self) -> None:
+        self.stream.close()
+
+
 def _raise_for_status(response: httpx.Response) -> None:
+    deadline = _deadline.get()
+    if deadline is not None and isinstance(response.stream, httpx.SyncByteStream):
+        response.stream = _DeadlineStream(response.stream, deadline)
     if response.is_success:
         return
     response.read()
@@ -223,100 +281,103 @@ def build_async_client(settings: Settings) -> AuthenticatedClient:
 
 
 def _backoff_for(attempt: int, error: AxonPushError) -> float:
+    # Retained for callers/tests inspecting the nominal shared ladder.
     if isinstance(error, RateLimitError) and error.retry_after is not None:
         return max(0.0, float(error.retry_after))
-    idx = min(attempt, len(_BACKOFF_SCHEDULE) - 1)
-    return _BACKOFF_SCHEDULE[idx]
+    return _BACKOFF_SCHEDULE[min(attempt, len(_BACKOFF_SCHEDULE) - 1)]
 
 
 def _wrap_transport_error(exc: BaseException) -> APIConnectionError:
     return APIConnectionError(f"Failed to connect to AxonPush API: {exc}")
 
 
+_deadline: contextvars.ContextVar[float | None] = contextvars.ContextVar(
+    "axonpush_deadline", default=None
+)
+_retry_safe: contextvars.ContextVar[list[bool] | None] = contextvars.ContextVar(
+    "axonpush_retry_safe", default=None
+)
+_jitter = wait_exponential_jitter(initial=0.25, max=4, jitter=0.25)
+
+
+def _retry_wait(state: Any) -> float:
+    error = state.outcome.exception()
+    if isinstance(error, RateLimitError) and error.retry_after is not None:
+        return error.retry_after
+    return _jitter(state)
+
+
+def _retry_options(max_retries: int, timeout: float) -> dict[str, Any]:
+    if isinstance(max_retries, bool) or not isinstance(max_retries, int) or max_retries < 0:
+        raise ValueError("max_retries must be a nonnegative integer")
+    return dict(
+        retry=retry_if_exception(_should_retry),
+        stop=stop_after_attempt(max_retries + 1) | stop_before_delay(timeout),
+        wait=_retry_wait,
+        reraise=True,
+    )
+
+
+def _should_retry(error: BaseException) -> bool:
+    safety = _retry_safe.get()
+    return safety is not None and safety[0] and isinstance(error, RetryableError)
+
+
 def call_with_retries_sync(
-    op: _DetailedSyncOp | Any,
+    op: Any,
     *,
     max_retries: int,
+    timeout: float = 30.0,
+    retry_safe: bool = False,
     sleep: Callable[[float], None] = time.sleep,
     **kwargs: Any,
 ) -> Any:
-    """Invoke ``op.sync_detailed(**kwargs)`` with exponential-backoff retries.
-
-    Retries on any :class:`~axonpush.exceptions.RetryableError`. Network
-    failures from httpx are mapped to
-    :class:`~axonpush.exceptions.APIConnectionError` (which is retryable).
-    Non-retryable errors are re-raised on the first attempt.
-
-    Args:
-        op: The generated operation module (must expose ``sync_detailed``).
-        max_retries: Number of additional attempts after the initial call.
-            ``0`` disables retries entirely.
-        sleep: Override for the sleep function. Tests pass a fake.
-        **kwargs: Forwarded to ``op.sync_detailed``.
-
-    Returns:
-        The :class:`Response` object returned by the operation.
-
-    Raises:
-        AxonPushError: The mapped SDK error if every attempt fails.
-    """
-    last_error: AxonPushError | None = None
-    for attempt in range(max_retries + 1):
-        try:
-            with _OtelSuppression():
-                return op.sync_detailed(**kwargs)
-        except RetryableError as exc:
-            last_error = exc
-        except (httpx.TransportError, httpx.RequestError) as exc:
-            last_error = _wrap_transport_error(exc)
-        except AxonPushError:
-            raise
-        if attempt < max_retries:
-            sleep(_backoff_for(attempt, last_error))
-            continue
-        break
-    assert last_error is not None
-    raise last_error
+    safety_token = _retry_safe.set([retry_safe])
+    token = _deadline.set(time.monotonic() + timeout)
+    try:
+        for attempt in Retrying(**_retry_options(max_retries, timeout), sleep=sleep):
+            with attempt, _OtelSuppression():
+                try:
+                    result = op.sync_detailed(**kwargs)
+                    if time.monotonic() >= (_deadline.get() or float("inf")):
+                        raise APIConnectionError("AxonPush invocation timed out")
+                    return result
+                except (httpx.TransportError, httpx.RequestError) as exc:
+                    raise _wrap_transport_error(exc) from exc
+    finally:
+        _deadline.reset(token)
+        _retry_safe.reset(safety_token)
 
 
 async def call_with_retries_async(
-    op: _DetailedAsyncOp | Any,
+    op: Any,
     *,
     max_retries: int,
+    timeout: float = 30.0,
+    retry_safe: bool = False,
     sleep: Callable[[float], Awaitable[None]] = asyncio.sleep,
     **kwargs: Any,
 ) -> Any:
-    """Async sibling of :func:`call_with_retries_sync`.
+    async def run() -> Any:
+        async for attempt in AsyncRetrying(**_retry_options(max_retries, timeout), sleep=sleep):
+            with attempt, _OtelSuppression():
+                try:
+                    result = await op.asyncio_detailed(**kwargs)
+                    if time.monotonic() >= (_deadline.get() or float("inf")):
+                        raise APIConnectionError("AxonPush invocation timed out")
+                    return result
+                except (httpx.TransportError, httpx.RequestError) as exc:
+                    raise _wrap_transport_error(exc) from exc
 
-    Args:
-        op: The generated operation module (must expose ``asyncio_detailed``).
-        max_retries: Number of additional attempts after the initial call.
-        sleep: Override for the async sleep function. Tests pass a fake.
-        **kwargs: Forwarded to ``op.asyncio_detailed``.
-
-    Returns:
-        The :class:`Response` object returned by the operation.
-
-    Raises:
-        AxonPushError: The mapped SDK error if every attempt fails.
-    """
-    last_error: AxonPushError | None = None
-    for attempt in range(max_retries + 1):
-        try:
-            with _OtelSuppression():
-                return await op.asyncio_detailed(**kwargs)
-        except RetryableError as exc:
-            last_error = exc
-        except (httpx.TransportError, httpx.RequestError) as exc:
-            last_error = _wrap_transport_error(exc)
-        except AxonPushError:
-            raise
-        if attempt < max_retries:
-            await sleep(_backoff_for(attempt, last_error))
-            continue
-        break
-    assert last_error is not None
-    raise last_error
+    safety_token = _retry_safe.set([retry_safe])
+    token = _deadline.set(time.monotonic() + timeout)
+    try:
+        return await asyncio.wait_for(run(), timeout)
+    except asyncio.TimeoutError as exc:
+        raise APIConnectionError("AxonPush invocation timed out") from exc
+    finally:
+        _deadline.reset(token)
+        _retry_safe.reset(safety_token)
 
 
 __all__ = [

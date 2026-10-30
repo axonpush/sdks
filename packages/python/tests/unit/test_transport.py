@@ -227,17 +227,19 @@ class _Op:
 class TestCallWithRetriesSync:
     def test_returns_response_on_first_success(self) -> None:
         op = _Op(["ok"])
-        result = call_with_retries_sync(op, max_retries=3)
+        result = call_with_retries_sync(op, retry_safe=True, max_retries=3)
         assert result == "ok"
         assert op.calls == 1
 
     def test_retries_on_server_error_then_succeeds(self) -> None:
         op = _Op([ServerError("boom", status_code=503), "ok"])
         sleeps: list[float] = []
-        result = call_with_retries_sync(op, max_retries=3, sleep=lambda s: sleeps.append(s))
+        result = call_with_retries_sync(
+            op, retry_safe=True, max_retries=3, sleep=lambda s: sleeps.append(s)
+        )
         assert result == "ok"
         assert op.calls == 2
-        assert sleeps == [0.25]
+        assert len(sleeps) == 1 and 0.25 <= sleeps[0] <= 0.5
 
     def test_backoff_schedule(self) -> None:
         op = _Op(
@@ -251,38 +253,46 @@ class TestCallWithRetriesSync:
             ]
         )
         sleeps: list[float] = []
-        result = call_with_retries_sync(op, max_retries=5, sleep=lambda s: sleeps.append(s))
+        result = call_with_retries_sync(
+            op, retry_safe=True, max_retries=5, sleep=lambda s: sleeps.append(s)
+        )
         assert result == "ok"
-        assert sleeps == [0.25, 0.5, 1.0, 2.0, 4.0]
+        assert len(sleeps) == 5
+        assert all(
+            base <= actual <= min(4.0, base + 0.25)
+            for base, actual in zip([0.25, 0.5, 1.0, 2.0, 4.0], sleeps)
+        )
 
     def test_rate_limit_uses_retry_after(self) -> None:
         op = _Op([RateLimitError("slow", retry_after=7.0), "ok"])
         sleeps: list[float] = []
-        result = call_with_retries_sync(op, max_retries=3, sleep=lambda s: sleeps.append(s))
+        result = call_with_retries_sync(
+            op, retry_safe=True, max_retries=3, sleep=lambda s: sleeps.append(s)
+        )
         assert result == "ok"
         assert sleeps == [7.0]
 
     def test_transport_error_wrapped_as_api_connection_error(self) -> None:
         op = _Op([httpx.ConnectError("dns fail")])
         with pytest.raises(APIConnectionError):
-            call_with_retries_sync(op, max_retries=0, sleep=lambda s: None)
+            call_with_retries_sync(op, retry_safe=True, max_retries=0, sleep=lambda s: None)
 
     def test_transport_error_is_retried(self) -> None:
         op = _Op([httpx.ConnectError("dns fail"), "ok"])
-        result = call_with_retries_sync(op, max_retries=2, sleep=lambda s: None)
+        result = call_with_retries_sync(op, retry_safe=True, max_retries=2, sleep=lambda s: None)
         assert result == "ok"
         assert op.calls == 2
 
     def test_non_retryable_error_propagates_immediately(self) -> None:
         op = _Op([AuthenticationError("nope", status_code=401)])
         with pytest.raises(AuthenticationError):
-            call_with_retries_sync(op, max_retries=5, sleep=lambda s: None)
+            call_with_retries_sync(op, retry_safe=True, max_retries=5, sleep=lambda s: None)
         assert op.calls == 1
 
     def test_exhausts_retries_and_raises_last(self) -> None:
         op = _Op([ServerError("a"), ServerError("b"), ServerError("c")])
         with pytest.raises(ServerError) as exc:
-            call_with_retries_sync(op, max_retries=2, sleep=lambda s: None)
+            call_with_retries_sync(op, retry_safe=True, max_retries=2, sleep=lambda s: None)
         assert str(exc.value) == "c"
         assert op.calls == 3
 
@@ -295,9 +305,9 @@ class TestCallWithRetriesAsync:
         async def fake_sleep(s: float) -> None:
             sleeps.append(s)
 
-        result = await call_with_retries_async(op, max_retries=2, sleep=fake_sleep)
+        result = await call_with_retries_async(op, retry_safe=True, max_retries=2, sleep=fake_sleep)
         assert result == "ok"
-        assert sleeps == [0.25]
+        assert len(sleeps) == 1 and 0.25 <= sleeps[0] <= 0.5
 
     async def test_async_transport_error_wrapped(self) -> None:
         op = _Op([httpx.ConnectError("net fail")])
@@ -306,7 +316,7 @@ class TestCallWithRetriesAsync:
             pass
 
         with pytest.raises(APIConnectionError):
-            await call_with_retries_async(op, max_retries=0, sleep=fake_sleep)
+            await call_with_retries_async(op, retry_safe=True, max_retries=0, sleep=fake_sleep)
 
     async def test_async_non_retryable_propagates(self) -> None:
         op = _Op([AuthenticationError("nope", status_code=401)])
@@ -315,7 +325,7 @@ class TestCallWithRetriesAsync:
             pass
 
         with pytest.raises(AuthenticationError):
-            await call_with_retries_async(op, max_retries=5, sleep=fake_sleep)
+            await call_with_retries_async(op, retry_safe=True, max_retries=5, sleep=fake_sleep)
 
     async def test_async_exhausts_retries(self) -> None:
         op = _Op([ServerError("a"), ServerError("b")])
@@ -324,7 +334,7 @@ class TestCallWithRetriesAsync:
             pass
 
         with pytest.raises(AxonPushError):
-            await call_with_retries_async(op, max_retries=1, sleep=fake_sleep)
+            await call_with_retries_async(op, retry_safe=True, max_retries=1, sleep=fake_sleep)
         assert op.calls == 2
 
 
@@ -357,7 +367,7 @@ class TestOtelSuppression:
                 )
                 return "ok"
 
-        result = call_with_retries_sync(_Probe(), max_retries=0)
+        result = call_with_retries_sync(_Probe(), retry_safe=True, max_retries=0)
         assert result == "ok"
         assert observed == {
             "suppress_instrumentation": True,
@@ -380,7 +390,9 @@ class TestOtelSuppression:
         async def fake_sleep(s: float) -> None:
             pass
 
-        result = await call_with_retries_async(_Probe(), max_retries=0, sleep=fake_sleep)
+        result = await call_with_retries_async(
+            _Probe(), retry_safe=True, max_retries=0, sleep=fake_sleep
+        )
         assert result == "ok"
         assert observed == {
             "suppress_instrumentation": True,

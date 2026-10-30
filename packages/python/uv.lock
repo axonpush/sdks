@@ -249,6 +249,7 @@ dependencies = [
     { name = "pydantic" },
     { name = "pydantic-settings" },
     { name = "python-dateutil" },
+    { name = "tenacity" },
 ]
 
 [package.optional-dependencies]
@@ -347,6 +348,7 @@ requires-dist = [
     { name = "ruff", marker = "extra == 'dev'", specifier = ">=0.4" },
     { name = "sentry-sdk", marker = "extra == 'sentry'", specifier = ">=2.0" },
     { name = "structlog", marker = "extra == 'structlog'", specifier = ">=24.0.0" },
+    { name = "tenacity", specifier = ">=9.1,<10" },
     { name = "tomli", marker = "python_full_version < '3.11' and extra == 'dev'", specifier = ">=2.0" },
 ]
 provides-extras = ["langchain", "openai-agents", "anthropic", "crewai", "deepagents", "loguru", "structlog", "rq", "sentry", "otel", "all", "dev"]

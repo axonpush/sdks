@@ -203,6 +203,7 @@ class AxonPush:
                 op,
                 client=self._client,
                 max_retries=self._settings.max_retries,
+                timeout=self._settings.timeout,
                 **kwargs,
             )
         except APIConnectionError:
@@ -504,6 +505,7 @@ class AsyncAxonPush:
                 op,
                 client=client,
                 max_retries=self._settings.max_retries,
+                timeout=self._settings.timeout,
                 **kwargs,
             )
         except APIConnectionError:
