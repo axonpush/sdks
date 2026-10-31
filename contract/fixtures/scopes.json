@@ -1,15 +1,19 @@
 {
-  "description": "Active API-key scope vocabulary. Workspace operations carry their enforced scopes as x-axonpush-scopes; session writes additionally require owner/admin.",
+  "description": "Generated API-key scope vocabulary; operation policies define enforcement.",
   "scopes": [
+    "content:read",
+    "replay:read",
+    "content:erase",
     "events:publish",
     "events:read",
     "observe:read",
+    "profiles:read",
     "observe:manage",
-    "alerts:manage",
     "apps:manage",
     "channels:manage",
-    "webhooks:manage",
+    "alerts:manage",
     "workspaces:manage",
-    "templates:publish"
+    "templates:publish",
+    "webhooks:manage"
   ]
 }
