@@ -281,8 +281,8 @@ async function runOp<T>(
 /**
  * Single chokepoint against the shared generated client. Adds:
  *
- * - Retries on retryable errors with backoff `[250, 500, 1000, 2000, 4000]ms`,
- *   honouring {@link RateLimitError.retryAfter} when present.
+ * - Retries eligible reads and deduplicated writes with jittered backoff,
+ *   honouring {@link RateLimitError.retryAfter} within the invocation deadline.
  * - Fail-open semantics: when `opts.failOpen` is true and the final attempt
  *   ends in {@link APIConnectionError}, return `null` instead of throwing.
  * - Exception passthrough for all other errors.

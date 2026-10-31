@@ -27,21 +27,10 @@ import sys
 from pathlib import Path
 
 
-def _load_dotenv() -> None:
-    env_path = Path(__file__).parent / ".env"
-    if not env_path.exists():
-        return
-    for line in env_path.read_text().splitlines():
-        line = line.strip()
-        if not line or line.startswith("#"):
-            continue
-        key, _, value = line.partition("=")
-        key, value = key.strip(), value.strip()
-        if key and key not in os.environ:
-            os.environ[key] = value
+from dotenv import load_dotenv
 
-
-_load_dotenv()
+# python-dotenv is already installed by the SDK's pydantic-settings dependency.
+load_dotenv(Path(__file__).parent / ".env", override=False)
 
 API_KEY = os.environ.get("AXONPUSH_API_KEY")
 TENANT_ID = os.environ.get("AXONPUSH_TENANT_ID")
@@ -51,12 +40,14 @@ CHANNEL_ID = os.environ.get("AXONPUSH_CHANNEL_ID")
 APP_ID = os.environ.get("AXONPUSH_APP_ID")
 
 OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY")
-WEBHOOK_URL = os.environ.get("WEBHOOK_URL", "https://httpbin.org/post")
+WEBHOOK_URL = os.environ.get("WEBHOOK_URL")
 
 
 def require_credentials() -> None:
     """Exit with a helpful message when ``AXONPUSH_API_KEY`` / ``AXONPUSH_TENANT_ID`` are missing."""
-    missing = [k for k, v in (("AXONPUSH_API_KEY", API_KEY), ("AXONPUSH_TENANT_ID", TENANT_ID)) if not v]
+    missing = [
+        k for k, v in (("AXONPUSH_API_KEY", API_KEY), ("AXONPUSH_TENANT_ID", TENANT_ID)) if not v
+    ]
     if missing:
         print(f"Missing env var(s): {', '.join(missing)}")
         print("Either:")

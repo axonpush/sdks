@@ -31,7 +31,8 @@ codegen do the rest.
 
 [Caller operation discovery](docs/operation-capabilities.md) provides advisory permissions for the authenticated caller without changing the SDK method surface.
 
-Business operation wrappers are generated with `tools/generate-operations.py`.
+`tools/generate-operations.py` generates business operation wrappers and invokes
+`tools/generate-resource-facades.py` for the Python and TypeScript resource facades.
 What you write by hand is the layer on top: framework integrations, resource
 helpers and the error tree. Those are what make the SDK pleasant
 rather than merely correct.
@@ -53,10 +54,8 @@ Python and TypeScript resource surfaces are mirrored; shared business operations
 also cover .NET. The following checks keep them aligned:
 
 - **`tools/surface-diff.ts`** compares the resource surfaces across languages,
-  normalising for naming convention. It found `channels.list` missing from
-  Python and `cancelInvitation` missing from TypeScript on its first run.
-- **`tools/check-versions.ts`** asserts each package states one version. It
-  found `@axonpush/sdk` shipping 0.0.7 with `src/version.ts` saying 0.0.6.
+  normalising for naming convention.
+- **`tools/check-versions.ts`** asserts each package states one consistent version.
 - **`tools/check-contract.ts`** verifies the mirrored contract digest and operation
   list, and that all business operations have resource wrappers in all languages.
   `packages/typescript/tools/check-resource-contract.ts` also checks each facade’s
@@ -132,4 +131,4 @@ not automatically fetch all pages.
 Session timeline calls accept `cursor` and `replayOnly` (`replay_only` in Python).
 Use `replayOnly: true` to query recording chunks without walking ordinary session
 events. Do not combine a cursor with an offset. Content still requires explicit,
-audited reads. These changes do not bump package versions or publish a release.
+audited reads. See each package changelog for release availability.

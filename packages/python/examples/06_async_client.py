@@ -12,14 +12,18 @@ Run::
 import asyncio
 import time
 
-from config import APP_ID, BASE_URL, CHANNEL_ID, ENVIRONMENT, require_credentials
+from config import BASE_URL, ENVIRONMENT, require_credentials
+
+from resources import async_example_channel
 
 require_credentials()
 
 from axonpush import AsyncAxonPush, EventType  # noqa: E402
 
 
-async def publish_agent_events(client: AsyncAxonPush, channel_id: str, agent_id: str, count: int) -> tuple[str, int]:
+async def publish_agent_events(
+    client: AsyncAxonPush, channel_id: str, agent_id: str, count: int
+) -> tuple[str, int]:
     for i in range(count):
         await client.events.publish(
             f"{agent_id}.step",
@@ -32,21 +36,10 @@ async def publish_agent_events(client: AsyncAxonPush, channel_id: str, agent_id:
 
 
 async def main() -> None:
-    async with AsyncAxonPush(base_url=BASE_URL, environment=ENVIRONMENT) as client:
-        owns_app = APP_ID is None
-        owns_channel = CHANNEL_ID is None
-        app_id = APP_ID
-        channel_id = CHANNEL_ID
-        if owns_app:
-            app = await client.apps.create(name="async-demo")
-            assert app is not None
-            app_id = app.id
-        if owns_channel:
-            assert app_id is not None
-            channel = await client.channels.create("concurrent", app_id)
-            assert channel is not None
-            channel_id = channel.id
-        assert channel_id is not None
+    async with (
+        AsyncAxonPush(base_url=BASE_URL, environment=ENVIRONMENT, fail_open=False) as client,
+        async_example_channel(client) as channel_id,
+    ):
         print(f"channel={channel_id}\n")
 
         agents = ["agent-alpha", "agent-beta", "agent-gamma", "agent-delta", "agent-epsilon"]
@@ -63,14 +56,9 @@ async def main() -> None:
         for agent_id, count in results:
             print(f"  {agent_id}: {count} events")
 
-        listing = await client.events.list(channel_id, limit=100)
+        listing = await client.events.search(channel_id=channel_id, limit=100)
         if listing is not None:
-            print(f"\nTotal events visible: {len(listing.data)}")
-
-        if owns_channel:
-            await client.channels.delete(channel_id)
-        if owns_app and app_id is not None:
-            await client.apps.delete(app_id)
+            print(f"\nTotal events visible: {len((listing.events or []))}")
 
 
 if __name__ == "__main__":

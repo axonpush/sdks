@@ -390,7 +390,7 @@ class TestPublishFailureLogging:
     """`_log_publish_failure` distinguishes config errors (ValidationError,
     4xx) from transient errors (5xx, connection) and applies a 60s
     rate-limit per (code, status) pair. Both branches and the rate-limit
-    are exercised end-to-end against the live easy-push backend in
+    are exercised end-to-end against the running local Go backend in
     `tests/e2e/`. They are intentionally not unit-tested: the function
     relies on a module-level rate-limit cache shared with every other
     test that triggers a publisher exception, and isolating that cache

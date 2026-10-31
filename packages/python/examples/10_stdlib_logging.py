@@ -16,7 +16,9 @@ Run::
 
 import logging
 
-from config import APP_ID, BASE_URL, CHANNEL_ID, ENVIRONMENT, require_credentials
+from config import BASE_URL, ENVIRONMENT, require_credentials
+
+from resources import example_channel
 
 require_credentials()
 
@@ -25,22 +27,10 @@ from axonpush.integrations.logging_handler import AxonPushLoggingHandler  # noqa
 
 
 def main() -> None:
-    with AxonPush(base_url=BASE_URL, environment=ENVIRONMENT) as client:
-        owns_app = APP_ID is None
-        owns_channel = CHANNEL_ID is None
-        app_id = APP_ID
-        channel_id = CHANNEL_ID
-        if owns_app:
-            app = client.apps.create(name="stdlib-logging-demo")
-            assert app is not None
-            app_id = app.id
-        if owns_channel:
-            assert app_id is not None
-            channel = client.channels.create("service-logs", app_id)
-            assert channel is not None
-            channel_id = channel.id
-        assert channel_id is not None
-
+    with (
+        AxonPush(base_url=BASE_URL, environment=ENVIRONMENT, fail_open=False) as client,
+        example_channel(client) as channel_id,
+    ):
         handler = AxonPushLoggingHandler(
             client=client,
             channel_id=channel_id,
@@ -66,19 +56,13 @@ def main() -> None:
         root.removeHandler(handler)
         handler.close()
 
-        listing = client.events.list(channel_id, limit=20)
+        listing = client.events.search(channel_id=channel_id, limit=20)
         if listing is not None:
-            print(f"\nEvents published ({len(listing.data)}):")
-            for ev in listing.data:
-                props = ev.payload.additional_properties if ev.payload else {}
-                sev = props.get("severityText", "?")
-                body = props.get("body", "")
-                print(f"  [{sev}] {ev.identifier}: {body}")
-
-        if owns_channel:
-            client.channels.delete(channel_id)
-        if owns_app and app_id is not None:
-            client.apps.delete(app_id)
+            print(f"\nEvents published ({len((listing.events or []))}):")
+            for ev in listing.events or []:
+                print(f"  [{ev.event_type}] {ev.operation_name} (event_id={ev.event_id})")
+            # Payload reads are separate and audited: client.telemetry.content(event_id)
+            # requires content:read; search returns metadata only.
 
 
 # --- Django integration snippet (reference) --------------------------------

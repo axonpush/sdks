@@ -49,22 +49,6 @@ export interface IntegrationConfig {
   bullmqOptions?: BullMQPublisherOptions;
 }
 
-/**
- * Narrow shim around the SHARED-CONTRACT-guaranteed
- * `client.events.publish(...)` chokepoint. Stream A's lazy
- * `AxonPush.events` typing (`Promise<unknown>`) is a transitional
- * detail — integrations rely only on the call shape promised in §3 of
- * `SHARED-CONTRACT.md`, so we cast through this helper rather than
- * coupling to the shifting facade type.
- */
-interface PublishLike {
-  events: { publish(params: PublishParams): Promise<unknown> };
-}
-
-function asPublisher(client: AxonPush): PublishLike {
-  return client as unknown as PublishLike;
-}
-
 export function truncate(value: unknown, maxLen = 2000): unknown {
   try {
     const s = JSON.stringify(value, (_k, v) => (typeof v === "bigint" ? v.toString() : v));
@@ -181,15 +165,15 @@ export async function safePublish(
   },
 ): Promise<void> {
   try {
-    await asPublisher(client).events.publish({
+    await client.events.publish({
       identifier,
-      payload: payload as Record<string, never>,
+      payload,
       channelId: coerceChannelId(channelId),
       agentId: opts.agentId,
       traceId: opts.trace.traceId,
       spanId: opts.trace.nextSpanId(),
       eventType,
-      metadata: opts.metadata as Record<string, never>,
+      metadata: opts.metadata,
     });
   } catch {
     logger.warn(`failed to emit event "${identifier}", suppressing.`);
@@ -198,7 +182,7 @@ export async function safePublish(
 
 export async function safePublishParams(client: AxonPush, params: PublishParams): Promise<void> {
   try {
-    await asPublisher(client).events.publish(params);
+    await client.events.publish(params);
   } catch {
     logger.warn(`failed to emit event "${params.identifier}", suppressing.`);
   }

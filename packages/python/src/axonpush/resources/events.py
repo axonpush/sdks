@@ -141,7 +141,8 @@ class Events:
             ``None`` if ``fail_open`` swallowed a transport error.
 
         Raises:
-            AxonPushError: When ``fail_open`` is False and the call fails.
+            AxonPushError: For API errors; connection failures also raise when
+                ``fail_open`` is False.
         """
         body = _build_event_body(
             identifier=identifier,

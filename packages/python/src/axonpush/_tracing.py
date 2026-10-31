@@ -1,6 +1,6 @@
 """Trace propagation primitives for the AxonPush SDK.
 
-A :class:`TraceContext` carries a UUID4 ``trace_id`` plus a monotonic span-id
+A :class:`TraceContext` carries a UUID4 ``trace_id`` plus a random W3C-compatible span-id
 generator. The current context is stored in a :class:`~contextvars.ContextVar`
 so each asyncio task — and each thread that copies the parent's context —
 sees its own value.

@@ -13,7 +13,7 @@ A console chat REPL that runs Microsoft Semantic Kernel against Azure OpenAI (or
 Set the required environment variables, then run from the repository root:
 
 ```bash
-dotnet run --project samples/SemanticKernelChat
+dotnet run --project packages/dotnet/samples/SemanticKernelChat
 ```
 
 Type prompts at the `>` cursor. An empty line exits.
@@ -46,4 +46,4 @@ Each span carries the `gen_ai.*` semantic-convention attributes (model, token us
 
 ## Fail-open behaviour
 
-If AxonPush is unreachable, the sample keeps responding to prompts and logs an `AxonPush publish failed` warning to the console. Set `AXONPUSH_FAIL_OPEN=false` to make publish errors throw.
+If AxonPush is unreachable, the sample keeps responding to prompts and logs an `AxonPush publish failed` warning to the console. The exporter reports failures through OpenTelemetry and catches client exceptions at the exporter boundary; `AXONPUSH_FAIL_OPEN=false` does not make span completion throw into the chat loop.

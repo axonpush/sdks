@@ -30,7 +30,7 @@ class Settings(BaseSettings):
             ``https://api.axonpush.xyz``.
         environment: Logical environment name, propagated as
             ``X-Axonpush-Environment`` (``AXONPUSH_ENVIRONMENT``).
-        timeout: Per-request timeout in seconds (``AXONPUSH_TIMEOUT``).
+        timeout: Total invocation timeout in seconds, including retries (``AXONPUSH_TIMEOUT``).
         max_retries: Maximum number of automatic retries for retryable
             failures (``AXONPUSH_MAX_RETRIES``).
         fail_open: When true (the default), the facade swallows

@@ -5,6 +5,8 @@ author: Sayan Biswas
 tags: [semantic-kernel, dotnet, opentelemetry, observability]
 ---
 
+> Historical draft for the event-plane compatibility exporter. For current setup, native OTLP transport, and lifecycle behavior, use the [package README](../README.md). This draft is not release documentation.
+
 Microsoft Semantic Kernel quietly added GenAI OpenTelemetry diagnostics a while back. Flip a switch, attach a `TracerProvider`, and your kernel starts emitting spans for every chat completion, function call, and prompt render, complete with the OpenTelemetry GenAI semantic-convention attributes for model name, token usage, and finish reason.
 
 Most observability vendors do not have a quickstart for this. So when I added a Semantic Kernel sample to AxonPush this week, the first thing I shipped was the missing exporter.
@@ -66,16 +68,9 @@ This mirrors the way Application Insights and OTLP samples in the Semantic Kerne
 
 ## Fail-open behaviour
 
-A telemetry pipeline that takes down your app is worse than no telemetry. The AxonPush .NET client treats publish failures as soft failures by default. If a span cannot be delivered, the exception is logged at warning level and the export returns success to the OpenTelemetry SDK, so the kernel keeps responding to prompts.
+The compatibility exporter logs failed publishes and returns `ExportResult.Failure` when any span fails. It catches client exceptions at the exporter boundary, so changing the HTTP client's fail-open setting does not make span completion throw into application code. Export failure reporting is not a durable delivery guarantee.
 
-Concretely, that means the exporter:
-
-- Retries transient failures on a small backoff schedule (250 ms, 500 ms, 1 s, 2 s, 4 s).
-- Honours `Retry-After` on 429 responses.
-- Catches and swallows terminal failures when `AxonPushOptions.FailOpen` is true.
-- Surfaces failures to callers only when fail-open is explicitly turned off.
-
-This is the same shape the Python and TypeScript SDKs use. Cross-runtime consistency is intentional.
+The current client uses Polly for eligible retries within a total invocation deadline. The exporter assigns a stable `otel:<traceId>:<spanId>` deduplication identity. See [transport behavior](../../../docs/infrastructure-libraries.md) for retry, cancellation, and timeout details.
 
 ## Cross-SDK wire compatibility
 

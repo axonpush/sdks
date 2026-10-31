@@ -1,7 +1,7 @@
 """Unit tests for :class:`AxonPushLoggingHandler`.
 
 Uses the duck-typed :class:`FakeSyncClient` so the tests don't depend on
-Stream A's transport or Stream B's resources — just on the
+the transport or resource layer — just on the
 ``client.events.publish`` contract.
 """
 

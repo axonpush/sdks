@@ -6,11 +6,9 @@ plugging this exporter into its tracer provider.
 
 The exporter ingests through the regular AxonPush events API
 (``client.events.publish`` with ``event_type=EventType.APP_SPAN``)
-rather than the dedicated OTLP ``/v1/traces`` endpoint. The dedicated
-endpoint exists on the backend (see :file:`src/otlp/otlp.controller.ts`)
-and accepts both protobuf and JSON, but the per-span ``app.span`` events
-flow gives uniform fan-out / channel routing for free. Future versions
-may add a direct OTLP transport.
+rather than the dedicated OTLP ``/v1/traces`` endpoint. For native OTLP
+delivery, use ``axonpush.telemetry``.
+This exporter retains event-plane channel routing for compatibility.
 
 Tested against ``opentelemetry-sdk>=1.20,<2``.
 

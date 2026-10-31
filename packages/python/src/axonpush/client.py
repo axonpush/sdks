@@ -105,7 +105,7 @@ class AxonPush:
         environment: Logical environment label (sent as
             ``X-Axonpush-Environment``). Falls back to
             ``AXONPUSH_ENVIRONMENT``.
-        timeout: Per-request timeout in seconds. Falls back to
+        timeout: Total invocation timeout in seconds, including retries. Falls back to
             ``AXONPUSH_TIMEOUT``.
         max_retries: Number of retry attempts on retryable failures. Falls
             back to ``AXONPUSH_MAX_RETRIES``.

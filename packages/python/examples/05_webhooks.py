@@ -3,9 +3,8 @@
 Register a webhook endpoint on a channel, publish an event that matches
 the endpoint's filter, then poll the deliveries log.
 
-Set ``WEBHOOK_URL`` (e.g. ``https://webhook.site/<your-id>``) to a real
-sink to actually see deliveries arrive — otherwise the default
-``https://httpbin.org/post`` will accept them.
+Set ``WEBHOOK_URL`` to a receiver you control. There is no third-party
+default destination.
 
 Run::
 
@@ -13,15 +12,16 @@ Run::
 """
 
 import time
+from contextlib import ExitStack
 
 from config import (
-    APP_ID,
     BASE_URL,
-    CHANNEL_ID,
     ENVIRONMENT,
     WEBHOOK_URL,
     require_credentials,
 )
+
+from resources import example_channel
 
 require_credentials()
 
@@ -29,22 +29,13 @@ from axonpush import AxonPush, EventType  # noqa: E402
 
 
 def main() -> None:
-    with AxonPush(base_url=BASE_URL, environment=ENVIRONMENT) as client:
-        owns_app = APP_ID is None
-        owns_channel = CHANNEL_ID is None
-        app_id = APP_ID
-        channel_id = CHANNEL_ID
-        if owns_app:
-            app = client.apps.create(name="webhook-demo")
-            assert app is not None
-            app_id = app.id
-        if owns_channel:
-            assert app_id is not None
-            channel = client.channels.create("alerts", app_id)
-            assert channel is not None
-            channel_id = channel.id
-        assert channel_id is not None
-
+    if not WEBHOOK_URL:
+        raise RuntimeError("Set WEBHOOK_URL to a receiver you control")
+    with (
+        AxonPush(base_url=BASE_URL, environment=ENVIRONMENT, fail_open=False) as client,
+        example_channel(client) as channel_id,
+        ExitStack() as cleanup,
+    ):
         endpoint = client.webhooks.create_endpoint(
             url=WEBHOOK_URL,
             channel_id=channel_id,
@@ -53,13 +44,15 @@ def main() -> None:
         )
         assert endpoint is not None
         endpoint_id = endpoint.endpoint_id
+        cleanup.callback(client.webhooks.delete_endpoint, endpoint_id)
         print(f"Created endpoint: id={endpoint_id} url={endpoint.url}")
         print(f"  Filters: {endpoint.event_types}")
-        if endpoint.raw_secret:
-            print(f"  Signing secret (shown once): {endpoint.raw_secret}\n")
+        # Store endpoint.raw_secret in your receiver's secret store; never log it.
 
         client.events.publish(
-            "agent.step", {"status": "processing"}, channel_id,
+            "agent.step",
+            {"status": "processing"},
+            channel_id,
             event_type=EventType.AGENT_MESSAGE,
         )
         print("Published normal event (filtered out)")
@@ -84,12 +77,6 @@ def main() -> None:
                 print(f"  status={d.status} attempts={int(d.attempts)} http={http_code}")
         else:
             print("No deliveries recorded yet (they may still be in flight).")
-
-        client.webhooks.delete_endpoint(endpoint_id=endpoint_id)
-        if owns_channel:
-            client.channels.delete(channel_id)
-        if owns_app and app_id is not None:
-            client.apps.delete(app_id)
 
 
 if __name__ == "__main__":

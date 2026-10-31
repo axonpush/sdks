@@ -71,7 +71,7 @@ npm install @anthropic-ai/sdk
 
 ## Quickstart
 
-This snippet matches `examples/01-quickstart.ts` exactly.
+Run the fuller example in `examples/01-quickstart.ts`.
 
 ```ts
 import { AxonPush } from "@axonpush/sdk";
@@ -100,8 +100,8 @@ client.close();
 | `appId` | `AXONPUSH_APP_ID` | - | Default app for resources that need one. |
 | `baseUrl` | `AXONPUSH_BASE_URL` | `https://api.axonpush.xyz` | REST API root. |
 | `environment` | `AXONPUSH_ENVIRONMENT` | - | Logical env slug (`production`, `staging`). |
-| `timeout` | `AXONPUSH_TIMEOUT` | `30` | Per-request timeout. The option is milliseconds; the environment variable is seconds. |
-| `maxRetries` | `AXONPUSH_MAX_RETRIES` | `3` | Retries on `RetryableError`. |
+| `timeout` | `AXONPUSH_TIMEOUT` | `30000` ms / `30` s | Total invocation budget, including retries and response reading. The option is milliseconds; the environment variable is seconds. |
+| `maxRetries` | `AXONPUSH_MAX_RETRIES` | `3` | Additional attempts for eligible reads and deduplicated event/observation writes. Other mutations run once. |
 | `failOpen` | `AXONPUSH_FAIL_OPEN` | `true` | Swallow `APIConnectionError` and resolve `null`, so telemetry cannot take your app down. |
 
 Caller-supplied options always win when defined.
@@ -176,17 +176,14 @@ try {
   } else if (err instanceof AuthenticationError) {
     rotateApiKey();
   } else if (err instanceof RetryableError) {
-    // safe to retry with your own backoff
+    // The transport budget was exhausted. Retry only an idempotent operation.
   } else if (err instanceof NotFoundError || err instanceof ValidationError) {
     throw err; // not retryable
   }
 }
 ```
 
-The SDK already retries `RetryableError` with backoff
-`[250, 500, 1000, 2000, 4000] ms` (honouring `Retry-After`) up to
-`maxRetries` times - handle these in your code only when you need a
-custom policy.
+The p-retry transport uses jittered backoff with a 250ms base and 4s cap, respecting `Retry-After` within the invocation deadline. `RetryableError` classifies a transient failure; it does not make arbitrary mutations safe to repeat. Avoid nesting a second retry loop around the built-in policy. When retrying a publish in a later SDK call, preserve its original deduplication key or observation identity. Caller cancellation is never swallowed by `failOpen`. See [transport and queue behavior](../../docs/infrastructure-libraries.md).
 
 ## Tracing
 

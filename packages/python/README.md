@@ -6,7 +6,7 @@ Python SDK for [axonpush](https://axonpush.xyz), observability and event infrast
 
 Publish, trace, and deliver agent events. Drop-in integrations for LangChain, LangGraph Deep Agents, OpenAI Agents SDK, Anthropic, CrewAI, and the Python observability stack (stdlib `logging`, Loguru, structlog, OpenTelemetry, Sentry).
 
-> **v1.0.0 is a breaking release.** All IDs are `str` UUIDs; models live under a flat `axonpush.models` namespace; the realtime feature (MQTT / SSE / WebSocket / `connect_realtime`) has been removed. See [`CHANGELOG.md`](CHANGELOG.md) for the migration guide.
+> Migrating an older client? The Go/Huma API migration is documented under `0.0.18` in [CHANGELOG.md](CHANGELOG.md). Models are exposed through `axonpush.models`; use app-scoped channel methods and `events.search()` for event reads. The removed realtime connection APIs are not part of this SDK.
 
 ## Agent operations
 
@@ -117,7 +117,7 @@ AxonPush(
 )
 ```
 
-`fail_open=True` swallows `APIConnectionError` and returns `None` from every resource call, useful when axonpush observability must never break the host application.
+`timeout` is the total invocation budget in seconds, including retries and response reading; `max_retries` counts additional attempts. Synchronous HTTP cancellation is cooperative at network/read checkpoints. `fail_open=True` returns `None` on connection failures; it does not suppress caller cancellation or authentication, validation, and other API errors. See [transport behavior](../../docs/infrastructure-libraries.md) for retry eligibility and deadline details.
 
 ## Authentication
 
@@ -153,12 +153,12 @@ The client exposes Stripe-style resource accessors:
 | `client.apps` | `list`, `get`, `create`, `update`, `delete` |
 | `client.environments` | `list`, `create`, `update`, `delete`, `promote` |
 | `client.webhooks` | `create_endpoint`, `list_endpoints`, `delete_endpoint`, `deliveries` |
-| `client.traces` | `list`, `get` |
+| `client.traces` | `list`, `get`, `groups`, `group_members` |
 | `client.errors` | `list`, `get`, `events`, `triage` |
 | `client.analytics` | `overview`, `breakdown`, `timeseries`, `heatmap`, `diff`, `dimensions`, `dimension_values`, `latency`, `ingestion_status` |
 | `client.alerts` | `list`, `create`, `update`, `delete`, `occurrences` |
 | `client.organizations` | `list`, `get`, `update`, `delete`, `invite`, `cancel_invitation`, `accept_invitation`, `remove_member`, `transfer_ownership`, `leave` |
-| `client.capabilities` | `get` |
+| `client.capabilities` | `get`, `operations` |
 
 Every resource has an `Async` sibling on `AsyncAxonPush`, and is importable
 from `axonpush.resources`.
@@ -181,7 +181,7 @@ from axonpush import (
 )
 ```
 
-Every exception carries `request_id`, `status_code`, `code`, `hint` parsed from the backend's `{ code, message, hint, requestId }` envelope. Anything that subclasses `RetryableError` is safe to retry; the SDK's transport already retries them up to `max_retries` with exponential backoff.
+SDK errors expose `request_id`, `status_code`, `code`, and `hint` when the response provides them. `RetryableError` classifies transient failures; it does not make an operation safe to repeat. The Tenacity transport retries eligible reads and event/observation writes with stable identities, using jittered backoff and `Retry-After` within the invocation deadline. Other mutations run once. If your application retries a publish after the SDK call finishes, reuse its original deduplication key or observation identity.
 
 ## Integrations
 

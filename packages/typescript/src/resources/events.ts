@@ -8,7 +8,7 @@ import type { ResourceClient } from "./_client.js";
 export interface PublishParams {
   /** Cancel this invocation, including retry waits. */
   signal?: AbortSignal;
-  /** Stable, caller-supplied identifier — used for dedupe. */
+  /** Operation name or event identifier. Use dedupKey for retry identity. */
   identifier: string;
   /** Free-form JSON body. */
   payload: Record<string, unknown>;
