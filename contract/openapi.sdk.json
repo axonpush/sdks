@@ -18244,7 +18244,7 @@
         "x-axonpush-mcp": true,
         "x-axonpush-policy": {
           "category": "org-config",
-          "grants": "none",
+          "grants": "reject-scoped",
           "scopes": [
             "webhooks:manage"
           ],
@@ -18299,7 +18299,7 @@
         "x-axonpush-mcp": true,
         "x-axonpush-policy": {
           "category": "org-config",
-          "grants": "none",
+          "grants": "reject-scoped",
           "scopes": [
             "webhooks:manage"
           ],
@@ -18354,7 +18354,7 @@
         "x-axonpush-mcp": true,
         "x-axonpush-policy": {
           "category": "org-config",
-          "grants": "none",
+          "grants": "reject-scoped",
           "scopes": [
             "webhooks:manage"
           ],
@@ -18409,7 +18409,7 @@
         "x-axonpush-mcp": true,
         "x-axonpush-policy": {
           "category": "org-config",
-          "grants": "none",
+          "grants": "reject-scoped",
           "scopes": [
             "webhooks:manage"
           ],
@@ -18507,10 +18507,11 @@
         "x-axonpush-mcp": true,
         "x-axonpush-policy": {
           "category": "org-config",
-          "grants": "resource",
+          "grants": "reject-scoped",
           "scopes": [
             "workspaces:manage"
-          ]
+          ],
+          "unboundEnvironment": true
         },
         "x-axonpush-scopes": [
           "workspaces:manage"
@@ -18769,10 +18770,11 @@
         "x-axonpush-mcp": true,
         "x-axonpush-policy": {
           "category": "org-config",
-          "grants": "resource",
+          "grants": "reject-scoped",
           "scopes": [
             "workspaces:manage"
-          ]
+          ],
+          "unboundEnvironment": true
         },
         "x-axonpush-scopes": [
           "workspaces:manage"
@@ -18831,10 +18833,11 @@
         "x-axonpush-mcp": true,
         "x-axonpush-policy": {
           "category": "org-config",
-          "grants": "resource",
+          "grants": "reject-scoped",
           "scopes": [
             "workspaces:manage"
-          ]
+          ],
+          "unboundEnvironment": true
         },
         "x-axonpush-scopes": [
           "workspaces:manage"
@@ -18894,10 +18897,11 @@
         "x-axonpush-mcp": true,
         "x-axonpush-policy": {
           "category": "org-config",
-          "grants": "resource",
+          "grants": "reject-scoped",
           "scopes": [
             "workspaces:manage"
-          ]
+          ],
+          "unboundEnvironment": true
         },
         "x-axonpush-scopes": [
           "workspaces:manage"
@@ -18965,10 +18969,11 @@
         "x-axonpush-mcp": true,
         "x-axonpush-policy": {
           "category": "org-config",
-          "grants": "resource",
+          "grants": "reject-scoped",
           "scopes": [
             "workspaces:manage"
-          ]
+          ],
+          "unboundEnvironment": true
         },
         "x-axonpush-scopes": [
           "workspaces:manage"
@@ -19029,10 +19034,11 @@
         "x-axonpush-mcp": true,
         "x-axonpush-policy": {
           "category": "org-config",
-          "grants": "resource",
+          "grants": "reject-scoped",
           "scopes": [
             "workspaces:manage"
-          ]
+          ],
+          "unboundEnvironment": true
         },
         "x-axonpush-scopes": [
           "workspaces:manage"
@@ -19488,7 +19494,7 @@
         "x-axonpush-mcp": true,
         "x-axonpush-policy": {
           "category": "org-config",
-          "grants": "resource",
+          "grants": "reject-scoped",
           "scopes": [
             "workspaces:manage"
           ]
@@ -19597,10 +19603,11 @@
         "x-axonpush-mcp": true,
         "x-axonpush-policy": {
           "category": "org-config",
-          "grants": "resource",
+          "grants": "reject-scoped",
           "scopes": [
             "workspaces:manage"
-          ]
+          ],
+          "unboundEnvironment": true
         },
         "x-axonpush-scopes": [
           "workspaces:manage"
@@ -19650,10 +19657,11 @@
         "x-axonpush-mcp": true,
         "x-axonpush-policy": {
           "category": "org-config",
-          "grants": "resource",
+          "grants": "reject-scoped",
           "scopes": [
             "workspaces:manage"
-          ]
+          ],
+          "unboundEnvironment": true
         },
         "x-axonpush-scopes": [
           "workspaces:manage"
@@ -19712,10 +19720,11 @@
         "x-axonpush-mcp": true,
         "x-axonpush-policy": {
           "category": "org-config",
-          "grants": "resource",
+          "grants": "reject-scoped",
           "scopes": [
             "workspaces:manage"
-          ]
+          ],
+          "unboundEnvironment": true
         },
         "x-axonpush-scopes": [
           "workspaces:manage"
@@ -19776,10 +19785,11 @@
         "x-axonpush-mcp": true,
         "x-axonpush-policy": {
           "category": "org-config",
-          "grants": "resource",
+          "grants": "reject-scoped",
           "scopes": [
             "workspaces:manage"
-          ]
+          ],
+          "unboundEnvironment": true
         },
         "x-axonpush-scopes": [
           "workspaces:manage"
@@ -19830,10 +19840,11 @@
         "x-axonpush-mcp": true,
         "x-axonpush-policy": {
           "category": "org-config",
-          "grants": "resource",
+          "grants": "reject-scoped",
           "scopes": [
             "workspaces:manage"
-          ]
+          ],
+          "unboundEnvironment": true
         },
         "x-axonpush-scopes": [
           "workspaces:manage"
@@ -19895,10 +19906,11 @@
         "x-axonpush-mcp": true,
         "x-axonpush-policy": {
           "category": "org-config",
-          "grants": "resource",
+          "grants": "reject-scoped",
           "scopes": [
             "workspaces:manage"
-          ]
+          ],
+          "unboundEnvironment": true
         },
         "x-axonpush-scopes": [
           "workspaces:manage"
@@ -20734,10 +20746,11 @@
         "x-axonpush-mcp": true,
         "x-axonpush-policy": {
           "category": "org-config",
-          "grants": "resource",
+          "grants": "reject-scoped",
           "scopes": [
             "workspaces:manage"
-          ]
+          ],
+          "unboundEnvironment": true
         },
         "x-axonpush-scopes": [
           "workspaces:manage"
