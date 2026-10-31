@@ -171,6 +171,8 @@ markers = [
 
 [dependency-groups]
 dev = [
-    "openapi-python-client>=0.21,<1.0",
+    # 0.29 emits Python 3.11-only Self/StrEnum/date parsing. Keep generated
+    # runtime compatible with our supported Python 3.10 floor.
+    "openapi-python-client>=0.28.3,<0.29",
     "types-python-dateutil>=2.9.0.20260408",
 ]

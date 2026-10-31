@@ -45,7 +45,9 @@ internal sealed class AxonPushTransport : IDisposable
         }
         else
         {
-            _httpClient = new HttpClient
+            // Redirect handlers preserve custom API-key headers. Never send them to
+            // a redirect target; callers must configure the canonical API URL.
+            _httpClient = new HttpClient(new HttpClientHandler { AllowAutoRedirect = false })
             {
                 BaseAddress = options.BaseUrl,
                 Timeout = options.Timeout,

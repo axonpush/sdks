@@ -400,3 +400,32 @@ class TestOtelSuppression:
         }
         assert _otel().get_value("suppress_instrumentation") is None
         assert _otel().get_value("suppress_http_instrumentation") is None
+
+
+@pytest.mark.parametrize("status", [301, 302, 303, 307, 308])
+@pytest.mark.parametrize("key", ["ak_synthetic", "pt_synthetic"])
+def test_redirect_does_not_forward_credentials(status: int, key: str) -> None:
+    client = build_sync_client(_settings(api_key=SecretStr(key)))
+    with respx.mock(assert_all_called=False) as router:
+        router.get("http://api.example.test/health").respond(
+            status, headers={"Location": "http://redirect.example.test/stolen"}
+        )
+        destination = router.get("http://redirect.example.test/stolen").respond(200, json={})
+        with pytest.raises(AxonPushError):
+            client.get_httpx_client().get("/health")
+        assert destination.call_count == 0
+    client.get_httpx_client().close()
+
+
+@pytest.mark.parametrize("key", ["ak_synthetic", "pt_synthetic"])
+async def test_async_redirect_does_not_forward_credentials(key: str) -> None:
+    client = build_async_client(_settings(api_key=SecretStr(key)))
+    with respx.mock(assert_all_called=False) as router:
+        router.get("http://api.example.test/health").respond(
+            307, headers={"Location": "http://redirect.example.test/stolen"}
+        )
+        destination = router.get("http://redirect.example.test/stolen").respond(200, json={})
+        with pytest.raises(AxonPushError):
+            await client.get_async_httpx_client().get("/health")
+        assert destination.call_count == 0
+    await client.get_async_httpx_client().aclose()

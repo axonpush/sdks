@@ -18,6 +18,9 @@ public sealed class AxonPushClient : IDisposable, IAsyncDisposable
     {
     }
 
+    /// <summary>Use a caller-owned HTTP client. Its handler must disable automatic redirects
+    /// (<c>AllowAutoRedirect = false</c>) to keep custom API-key headers at the configured endpoint.
+    /// The SDK cannot inspect or change an injected client's handler.</summary>
     public AxonPushClient(AxonPushOptions options, HttpClient? httpClient, ILoggerFactory? loggerFactory = null)
     {
         ArgumentNullException.ThrowIfNull(options);

@@ -57,6 +57,10 @@ public static class AxonPushTelemetry
             otlp.Endpoint = config.TracesEndpoint;
             otlp.Protocol = OtlpExportProtocol.HttpProtobuf;
             otlp.Headers = config.OtlpHeaders();
+            otlp.HttpClientFactory = () => new HttpClient(new HttpClientHandler { AllowAutoRedirect = false })
+            {
+                Timeout = TimeSpan.FromMilliseconds(otlp.TimeoutMilliseconds),
+            };
         });
     }
 

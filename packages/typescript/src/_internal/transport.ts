@@ -72,7 +72,9 @@ function attachInterceptors(client: Client, getSettings: () => ResolvedSettings)
       ].filter(Boolean);
       if (baggage.length > 0) request.headers.set("baggage", baggage.join(","));
     }
-    return request;
+    // Fetch strips standard Authorization on cross-origin redirects, but retains
+    // our custom credential headers. Surface redirects as terminal responses.
+    return new Request(request, { redirect: "manual" });
   });
 
   client.interceptors.error.use((error, response, _request, _options) => {

@@ -48,16 +48,16 @@
   "devDependencies": {
     "@biomejs/biome": "^2.4.10",
     "@hey-api/openapi-ts": "^0.97.0",
-    "@mastra/core": "^1.54.0",
+    "@mastra/core": "^1.81.0",
     "@opentelemetry/exporter-trace-otlp-http": "^0.57.0",
     "@opentelemetry/resources": "^1.30.0",
     "@opentelemetry/sdk-trace-node": "^1.30.0",
     "@opentelemetry/semantic-conventions": "^1.30.0",
     "@types/bun": "latest",
     "@types/node": "^25.5.2",
-    "@vitest/ui": "^4.1.4",
+    "@vitest/ui": "^4.1.12",
     "msw": "^2.13.2",
-    "vitest": "^4.1.4",
+    "vitest": "^4.1.12",
     "winston-transport": "^4.7.0"
   },
   "peerDependencies": {

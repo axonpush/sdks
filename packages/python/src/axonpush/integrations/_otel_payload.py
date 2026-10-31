@@ -26,11 +26,12 @@ import logging
 from typing import Any, Dict, Optional
 
 try:
-    from opentelemetry._logs.severity import (
-        SeverityNumber as _OtelSeverityNumber,
-        std_to_otel as _otel_std_to_otel,
-    )
+    from opentelemetry._logs import severity as _otel_severity
 
+    _OtelSeverityNumber = _otel_severity.SeverityNumber
+    # Some OTel releases do not expose this optional helper. Retain the
+    # existing fallback rather than depending on a private SDK implementation.
+    _otel_std_to_otel = getattr(_otel_severity, "std_to_otel")
     _HAS_OTEL_SEVERITY = True
 except Exception:  # pragma: no cover — extra is optional
     _HAS_OTEL_SEVERITY = False

@@ -26,7 +26,7 @@ interface MockCollector {
   close(): Promise<void>;
 }
 
-async function startCollector(): Promise<MockCollector> {
+async function startCollector(redirectLocation?: string): Promise<MockCollector> {
   const requests: Capture[] = [];
   const server = http.createServer((req, res) => {
     const chunks: Buffer[] = [];
@@ -38,7 +38,10 @@ async function startCollector(): Promise<MockCollector> {
       }
       if ((req.url ?? "").replace(/\/+$/, "").endsWith("/v1/traces")) {
         requests.push({ headers: req.headers, body });
-        res.writeHead(200, { "Content-Type": "application/x-protobuf" });
+        res.writeHead(redirectLocation ? 307 : 200, {
+          "Content-Type": "application/x-protobuf",
+          ...(redirectLocation ? { Location: redirectLocation } : {}),
+        });
         res.end();
       } else {
         res.writeHead(404);
@@ -279,4 +282,25 @@ it("starts GenAI calls with the official CLIENT kind", () => {
     { operation: "chat", requestModel: "synthetic" },
   );
   expect(actual).toBe(SpanKind.CLIENT);
+});
+
+it("native OTLP exporter does not forward credentials to redirect targets", async () => {
+  const destination = await startCollector();
+  const origin = await startCollector(`${destination.baseUrl}/v1/traces`);
+  const handle = await configureTelemetry({
+    baseUrl: origin.baseUrl,
+    apiKey: "ak_synthetic",
+    tracerProvider: freshProvider(),
+  });
+  try {
+    const span = handle.tracer().startSpan("redirect-test");
+    span.end();
+    await handle.flush(5000);
+    expect(origin.requests).toHaveLength(1);
+    expect(destination.requests).toHaveLength(0);
+  } finally {
+    await handle.shutdown();
+    await origin.close();
+    await destination.close();
+  }
 });

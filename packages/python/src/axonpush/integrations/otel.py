@@ -152,6 +152,8 @@ class AxonPushSpanExporter(SpanExporter):
 
     def _export_one(self, span: ReadableSpan) -> None:
         ctx = span.get_span_context()  # type: ignore[no-untyped-call, unused-ignore]
+        if ctx is None:
+            raise ValueError("Cannot export a span without a span context")
         trace_id = format(ctx.trace_id, "032x")
         span_id = format(ctx.span_id, "016x")
 

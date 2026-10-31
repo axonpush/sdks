@@ -224,6 +224,7 @@ def build_sync_client(settings: Settings) -> AuthenticatedClient:
     httpx_client = httpx.Client(
         base_url=base_url,
         headers=headers,
+        follow_redirects=False,
         timeout=_make_timeout(settings),
         event_hooks={
             "request": [_inject_request_headers],
@@ -260,6 +261,7 @@ def build_async_client(settings: Settings) -> AuthenticatedClient:
     httpx_client = httpx.AsyncClient(
         base_url=base_url,
         headers=headers,
+        follow_redirects=False,
         timeout=_make_timeout(settings),
         event_hooks={
             "request": [_async_inject_request_headers],

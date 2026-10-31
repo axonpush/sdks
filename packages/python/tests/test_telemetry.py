@@ -378,3 +378,37 @@ def test_configure_telemetry_is_idempotent(otlp_server):
     assert len(matching) == 1, (
         f"span exported {len(matching)} times; span processor double-registered"
     )
+
+
+def test_otlp_redirect_never_forwards_credentials(otlp_server):
+    destination_url, capture = otlp_server
+
+    class Redirect(BaseHTTPRequestHandler):
+        def do_POST(self):  # noqa: N802
+            self.rfile.read(int(self.headers.get("Content-Length", "0")))
+            self.send_response(307)
+            self.send_header("Location", destination_url + "/v1/traces")
+            self.end_headers()
+
+        def log_message(self, *args):
+            pass
+
+    origin = ThreadingHTTPServer(("127.0.0.1", 0), Redirect)
+    thread = threading.Thread(target=origin.serve_forever, daemon=True)
+    thread.start()
+    provider = _new_provider()
+    try:
+        handle = configure_telemetry(
+            base_url=f"http://127.0.0.1:{origin.server_port}",
+            api_key="ak_synthetic",
+            tracer_provider=provider,
+        )
+        with provider.get_tracer("redirect-test").start_as_current_span("synthetic"):
+            pass
+        handle.flush()
+        assert capture.snapshot() == []
+    finally:
+        provider.shutdown()
+        origin.shutdown()
+        origin.server_close()
+        thread.join(timeout=5)

@@ -253,7 +253,7 @@ class AxonPushCallbackHandler(BaseCallbackHandler):
 
     def on_llm_new_token(
         self,
-        token: str,
+        token: str | list[str | dict[str, Any]],
         *,
         run_id: UUID,
         parent_run_id: Optional[UUID] = None,
@@ -485,7 +485,7 @@ class AsyncAxonPushCallbackHandler(AsyncCallbackHandler):
 
     async def on_llm_new_token(
         self,
-        token: str,
+        token: str | list[str | dict[str, Any]],
         *,
         run_id: UUID,
         parent_run_id: Optional[UUID] = None,
