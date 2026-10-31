@@ -25,11 +25,16 @@ public class RedirectSecurityTests
         });
         using var client = new AxonPushClient(new AxonPushOptions
         {
-            BaseUrl = origin.Url, ApiKey = key, TenantId = "synthetic", MaxRetries = 2,
+            BaseUrl = origin.Url,
+            ApiKey = key,
+            TenantId = "synthetic",
+            MaxRetries = 2,
         });
         var result = await client.Events.PublishAsync(new PublishRequest
         {
-            Identifier = "synthetic", Payload = new Dictionary<string, object?>(), ChannelId = "synthetic",
+            Identifier = "synthetic",
+            Payload = new Dictionary<string, object?>(),
+            ChannelId = "synthetic",
         });
         Assert.False(result.Success);
         Assert.Equal((HttpStatusCode)status, result.StatusCode);
