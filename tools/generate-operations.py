@@ -14,7 +14,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 spec = json.loads((ROOT / "contract/openapi.sdk.json").read_text())
 schemas = spec["components"]["schemas"]
-groups = {"workspaces": "Workspaces", "templates": "Templates", "observations": "Observations", "activity": "Activity", "telemetry": "Telemetry"}
+groups = {"workspaces": "Workspaces", "templates": "Templates", "observations": "Observations", "activity": "Activity", "telemetry": "Telemetry", "capabilities": "Capabilities"}
 ops: dict[str, list[dict]] = {g: [] for g in groups}
 
 
@@ -52,6 +52,9 @@ for path, item in spec["paths"].items():
         ops[group].append(dict(oid=oid, path=path, verb=verb, name=oid.split(".")[-1], body=ref(body), body_required=body_required, response=ref(response), params=operation.get("parameters", []), tag=operation["tags"][0], summary=operation.get("summary", "")))
 
 for group, cls in groups.items():
+    # Capabilities keeps its published get() facade and pure discovery helper.
+    if group == "capabilities":
+        continue
     operations = ops[group]
     if not operations:
         raise SystemExit(f"Missing operations group {group}")

@@ -44,7 +44,13 @@ from axonpush.resources.activity import Activity, AsyncActivity
 from axonpush.resources.alerts import Alerts, AsyncAlerts
 from axonpush.resources.analytics import Analytics, AsyncAnalytics
 from axonpush.resources.apps import Apps, AsyncApps
-from axonpush.resources.capabilities import AsyncCapabilities, Capabilities
+from axonpush.resources.capabilities import (
+    AsyncCapabilities,
+    Capabilities,
+    OperationAvailability,
+    operation_availability,
+)
+from axonpush._internal.api.models import OperationCapabilities
 from axonpush.resources.channels import AsyncChannels, Channels
 from axonpush.resources.environments import AsyncEnvironments, Environments
 from axonpush.resources.errors import AsyncErrors, Errors
@@ -103,6 +109,9 @@ __all__ = [
     "AxonPush",
     "AxonPushError",
     "Capabilities",
+    "OperationCapabilities",
+    "OperationAvailability",
+    "operation_availability",
     "Channel",
     "Channels",
     "Environment",
