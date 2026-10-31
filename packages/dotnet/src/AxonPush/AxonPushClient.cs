@@ -18,6 +18,9 @@ public sealed class AxonPushClient : IDisposable, IAsyncDisposable
     {
     }
 
+    /// <summary>Use a caller-owned HTTP client. Its handler must disable automatic redirects
+    /// (<c>AllowAutoRedirect = false</c>) to keep custom API-key headers at the configured endpoint.
+    /// The SDK cannot inspect or change an injected client's handler.</summary>
     public AxonPushClient(AxonPushOptions options, HttpClient? httpClient, ILoggerFactory? loggerFactory = null)
     {
         ArgumentNullException.ThrowIfNull(options);
@@ -28,6 +31,7 @@ public sealed class AxonPushClient : IDisposable, IAsyncDisposable
         Observations = new ObservationsResource(_transport);
         Activity = new ActivityResource(_transport);
         Telemetry = new TelemetryResource(_transport);
+        Capabilities = new CapabilitiesResource(_transport);
 
     }
 
@@ -38,6 +42,7 @@ public sealed class AxonPushClient : IDisposable, IAsyncDisposable
     public ObservationsResource Observations { get; }
     public ActivityResource Activity { get; }
     public TelemetryResource Telemetry { get; }
+    public CapabilitiesResource Capabilities { get; }
 
 
     public void Dispose()

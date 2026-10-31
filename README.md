@@ -29,6 +29,8 @@ not hand-edit it. The generated client layers and .NET `Operations/*.g.cs` DTOs
 are likewise off limits; change the server, let the contract follow, and let
 codegen do the rest.
 
+[Caller operation discovery](docs/operation-capabilities.md) provides advisory permissions for the authenticated caller without changing the SDK method surface.
+
 Business operation wrappers are generated with `tools/generate-operations.py`.
 What you write by hand is the layer on top: framework integrations, resource
 helpers and the error tree. Those are what make the SDK pleasant

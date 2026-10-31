@@ -1,3 +1,6 @@
+using AxonPush.Operations;
+using Polly;
+using Polly.Retry;
 using System.Diagnostics;
 using System.Net;
 using System.Net.Http.Json;
@@ -27,14 +30,12 @@ internal sealed class AxonPushTransport : IDisposable
     private readonly HttpClient _httpClient;
     private readonly bool _ownsHttpClient;
     private readonly AxonPushOptions _options;
-    private readonly RetryPolicy _retryPolicy;
     private readonly ILogger<AxonPushTransport> _logger;
 
     public AxonPushTransport(AxonPushOptions options, HttpClient? injectedClient, ILoggerFactory? loggerFactory)
     {
         options.Validate();
         _options = options;
-        _retryPolicy = new RetryPolicy(options.MaxRetries);
         _logger = (loggerFactory ?? NullLoggerFactory.Instance).CreateLogger<AxonPushTransport>();
 
         if (injectedClient is not null)
@@ -44,7 +45,9 @@ internal sealed class AxonPushTransport : IDisposable
         }
         else
         {
-            _httpClient = new HttpClient
+            // Redirect handlers preserve custom API-key headers. Never send them to
+            // a redirect target; callers must configure the canonical API URL.
+            _httpClient = new HttpClient(new HttpClientHandler { AllowAutoRedirect = false })
             {
                 BaseAddress = options.BaseUrl,
                 Timeout = options.Timeout,
@@ -58,158 +61,85 @@ internal sealed class AxonPushTransport : IDisposable
         }
     }
 
-    public async Task<PublishResult> PostEventAsync(PublishRequest request, CancellationToken userCancellation)
+    private async Task<(HttpResponseMessage Response, int Attempts)> SendWithRetryAsync(
+        Func<HttpRequestMessage> create, bool retrySafe, CancellationToken userCancellation)
     {
-        var attempt = 0;
-        Exception? lastException = null;
-        HttpStatusCode? lastStatus = null;
-        string? lastError = null;
-
-        while (attempt < _retryPolicy.TotalAttempts)
+        using var budget = CancellationTokenSource.CreateLinkedTokenSource(userCancellation);
+        budget.CancelAfter(_options.Timeout);
+        var attempts = 0;
+        var pipeline = new ResiliencePipelineBuilder<HttpResponseMessage>()
+            .AddRetry(new RetryStrategyOptions<HttpResponseMessage>
+            {
+                MaxRetryAttempts = Math.Max(1, _options.MaxRetries),
+                Delay = TimeSpan.FromMilliseconds(250),
+                MaxDelay = TimeSpan.FromSeconds(4),
+                BackoffType = DelayBackoffType.Exponential,
+                UseJitter = true,
+                ShouldHandle = args => ValueTask.FromResult(retrySafe && _options.MaxRetries > 0 &&
+                    (args.Outcome.Result is { } response ? RetryPolicy.ShouldRetry(response) :
+                    args.Outcome.Exception is { } ex && RetryPolicy.ShouldRetry(ex, budget.Token))),
+                DelayGenerator = args => ValueTask.FromResult<TimeSpan?>(args.Outcome.Result is { } response && response.Headers.RetryAfter is not null
+                    ? RetryPolicy.ParseRetryAfter(response, TimeSpan.Zero) : null),
+                OnRetry = args => { args.Outcome.Result?.Dispose(); return default; },
+            }).Build();
+        try
         {
-            attempt++;
-            try
+            var result = await pipeline.ExecuteAsync(async token =>
             {
-                using var message = new HttpRequestMessage(HttpMethod.Post, EventsPath)
-                {
-                    Content = JsonContent.Create(request, options: AxonPushJsonOptions.Default),
-                };
+                attempts++;
+                using var message = create();
                 StampHeaders(message);
-                if (!string.IsNullOrWhiteSpace(request.Environment))
-                {
-                    message.Headers.Remove("X-Axonpush-Environment");
-                    message.Headers.Add("X-Axonpush-Environment", request.Environment);
-                }
-
-                using var response = await _httpClient.SendAsync(message, userCancellation).ConfigureAwait(false);
-                if (response.IsSuccessStatusCode)
-                {
-                    return PublishResult.Ok(response.StatusCode, attempt);
-                }
-
-                lastStatus = response.StatusCode;
-                lastError = await ReadBodyAsync(response).ConfigureAwait(false);
-
-                if (!RetryPolicy.ShouldRetry(response) || attempt >= _retryPolicy.TotalAttempts)
-                {
-                    return HandleFailure(
-                        new AxonPushException($"AxonPush publish failed with {(int)response.StatusCode} {response.ReasonPhrase}.")
-                        {
-                            StatusCode = response.StatusCode,
-                            ResponseBody = lastError,
-                        },
-                        attempt);
-                }
-
-                var delay = RetryPolicy.ParseRetryAfter(response, RetryPolicy.DelayFor(attempt));
-                await Task.Delay(delay, userCancellation).ConfigureAwait(false);
-            }
-            catch (OperationCanceledException) when (userCancellation.IsCancellationRequested)
-            {
-                throw;
-            }
-            catch (Exception ex) when (RetryPolicy.ShouldRetry(ex, userCancellation))
-            {
-                lastException = ex;
-                lastError = ex.Message;
-                if (attempt >= _retryPolicy.TotalAttempts)
-                {
-                    return HandleFailure(new AxonPushException("AxonPush publish failed after retries.", ex), attempt);
-                }
-
-                var delay = RetryPolicy.DelayFor(attempt);
-                await Task.Delay(delay, userCancellation).ConfigureAwait(false);
-            }
-            catch (Exception ex)
-            {
-                return HandleFailure(new AxonPushException("AxonPush publish failed.", ex), attempt);
-            }
+                return await _httpClient.SendAsync(message, token).ConfigureAwait(false);
+            }, budget.Token).ConfigureAwait(false);
+            return (result, attempts);
         }
-
-        return HandleFailure(
-            new AxonPushException(lastError ?? "AxonPush publish failed.", lastException ?? new InvalidOperationException("retries exhausted")),
-            attempt);
+        catch (OperationCanceledException) when (!userCancellation.IsCancellationRequested)
+        {
+            throw new AxonPushException("AxonPush invocation timed out.") { Data = { ["AxonPush.Attempts"] = attempts } };
+        }
+        catch (Exception ex) { ex.Data["AxonPush.Attempts"] = attempts; throw; }
     }
 
-    /// <summary>
-    /// Drives a typed request through the same retry ladder and header stamping as
-    /// <see cref="PostEventAsync"/>. Unlike event publishing this never fails open:
-    /// gate reads and writes are control-plane calls whose result the caller needs,
-    /// so a terminal failure throws <see cref="AxonPushException"/> rather than
-    /// handing back a silent null.
-    /// </summary>
-    public async Task<TResponse?> SendAsync<TResponse>(
-        HttpMethod method,
-        string path,
-        object? body,
-        CancellationToken userCancellation)
-        where TResponse : class
+    public async Task<PublishResult> PostEventAsync(PublishRequest request, CancellationToken userCancellation)
     {
-        var attempt = 0;
-        Exception? lastException = null;
-        string? lastError = null;
-
-        while (attempt < _retryPolicy.TotalAttempts)
+        request = request with { DedupKey = string.IsNullOrEmpty(request.DedupKey) ? Guid.NewGuid().ToString() : request.DedupKey };
+        var attempts = 0;
+        try
         {
-            attempt++;
-            try
+            var result = await SendWithRetryAsync(() =>
             {
-                using var message = new HttpRequestMessage(method, path);
-                if (body is not null)
-                {
-                    message.Content = JsonContent.Create(body, body.GetType(), options: AxonPushJsonOptions.Default);
-                }
-
-                StampHeaders(message);
-
-                using var response = await _httpClient.SendAsync(message, userCancellation).ConfigureAwait(false);
-                if (response.IsSuccessStatusCode)
-                {
-                    if (response.StatusCode == HttpStatusCode.NoContent)
-                    {
-                        return null;
-                    }
-
-                    return await response.Content
-                        .ReadFromJsonAsync<TResponse>(AxonPushJsonOptions.Default, userCancellation)
-                        .ConfigureAwait(false);
-                }
-
-                lastError = await ReadBodyAsync(response).ConfigureAwait(false);
-
-                if (!RetryPolicy.ShouldRetry(response) || attempt >= _retryPolicy.TotalAttempts)
-                {
-                    throw new AxonPushException($"AxonPush request to {path} failed with {(int)response.StatusCode} {response.ReasonPhrase}.")
-                    {
-                        StatusCode = response.StatusCode,
-                        ResponseBody = lastError,
-                    };
-                }
-
-                var delay = RetryPolicy.ParseRetryAfter(response, RetryPolicy.DelayFor(attempt));
-                await Task.Delay(delay, userCancellation).ConfigureAwait(false);
-            }
-            catch (OperationCanceledException) when (userCancellation.IsCancellationRequested)
-            {
-                throw;
-            }
-            catch (Exception ex) when (RetryPolicy.ShouldRetry(ex, userCancellation))
-            {
-                lastException = ex;
-                lastError = ex.Message;
-                if (attempt >= _retryPolicy.TotalAttempts)
-                {
-                    throw new AxonPushException($"AxonPush request to {path} failed after retries.", ex);
-                }
-
-                var delay = RetryPolicy.DelayFor(attempt);
-                await Task.Delay(delay, userCancellation).ConfigureAwait(false);
-            }
+                var message = new HttpRequestMessage(HttpMethod.Post, EventsPath) { Content = JsonContent.Create(request, options: AxonPushJsonOptions.Default) };
+                if (!string.IsNullOrWhiteSpace(request.Environment)) message.Headers.Add("X-Axonpush-Environment", request.Environment);
+                return message;
+            }, true, userCancellation).ConfigureAwait(false);
+            attempts = result.Attempts;
+            using var response = result.Response;
+            if (response.IsSuccessStatusCode) return PublishResult.Ok(response.StatusCode, attempts);
+            return HandleFailure(new AxonPushException($"AxonPush publish failed with {(int)response.StatusCode} {response.ReasonPhrase}.")
+            { StatusCode = response.StatusCode, ResponseBody = await ReadBodyAsync(response).ConfigureAwait(false) }, attempts);
         }
+        catch (OperationCanceledException) when (userCancellation.IsCancellationRequested) { throw; }
+        catch (AxonPushException ex) { return HandleFailure(ex, ex.Data["AxonPush.Attempts"] as int? ?? attempts); }
+        catch (Exception ex) { return HandleFailure(new AxonPushException("AxonPush publish failed.", ex), ex.Data["AxonPush.Attempts"] as int? ?? attempts); }
+    }
 
-        throw new AxonPushException(
-            lastError ?? $"AxonPush request to {path} failed.",
-            lastException ?? new InvalidOperationException("retries exhausted"));
+    /// <summary>Typed control-plane operations never fail open.</summary>
+    public async Task<TResponse?> SendAsync<TResponse>(HttpMethod method, string path, object? body, CancellationToken userCancellation) where TResponse : class
+    {
+        try
+        {
+            var result = await SendWithRetryAsync(() => new HttpRequestMessage(method, path)
+            { Content = body is null ? null : JsonContent.Create(body, body.GetType(), options: AxonPushJsonOptions.Default) }, method == HttpMethod.Get || method == HttpMethod.Head ||
+                (method == HttpMethod.Post && path.StartsWith("workspaces/", StringComparison.Ordinal) && path.EndsWith("/observations", StringComparison.Ordinal) && body is WorkspaceIngestInputBody batch && batch.Observations is not null && batch.Observations.All(item => !string.IsNullOrEmpty(item.SourceEventId))), userCancellation).ConfigureAwait(false);
+            using var response = result.Response;
+            if (!response.IsSuccessStatusCode) throw new AxonPushException($"AxonPush request to {path} failed with {(int)response.StatusCode} {response.ReasonPhrase}.")
+            { StatusCode = response.StatusCode, ResponseBody = await ReadBodyAsync(response).ConfigureAwait(false) };
+            if (response.StatusCode == HttpStatusCode.NoContent) return null;
+            return await response.Content.ReadFromJsonAsync<TResponse>(AxonPushJsonOptions.Default, userCancellation).ConfigureAwait(false);
+        }
+        catch (OperationCanceledException) when (userCancellation.IsCancellationRequested) { throw; }
+        catch (AxonPushException) { throw; }
+        catch (Exception ex) { throw new AxonPushException($"AxonPush request to {path} failed.", ex); }
     }
 
     /// <summary>Observation acceptance fails open on connection failure when configured.</summary>

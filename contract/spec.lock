@@ -1,6 +1,6 @@
 {
   "source": "axonpush/server",
-  "sha": "0ff666ba9043f532aaa37adac9bd8e16222c8374",
-  "ref": "perf/api-consumption-bounds",
-  "sha256": "c2352011e9e050c5f626a0e9b31c55e06d91b2a79b70c8fc170f764aa5678e6f"
+  "sha": "58b997b98bfb9a5311007101e6c1afb8cde34b7f",
+  "ref": "perf/bounded-read-work-20261031",
+  "sha256": "95fd58241792a043e8058767f90c86c329dcfb766a47f079c0d99635ad2b043f"
 }

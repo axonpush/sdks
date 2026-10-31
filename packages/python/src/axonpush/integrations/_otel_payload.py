@@ -26,11 +26,12 @@ import logging
 from typing import Any, Dict, Optional
 
 try:
-    from opentelemetry._logs.severity import (
-        SeverityNumber as _OtelSeverityNumber,
-        std_to_otel as _otel_std_to_otel,
-    )
+    from opentelemetry._logs import severity as _otel_severity
 
+    _OtelSeverityNumber = _otel_severity.SeverityNumber
+    # Some OTel releases do not expose this optional helper. Retain the
+    # existing fallback rather than depending on a private SDK implementation.
+    _otel_std_to_otel = getattr(_otel_severity, "std_to_otel")
     _HAS_OTEL_SEVERITY = True
 except Exception:  # pragma: no cover — extra is optional
     _HAS_OTEL_SEVERITY = False
@@ -98,11 +99,22 @@ def build_log_payload(
     }
     if time_unix_nano is not None:
         payload["timeUnixNano"] = time_unix_nano
-    if attributes:
-        payload["attributes"] = _stringify_values(attributes)
+    payload = record_with_attributes(payload, attributes)
     if resource:
         payload["resource"] = _stringify_values(resource)
     return payload
+
+
+def record_with_attributes(
+    fields: Dict[str, Any], attributes: Optional[Dict[str, Any]], *, required: bool = False
+) -> Dict[str, Any]:
+    """Adapt attributes for the legacy event plane shared by logs and spans.
+
+    This intentionally keeps the event API dictionary shape, not OTLP AnyValue.
+    """
+    if attributes or required:
+        fields["attributes"] = _stringify_values(attributes or {})
+    return fields
 
 
 def _serializable_body(value: Any) -> Any:

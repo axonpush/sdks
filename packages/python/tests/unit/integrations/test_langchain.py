@@ -55,10 +55,12 @@ class TestSyncHandler:
         assert call["identifier"] == "tool.search.start"
         assert call["event_type"].value == "agent.tool_call.start"
 
-    def test_llm_token_event(self, fake_sync_client: FakeSyncClient) -> None:
+    @pytest.mark.parametrize("token", ["hello", [{"type": "text", "text": "hello"}]])
+    def test_llm_token_event(self, fake_sync_client: FakeSyncClient, token) -> None:
         h = AxonPushCallbackHandler(fake_sync_client, "ch_x", mode="sync")
-        h.on_llm_new_token("hello", run_id=uuid.uuid4())
+        h.on_llm_new_token(token, run_id=uuid.uuid4())
         assert fake_sync_client.events.calls[0]["event_type"].value == "agent.llm.token"
+        assert fake_sync_client.events.calls[0]["payload"]["token"] == token
 
     def test_publish_failure_swallowed(self, fake_sync_client: FakeSyncClient) -> None:
         fake_sync_client.events.exception = RuntimeError("nope")

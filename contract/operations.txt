@@ -55,7 +55,13 @@ apps.update
 audit.list
 audit.verify
 audittrail.get
+billing.checkout
+billing.plans
+billing.portal
+billing.usage
+billing.webhook
 capabilities.get
+capabilities.operations
 channels.create
 channels.delete
 channels.get

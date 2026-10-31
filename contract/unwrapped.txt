@@ -76,3 +76,10 @@ admin.users.restore
 
 # Dashboard session bootstrap; not an API-key SDK operation.
 session.bootstrap
+
+# Hosted billing UI and provider webhook; generated methods exist without SDK conveniences.
+billing.checkout
+billing.plans
+billing.portal
+billing.usage
+billing.webhook

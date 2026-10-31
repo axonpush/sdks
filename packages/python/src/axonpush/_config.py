@@ -44,8 +44,8 @@ class Settings(BaseSettings):
     tenant_id: str | None = None
     base_url: HttpUrl = HttpUrl("https://api.axonpush.xyz")
     environment: str | None = None
-    timeout: float = 30.0
-    max_retries: int = 3
+    timeout: float = Field(default=30.0, gt=0, allow_inf_nan=False)
+    max_retries: int = Field(default=3, ge=0)
     fail_open: bool = True
     content_capture_mode: ContentCaptureMode = "metadata_only"
     redact_keys: Annotated[list[str], NoDecode] = Field(default_factory=list)

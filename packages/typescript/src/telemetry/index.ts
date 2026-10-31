@@ -48,6 +48,7 @@
  * (or wrap the handler with `flushAfterInvocation`).
  */
 
+import { createRequire } from "node:module";
 import { type ResolvedSettings, resolveSettings } from "../config.js";
 import { detectServerless, flushAfterInvocation } from "../integrations/_publisher.js";
 import { logger as sdkLogger } from "../logger.js";
@@ -113,7 +114,10 @@ export interface TelemetryHandle {
 //: Guards against attaching our processor to the same (endpoint, channel)
 //: twice — e.g. when `configureTelemetry` is called from multiple modules
 //: that all reuse the global provider.
-const INSTALLED = new Set<string>();
+const INSTALLED = new WeakMap<
+  ProviderLike,
+  Map<string, { processor: OtelProcessor; apiKey: string | undefined; refs: number }>
+>();
 
 interface ProviderLike extends TracerProvider {
   addSpanProcessor?(processor: OtelProcessor): void;
@@ -273,27 +277,46 @@ function installProcessor(
   provider: ProviderLike,
   cfg: { endpoint: string; apiKey: string | undefined; channelId: string | undefined },
 ): OtelProcessor {
-  const headers: Record<string, string> = {};
-  if (cfg.apiKey) headers["X-API-Key"] = cfg.apiKey;
-  if (cfg.channelId) headers["X-Axonpush-Channel"] = cfg.channelId;
-
-  const exporter = new otel.OTLPTraceExporter({
-    url: cfg.endpoint,
-    headers,
-    compression: "gzip",
-  });
-  const processor = new otel.BatchSpanProcessor(exporter);
-
   const key = `${cfg.endpoint}|${cfg.channelId ?? ""}`;
-  if (INSTALLED.has(key)) {
-    sdkLogger.debug(
-      `axonpush telemetry already installed for ${key}; skipping duplicate processor`,
-    );
-  } else if (typeof provider.addSpanProcessor === "function") {
-    provider.addSpanProcessor(processor);
-    INSTALLED.add(key);
+  let registry = INSTALLED.get(provider);
+  if (!registry) {
+    registry = new Map();
+    INSTALLED.set(provider, registry);
   }
-  return processor;
+  let entry = registry.get(key);
+  if (entry && entry.apiKey !== cfg.apiKey)
+    throw new Error("Telemetry provider already configured with different credentials");
+  if (!entry) {
+    if (typeof provider.addSpanProcessor !== "function")
+      throw new Error("Tracer provider does not support installing a span processor");
+    const headers: Record<string, string> = {};
+    if (cfg.apiKey) headers["X-API-Key"] = cfg.apiKey;
+    if (cfg.channelId) headers["X-Axonpush-Channel"] = cfg.channelId;
+    const exporter = new otel.OTLPTraceExporter({
+      url: cfg.endpoint,
+      headers,
+      compression: "gzip",
+    });
+    const processor = new otel.BatchSpanProcessor(exporter);
+    provider.addSpanProcessor(processor);
+    entry = { processor, apiKey: cfg.apiKey, refs: 0 };
+    registry.set(key, entry);
+  }
+  entry.refs++;
+  const installed = entry;
+  const entries = registry;
+  let stopped = false;
+  return {
+    forceFlush: () => installed.processor.forceFlush(),
+    shutdown: async () => {
+      if (stopped) return;
+      stopped = true;
+      if (--installed.refs === 0) {
+        entries.delete(key);
+        await installed.processor.shutdown();
+      }
+    },
+  };
 }
 
 function forceFlush(processor: OtelProcessor, timeoutMs: number): Promise<boolean> {
@@ -314,8 +337,8 @@ function forceFlush(processor: OtelProcessor, timeoutMs: number): Promise<boolea
 
 // --- GenAI semantic-convention helpers -------------------------------------
 
-/** `SpanKind.CLIENT` from `@opentelemetry/api` (stable across versions). */
-const SPAN_KIND_CLIENT = 3;
+// Resolve optional OTel only when a telemetry helper is called.
+const requireOtel = createRequire(import.meta.url);
 
 export interface GenaiSpanOptions {
   operation: string;
@@ -346,9 +369,10 @@ export function genaiSpan(tracer: Tracer, options: GenaiSpanOptions): TelemetryS
   }
   if (options.agentName) attributes["gen_ai.agent.name"] = options.agentName;
 
-  // SpanKind.CLIENT is stably 3 across OTel API versions; hard-coded so this
-  // helper needs no reference to the (optional) `@opentelemetry/api` enum.
-  return tracer.startSpan(name, { kind: SPAN_KIND_CLIENT, attributes });
+  const { SpanKind } = requireOtel("@opentelemetry/api") as {
+    SpanKind: { CLIENT: number };
+  };
+  return tracer.startSpan(name, { kind: SpanKind.CLIENT, attributes });
 }
 
 export interface GenaiResponseOptions {

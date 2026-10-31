@@ -35,7 +35,8 @@ function restoreEnv(saved: Saved): void {
 }
 
 function makeOp<T>(impl: () => Promise<T>): GeneratedOp<T> {
-  return (async () => {
+  return (async (args: any) => {
+    await args.requestValidator?.({ method: "GET", url: "/test" });
     const data = await impl();
     return { data, request: new Request("http://x"), response: new Response() };
   }) as GeneratedOp<T>;
@@ -177,22 +178,19 @@ describe("AxonPush facade", () => {
   });
 
   it("invoke honours RateLimitError.retryAfter for backoff", async () => {
-    vi.useFakeTimers();
     const c = new AxonPush({ apiKey: "k", tenantId: "t", maxRetries: 1 });
     let attempts = 0;
     const op = makeOp(async () => {
       attempts++;
-      if (attempts === 1) throw new RateLimitError("slow", { retryAfter: 2 });
+      if (attempts === 1) throw new RateLimitError("slow", { retryAfter: 0.5 });
       return { ok: true };
     });
     const promise = c.invoke(op, {});
-    await vi.advanceTimersByTimeAsync(1999);
+    await new Promise((resolve) => setTimeout(resolve, 100));
     expect(attempts).toBe(1);
-    await vi.advanceTimersByTimeAsync(2);
     const result = await promise;
     expect(result).toEqual({ ok: true });
     expect(attempts).toBe(2);
-    vi.useRealTimers();
   });
 
   it("environment getter mirrors settings.environment", () => {

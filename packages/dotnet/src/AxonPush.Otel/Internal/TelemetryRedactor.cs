@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Globalization;
+using System.Text;
 using System.Text.Json;
 using System.Text.RegularExpressions;
 using AxonPush.Otel.Telemetry;
@@ -56,11 +57,12 @@ internal static partial class TelemetryRedactor
                     var limit = inContent
                         ? Math.Min(ContentPreviewLength, maxContentLength)
                         : maxContentLength;
-                    if (text.Length > limit)
+                    var runes = text.EnumerateRunes().ToArray();
+                    if (runes.Length > limit)
                     {
                         var previewBound = inContent && ContentPreviewLength < maxContentLength;
                         var marker = previewBound ? "[REDACTED_PREVIEW]" : "[TRUNCATED]";
-                        return $"{text[..limit]}…{marker}";
+                        return $"{string.Concat(runes.Take(limit).Select(rune => rune.ToString()))}…{marker}";
                     }
                     return text;
                 }

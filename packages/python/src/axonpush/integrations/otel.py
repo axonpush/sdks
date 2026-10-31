@@ -55,7 +55,7 @@ except ImportError:
     ) from None
 
 from axonpush._tracing import get_or_create_trace
-from axonpush.integrations._otel_payload import _stringify_values
+from axonpush.integrations._otel_payload import _stringify_values, record_with_attributes
 from axonpush.integrations._publisher import (
     BackgroundPublisher,
     DEFAULT_QUEUE_SIZE,
@@ -152,6 +152,8 @@ class AxonPushSpanExporter(SpanExporter):
 
     def _export_one(self, span: ReadableSpan) -> None:
         ctx = span.get_span_context()  # type: ignore[no-untyped-call, unused-ignore]
+        if ctx is None:
+            raise ValueError("Cannot export a span without a span context")
         trace_id = format(ctx.trace_id, "032x")
         span_id = format(ctx.span_id, "016x")
 
@@ -164,57 +166,47 @@ class AxonPushSpanExporter(SpanExporter):
         status_code = int(span.status.status_code.value) if span.status else 0
         status_message = span.status.description or "" if span.status else ""
 
-        attributes: Dict[str, Any] = {}
-        if span.attributes:
-            for key, value in span.attributes.items():
-                attributes[key] = value
-
-        resource: Dict[str, Any] = {}
-        if span.resource and span.resource.attributes:
-            for key, value in span.resource.attributes.items():
-                resource[key] = value
-        resource.update(self._resource_override)
-
-        events_out = []
-        for ev in span.events or []:
-            ev_attrs: Dict[str, Any] = {}
-            if ev.attributes:
-                for key, value in ev.attributes.items():
-                    ev_attrs[key] = value
-            events_out.append(
-                {
-                    "timeUnixNano": str(ev.timestamp),
-                    "name": ev.name,
-                    "attributes": _stringify_values(ev_attrs),
-                }
+        attributes = dict(span.attributes or {})
+        resource = {
+            **dict(span.resource.attributes if span.resource else {}),
+            **self._resource_override,
+        }
+        events_out = [
+            record_with_attributes(
+                {"timeUnixNano": str(event.timestamp), "name": event.name},
+                dict(event.attributes or {}),
+                required=True,
             )
-
-        links_out = []
-        for link in span.links or []:
-            link_attrs: Dict[str, Any] = {}
-            if link.attributes:
-                for key, value in link.attributes.items():
-                    link_attrs[key] = value
-            links_out.append(
+            for event in span.events or []
+        ]
+        links_out = [
+            record_with_attributes(
                 {
                     "traceId": format(link.context.trace_id, "032x"),
                     "spanId": format(link.context.span_id, "016x"),
-                    "attributes": _stringify_values(link_attrs),
-                }
+                },
+                dict(link.attributes or {}),
+                required=True,
             )
+            for link in span.links or []
+        ]
 
-        kind_value = int(span.kind.value) if span.kind else 0
+        # SpanKind API is zero-based; the event wire contract uses OTLP proto 1..5.
+        kind_value = int(span.kind.value) + 1 if span.kind else 0
 
-        payload: Dict[str, Any] = {
-            "traceId": trace_id,
-            "spanId": span_id,
-            "name": span.name,
-            "kind": kind_value,
-            "startTimeUnixNano": str(span.start_time) if span.start_time else None,
-            "endTimeUnixNano": str(span.end_time) if span.end_time else None,
-            "status": {"code": status_code, "message": status_message},
-            "attributes": _stringify_values(attributes),
-        }
+        payload = record_with_attributes(
+            {
+                "traceId": trace_id,
+                "spanId": span_id,
+                "name": span.name,
+                "kind": kind_value,
+                "startTimeUnixNano": str(span.start_time) if span.start_time else None,
+                "endTimeUnixNano": str(span.end_time) if span.end_time else None,
+                "status": {"code": status_code, "message": status_message},
+            },
+            attributes,
+            required=True,
+        )
         if parent_span_id:
             payload["parentSpanId"] = parent_span_id
         if events_out:

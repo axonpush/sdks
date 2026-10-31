@@ -233,7 +233,12 @@ class BackgroundPublisher:
 
     def _worker_loop(self) -> None:
         while True:
-            item = self._queue.get()
+            if self._closed and self._queue.empty():
+                return
+            try:
+                item = self._queue.get(timeout=0.1)
+            except queue.Empty:
+                continue
             try:
                 if item is None:
                     return
@@ -299,15 +304,25 @@ class BackgroundPublisher:
             if self._closed:
                 return
             self._closed = True
-        self.flush(timeout=timeout if timeout is not None else self._shutdown_timeout)
+        budget = timeout if timeout is not None else self._shutdown_timeout
+        deadline = time.monotonic() + budget
+        self.flush(timeout=budget)
         try:
             self._queue.put_nowait(None)
         except queue.Full:
-            pass
+            while True:
+                try:
+                    item = self._queue.get_nowait()
+                    self._queue.task_done()
+                    if item is not None:
+                        self._drops.record()
+                except queue.Empty:
+                    break
         thread = self._thread
         if thread is not None and thread.is_alive():
-            thread.join(timeout=timeout if timeout is not None else self._shutdown_timeout)
-        self._thread = None
+            thread.join(timeout=max(0.0, deadline - time.monotonic()))
+        if thread is not None and not thread.is_alive():
+            self._thread = None
 
     def _reset_after_fork(self) -> None:
         self._queue = queue.Queue(maxsize=self._queue_size)
@@ -362,6 +377,9 @@ class AsyncBackgroundPublisher:
                 token = _in_publisher_path.set(True)
                 try:
                     await self._client.events.publish(**item)
+                except asyncio.CancelledError:
+                    self._drops.record()
+                    raise
                 except Exception as exc:
                     _log_publish_failure(exc)
                 finally:
@@ -400,7 +418,7 @@ class AsyncBackgroundPublisher:
     async def flush(self, timeout: Optional[float] = None) -> None:
         """Wait for all queued items to be published, or until ``timeout``."""
         q = self._queue
-        if q is None or q.empty():
+        if q is None:
             return
         join_task = asyncio.create_task(q.join())
         try:
@@ -416,24 +434,25 @@ class AsyncBackgroundPublisher:
                 pass
 
     async def aclose(self, timeout: Optional[float] = None) -> None:
-        """Drain in-flight events, then stop the worker. Idempotent."""
+        """Drain within one budget, then cancel and account for pending records."""
         if self._closed:
             return
         self._closed = True
-        await self.flush(timeout=timeout)
+        budget = DEFAULT_SHUTDOWN_TIMEOUT_S if timeout is None else timeout
+        await self.flush(timeout=budget)
+        worker = self._worker
+        if worker is not None and not worker.done():
+            worker.cancel()
+            try:
+                await worker
+            except asyncio.CancelledError:
+                pass
         if self._queue is not None:
-            try:
-                self._queue.put_nowait(None)
-            except asyncio.QueueFull:
-                pass
-        if self._worker is not None and not self._worker.done():
-            try:
-                if timeout is None:
-                    await self._worker
-                else:
-                    await asyncio.wait_for(asyncio.shield(self._worker), timeout=timeout)
-            except (asyncio.TimeoutError, asyncio.CancelledError, BaseException):  # noqa: BLE001
-                pass
+            while not self._queue.empty():
+                item = self._queue.get_nowait()
+                self._queue.task_done()
+                if item is not None:
+                    self._drops.record()
         self._worker = None
 
     async def close(self, timeout: Optional[float] = None) -> None:
