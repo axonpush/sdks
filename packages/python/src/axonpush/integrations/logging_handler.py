@@ -138,6 +138,12 @@ class _SelfRecursionFilter(logging.Filter):
 class AxonPushLoggingHandler(logging.Handler):
     """A ``logging.Handler`` that ships log records to AxonPush as ``app.log`` events."""
 
+    _framework = "stdlib-logging"
+
+    @staticmethod
+    def _severity(record: logging.LogRecord) -> tuple[int, str]:
+        return severity_from_python_level(record.levelno)
+
     def __init__(
         self,
         *,
@@ -235,40 +241,44 @@ class AxonPushLoggingHandler(logging.Handler):
             kwargs["base_url"] = base_url
         return AxonPush(**kwargs)
 
+    def _record_attributes(self, record: logging.LogRecord) -> Dict[str, Any]:
+        attributes: Dict[str, Any] = {
+            "code.filepath": record.pathname,
+            "code.function": record.funcName,
+            "code.lineno": record.lineno,
+            "logger.name": record.name,
+            "thread.name": record.threadName,
+            "process.pid": record.process,
+        }
+        if record.module:
+            attributes["code.namespace"] = record.module
+
+        for key, value in record.__dict__.items():
+            if key in _STD_LOGRECORD_ATTRS or key.startswith("_"):
+                continue
+            attributes[key] = value
+
+        if record.exc_info:
+            attributes["exception.type"] = (
+                record.exc_info[0].__name__ if record.exc_info[0] else None
+            )
+            attributes["exception.message"] = (
+                str(record.exc_info[1]) if record.exc_info[1] else None
+            )
+        return attributes
+
     def emit(self, record: logging.LogRecord) -> None:
         if in_publisher_path():
             return
         try:
-            severity_number, severity_text = severity_from_python_level(record.levelno)
+            severity_number, severity_text = self._severity(record)
 
             try:
                 body: Any = record.getMessage()
             except Exception:  # pragma: no cover - defensive
                 body = str(record.msg)
 
-            attributes: Dict[str, Any] = {
-                "code.filepath": record.pathname,
-                "code.function": record.funcName,
-                "code.lineno": record.lineno,
-                "logger.name": record.name,
-                "thread.name": record.threadName,
-                "process.pid": record.process,
-            }
-            if record.module:
-                attributes["code.namespace"] = record.module
-
-            for key, value in record.__dict__.items():
-                if key in _STD_LOGRECORD_ATTRS or key.startswith("_"):
-                    continue
-                attributes[key] = value
-
-            if record.exc_info:
-                attributes["exception.type"] = (
-                    record.exc_info[0].__name__ if record.exc_info[0] else None
-                )
-                attributes["exception.message"] = (
-                    str(record.exc_info[1]) if record.exc_info[1] else None
-                )
+            attributes = self._record_attributes(record)
 
             payload = build_log_payload(
                 body=body,
@@ -291,7 +301,7 @@ class AxonPushLoggingHandler(logging.Handler):
                 "trace_id": trace.trace_id,
                 "span_id": trace.next_span_id(),
                 "event_type": event_type,
-                "metadata": {"framework": "stdlib-logging"},
+                "metadata": {"framework": self._framework},
             }
             if self._environment is not None:
                 publish_kwargs["environment"] = self._environment

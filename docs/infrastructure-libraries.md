@@ -63,3 +63,21 @@ legacy attribute compatibility adapter; the remaining per-language span mapping
 is retained to preserve this wire contract. Legacy Python/TypeScript span kinds
 now use OTLP protobuf values 1–5, matching .NET and the server OTLP normalizer,
 instead of writing the zero-based language API enum directly.
+
+## Loguru handler delegation
+
+The Loguru sink now uses Loguru's supported `logging.Handler` adapter and the
+existing `AxonPushLoggingHandler` for publishing, capture policy, recursion
+filtering, flushing and shutdown. `logger.remove(handler_id)` drains and closes
+the sink; it does not close the caller's AxonPush client. TRACE/custom-name
+severity, bound/contextual extras and `framework=loguru` remain compatible.
+
+Keep `logger.add(sink, serialize=True)`, as required by the existing factory.
+The compatibility shim extracts only the original record message and origin
+metadata from that envelope. It never forwards Loguru's formatted `text`, which
+can include traceback locals with `diagnose=True`. The unstructured/default
+formatter is unsupported and records without a valid envelope are dropped with
+a warning. Enqueued records retain their original timestamp, thread and process.
+An exact Loguru-shaped envelope cannot be distinguished from identical user text
+passed directly to the sink; use the documented serialized logger path, which
+wraps user JSON and preserves it as the message body.
