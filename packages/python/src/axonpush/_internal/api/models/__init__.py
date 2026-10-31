@@ -129,6 +129,9 @@ from .analytics_timeseries_bucket import AnalyticsTimeseriesBucket
 from .api_key_scope import ApiKeyScope
 from .app_dto import AppDTO
 from .audit_capability import AuditCapability
+from .batch_input_body import BatchInputBody
+from .batch_output_body import BatchOutputBody
+from .batch_result import BatchResult
 from .billing_event_dto import BillingEventDTO
 from .breadcrumb_dto import BreadcrumbDTO
 from .breakdown_output_body import BreakdownOutputBody
@@ -466,6 +469,9 @@ __all__ = (
     "ApiKeyScope",
     "AppDTO",
     "AuditCapability",
+    "BatchInputBody",
+    "BatchOutputBody",
+    "BatchResult",
     "BillingEventDTO",
     "BreadcrumbDTO",
     "BreakdownOutputBody",

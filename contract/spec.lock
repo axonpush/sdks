@@ -1,6 +1,6 @@
 {
   "source": "axonpush/server",
-  "sha": "58b997b98bfb9a5311007101e6c1afb8cde34b7f",
-  "ref": "perf/bounded-read-work-20261031",
-  "sha256": "95fd58241792a043e8058767f90c86c329dcfb766a47f079c0d99635ad2b043f"
+  "sha": "24621d494944d5d63f942e56d309a358efa95a2c",
+  "ref": "feat/batched-telemetry-20261031",
+  "sha256": "c2f5c901e332cf379d04078ebf7df78c1c291508d144d06ee6960e1995f7707e"
 }

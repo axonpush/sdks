@@ -3504,6 +3504,85 @@
         ],
         "type": "object"
       },
+      "BatchInputBody": {
+        "additionalProperties": false,
+        "properties": {
+          "$schema": {
+            "description": "A URL to the JSON Schema for this object.",
+            "examples": [
+              "https://example.com/schemas/BatchInputBody.json"
+            ],
+            "format": "uri",
+            "readOnly": true,
+            "type": "string"
+          },
+          "events": {
+            "items": {
+              "$ref": "#/components/schemas/EventBody"
+            },
+            "maxItems": 50,
+            "minItems": 1,
+            "type": [
+              "array",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "events"
+        ],
+        "type": "object"
+      },
+      "BatchOutputBody": {
+        "additionalProperties": false,
+        "properties": {
+          "$schema": {
+            "description": "A URL to the JSON Schema for this object.",
+            "examples": [
+              "https://example.com/schemas/BatchOutputBody.json"
+            ],
+            "format": "uri",
+            "readOnly": true,
+            "type": "string"
+          },
+          "results": {
+            "items": {
+              "$ref": "#/components/schemas/BatchResult"
+            },
+            "type": [
+              "array",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "results"
+        ],
+        "type": "object"
+      },
+      "BatchResult": {
+        "additionalProperties": false,
+        "properties": {
+          "errorCode": {
+            "type": "string"
+          },
+          "eventId": {
+            "type": "string"
+          },
+          "index": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "status": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "index",
+          "status"
+        ],
+        "type": "object"
+      },
       "BillingEventDTO": {
         "additionalProperties": false,
         "properties": {
@@ -14589,6 +14668,84 @@
         "x-axonpush-scopes": [
           "observe:read"
         ],
+        "x-axonpush-sdk": true
+      }
+    },
+    "/events/batch": {
+      "post": {
+        "operationId": "createEventBatch",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "x-axonpush-api-key",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "x-api-key",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "x-public-token",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "Authorization",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BatchInputBody"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BatchOutputBody"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "summary": "Durably accept events with individual results",
+        "tags": [
+          "event"
+        ],
+        "x-axonpush-effect": "write",
+        "x-axonpush-mcp": false,
+        "x-axonpush-policy": {
+          "category": "external-auth",
+          "grants": "none"
+        },
         "x-axonpush-sdk": true
       }
     },

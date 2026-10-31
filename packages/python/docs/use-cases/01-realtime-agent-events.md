@@ -2,7 +2,7 @@
 
 Business observations describe confirmed source transitions across traces. They use a workspace installed from a versioned spec. Framework spans are supporting technical evidence. See the [shared operations contract](../../../../AGENT_OPERATIONS.md) for authoring, access and privacy.
 
-The exporter reads an already allowlisted batch from its durable journal. This synthetic file has the same structure as `contract/fixtures/activity-observation.json`; preserve its event ID, original occurrence time and content on every retry.
+The exporter reads an already allowlisted batch from its durable journal. This synthetic file has the same structure as `tests/fixtures/activity-observation.json`; preserve its event ID, original occurrence time and content on every retry.
 
 ```python
 import json

@@ -14,7 +14,7 @@ public sealed class OperationsTests
         var directory = new DirectoryInfo(AppContext.BaseDirectory);
         while (directory is not null)
         {
-            var path = Path.Combine(directory.FullName, "contract", "fixtures", "activity-observation.json");
+            var path = Path.Combine(directory.FullName, "tests", "fixtures", "activity-observation.json");
             if (File.Exists(path)) return path;
             directory = directory.Parent;
         }

@@ -68,6 +68,7 @@ channels.get
 channels.list
 channels.update
 createEvent
+createEventBatch
 environments.create
 environments.delete
 environments.list

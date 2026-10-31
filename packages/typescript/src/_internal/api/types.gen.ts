@@ -1254,6 +1254,29 @@ export type AuditCapability = {
     formats: Array<string> | null;
 };
 
+export type BatchInputBody = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
+    events: Array<EventBody> | null;
+};
+
+export type BatchOutputBody = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
+    results: Array<BatchResult> | null;
+};
+
+export type BatchResult = {
+    errorCode?: string;
+    eventId?: string;
+    index: number;
+    status: string;
+};
+
 export type BillingEventDto = {
     createdAt: string;
     error?: string;
@@ -3579,6 +3602,14 @@ export type AppDtoWritable = {
     orgId: string;
     repoUrl?: string;
     updatedAt?: string;
+};
+
+export type BatchInputBodyWritable = {
+    events: Array<EventBodyWritable> | null;
+};
+
+export type BatchOutputBodyWritable = {
+    results: Array<BatchResult> | null;
 };
 
 export type BreakdownOutputBodyWritable = {
@@ -6935,6 +6966,37 @@ export type EventsSearchResponses = {
 };
 
 export type EventsSearchResponse = EventsSearchResponses[keyof EventsSearchResponses];
+
+export type CreateEventBatchData = {
+    body: BatchInputBodyWritable;
+    headers?: {
+        'x-axonpush-api-key'?: string;
+        'x-api-key'?: string;
+        'x-public-token'?: string;
+        Authorization?: string;
+    };
+    path?: never;
+    query?: never;
+    url: '/events/batch';
+};
+
+export type CreateEventBatchErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type CreateEventBatchError = CreateEventBatchErrors[keyof CreateEventBatchErrors];
+
+export type CreateEventBatchResponses = {
+    /**
+     * OK
+     */
+    200: BatchOutputBody;
+};
+
+export type CreateEventBatchResponse = CreateEventBatchResponses[keyof CreateEventBatchResponses];
 
 export type ExportListData = {
     body?: never;
