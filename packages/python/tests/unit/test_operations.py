@@ -14,7 +14,7 @@ from axonpush._internal.api.models import WorkspaceIngestInputBody
 from axonpush.exceptions import AuthenticationError
 
 ROOT = Path(__file__).resolve().parents[4]
-FIXTURE = json.loads((ROOT / "contract/fixtures/activity-observation.json").read_text())
+FIXTURE = json.loads((ROOT / "tests/fixtures/activity-observation.json").read_text())
 BASE = "http://operations.example.test"
 RECEIPT = {
     "sourceEventId": FIXTURE["source_event_id"],

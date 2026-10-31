@@ -18,17 +18,7 @@ export function requireEnv(name: string): string {
   return v;
 }
 
-export const API_KEY = process.env.AXONPUSH_API_KEY ?? "";
-export const TENANT_ID = process.env.AXONPUSH_TENANT_ID ?? "";
 export const CHANNEL_ID = process.env.AXONPUSH_CHANNEL_ID ?? "";
-export const APP_ID = process.env.AXONPUSH_APP_ID ?? "";
-export const BASE_URL = process.env.AXONPUSH_BASE_URL ?? "http://localhost:3000";
-export const ENVIRONMENT = process.env.AXONPUSH_ENVIRONMENT;
-
-export function bail(reason: string): never {
-  console.error(`[axonpush-example] ${reason}`);
-  process.exit(1);
-}
 
 export async function tryImport<T>(spec: string): Promise<T | null> {
   try {

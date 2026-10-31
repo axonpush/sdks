@@ -147,7 +147,7 @@ jobs:
         working-directory: .
         run: bun run packages/typescript/tools/check-resource-contract.ts
       - name: Typecheck
-        run: uv run mypy src/axonpush
+        run: uv run mypy src/axonpush examples
       - name: Test
         run: uv run pytest
 

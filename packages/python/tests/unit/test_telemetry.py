@@ -67,30 +67,41 @@ def test_configure_uses_supplied_provider():
     assert handle.tracer("x") is not None
 
 
-def test_endpoint_and_headers_from_args():
+@pytest.fixture()
+def exporter_options(monkeypatch):
+    options = {}
+    original = telemetry.OTLPSpanExporter
+
+    def exporter(**kwargs):
+        options.update(kwargs)
+        return original(**kwargs)
+
+    monkeypatch.setattr(telemetry, "OTLPSpanExporter", exporter)
+    return options
+
+
+def test_endpoint_and_headers_from_args(exporter_options):
     provider = TracerProvider()
-    handle = configure_telemetry(
+    configure_telemetry(
         base_url="https://api.example.com/",
         api_key="ak_secret",
         channel_id="ch_42",
         tracer_provider=provider,
     )
-    exporter = handle._processor.span_exporter
-    assert exporter._endpoint == "https://api.example.com/v1/traces"
-    headers = exporter._session.headers
+    assert exporter_options["endpoint"] == "https://api.example.com/v1/traces"
+    headers = exporter_options["headers"]
     assert headers["X-API-Key"] == "ak_secret"
     assert headers["X-Axonpush-Channel"] == "ch_42"
 
 
-def test_env_resolution(monkeypatch):
+def test_env_resolution(monkeypatch, exporter_options):
     monkeypatch.setenv("AXONPUSH_BASE_URL", "https://env.example.com")
     monkeypatch.setenv("AXONPUSH_API_KEY", "ak_env")
     monkeypatch.setenv("AXONPUSH_CHANNEL_ID", "ch_env")
     provider = TracerProvider()
-    handle = configure_telemetry(tracer_provider=provider)
-    exporter = handle._processor.span_exporter
-    assert exporter._endpoint == "https://env.example.com/v1/traces"
-    headers = exporter._session.headers
+    configure_telemetry(tracer_provider=provider)
+    assert exporter_options["endpoint"] == "https://env.example.com/v1/traces"
+    headers = exporter_options["headers"]
     assert headers["X-API-Key"] == "ak_env"
     assert headers["X-Axonpush-Channel"] == "ch_env"
 

@@ -1,231 +1,137 @@
-"""Loguru integration for AxonPush.
+"""Loguru sink using its native stdlib logging.Handler adapter.
 
-Loguru is a popular alternative to stdlib ``logging`` that's loved for
-its ergonomic API. This integration provides a sink object that can be
-added to a Loguru logger to forward records to AxonPush.
-
-Tested against ``loguru>=0.7,<1.0``.
-
-Install::
-
-    pip install axonpush[loguru]
-
-Usage::
-
-    from loguru import logger
-    from axonpush import AxonPush
-    from axonpush.integrations.loguru import create_axonpush_loguru_sink
-
-    client = AxonPush(api_key="ak_...", tenant_id="org_...")
-    sink = create_axonpush_loguru_sink(
-        client=client,
-        channel_id="ch_...",
-        service_name="my-api",
-    )
-    logger.add(sink, serialize=True)
-
-    logger.error("connection refused", user_id=42)
+Use ``logger.add(sink, serialize=True)``. The serialized record preserves the
+original body, timestamp and thread even when Loguru uses an enqueue worker.
 """
 
 from __future__ import annotations
 
 import json
-import logging as _stdlib_logging
+import logging
 from typing import TYPE_CHECKING, Any, Dict, Literal, Optional
 
 try:
     import loguru  # noqa: F401
 except ImportError:
     raise ImportError(
-        "Loguru integration requires the 'loguru' extra. "
-        "Install it with: pip install axonpush[loguru]"
+        "Loguru integration requires the 'loguru' extra. Install it with: pip install axonpush[loguru]"
     ) from None
 
-from axonpush._tracing import current_trace, get_or_create_trace
-from axonpush.integrations._otel_payload import (
-    build_log_payload,
-    severity_from_text,
-)
+from axonpush.integrations.logging_handler import AxonPushLoggingHandler
+from axonpush.integrations._otel_payload import severity_from_text
 from axonpush.integrations._publisher import (
-    BackgroundPublisher,
     DEFAULT_QUEUE_SIZE,
     DEFAULT_SHUTDOWN_TIMEOUT_S,
-    detect_serverless,
     flush_after_invocation,
-    in_publisher_path,
 )
-from axonpush.integrations._utils import (
-    build_resource,
-    coerce_channel_id,
-    fire_and_forget,
-    is_async_client,
-)
-from axonpush.models import EventType
 
 if TYPE_CHECKING:
     from axonpush.client import AsyncAxonPush, AxonPush
 
 __all__ = ["create_axonpush_loguru_sink", "flush_after_invocation"]
+_internal_logger = logging.getLogger("axonpush")
 
-_internal_logger = _stdlib_logging.getLogger("axonpush")
 
+class _AxonPushLoguruSink(AxonPushLoggingHandler):
+    """Native handler sink; publishing, capture and lifecycle use the stdlib integration."""
 
-class _AxonPushLoguruSink:
-    """Callable sink that forwards Loguru records to AxonPush."""
+    _framework = "loguru"
 
-    def __init__(
-        self,
-        *,
-        client: "AxonPush | AsyncAxonPush",
-        channel_id: int | str,
-        source: str = "app",
-        service_name: Optional[str] = None,
-        service_version: Optional[str] = None,
-        environment: Optional[str] = None,
-        agent_id: Optional[str] = None,
-        mode: Optional[Literal["background", "sync"]] = None,
-        queue_size: int = DEFAULT_QUEUE_SIZE,
-        shutdown_timeout: float = DEFAULT_SHUTDOWN_TIMEOUT_S,
-    ) -> None:
-        if source not in ("agent", "app"):
-            raise ValueError(f"source must be 'agent' or 'app', got {source!r}")
-        resolved_mode = mode or "background"
-        if resolved_mode not in ("background", "sync"):
-            raise ValueError(f"mode must be 'background' or 'sync', got {resolved_mode!r}")
+    def __init__(self, **kwargs: Any) -> None:
+        super().__init__(**kwargs)
+        # Historically this integration sets environment on the resource only.
+        self._environment = None
 
-        self._client = client
-        self._channel_id = coerce_channel_id(channel_id)
-        self._agent_id = agent_id
-        self._event_type = EventType.APP_LOG if source == "app" else EventType.AGENT_LOG
-        self._resource = build_resource(service_name, service_version, environment)
+    @staticmethod
+    def _severity(record: logging.LogRecord) -> tuple[int, str]:
+        return severity_from_text(record.levelname)
 
-        if resolved_mode == "background":
-            if is_async_client(client):
-                self._publisher: Optional[BackgroundPublisher] = None
-            else:
-                self._publisher = BackgroundPublisher(
-                    client,  # type: ignore[arg-type]
-                    queue_size=queue_size,
-                    shutdown_timeout=shutdown_timeout,
+    def _record_attributes(self, record: logging.LogRecord) -> Dict[str, Any]:
+        attributes = super()._record_attributes(record)
+        attributes["code.filename"] = record.filename
+        extra = attributes.pop("extra", None)
+        if isinstance(extra, dict):
+            attributes.update(extra)
+        return attributes
+
+    @staticmethod
+    def _serialized_record(message: str) -> Dict[str, Any] | None:
+        try:
+            envelope = json.loads(message)
+        except (ValueError, TypeError):
+            return None
+        if not isinstance(envelope, dict) or not isinstance(envelope.get("text"), str):
+            return None
+        raw = envelope.get("record")
+        if not isinstance(raw, dict) or not isinstance(raw.get("message"), str):
+            return None
+        if not all(
+            isinstance(raw.get(key), dict)
+            for key in ("time", "level", "file", "thread", "process", "extra")
+        ):
+            return None
+        if not isinstance(raw["time"].get("timestamp"), (int, float)) or not isinstance(
+            raw["level"].get("name"), str
+        ):
+            return None
+        return raw
+
+    def emit(self, record: logging.LogRecord) -> None:
+        try:
+            serialized = self._serialized_record(record.getMessage())
+            if serialized is None:
+                _internal_logger.warning(
+                    "AxonPush loguru sink requires logger.add(sink, serialize=True)"
                 )
-        else:
-            self._publisher = None
+                return
+            # The library owns LogRecord/exception conversion. Restore the
+            # unformatted body and origin fields lost by its enqueue adapter.
+            record = logging.makeLogRecord(record.__dict__.copy())
+            record.msg, record.args = serialized["message"], ()
+            record.created = serialized["time"]["timestamp"]
+            record.threadName = serialized["thread"].get("name", record.threadName)
+            record.process = serialized["process"].get("id", record.process)
+            super().emit(record)
+        except Exception:
+            self.handleError(record)
 
-        serverless = detect_serverless()
-        if serverless is not None and self._publisher is not None:
-            _internal_logger.info(
-                "AxonPush detected %s. Call sink.flush() at the end of each "
-                "invocation (or wrap your handler with "
-                "axonpush.integrations.loguru.flush_after_invocation) to "
-                "avoid losing records when the container is frozen.",
-                serverless,
-            )
-
-    def flush(self, timeout: Optional[float] = None) -> None:
-        if self._publisher is not None:
-            self._publisher.flush(timeout)
-
-    def close(self) -> None:
-        if self._publisher is not None:
-            self._publisher.close()
-            self._publisher = None
+    def handleError(self, record: logging.LogRecord) -> None:
+        _internal_logger.warning("AxonPush loguru sink failed", exc_info=True)
 
     def __call__(self, message: Any) -> None:
-        if in_publisher_path():
-            return
+        """Compatibility for direct invocation with a serialized record."""
         try:
-            publish_kwargs = self._build_publish_kwargs(message)
-        except Exception as exc:
-            _internal_logger.warning("AxonPush loguru sink failed: %s", exc)
-            return
-
-        if self._publisher is not None:
-            self._publisher.submit(publish_kwargs)
-            return
-
-        try:
-            result = self._client.events.publish(**publish_kwargs)
-            fire_and_forget(result)
-        except Exception as exc:
-            _internal_logger.warning("AxonPush loguru sink failed: %s", exc)
-
-    def _build_publish_kwargs(self, message: Any) -> Dict[str, Any]:
-        if isinstance(message, str):
-            record_dict = json.loads(message).get("record", {})
-        else:
-            record_dict = getattr(message, "record", {}) or {}
-
-        level_raw = record_dict.get("level")
-        if isinstance(level_raw, dict):
-            level_name = level_raw.get("name", "INFO")
-        else:
-            level_name = str(level_raw or "INFO")
-        severity_number, severity_text = severity_from_text(level_name)
-
-        body = record_dict.get("message", "")
-
-        attributes: Dict[str, Any] = {}
-        file_info = record_dict.get("file")
-        if isinstance(file_info, dict):
-            if "path" in file_info:
-                attributes["code.filepath"] = file_info["path"]
-            if "name" in file_info:
-                attributes["code.filename"] = file_info["name"]
-        if "function" in record_dict:
-            attributes["code.function"] = record_dict["function"]
-        if "line" in record_dict:
-            attributes["code.lineno"] = record_dict["line"]
-        if "module" in record_dict:
-            attributes["code.namespace"] = record_dict["module"]
-        if "name" in record_dict:
-            attributes["logger.name"] = record_dict["name"]
-        proc = record_dict.get("process")
-        if isinstance(proc, dict) and "id" in proc:
-            attributes["process.pid"] = proc["id"]
-        thr = record_dict.get("thread")
-        if isinstance(thr, dict) and "name" in thr:
-            attributes["thread.name"] = thr["name"]
-
-        extra = record_dict.get("extra")
-        if isinstance(extra, dict):
-            for key, value in extra.items():
-                attributes[key] = value
-
-        exception = record_dict.get("exception")
-        if isinstance(exception, dict):
-            if "type" in exception:
-                attributes["exception.type"] = exception["type"]
-            if "value" in exception:
-                attributes["exception.message"] = exception["value"]
-
-        time_field = record_dict.get("time")
-        time_unix_nano: Optional[str] = None
-        if isinstance(time_field, dict) and "timestamp" in time_field:
-            ts = time_field["timestamp"]
-            if isinstance(ts, (int, float)):
-                time_unix_nano = str(int(ts * 1_000_000_000))
-
-        payload = build_log_payload(
-            body=body,
-            severity_number=severity_number,
-            severity_text=severity_text,
-            time_unix_nano=time_unix_nano,
-            attributes=attributes or None,
-            resource=self._resource,
-        )
-
-        trace = current_trace() or get_or_create_trace()
-
-        return {
-            "identifier": str(record_dict.get("name", "loguru")),
-            "payload": payload,
-            "channel_id": self._channel_id,
-            "agent_id": self._agent_id,
-            "trace_id": trace.trace_id,
-            "span_id": trace.next_span_id(),
-            "event_type": self._event_type,
-            "metadata": {"framework": "loguru"},
-        }
+            serialized = self._serialized_record(str(message))
+            if serialized is None:
+                _internal_logger.warning("AxonPush loguru sink expected a serialized record")
+                return
+            level = serialized.get("level", {})
+            file = serialized.get("file", {})
+            record = logging.makeLogRecord(
+                {
+                    "name": serialized.get("name", "loguru"),
+                    "msg": str(message),
+                    "args": (),
+                    "levelname": level.get("name", "INFO"),
+                    "levelno": level.get("no", logging.INFO),
+                    "pathname": file.get("path", ""),
+                    "filename": file.get("name", ""),
+                    "funcName": serialized.get("function"),
+                    "lineno": serialized.get("line", 0),
+                    "module": serialized.get("module"),
+                    "extra": serialized.get("extra", {}),
+                }
+            )
+            exception = serialized.get("exception")
+            if isinstance(exception, dict):
+                record.__dict__["extra"] = {
+                    **record.__dict__["extra"],
+                    "exception.type": exception.get("type"),
+                    "exception.message": exception.get("value"),
+                }
+            self.handle(record)
+        except Exception:
+            _internal_logger.warning("AxonPush loguru sink failed", exc_info=True)
 
 
 def create_axonpush_loguru_sink(
@@ -243,9 +149,10 @@ def create_axonpush_loguru_sink(
 ) -> _AxonPushLoguruSink:
     """Build a Loguru sink that forwards each record to AxonPush.
 
-    Pass the returned object to ``logger.add(sink, serialize=True)``.
-    The ``serialize=True`` flag is required — it tells Loguru to pass
-    a JSON string of the record to the sink, which this integration parses.
+    Use ``logger.add(sink, serialize=True)`` as before. Serialization preserves
+    the original body and enqueue origin; formatted traceback text is never
+    captured as the message. ``logger.remove()`` closes the handler and drains
+    its publisher. The supplied client remains caller-owned.
     """
     return _AxonPushLoguruSink(
         client=client,

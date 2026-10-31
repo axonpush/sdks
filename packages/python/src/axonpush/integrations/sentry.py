@@ -5,11 +5,9 @@ AxonPush ``/api/{projectId}/envelope`` endpoint and forwards every other
 ``sentry_sdk.init`` kwarg through. Makes wiring Sentry to AxonPush a
 one-liner.
 
-The backend's :file:`src/sentry/sentry.controller.ts` parses the
-``:projectId`` URL segment as the AxonPush channel id and accepts any
-non-empty string — including the new ``str`` UUIDs introduced in v0.0.10
-— so callers can pass either ``int`` (deprecated, soft-converted) or
-``str``.
+The Go ingest handler in ``server/internal/ingest/sentry`` treats the project
+segment as a channel ID. String channel IDs are recommended; integer IDs remain
+accepted by the compatibility helper and are converted with a deprecation warning.
 
 Tested against ``sentry-sdk>=1.40,<3``.
 

@@ -11,7 +11,9 @@ Run::
     uv run examples/13_print_capture.py
 """
 
-from config import APP_ID, BASE_URL, CHANNEL_ID, ENVIRONMENT, require_credentials
+from config import BASE_URL, ENVIRONMENT, require_credentials
+
+from resources import example_channel
 
 require_credentials()
 
@@ -20,27 +22,16 @@ from axonpush.integrations.print_capture import setup_print_capture  # noqa: E40
 
 
 def main() -> None:
-    with AxonPush(base_url=BASE_URL, environment=ENVIRONMENT) as client:
-        owns_app = APP_ID is None
-        owns_channel = CHANNEL_ID is None
-        app_id = APP_ID
-        channel_id = CHANNEL_ID
-        if owns_app:
-            app = client.apps.create(name="print-capture-demo")
-            assert app is not None
-            app_id = app.id
-        if owns_channel:
-            assert app_id is not None
-            channel = client.channels.create("agent-stdout", app_id)
-            assert channel is not None
-            channel_id = channel.id
-        assert channel_id is not None
-
+    with (
+        AxonPush(base_url=BASE_URL, environment=ENVIRONMENT, fail_open=False) as client,
+        example_channel(client) as channel_id,
+    ):
         # Print the header BEFORE patching so it doesn't get captured.
         print(f"channel={channel_id}\n")
 
         handle = setup_print_capture(
-            client, channel_id,
+            client,
+            channel_id,
             agent_id="demo-agent",
             service_name="my-agent",
         )
@@ -54,18 +45,13 @@ def main() -> None:
         finally:
             handle.unpatch()
 
-        listing = client.events.list(channel_id, limit=20)
+        listing = client.events.search(channel_id=channel_id, limit=20)
         if listing is not None:
-            print(f"\nEvents captured ({len(listing.data)}):")
-            for ev in listing.data:
-                props = ev.payload.additional_properties if ev.payload else {}
-                body = props.get("body", "")
-                print(f"  [{ev.event_type}] {body}")
-
-        if owns_channel:
-            client.channels.delete(channel_id)
-        if owns_app and app_id is not None:
-            client.apps.delete(app_id)
+            print(f"\nEvents captured ({len((listing.events or []))}):")
+            for ev in listing.events or []:
+                print(f"  [{ev.event_type}] {ev.operation_name} (event_id={ev.event_id})")
+            # Payload reads are separate and audited: client.telemetry.content(event_id)
+            # requires content:read; search returns metadata only.
 
 
 if __name__ == "__main__":

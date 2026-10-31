@@ -76,7 +76,7 @@ class TestPublishBody:
         int(body.span_id, 16)
         assert body.metadata is UNSET
         assert body.event_type is UNSET
-        assert body.dedup_key is UNSET
+        assert isinstance(body.dedup_key, str) and len(body.dedup_key) == 36
 
     def test_source_occurrence_and_retry_key_survive_serialization(self) -> None:
         from datetime import datetime, timezone

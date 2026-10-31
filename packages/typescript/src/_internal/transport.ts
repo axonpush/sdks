@@ -1,3 +1,5 @@
+import { setTimeout as delay } from "node:timers/promises";
+import pRetry from "p-retry";
 import { type ResolvedSettings, resolveSettings } from "../config.js";
 import {
   APIConnectionError,
@@ -70,7 +72,9 @@ function attachInterceptors(client: Client, getSettings: () => ResolvedSettings)
       ].filter(Boolean);
       if (baggage.length > 0) request.headers.set("baggage", baggage.join(","));
     }
-    return request;
+    // Fetch strips standard Authorization on cross-origin redirects, but retains
+    // our custom credential headers. Surface redirects as terminal responses.
+    return new Request(request, { redirect: "manual" });
   });
 
   client.interceptors.error.use((error, response, _request, _options) => {
@@ -173,6 +177,7 @@ export class Transport {
       failOpen: opts.failOpen ?? this.settings.failOpen,
       maxRetries: opts.maxRetries ?? this.settings.maxRetries,
       client: this.client,
+      timeout: this.settings.timeout,
     });
   }
 }
@@ -184,55 +189,100 @@ export class Transport {
  * type per op, and the chokepoint relies on shape-compatibility, not nominal
  * equality.
  */
-// biome-ignore lint/suspicious/noExplicitAny: see doc comment above.
 export type GeneratedOp<T = unknown> = (args: any) => Promise<{ data?: T; [k: string]: unknown }>;
 
 export const RETRY_BACKOFF_MS = [250, 500, 1000, 2000, 4000] as const;
 
-function delayFor(attempt: number, retryAfter?: number): number {
-  if (retryAfter !== undefined) return Math.max(0, retryAfter * 1000);
-  const idx = Math.min(attempt, RETRY_BACKOFF_MS.length - 1);
-  return RETRY_BACKOFF_MS[idx] ?? RETRY_BACKOFF_MS[RETRY_BACKOFF_MS.length - 1] ?? 0;
-}
-
-const sleep = (ms: number): Promise<void> =>
-  ms > 0 ? new Promise((resolve) => setTimeout(resolve, ms)) : Promise.resolve();
-
-/**
- * Core retry loop shared by {@link Transport.invoke} and {@link invokeSync}.
- * When `client` is set, each op call is routed to that client (per-instance
- * interceptors); otherwise it falls back to the generated global client.
- */
 async function runOp<T>(
   op: GeneratedOp<T>,
   args: unknown,
-  opts: { failOpen: boolean; maxRetries: number; client?: Client },
+  opts: { failOpen: boolean; maxRetries: number; client?: Client; timeout: number },
 ): Promise<T | null> {
-  const baseArgs = (args ?? {}) as Record<string, unknown>;
-  if (opts.client) baseArgs.client = opts.client;
-  let lastErr: unknown;
-
-  for (let attempt = 0; attempt <= opts.maxRetries; attempt++) {
-    try {
-      const result = await op({ ...baseArgs, throwOnError: true });
-      return result.data ?? null;
-    } catch (err) {
-      lastErr = err;
-      if (!isRetryable(err) || attempt === opts.maxRetries) break;
-      const retryAfter = err instanceof RateLimitError ? err.retryAfter : undefined;
-      await sleep(delayFor(attempt, retryAfter));
-    }
+  if (!Number.isInteger(opts.maxRetries) || opts.maxRetries < 0)
+    throw new RangeError("maxRetries must be a nonnegative integer");
+  const baseArgs: Record<string, unknown> = {
+    ...((args ?? {}) as Record<string, unknown>),
+    ...(opts.client ? { client: opts.client } : {}),
+  };
+  let retrySafe = false;
+  const previousValidator = baseArgs.requestValidator as
+    | ((request: Record<string, unknown>) => Promise<void>)
+    | undefined;
+  baseArgs.requestValidator = async (request: Record<string, unknown>) => {
+    if (previousValidator) await previousValidator(request);
+    const method = String(request.method).toUpperCase();
+    const path = String(request.url).split("?")[0] ?? "";
+    const body = request.body as
+      | { dedupKey?: string; observations?: { source_event_id?: string }[] }
+      | undefined;
+    retrySafe =
+      method === "GET" ||
+      method === "HEAD" ||
+      (method === "POST" &&
+        ((path === "/event" && typeof body?.dedupKey === "string" && body.dedupKey.length > 0) ||
+          (/^\/workspaces\/[^/]+\/observations$/.test(path) &&
+            Array.isArray(body?.observations) &&
+            body.observations.every(
+              (item) => typeof item.source_event_id === "string" && item.source_event_id.length > 0,
+            ))));
+  };
+  const callerSignal = baseArgs.signal as AbortSignal | undefined;
+  const budget = AbortSignal.timeout(Math.ceil(opts.timeout));
+  const signal = callerSignal ? AbortSignal.any([callerSignal, budget]) : budget;
+  try {
+    return await pRetry(
+      async () => {
+        signal.throwIfAborted();
+        const attemptSignal = AbortSignal.any([
+          signal,
+          AbortSignal.timeout(Math.ceil(opts.timeout)),
+        ]);
+        try {
+          const result = await op({ ...baseArgs, signal: attemptSignal, throwOnError: true });
+          attemptSignal.throwIfAborted();
+          return result.data ?? null;
+        } catch (error) {
+          signal.throwIfAborted();
+          if (attemptSignal.aborted) throw new APIConnectionError("AxonPush request timed out");
+          throw error;
+        }
+      },
+      {
+        retries: opts.maxRetries,
+        minTimeout: 250,
+        maxTimeout: 4000,
+        factor: 2,
+        randomize: true,
+        signal,
+        shouldRetry: ({ error }) => retrySafe && isRetryable(error),
+        onFailedAttempt: async ({ error, retriesLeft }) => {
+          if (
+            retrySafe &&
+            retriesLeft > 0 &&
+            error instanceof RateLimitError &&
+            error.retryAfter !== undefined
+          ) {
+            const extra = Math.max(0, error.retryAfter * 1000);
+            if (extra > 0) await delay(Math.min(extra, 2147483647), undefined, { signal });
+          }
+        },
+      },
+    );
+  } catch (error) {
+    if (callerSignal?.aborted) throw callerSignal.reason;
+    const failure = budget.aborted
+      ? new APIConnectionError("AxonPush retry budget exhausted")
+      : error;
+    if (opts.failOpen && failure instanceof APIConnectionError) return null;
+    throw failure;
   }
-
-  if (opts.failOpen && lastErr instanceof APIConnectionError) return null;
-  throw lastErr;
 }
 
 /**
  * Single chokepoint against the shared generated client. Adds:
  *
- * - Retries on retryable errors with backoff `[250, 500, 1000, 2000, 4000]ms`,
- *   honouring {@link RateLimitError.retryAfter} when present.
+ * - Retries eligible reads and deduplicated writes with jittered backoff,
+ *   honouring {@link RateLimitError.retryAfter} within the invocation deadline.
  * - Fail-open semantics: when `opts.failOpen` is true and the final attempt
  *   ends in {@link APIConnectionError}, return `null` instead of throwing.
  * - Exception passthrough for all other errors.
@@ -259,5 +309,6 @@ export async function invokeSync<T>(
   return runOp(op, args, {
     failOpen: opts.failOpen ?? currentSettings.failOpen,
     maxRetries: opts.maxRetries ?? currentSettings.maxRetries,
+    timeout: currentSettings.timeout,
   });
 }

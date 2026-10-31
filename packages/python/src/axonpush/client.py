@@ -105,7 +105,7 @@ class AxonPush:
         environment: Logical environment label (sent as
             ``X-Axonpush-Environment``). Falls back to
             ``AXONPUSH_ENVIRONMENT``.
-        timeout: Per-request timeout in seconds. Falls back to
+        timeout: Total invocation timeout in seconds, including retries. Falls back to
             ``AXONPUSH_TIMEOUT``.
         max_retries: Number of retry attempts on retryable failures. Falls
             back to ``AXONPUSH_MAX_RETRIES``.
@@ -203,6 +203,7 @@ class AxonPush:
                 op,
                 client=self._client,
                 max_retries=self._settings.max_retries,
+                timeout=self._settings.timeout,
                 **kwargs,
             )
         except APIConnectionError:
@@ -504,6 +505,7 @@ class AsyncAxonPush:
                 op,
                 client=client,
                 max_retries=self._settings.max_retries,
+                timeout=self._settings.timeout,
                 **kwargs,
             )
         except APIConnectionError:

@@ -1,3 +1,4 @@
+import { z } from "zod";
 /**
  * Caller-supplied AxonPush configuration. Falsy values fall through to the
  * matching `AXONPUSH_*` environment variable; any field still unset after
@@ -101,7 +102,7 @@ export function resolveSettings(options?: AxonPushOptions): ResolvedSettings {
   const opts = options ?? {};
   const orgId = opts.orgId ?? envString("AXONPUSH_ORG_ID") ?? envString("AXONPUSH_TENANT_ID");
   const tenantId = opts.tenantId ?? envString("AXONPUSH_TENANT_ID") ?? orgId;
-  return {
+  const settings = {
     apiKey: opts.apiKey ?? envString("AXONPUSH_API_KEY"),
     tenantId,
     orgId: orgId ?? tenantId,
@@ -121,4 +122,10 @@ export function resolveSettings(options?: AxonPushOptions): ResolvedSettings {
       [],
     maxContentLength: opts.maxContentLength ?? envInt("AXONPUSH_MAX_CONTENT_LENGTH") ?? 4_096,
   };
+  z.object({
+    timeout: z.number().finite().positive(),
+    maxRetries: z.number().finite().int().min(0),
+    maxContentLength: z.number().finite().int().positive(),
+  }).parse(settings);
+  return settings;
 }

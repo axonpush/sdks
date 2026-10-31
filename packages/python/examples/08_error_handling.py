@@ -6,7 +6,8 @@ Walk through the exception hierarchy. Every error subclasses
 ``{ code, message, hint, requestId }`` envelope.
 
 ``RetryableError`` is a marker mixin worn by ``APIConnectionError``,
-``RateLimitError``, and ``ServerError`` — anything safe to retry.
+``RateLimitError``, and ``ServerError``. It classifies transient failures;
+retry safety still depends on the operation and its deduplication identity.
 
 Run::
 
@@ -53,9 +54,9 @@ def demo_not_found(client: AxonPush) -> None:
 
 
 def demo_validation_error(client: AxonPush) -> None:
-    print("3. ValidationError (name too short)")
+    print("3. ValidationError (empty name)")
     try:
-        client.apps.create(name="ab")
+        client.apps.create(name="")
     except ValidationError as exc:
         print(f"   {type(exc).__name__}: {exc} (hint={exc.hint!r})")
     except AxonPushError as exc:
@@ -65,9 +66,11 @@ def demo_validation_error(client: AxonPush) -> None:
 
 def demo_retry_classification() -> None:
     print("4. Retry classification")
-    print("   Anything that subclasses RetryableError is safe to retry:")
-    print(f"     issubclass(RateLimitError, RetryableError) = {issubclass(RateLimitError, RetryableError)}")
-    print("   Wire-level retry is built-in (max_retries kwarg). For app-level")
+    print("   RetryableError identifies transient failures, not idempotent operations:")
+    print(
+        f"     issubclass(RateLimitError, RetryableError) = {issubclass(RateLimitError, RetryableError)}"
+    )
+    print("   Safe-operation retry is built in (max_retries additional attempts). For app-level")
     print("   logic on RateLimitError, honour `exc.retry_after` (seconds).")
     print()
 
@@ -75,10 +78,10 @@ def demo_retry_classification() -> None:
 def demo_catch_all() -> None:
     print("5. Catch-all pattern")
     print("   try:")
-    print("       client.events.publish(...)")
+    print("       client.apps.get(app_id)")
     print("   except AuthenticationError: ...")
-    print("   except RateLimitError as exc: time.sleep(exc.retry_after or 1)")
-    print("   except RetryableError: ...   # transient — back off and retry")
+    print("   except RateLimitError as exc: ...  # schedule a later read if needed")
+    print("   except RetryableError: ...   # report the exhausted retry budget")
     print("   except AxonPushError: ...    # permanent — surface to caller")
     print()
 
@@ -87,7 +90,9 @@ def main() -> None:
     print("=== AxonPush error handling ===\n")
     demo_auth_error()
 
-    with AxonPush(api_key=API_KEY, tenant_id=TENANT_ID, base_url=BASE_URL, environment=ENVIRONMENT) as client:
+    with AxonPush(
+        api_key=API_KEY, tenant_id=TENANT_ID, base_url=BASE_URL, environment=ENVIRONMENT
+    ) as client:
         demo_not_found(client)
         demo_validation_error(client)
 

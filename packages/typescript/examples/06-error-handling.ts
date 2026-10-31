@@ -5,7 +5,7 @@
  *   - `AuthenticationError` from a deliberately bad API key
  *   - `NotFoundError` from `apps.get(<bogus-uuid>)`
  *   - `RateLimitError` -> back off via `err.retryAfter`
- *   - `RetryableError` mixin -> blanket retry
+ *   - `RetryableError` -> exhausted transport retries for a safe operation
  *
  * The 429 path is illustrative — comment-driven, since most local
  * backends won't actually rate-limit you. The first two paths run live.
@@ -18,11 +18,9 @@
  */
 
 import {
-  APIConnectionError,
   AuthenticationError,
   AxonPush,
   NotFoundError,
-  RateLimitError,
   RetryableError,
   ValidationError,
 } from "../src/index";
@@ -68,32 +66,21 @@ async function main() {
     }
   }
 
-  // --- blanket retry sketch ---
-  async function withRetry<T>(fn: () => Promise<T>, attempts = 3): Promise<T> {
-    let lastErr: unknown;
-    for (let i = 0; i < attempts; i++) {
-      try {
-        return await fn();
-      } catch (err) {
-        lastErr = err;
-        if (err instanceof RateLimitError) {
-          const waitMs = (err.retryAfter ?? 1) * 1000;
-          console.log(`[retry] rate limited; sleeping ${waitMs}ms`);
-          await new Promise((r) => setTimeout(r, waitMs));
-          continue;
-        }
-        if (err instanceof RetryableError || err instanceof APIConnectionError) {
-          await new Promise((r) => setTimeout(r, 2 ** i * 250));
-          continue;
-        }
-        throw err;
-      }
+  // Use the built-in p-retry policy instead of nesting another retry loop.
+  // GET reads and deduplicated event publishes can retry; arbitrary mutations cannot.
+  const retryingClient = new AxonPush({ failOpen: false, maxRetries: 3 });
+  try {
+    const apps = await retryingClient.apps.list();
+    console.log(`[retry] apps.list returned ${apps?.length ?? 0} app(s)`);
+  } catch (err) {
+    if (err instanceof RetryableError) {
+      console.log("[retry] the transport retry/deadline budget was exhausted");
+    } else {
+      throw err;
     }
-    throw lastErr;
+  } finally {
+    retryingClient.close();
   }
-
-  const apps = await withRetry(() => client.apps.list());
-  console.log(`[retry] apps.list returned ${apps?.length ?? 0} app(s)`);
 
   client.close();
 }

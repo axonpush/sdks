@@ -1,8 +1,8 @@
 """End-to-end round-trip tests for the 5 logging integrations.
 
-Each test wires the integration to the live easy-push backend, emits one
-event, then asserts the event appears in client.events.list() with the
-expected OTel-shaped payload. This catches payload-shape mismatches that
+Each test wires the integration to the running local Go backend, emits one
+event, finds its metadata through events.search(), and reads the payload
+through audited telemetry.content(). This catches payload-shape mismatches that
 the respx-mocked unit tests in tests/unit/integrations/ can't see.
 """
 
@@ -10,20 +10,15 @@ from __future__ import annotations
 
 import logging
 import sys
-import time
 
 import pytest
 
 from axonpush import EventType
 from axonpush.integrations.logging_handler import AxonPushLoggingHandler
 from axonpush.integrations.print_capture import setup_print_capture
+from tests.e2e._evidence import read_events
 
 pytestmark = pytest.mark.e2e
-
-
-def _search(client, channel_id):
-    result = client.events.search(channel_id=channel_id, limit=50)
-    return result.events if result else []
 
 
 def _find_by_body(events, body):
@@ -41,11 +36,11 @@ def test_logging_handler_round_trip(client, channel):
     logger.addHandler(handler)
     try:
         logger.error("connection refused", extra={"user_id": 42})
-        time.sleep(0.5)
     finally:
         logger.removeHandler(handler)
+        handler.close()
 
-    events = _search(client, channel.channel_id)
+    events = read_events(client, channel.channel_id)
     matches = _find_by_body(events, "connection refused")
     assert len(matches) == 1, (
         f"expected one matching event, got payloads: {[e.payload for e in events]}"
@@ -56,7 +51,7 @@ def test_logging_handler_round_trip(client, channel):
     assert e.payload["severityNumber"] == 17
     assert e.payload["attributes"]["user_id"] == 42
     assert e.payload["resource"]["service.name"] == "e2e-svc"
-    assert e.metadata["framework"] == "stdlib-logging"
+    assert e.content_state == "available"
 
 
 def test_loguru_sink_round_trip(client, channel):
@@ -72,16 +67,17 @@ def test_loguru_sink_round_trip(client, channel):
     loguru_logger.add(sink, serialize=True, level="DEBUG")
     try:
         loguru_logger.error("loguru round trip")
-        time.sleep(0.5)
     finally:
+        sink.flush()
         loguru_logger.remove()
+        sink.close()
 
-    matches = _find_by_body(_search(client, channel.channel_id), "loguru round trip")
+    matches = _find_by_body(read_events(client, channel.channel_id), "loguru round trip")
     assert len(matches) == 1
     assert matches[0].event_type == EventType.APP_LOG
     assert matches[0].payload["severityText"] == "ERROR"
     assert matches[0].payload["resource"]["service.name"] == "loguru-e2e"
-    assert matches[0].metadata["framework"] == "loguru"
+    assert matches[0].content_state == "available"
 
 
 def test_structlog_processor_round_trip(client, channel):
@@ -103,15 +99,15 @@ def test_structlog_processor_round_trip(client, channel):
     try:
         log = structlog.get_logger()
         log.error("structlog round trip", user_id=7)
-        time.sleep(0.5)
     finally:
+        forwarder.close()
         structlog.reset_defaults()
 
-    matches = _find_by_body(_search(client, channel.channel_id), "structlog round trip")
+    matches = _find_by_body(read_events(client, channel.channel_id), "structlog round trip")
     assert len(matches) == 1
     assert matches[0].event_type == EventType.APP_LOG
     assert matches[0].payload["attributes"]["user_id"] == 7
-    assert matches[0].metadata["framework"] == "structlog"
+    assert matches[0].content_state == "available"
 
 
 def test_print_capture_round_trip(client, channel):
@@ -120,16 +116,16 @@ def test_print_capture_round_trip(client, channel):
     try:
         print("hello from print_capture")
     finally:
+        handle.flush()
         handle.unpatch()
         sys.stdout, sys.stderr = orig_out, orig_err
-    time.sleep(0.5)
 
-    matches = _find_by_body(_search(client, channel.channel_id), "hello from print_capture")
+    matches = _find_by_body(read_events(client, channel.channel_id), "hello from print_capture")
     assert len(matches) == 1
     assert matches[0].payload["severityText"] == "INFO"
     assert matches[0].payload["severityNumber"] == 9
     assert matches[0].payload["attributes"]["log.iostream"] == "stdout"
-    assert matches[0].metadata["framework"] == "print-capture"
+    assert matches[0].content_state == "available"
 
 
 def test_otel_span_exporter_round_trip(client, channel):
@@ -152,9 +148,8 @@ def test_otel_span_exporter_round_trip(client, channel):
         span.set_attribute("http.method", "POST")
         span.set_attribute("http.status_code", 200)
     provider.shutdown()
-    time.sleep(0.5)
 
-    events = _search(client, channel.channel_id)
+    events = read_events(client, channel.channel_id)
     spans = [
         e
         for e in events
@@ -167,4 +162,4 @@ def test_otel_span_exporter_round_trip(client, channel):
     assert p["resource"]["service.name"] == "otel-e2e"
     assert len(p["traceId"]) == 32  # 128-bit hex
     assert len(p["spanId"]) == 16  # 64-bit hex
-    assert spans[0].metadata["framework"] == "opentelemetry"
+    assert spans[0].content_state == "available"

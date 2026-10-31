@@ -102,3 +102,39 @@ class TestOTelExporter:
     def test_force_flush_returns_true(self, fake_sync_client: FakeSyncClient) -> None:
         exporter = AxonPushSpanExporter(client=fake_sync_client, channel_id="ch_x", mode="sync")
         assert exporter.force_flush(1) is True
+
+
+def test_legacy_records_keep_event_plane_shape(fake_sync_client: FakeSyncClient) -> None:
+    from opentelemetry.trace import Link, SpanContext
+
+    exporter = AxonPushSpanExporter(
+        client=fake_sync_client, channel_id="ch_x", service_name="synthetic", mode="sync"
+    )
+    provider = _provider_with(exporter)
+    tracer = provider.get_tracer(__name__)
+    with tracer.start_as_current_span(
+        "compatibility", links=[Link(SpanContext(1, 2, False), {"source": "synthetic"})]
+    ) as span:
+        span.add_event("chunk", {"items": ("a", "b")})
+    provider.shutdown()
+    call = fake_sync_client.events.calls[0]
+    assert call["event_type"].value == "app.span"
+    payload = call["payload"]
+    assert payload["resource"]["service.name"] == "synthetic"
+    assert payload["events"][0]["attributes"] == {"items": ["a", "b"]}
+    assert payload["links"] == [
+        {"traceId": "0" * 31 + "1", "spanId": "0" * 15 + "2", "attributes": {"source": "synthetic"}}
+    ]
+    assert payload["scope"]["name"] == __name__
+
+
+@pytest.mark.parametrize("api_kind,wire_kind", [(0, 1), (1, 2), (2, 3), (3, 4), (4, 5)])
+def test_legacy_kind_matches_otlp_wire_values(fake_sync_client, api_kind, wire_kind):
+    from opentelemetry.trace import SpanKind
+
+    exporter = AxonPushSpanExporter(client=fake_sync_client, channel_id="ch_x", mode="sync")
+    provider = _provider_with(exporter)
+    with provider.get_tracer(__name__).start_as_current_span("kind", kind=SpanKind(api_kind)):
+        pass
+    provider.shutdown()
+    assert fake_sync_client.events.calls[0]["payload"]["kind"] == wire_kind

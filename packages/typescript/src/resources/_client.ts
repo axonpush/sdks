@@ -1,7 +1,7 @@
 /**
  * Minimal client surface that {@link EventsResource} & friends rely on.
  *
- * Stream A's `AxonPush` class implements this. We import only the type so
+ * The `AxonPush` class implements this. We import only the type so
  * resources stay free of runtime coupling to `client.ts`.
  *
  * @internal

@@ -149,7 +149,8 @@ export class AxonPushSpanExporter {
       traceId: ctx.traceId,
       spanId: ctx.spanId,
       name: span.name,
-      kind: span.kind,
+      // API SpanKind is 0..4; OTLP and the .NET event exporter use 1..5.
+      kind: Number.isInteger(span.kind) && span.kind >= 0 && span.kind <= 4 ? span.kind + 1 : 0,
       startTimeUnixNano: hrTimeToNanoString(span.startTime),
       endTimeUnixNano: hrTimeToNanoString(span.endTime),
       flags: ctx.traceFlags,

@@ -5,17 +5,12 @@ The test suite is split into two tiers:
 * ``tests/unit/`` — fast, mocked with ``respx``, no backend required.
   Run on every push/PR and as the gate before publishing to PyPI.
 
-* ``tests/e2e/`` — end-to-end tests against a live easy-push backend.
-  Marked ``@pytest.mark.e2e``; opt in with ``pytest -m e2e`` (or via
-  ``scripts/test-e2e.sh`` which boots easy-push first).
+* ``tests/e2e/`` — opt-in tests against an already-running local Go API.
+  Run with ``pytest -m e2e`` after supplying explicit local credentials;
+  see ``tests/e2e/README.md``. No backend processes or databases are managed here.
 
-Backend connection details for e2e tests are read from environment
-variables so they work both on a developer laptop and in CI:
-
-    AXONPUSH_BASE_URL    default: http://localhost:3000
-    AXONPUSH_API_KEY     default: ak_test
-    AXONPUSH_TENANT_ID   default: 1
-    AXONPUSH_APP_ID      default: 1
+The defaults below are synthetic values for mocked unit tests. E2E fixtures
+require explicit connection settings and create only their own test resources.
 """
 
 from __future__ import annotations

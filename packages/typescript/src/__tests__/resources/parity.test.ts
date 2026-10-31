@@ -74,7 +74,7 @@ const expectations: Array<{ name: string; instance: object; methods: string[] }>
   {
     name: "CapabilitiesResource",
     instance: new CapabilitiesResource(stubClient),
-    methods: ["get"],
+    methods: ["get", "operations"],
   },
   {
     name: "OrganizationsResource",

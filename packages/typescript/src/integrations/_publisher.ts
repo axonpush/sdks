@@ -1,4 +1,5 @@
 import { AsyncLocalStorage } from "node:async_hooks";
+import PQueue from "p-queue";
 import type { AxonPush } from "../client.js";
 import { logger as sdkLogger } from "../logger.js";
 import type { PublishParams } from "../resources/events.js";
@@ -49,7 +50,6 @@ export const DEFAULT_DROP_WARNING_INTERVAL_MS = 10_000;
 export const DEFAULT_CONCURRENCY = 1;
 
 const IDLE_POLL_INTERVAL_MS = 5;
-const BLOCK_POLL_INTERVAL_MS = 1;
 
 export type PublisherMode = "background" | "sync" | "bullmq";
 
@@ -60,8 +60,8 @@ export type PublisherMode = "background" | "sync" | "bullmq";
  *   submissions always make it in.
  * - `drop-newest`: silently drop the incoming submission — oldest
  *   entries are preserved.
- * - `block`: best-effort spin until a slot frees up. Submissions become
- *   asynchronous; suitable only when the caller can tolerate latency.
+ * - `block`: deprecated for synchronous submit; drops newest when full.
+ *   Use submitAsync for bounded, awaitable admission instead.
  */
 export type OverflowPolicy = "drop-oldest" | "drop-newest" | "block";
 
@@ -82,7 +82,18 @@ export class BackgroundPublisher {
   private readonly dropWarningIntervalMs: number;
   private readonly concurrency: number;
   private readonly queue: PublishParams[] = [];
-  private draining = 0;
+  private readonly executor: PQueue;
+  private readonly stop = new AbortController();
+  private readonly waiters: {
+    params: PublishParams;
+    resolve: (accepted: boolean) => void;
+    reject: (error: unknown) => void;
+    signal?: AbortSignal;
+    abort?: () => void;
+  }[] = [];
+  private get draining(): number {
+    return this.executor.pending;
+  }
   private drops = 0;
   private lastDropWarn = 0;
   private closed = false;
@@ -94,6 +105,13 @@ export class BackgroundPublisher {
     this.shutdownTimeoutMs = opts.shutdownTimeoutMs ?? DEFAULT_SHUTDOWN_TIMEOUT_MS;
     this.dropWarningIntervalMs = opts.dropWarningIntervalMs ?? DEFAULT_DROP_WARNING_INTERVAL_MS;
     this.concurrency = Math.max(1, opts.concurrency ?? DEFAULT_CONCURRENCY);
+    if (
+      !Number.isInteger(this.queueSize) ||
+      this.queueSize < 1 ||
+      !Number.isInteger(this.concurrency)
+    )
+      throw new RangeError("Publisher capacity and concurrency must be positive integers");
+    this.executor = new PQueue({ concurrency: this.concurrency });
     registerPublisher(this);
   }
 
@@ -112,9 +130,50 @@ export class BackgroundPublisher {
     this.ensureDraining();
   }
 
+  /** Await bounded admission. False means closed or admission waiters are full. */
+  async submitAsync(params: PublishParams, opts: { signal?: AbortSignal } = {}): Promise<boolean> {
+    opts.signal?.throwIfAborted();
+    if (this.closed) return false;
+    if (this.queue.length < this.queueSize) {
+      this.queue.push(params);
+      this.ensureDraining();
+      return true;
+    }
+    if (this.waiters.length >= this.queueSize) {
+      this.recordDrop();
+      return false;
+    }
+    return new Promise<boolean>((resolve, reject) => {
+      const waiter = {
+        params,
+        resolve,
+        reject,
+        signal: opts.signal,
+        abort: undefined as (() => void) | undefined,
+      };
+      waiter.abort = () => {
+        const i = this.waiters.indexOf(waiter);
+        if (i >= 0) this.waiters.splice(i, 1);
+        reject(opts.signal?.reason);
+      };
+      opts.signal?.addEventListener("abort", waiter.abort, { once: true });
+      this.waiters.push(waiter);
+    });
+  }
+
+  private admitWaiters(): void {
+    while (this.waiters.length && this.queue.length < this.queueSize) {
+      const waiter = this.waiters.shift();
+      if (!waiter) break;
+      if (waiter.abort) waiter.signal?.removeEventListener("abort", waiter.abort);
+      this.queue.push(waiter.params);
+      waiter.resolve(true);
+    }
+  }
+
   async flush(timeoutMs?: number): Promise<void> {
     const deadline = timeoutMs !== undefined ? Date.now() + timeoutMs : Number.POSITIVE_INFINITY;
-    while (this.queue.length > 0 || this.draining > 0) {
+    while (this.queue.length > 0 || this.draining > 0 || this.waiters.length > 0) {
       if (Date.now() >= deadline) return;
       await sleep(IDLE_POLL_INTERVAL_MS);
     }
@@ -127,6 +186,17 @@ export class BackgroundPublisher {
     }
     this.closed = true;
     await this.flush(timeoutMs ?? this.shutdownTimeoutMs);
+    for (let i = 0; i < this.draining; i++) this.recordDrop();
+    this.stop.abort(new DOMException("Publisher closed", "AbortError"));
+    while (this.queue.length) {
+      this.queue.shift();
+      this.recordDrop();
+    }
+    for (const waiter of this.waiters.splice(0)) {
+      if (waiter.abort) waiter.signal?.removeEventListener("abort", waiter.abort);
+      this.recordDrop();
+      waiter.resolve(false);
+    }
     if (this.drops > 0) {
       sdkLogger.warn(
         `axonpush publisher closed with ${this.drops} dropped records ` +
@@ -152,48 +222,38 @@ export class BackgroundPublisher {
         this.ensureDraining();
         return;
       case "block":
-        void this.blockUntilSpace(params);
+        // Synchronous blocking is deprecated: use submitAsync for backpressure.
+        this.recordDrop();
         return;
     }
   }
 
-  private async blockUntilSpace(params: PublishParams): Promise<void> {
-    while (!this.closed && this.queue.length >= this.queueSize) {
-      await sleep(BLOCK_POLL_INTERVAL_MS);
-    }
-    if (this.closed) return;
-    this.queue.push(params);
-    this.ensureDraining();
-  }
-
   private ensureDraining(): void {
-    while (this.draining < this.concurrency && this.queue.length > 0) {
-      this.draining++;
-      void this.drain();
-    }
-  }
-
-  private async drain(): Promise<void> {
-    try {
-      while (!this.closed || this.queue.length > 0) {
-        const params = this.queue.shift();
-        if (params === undefined) return;
-        try {
-          await runInPublisherScope(() =>
-            (
-              this.client as unknown as {
-                events: { publish(p: PublishParams): Promise<unknown> };
-              }
-            ).events.publish(params),
-          );
-        } catch (err) {
-          runInPublisherScope(() => {
-            sdkLogger.warn(`axonpush publish failed: ${(err as Error).message ?? err}`);
-          });
-        }
-      }
-    } finally {
-      this.draining--;
+    while (this.executor.pending < this.concurrency && this.queue.length > 0) {
+      const params = this.queue.shift();
+      if (!params) break;
+      this.admitWaiters();
+      void this.executor
+        .add(async () => {
+          try {
+            await runInPublisherScope(() =>
+              this.client.events.publish({
+                ...params,
+                signal: params.signal
+                  ? AbortSignal.any([this.stop.signal, params.signal])
+                  : this.stop.signal,
+              }),
+            );
+          } catch (err) {
+            if (this.stop.signal.aborted) return;
+            runInPublisherScope(() =>
+              sdkLogger.warn(`axonpush publish failed: ${(err as Error).message ?? err}`),
+            );
+          }
+        })
+        .finally(() => {
+          if (!this.stop.signal.aborted) this.ensureDraining();
+        });
     }
   }
 

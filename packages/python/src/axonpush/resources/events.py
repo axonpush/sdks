@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from uuid import uuid4
+
 from collections.abc import Callable
 from datetime import datetime
 from typing import TYPE_CHECKING, Any
@@ -81,7 +83,7 @@ def _build_event_body(
         trace_id=resolved_trace,
         span_id=resolved_span,
         parent_span_id=parent_span_id if parent_span_id is not None else UNSET,
-        dedup_key=dedup_key if dedup_key is not None else UNSET,
+        dedup_key=dedup_key or str(uuid4()),
         occurred_at=occurred_at if occurred_at is not None else UNSET,
         expires_at=expires_at if expires_at is not None else UNSET,
         event_type=_coerce_event_type(event_type),  # type: ignore[arg-type]
@@ -139,7 +141,8 @@ class Events:
             ``None`` if ``fail_open`` swallowed a transport error.
 
         Raises:
-            AxonPushError: When ``fail_open`` is False and the call fails.
+            AxonPushError: For API errors; connection failures also raise when
+                ``fail_open`` is False.
         """
         body = _build_event_body(
             identifier=identifier,

@@ -43,7 +43,7 @@ async function main() {
   for (const event of listing?.events ?? []) {
     console.log(`[all] ${event.eventType} from ${event.agentId}`);
     if (event.eventType === "agent.error") {
-      console.log(`[errors] ${event.eventId}: ${JSON.stringify(event.payload)}`);
+      console.log(`[errors] ${event.eventId}: ${event.operationName}`);
     }
   }
 

@@ -27,7 +27,7 @@ public sealed class AxonPushOptions
     /// <summary>Environment tag emitted on every published event (e.g. "production").</summary>
     public string? Environment { get; set; }
 
-    /// <summary>Per-request timeout. Defaults to 30 seconds.</summary>
+    /// <summary>Total invocation timeout, including retries and response reading. Defaults to 30 seconds.</summary>
     public TimeSpan Timeout { get; set; } = TimeSpan.FromSeconds(30);
 
     /// <summary>Maximum retry attempts on transient failure. Defaults to 3.</summary>

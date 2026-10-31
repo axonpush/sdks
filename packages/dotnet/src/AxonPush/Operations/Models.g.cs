@@ -1088,6 +1088,52 @@ public sealed record ActivityWorkspaceSpec
     public IReadOnlyList<ActivityView>? Views { get; init; }
 }
 
+public sealed record AnalyticsCapability
+{
+    [JsonPropertyName("breakdownDimensions")]
+    public IReadOnlyList<string>? BreakdownDimensions { get; init; } = default!;
+    [JsonPropertyName("customDimensions")]
+    public bool CustomDimensions { get; init; }
+    [JsonPropertyName("enabled")]
+    public bool Enabled { get; init; }
+    [JsonPropertyName("tagFilter")]
+    public bool TagFilter { get; init; }
+    [JsonPropertyName("workspaces")]
+    public bool Workspaces { get; init; }
+}
+
+public sealed record ApiKeyScope
+{
+    [JsonPropertyName("category")]
+    public string Category { get; init; } = default!;
+    [JsonPropertyName("description")]
+    public string Description { get; init; } = default!;
+    [JsonPropertyName("scope")]
+    public string Scope { get; init; } = default!;
+}
+
+public sealed record AuditCapability
+{
+    [JsonPropertyName("enabled")]
+    public bool Enabled { get; init; }
+    [JsonPropertyName("formats")]
+    public IReadOnlyList<string>? Formats { get; init; } = default!;
+}
+
+public sealed record CapabilitiesOutputBody
+{
+    [JsonPropertyName("apiKeyScopes")]
+    public IReadOnlyList<ApiKeyScope>? ApiKeyScopes { get; init; } = default!;
+    [JsonPropertyName("controls")]
+    public Controls Controls { get; init; } = default!;
+    [JsonPropertyName("featureFlags")]
+    public FeatureFlags FeatureFlags { get; init; } = default!;
+    [JsonPropertyName("license")]
+    public LicenseStatus License { get; init; } = default!;
+    [JsonPropertyName("version")]
+    public string Version { get; init; } = default!;
+}
+
 public sealed record ChangesOutputBody
 {
     [JsonPropertyName("baseRevision")]
@@ -1110,12 +1156,36 @@ public sealed record ConnectInputBody
     public bool? Rotate { get; init; }
 }
 
+public sealed record Controls
+{
+    [JsonPropertyName("analytics")]
+    public AnalyticsCapability Analytics { get; init; } = default!;
+    [JsonPropertyName("auditTrail")]
+    public AuditCapability AuditTrail { get; init; } = default!;
+    [JsonPropertyName("dataAccess")]
+    public DataAccessCapability DataAccess { get; init; } = default!;
+}
+
 public sealed record CreateInputBody
 {
     [JsonPropertyName("appId")]
     public string AppId { get; init; } = default!;
     [JsonPropertyName("spec")]
     public ActivityWorkspaceSpec Spec { get; init; } = default!;
+}
+
+public sealed record DataAccessCapability
+{
+    [JsonPropertyName("aggregateRetentionDays")]
+    public long AggregateRetentionDays { get; init; }
+    [JsonPropertyName("description")]
+    public string Description { get; init; } = default!;
+    [JsonPropertyName("identifiableRetentionDays")]
+    public long IdentifiableRetentionDays { get; init; }
+    [JsonPropertyName("refusedForScoped")]
+    public IReadOnlyList<string>? RefusedForScoped { get; init; } = default!;
+    [JsonPropertyName("scopedGrants")]
+    public bool ScopedGrants { get; init; }
 }
 
 public sealed record EraseEvidenceOutputBody
@@ -1216,6 +1286,22 @@ public sealed record EventDTO
     public string? UserId { get; init; }
 }
 
+public sealed record FeatureFlags
+{
+    [JsonPropertyName("analyticsV2")]
+    public bool AnalyticsV2 { get; init; }
+    [JsonPropertyName("asyncIngest")]
+    public bool AsyncIngest { get; init; }
+    [JsonPropertyName("billing")]
+    public bool Billing { get; init; }
+    [JsonPropertyName("environments")]
+    public bool Environments { get; init; }
+    [JsonPropertyName("mcpServer")]
+    public bool McpServer { get; init; }
+    [JsonPropertyName("sentryIngest")]
+    public bool SentryIngest { get; init; }
+}
+
 public sealed record GrantInputBody
 {
     [JsonPropertyName("key")]
@@ -1256,6 +1342,34 @@ public sealed record IdentifyOutputBody
     public IReadOnlyList<string>? Dropped { get; init; } = default!;
     [JsonPropertyName("profile")]
     public ActivityProfile Profile { get; init; } = default!;
+}
+
+public sealed record LicenseStatus
+{
+    [JsonPropertyName("expiresAt")]
+    public string? ExpiresAt { get; init; } = default!;
+    [JsonPropertyName("status")]
+    public string Status { get; init; } = default!;
+    [JsonPropertyName("tier")]
+    public string? Tier { get; init; } = default!;
+}
+
+public sealed record OperationCapabilities
+{
+    [JsonPropertyName("operations")]
+    public IReadOnlyList<OperationCapability>? Operations { get; init; } = default!;
+    [JsonPropertyName("registryRevision")]
+    public string RegistryRevision { get; init; } = default!;
+}
+
+public sealed record OperationCapability
+{
+    [JsonPropertyName("availability")]
+    public string Availability { get; init; } = default!;
+    [JsonPropertyName("operationId")]
+    public string OperationId { get; init; } = default!;
+    [JsonPropertyName("reason")]
+    public string? Reason { get; init; }
 }
 
 public sealed record OpsInputBody

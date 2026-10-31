@@ -26,5 +26,5 @@ class TestChannels:
         name = f"test-ch-{uuid.uuid4().hex[:8]}"
         ch = client.channels.create(backend.app_id, name)
         client.channels.delete(backend.app_id, ch.channel_id)
-        with pytest.raises((NotFoundError, Exception)):
+        with pytest.raises(NotFoundError):
             client.channels.get(backend.app_id, ch.channel_id)

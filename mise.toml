@@ -63,7 +63,7 @@ run = "bunx tsc --noEmit"
 
 [tasks."typecheck:py"]
 dir = "packages/python"
-run = "uv run mypy --strict src/axonpush"
+run = "uv run mypy --strict src/axonpush examples"
 
 [tasks.typecheck]
 depends = ["typecheck:ts", "typecheck:py"]

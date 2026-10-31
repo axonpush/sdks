@@ -11,7 +11,7 @@
  *   AXONPUSH_CHANNEL_ID
  *
  * Optional:
- *   AXONPUSH_BASE_URL       (default http://localhost:3000)
+ *   AXONPUSH_BASE_URL       (default https://api.axonpush.xyz)
  *   AXONPUSH_ENVIRONMENT
  *
  * Run:

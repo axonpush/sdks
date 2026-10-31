@@ -16,7 +16,9 @@ script just prints the wiring pattern.
 
 import sys
 
-from config import APP_ID, BASE_URL, CHANNEL_ID, ENVIRONMENT, OPENAI_API_KEY, require_credentials
+from config import BASE_URL, ENVIRONMENT, OPENAI_API_KEY, require_credentials
+
+from resources import example_channel
 
 require_credentials()
 
@@ -30,24 +32,13 @@ except ImportError:
 
 
 def main() -> None:
-    with AxonPush(base_url=BASE_URL, environment=ENVIRONMENT) as client:
-        owns_app = APP_ID is None
-        owns_channel = CHANNEL_ID is None
-        app_id = APP_ID
-        channel_id = CHANNEL_ID
-        if owns_app:
-            app = client.apps.create(name="langchain-demo")
-            assert app is not None
-            app_id = app.id
-        if owns_channel:
-            assert app_id is not None
-            channel = client.channels.create("llm-traces", app_id)
-            assert channel is not None
-            channel_id = channel.id
-        assert channel_id is not None
-
+    with (
+        AxonPush(base_url=BASE_URL, environment=ENVIRONMENT, fail_open=False) as client,
+        example_channel(client) as channel_id,
+    ):
         handler = AxonPushCallbackHandler(
-            client, channel_id,
+            client,
+            channel_id,
             agent_id="langchain-agent",
             metadata={"model": "gpt-4o-mini"},
         )
@@ -56,13 +47,17 @@ def main() -> None:
         if OPENAI_API_KEY:
             try:
                 from langchain_core.prompts import ChatPromptTemplate
-                from langchain_openai import ChatOpenAI
+                from importlib import import_module
+
+                ChatOpenAI = import_module("langchain_openai").ChatOpenAI
 
                 llm = ChatOpenAI(model="gpt-4o-mini", temperature=0)
-                prompt = ChatPromptTemplate.from_messages([
-                    ("system", "You are a helpful assistant. Be concise."),
-                    ("human", "{question}"),
-                ])
+                prompt = ChatPromptTemplate.from_messages(
+                    [
+                        ("system", "You are a helpful assistant. Be concise."),
+                        ("human", "{question}"),
+                    ]
+                )
                 chain = prompt | llm
 
                 print("Invoking chain with AxonPush tracing...")
@@ -77,18 +72,13 @@ def main() -> None:
             print("OPENAI_API_KEY not set — pattern only:")
             print("  chain.invoke(input, config={'callbacks': [handler]})\n")
 
-        listing = client.events.list(channel_id, limit=20)
-        if listing is not None and listing.data:
-            print(f"Events published ({len(listing.data)}):")
-            for ev in listing.data:
-                print(f"  [{ev.event_type}] {ev.identifier}")
+        listing = client.events.search(channel_id=channel_id, limit=20)
+        if listing is not None and (listing.events or []):
+            print(f"Events published ({len((listing.events or []))}):")
+            for ev in listing.events or []:
+                print(f"  [{ev.event_type}] {ev.operation_name}")
         else:
             print("No events published (set OPENAI_API_KEY to run the chain).")
-
-        if owns_channel:
-            client.channels.delete(channel_id)
-        if owns_app and app_id is not None:
-            client.apps.delete(app_id)
 
 
 if __name__ == "__main__":

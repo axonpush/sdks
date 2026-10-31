@@ -9,7 +9,7 @@ import type { CreateAlertRuleInput } from "../resources/alerts.js";
 
 const fixture = JSON.parse(
   readFileSync(
-    new URL("../../../../contract/fixtures/activity-observation.json", import.meta.url),
+    new URL("../../../../tests/fixtures/activity-observation.json", import.meta.url),
     "utf8",
   ),
 ) as ActivityObservation;

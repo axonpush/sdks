@@ -1,12 +1,13 @@
 # axonpush SDK examples
 
+From the monorepo root, run `bun install --frozen-lockfile`, then `cd packages/typescript`.
 Each file is runnable on its own with `bun run examples/<file>.ts`.
 The shared loader lives in `examples/config.ts`.
 
 Set the standard SDK env vars before running anything:
 
 ```
-export AXONPUSH_API_KEY=ak_...          # or a pt_ public ingest token
+export AXONPUSH_API_KEY=ak_...          # scopes depend on the example
 export AXONPUSH_TENANT_ID=<org-uuid>
 export AXONPUSH_CHANNEL_ID=<channel-uuid>
 export AXONPUSH_BASE_URL=http://localhost:3000   # optional
@@ -24,6 +25,10 @@ export AXONPUSH_ENVIRONMENT=development          # optional
 | `08-winston-logger.ts` | Ship winston log records as `app.log` events with severity mapping. | optional `winston`, `winston-transport` |
 | `09-sentry.ts` | Build the axonpush DSN and call `installSentry(Sentry, opts)`. | optional `@sentry/node` |
 | `10-otel-export.ts` | Register `AxonPushSpanExporter` with a `BasicTracerProvider`. | optional `@opentelemetry/api`, `@opentelemetry/sdk-trace-base` |
+
+Public ingest tokens can publish but cannot run management or search examples.
+A local API URL must be supplied explicitly; `new AxonPush()` otherwise uses the
+SDK's hosted API default.
 
 The optional peer-dep examples (07–10) detect their host library at
 runtime and exit cleanly with a hint when it isn't installed, so they

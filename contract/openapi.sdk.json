@@ -3504,6 +3504,85 @@
         ],
         "type": "object"
       },
+      "BatchInputBody": {
+        "additionalProperties": false,
+        "properties": {
+          "$schema": {
+            "description": "A URL to the JSON Schema for this object.",
+            "examples": [
+              "https://example.com/schemas/BatchInputBody.json"
+            ],
+            "format": "uri",
+            "readOnly": true,
+            "type": "string"
+          },
+          "events": {
+            "items": {
+              "$ref": "#/components/schemas/EventBody"
+            },
+            "maxItems": 50,
+            "minItems": 1,
+            "type": [
+              "array",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "events"
+        ],
+        "type": "object"
+      },
+      "BatchOutputBody": {
+        "additionalProperties": false,
+        "properties": {
+          "$schema": {
+            "description": "A URL to the JSON Schema for this object.",
+            "examples": [
+              "https://example.com/schemas/BatchOutputBody.json"
+            ],
+            "format": "uri",
+            "readOnly": true,
+            "type": "string"
+          },
+          "results": {
+            "items": {
+              "$ref": "#/components/schemas/BatchResult"
+            },
+            "type": [
+              "array",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "results"
+        ],
+        "type": "object"
+      },
+      "BatchResult": {
+        "additionalProperties": false,
+        "properties": {
+          "errorCode": {
+            "type": "string"
+          },
+          "eventId": {
+            "type": "string"
+          },
+          "index": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "status": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "index",
+          "status"
+        ],
+        "type": "object"
+      },
       "BillingEventDTO": {
         "additionalProperties": false,
         "properties": {
@@ -3766,6 +3845,32 @@
           "channelId",
           "name",
           "createdAt"
+        ],
+        "type": "object"
+      },
+      "CheckoutInputBody": {
+        "additionalProperties": false,
+        "properties": {
+          "$schema": {
+            "description": "A URL to the JSON Schema for this object.",
+            "examples": [
+              "https://example.com/schemas/CheckoutInputBody.json"
+            ],
+            "format": "uri",
+            "readOnly": true,
+            "type": "string"
+          },
+          "cadence": {
+            "description": "monthly or annual",
+            "type": "string"
+          },
+          "plan": {
+            "description": "pro or team",
+            "type": "string"
+          }
+        },
+        "required": [
+          "plan"
         ],
         "type": "object"
       },
@@ -6510,6 +6615,27 @@
         ],
         "type": "object"
       },
+      "LinkOutputBody": {
+        "additionalProperties": false,
+        "properties": {
+          "$schema": {
+            "description": "A URL to the JSON Schema for this object.",
+            "examples": [
+              "https://example.com/schemas/LinkOutputBody.json"
+            ],
+            "format": "uri",
+            "readOnly": true,
+            "type": "string"
+          },
+          "url": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "url"
+        ],
+        "type": "object"
+      },
       "ListAbuseFlagsOutputBody": {
         "additionalProperties": false,
         "properties": {
@@ -7267,6 +7393,61 @@
         ],
         "type": "object"
       },
+      "OperationCapabilities": {
+        "additionalProperties": false,
+        "properties": {
+          "$schema": {
+            "description": "A URL to the JSON Schema for this object.",
+            "examples": [
+              "https://example.com/schemas/OperationCapabilities.json"
+            ],
+            "format": "uri",
+            "readOnly": true,
+            "type": "string"
+          },
+          "operations": {
+            "items": {
+              "$ref": "#/components/schemas/OperationCapability"
+            },
+            "type": [
+              "array",
+              "null"
+            ]
+          },
+          "registryRevision": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "registryRevision",
+          "operations"
+        ],
+        "type": "object"
+      },
+      "OperationCapability": {
+        "additionalProperties": false,
+        "properties": {
+          "availability": {
+            "enum": [
+              "allowed",
+              "denied",
+              "conditional"
+            ],
+            "type": "string"
+          },
+          "operationId": {
+            "type": "string"
+          },
+          "reason": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "operationId",
+          "availability"
+        ],
+        "type": "object"
+      },
       "OpsInputBody": {
         "additionalProperties": false,
         "properties": {
@@ -7728,6 +7909,90 @@
         ],
         "type": "object"
       },
+      "PlanFeatures": {
+        "additionalProperties": false,
+        "properties": {
+          "auditLog": {
+            "type": "boolean"
+          },
+          "customRetention": {
+            "type": "boolean"
+          },
+          "rbac": {
+            "type": "boolean"
+          },
+          "sso": {
+            "type": "boolean"
+          }
+        },
+        "type": "object"
+      },
+      "PlanLimits": {
+        "additionalProperties": false,
+        "properties": {
+          "events": {
+            "format": "int64",
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "features": {
+            "$ref": "#/components/schemas/PlanFeatures"
+          },
+          "hotRetentionDays": {
+            "format": "int64",
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "lemonsqueezyVariants": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "type": "object"
+          },
+          "priceAnnualUsd": {
+            "format": "int64",
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "priceMonthlyUsd": {
+            "format": "int64",
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "retentionDays": {
+            "format": "int64",
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "seats": {
+            "format": "int64",
+            "type": [
+              "integer",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "events",
+          "retentionDays",
+          "hotRetentionDays",
+          "seats",
+          "priceMonthlyUsd",
+          "priceAnnualUsd",
+          "features"
+        ],
+        "type": "object"
+      },
       "PlanMrr": {
         "additionalProperties": false,
         "properties": {
@@ -7747,6 +8012,30 @@
           "plan",
           "count",
           "mrrUsd"
+        ],
+        "type": "object"
+      },
+      "PlansOutputBody": {
+        "additionalProperties": false,
+        "properties": {
+          "$schema": {
+            "description": "A URL to the JSON Schema for this object.",
+            "examples": [
+              "https://example.com/schemas/PlansOutputBody.json"
+            ],
+            "format": "uri",
+            "readOnly": true,
+            "type": "string"
+          },
+          "plans": {
+            "additionalProperties": {
+              "$ref": "#/components/schemas/PlanLimits"
+            },
+            "type": "object"
+          }
+        },
+        "required": [
+          "plans"
         ],
         "type": "object"
       },
@@ -8974,6 +9263,78 @@
         },
         "type": "object"
       },
+      "UsageOutputBody": {
+        "additionalProperties": false,
+        "properties": {
+          "$schema": {
+            "description": "A URL to the JSON Schema for this object.",
+            "examples": [
+              "https://example.com/schemas/UsageOutputBody.json"
+            ],
+            "format": "uri",
+            "readOnly": true,
+            "type": "string"
+          },
+          "cycleStartedAt": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "hasBillingPortal": {
+            "type": "boolean"
+          },
+          "limit": {
+            "format": "int64",
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "plan": {
+            "type": "string"
+          },
+          "retentionDays": {
+            "format": "int32",
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "seats": {
+            "format": "int32",
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "subscriptionStatus": {
+            "type": "string"
+          },
+          "trialEndsAt": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "used": {
+            "format": "int64",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "plan",
+          "used",
+          "limit",
+          "retentionDays",
+          "seats",
+          "cycleStartedAt",
+          "subscriptionStatus",
+          "trialEndsAt",
+          "hasBillingPortal"
+        ],
+        "type": "object"
+      },
       "UserDTO": {
         "additionalProperties": false,
         "properties": {
@@ -9154,6 +9515,33 @@
         },
         "required": [
           "views"
+        ],
+        "type": "object"
+      },
+      "WebhookOutputBody": {
+        "additionalProperties": false,
+        "properties": {
+          "$schema": {
+            "description": "A URL to the JSON Schema for this object.",
+            "examples": [
+              "https://example.com/schemas/WebhookOutputBody.json"
+            ],
+            "format": "uri",
+            "readOnly": true,
+            "type": "string"
+          },
+          "deduped": {
+            "type": "boolean"
+          },
+          "ok": {
+            "type": "boolean"
+          },
+          "skipped": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "ok"
         ],
         "type": "object"
       },
@@ -9474,7 +9862,14 @@
         "summary": "Submit an access request",
         "tags": [
           "access-request"
-        ]
+        ],
+        "x-axonpush-effect": "write",
+        "x-axonpush-mcp": false,
+        "x-axonpush-policy": {
+          "category": "public",
+          "grants": "none"
+        },
+        "x-axonpush-sdk": true
       }
     },
     "/admin/abuse-flags": {
@@ -9517,7 +9912,14 @@
         "summary": "List abuse flags",
         "tags": [
           "admin"
-        ]
+        ],
+        "x-axonpush-effect": "read",
+        "x-axonpush-mcp": false,
+        "x-axonpush-policy": {
+          "category": "platform-admin",
+          "grants": "none"
+        },
+        "x-axonpush-sdk": true
       }
     },
     "/admin/abuse-flags/{flagId}/dismiss": {
@@ -9558,7 +9960,14 @@
         "summary": "Dismiss an abuse flag",
         "tags": [
           "admin"
-        ]
+        ],
+        "x-axonpush-effect": "write",
+        "x-axonpush-mcp": false,
+        "x-axonpush-policy": {
+          "category": "platform-admin",
+          "grants": "none"
+        },
+        "x-axonpush-sdk": true
       }
     },
     "/admin/abuse-flags/{flagId}/suspend": {
@@ -9599,7 +10008,14 @@
         "summary": "Suspend the flagged organization and mark the flag actioned",
         "tags": [
           "admin"
-        ]
+        ],
+        "x-axonpush-effect": "write",
+        "x-axonpush-mcp": false,
+        "x-axonpush-policy": {
+          "category": "platform-admin",
+          "grants": "none"
+        },
+        "x-axonpush-sdk": true
       }
     },
     "/admin/access-requests": {
@@ -9642,7 +10058,14 @@
         "summary": "List access requests",
         "tags": [
           "admin"
-        ]
+        ],
+        "x-axonpush-effect": "read",
+        "x-axonpush-mcp": false,
+        "x-axonpush-policy": {
+          "category": "platform-admin",
+          "grants": "none"
+        },
+        "x-axonpush-sdk": true
       }
     },
     "/admin/access-requests/{requestId}/status": {
@@ -9693,7 +10116,14 @@
         "summary": "Set access request status",
         "tags": [
           "admin"
-        ]
+        ],
+        "x-axonpush-effect": "write",
+        "x-axonpush-mcp": false,
+        "x-axonpush-policy": {
+          "category": "platform-admin",
+          "grants": "none"
+        },
+        "x-axonpush-sdk": true
       }
     },
     "/admin/billing-events": {
@@ -9724,7 +10154,14 @@
         "summary": "List billing events",
         "tags": [
           "admin"
-        ]
+        ],
+        "x-axonpush-effect": "read",
+        "x-axonpush-mcp": false,
+        "x-axonpush-policy": {
+          "category": "platform-admin",
+          "grants": "none"
+        },
+        "x-axonpush-sdk": true
       }
     },
     "/admin/feedback": {
@@ -9767,7 +10204,14 @@
         "summary": "List feedback",
         "tags": [
           "admin"
-        ]
+        ],
+        "x-axonpush-effect": "read",
+        "x-axonpush-mcp": false,
+        "x-axonpush-policy": {
+          "category": "platform-admin",
+          "grants": "none"
+        },
+        "x-axonpush-sdk": true
       }
     },
     "/admin/feedback/{feedbackId}/status": {
@@ -9818,7 +10262,14 @@
         "summary": "Set feedback status",
         "tags": [
           "admin"
-        ]
+        ],
+        "x-axonpush-effect": "write",
+        "x-axonpush-mcp": false,
+        "x-axonpush-policy": {
+          "category": "platform-admin",
+          "grants": "none"
+        },
+        "x-axonpush-sdk": true
       }
     },
     "/admin/orgs": {
@@ -9861,7 +10312,14 @@
         "summary": "Search organizations",
         "tags": [
           "admin"
-        ]
+        ],
+        "x-axonpush-effect": "read",
+        "x-axonpush-mcp": false,
+        "x-axonpush-policy": {
+          "category": "platform-admin",
+          "grants": "none"
+        },
+        "x-axonpush-sdk": true
       }
     },
     "/admin/orgs/{orgId}": {
@@ -9902,7 +10360,14 @@
         "summary": "Get an organization with members and invitations",
         "tags": [
           "admin"
-        ]
+        ],
+        "x-axonpush-effect": "read",
+        "x-axonpush-mcp": false,
+        "x-axonpush-policy": {
+          "category": "platform-admin",
+          "grants": "none"
+        },
+        "x-axonpush-sdk": true
       }
     },
     "/admin/orgs/{orgId}/billing": {
@@ -9953,7 +10418,14 @@
         "summary": "Set organization commercial terms (monthly amount + notes)",
         "tags": [
           "admin"
-        ]
+        ],
+        "x-axonpush-effect": "write",
+        "x-axonpush-mcp": false,
+        "x-axonpush-policy": {
+          "category": "platform-admin",
+          "grants": "none"
+        },
+        "x-axonpush-sdk": true
       }
     },
     "/admin/orgs/{orgId}/delete": {
@@ -9994,7 +10466,14 @@
         "summary": "Soft-delete an organization (hidden from lists and counts)",
         "tags": [
           "admin"
-        ]
+        ],
+        "x-axonpush-effect": "write",
+        "x-axonpush-mcp": false,
+        "x-axonpush-policy": {
+          "category": "platform-admin",
+          "grants": "none"
+        },
+        "x-axonpush-sdk": true
       }
     },
     "/admin/orgs/{orgId}/disable": {
@@ -10035,7 +10514,14 @@
         "summary": "Disable an organization (pauses ingest)",
         "tags": [
           "admin"
-        ]
+        ],
+        "x-axonpush-effect": "write",
+        "x-axonpush-mcp": false,
+        "x-axonpush-policy": {
+          "category": "platform-admin",
+          "grants": "none"
+        },
+        "x-axonpush-sdk": true
       }
     },
     "/admin/orgs/{orgId}/enable": {
@@ -10076,7 +10562,14 @@
         "summary": "Re-enable a disabled organization",
         "tags": [
           "admin"
-        ]
+        ],
+        "x-axonpush-effect": "write",
+        "x-axonpush-mcp": false,
+        "x-axonpush-policy": {
+          "category": "platform-admin",
+          "grants": "none"
+        },
+        "x-axonpush-sdk": true
       }
     },
     "/admin/orgs/{orgId}/limits": {
@@ -10127,7 +10620,14 @@
         "summary": "Set organization limit overrides",
         "tags": [
           "admin"
-        ]
+        ],
+        "x-axonpush-effect": "write",
+        "x-axonpush-mcp": false,
+        "x-axonpush-policy": {
+          "category": "platform-admin",
+          "grants": "none"
+        },
+        "x-axonpush-sdk": true
       }
     },
     "/admin/orgs/{orgId}/plan": {
@@ -10178,7 +10678,14 @@
         "summary": "Set organization plan",
         "tags": [
           "admin"
-        ]
+        ],
+        "x-axonpush-effect": "write",
+        "x-axonpush-mcp": false,
+        "x-axonpush-policy": {
+          "category": "platform-admin",
+          "grants": "none"
+        },
+        "x-axonpush-sdk": true
       }
     },
     "/admin/orgs/{orgId}/status": {
@@ -10229,7 +10736,14 @@
         "summary": "Set organization subscription status",
         "tags": [
           "admin"
-        ]
+        ],
+        "x-axonpush-effect": "write",
+        "x-axonpush-mcp": false,
+        "x-axonpush-policy": {
+          "category": "platform-admin",
+          "grants": "none"
+        },
+        "x-axonpush-sdk": true
       }
     },
     "/admin/orgs/{orgId}/trial": {
@@ -10280,7 +10794,14 @@
         "summary": "Set organization trial",
         "tags": [
           "admin"
-        ]
+        ],
+        "x-axonpush-effect": "write",
+        "x-axonpush-mcp": false,
+        "x-axonpush-policy": {
+          "category": "platform-admin",
+          "grants": "none"
+        },
+        "x-axonpush-sdk": true
       }
     },
     "/admin/overview": {
@@ -10311,7 +10832,14 @@
         "summary": "Super-admin overview stats",
         "tags": [
           "admin"
-        ]
+        ],
+        "x-axonpush-effect": "read",
+        "x-axonpush-mcp": false,
+        "x-axonpush-policy": {
+          "category": "platform-admin",
+          "grants": "none"
+        },
+        "x-axonpush-sdk": true
       }
     },
     "/admin/users": {
@@ -10364,7 +10892,14 @@
         "summary": "Search users",
         "tags": [
           "admin"
-        ]
+        ],
+        "x-axonpush-effect": "read",
+        "x-axonpush-mcp": false,
+        "x-axonpush-policy": {
+          "category": "platform-admin",
+          "grants": "none"
+        },
+        "x-axonpush-sdk": true
       }
     },
     "/admin/users/{userId}/delete": {
@@ -10405,7 +10940,14 @@
         "summary": "Soft-delete a user (hidden from lists and counts, sign-in blocked)",
         "tags": [
           "admin"
-        ]
+        ],
+        "x-axonpush-effect": "write",
+        "x-axonpush-mcp": false,
+        "x-axonpush-policy": {
+          "category": "platform-admin",
+          "grants": "none"
+        },
+        "x-axonpush-sdk": true
       }
     },
     "/admin/users/{userId}/disable": {
@@ -10446,7 +10988,14 @@
         "summary": "Disable a user",
         "tags": [
           "admin"
-        ]
+        ],
+        "x-axonpush-effect": "write",
+        "x-axonpush-mcp": false,
+        "x-axonpush-policy": {
+          "category": "platform-admin",
+          "grants": "none"
+        },
+        "x-axonpush-sdk": true
       }
     },
     "/admin/users/{userId}/enable": {
@@ -10487,7 +11036,14 @@
         "summary": "Enable a user",
         "tags": [
           "admin"
-        ]
+        ],
+        "x-axonpush-effect": "write",
+        "x-axonpush-mcp": false,
+        "x-axonpush-policy": {
+          "category": "platform-admin",
+          "grants": "none"
+        },
+        "x-axonpush-sdk": true
       }
     },
     "/admin/users/{userId}/restore": {
@@ -10528,7 +11084,14 @@
         "summary": "Restore a soft-deleted user",
         "tags": [
           "admin"
-        ]
+        ],
+        "x-axonpush-effect": "write",
+        "x-axonpush-mcp": false,
+        "x-axonpush-policy": {
+          "category": "platform-admin",
+          "grants": "none"
+        },
+        "x-axonpush-sdk": true
       }
     },
     "/analytics/breakdown": {
@@ -10793,7 +11356,21 @@
         "summary": "Top-N breakdown by model, provider, status, source, app, key, user, agent, tool, or tag",
         "tags": [
           "analytics"
-        ]
+        ],
+        "x-axonpush-effect": "read",
+        "x-axonpush-mcp": true,
+        "x-axonpush-policy": {
+          "category": "org-read",
+          "grants": "reject-scoped",
+          "scopes": [
+            "observe:read"
+          ]
+        },
+        "x-axonpush-read-budget": true,
+        "x-axonpush-scopes": [
+          "observe:read"
+        ],
+        "x-axonpush-sdk": true
       }
     },
     "/analytics/diff": {
@@ -10835,7 +11412,21 @@
         "summary": "BubbleUp attribute-diff: rank attributes by how differently their values appear in a selection vs a baseline cohort",
         "tags": [
           "analytics"
-        ]
+        ],
+        "x-axonpush-effect": "read",
+        "x-axonpush-mcp": true,
+        "x-axonpush-policy": {
+          "category": "org-read",
+          "grants": "reject-scoped",
+          "scopes": [
+            "observe:read"
+          ]
+        },
+        "x-axonpush-read-budget": true,
+        "x-axonpush-scopes": [
+          "observe:read"
+        ],
+        "x-axonpush-sdk": true
       }
     },
     "/analytics/dimensions": {
@@ -10890,7 +11481,21 @@
         "summary": "Discover the custom dimensions (span-attribute keys) this org emits",
         "tags": [
           "analytics"
-        ]
+        ],
+        "x-axonpush-effect": "read",
+        "x-axonpush-mcp": true,
+        "x-axonpush-policy": {
+          "category": "org-read",
+          "grants": "reject-scoped",
+          "scopes": [
+            "observe:read"
+          ]
+        },
+        "x-axonpush-read-budget": true,
+        "x-axonpush-scopes": [
+          "observe:read"
+        ],
+        "x-axonpush-sdk": true
       }
     },
     "/analytics/dimensions/values": {
@@ -10956,7 +11561,21 @@
         "summary": "List the observed values of one custom dimension",
         "tags": [
           "analytics"
-        ]
+        ],
+        "x-axonpush-effect": "read",
+        "x-axonpush-mcp": true,
+        "x-axonpush-policy": {
+          "category": "org-read",
+          "grants": "reject-scoped",
+          "scopes": [
+            "observe:read"
+          ]
+        },
+        "x-axonpush-read-budget": true,
+        "x-axonpush-scopes": [
+          "observe:read"
+        ],
+        "x-axonpush-sdk": true
       }
     },
     "/analytics/heatmap": {
@@ -11195,7 +11814,21 @@
         "summary": "Latency heatmap: duration-band x time-bucket request counts for drag-select",
         "tags": [
           "analytics"
-        ]
+        ],
+        "x-axonpush-effect": "read",
+        "x-axonpush-mcp": true,
+        "x-axonpush-policy": {
+          "category": "org-read",
+          "grants": "reject-scoped",
+          "scopes": [
+            "observe:read"
+          ]
+        },
+        "x-axonpush-read-budget": true,
+        "x-axonpush-scopes": [
+          "observe:read"
+        ],
+        "x-axonpush-sdk": true
       }
     },
     "/analytics/ingestion-status": {
@@ -11239,7 +11872,21 @@
         "summary": "Whether this workspace has ever ingested an event (onboarding signal)",
         "tags": [
           "analytics"
-        ]
+        ],
+        "x-axonpush-effect": "read",
+        "x-axonpush-mcp": true,
+        "x-axonpush-policy": {
+          "category": "org-read",
+          "grants": "reject-scoped",
+          "scopes": [
+            "observe:read"
+          ]
+        },
+        "x-axonpush-read-budget": true,
+        "x-axonpush-scopes": [
+          "observe:read"
+        ],
+        "x-axonpush-sdk": true
       }
     },
     "/analytics/latency": {
@@ -11454,7 +12101,21 @@
         "summary": "Latency + TTFT percentiles (p50/p95/p99/max) over the window",
         "tags": [
           "analytics"
-        ]
+        ],
+        "x-axonpush-effect": "read",
+        "x-axonpush-mcp": true,
+        "x-axonpush-policy": {
+          "category": "org-read",
+          "grants": "reject-scoped",
+          "scopes": [
+            "observe:read"
+          ]
+        },
+        "x-axonpush-read-budget": true,
+        "x-axonpush-scopes": [
+          "observe:read"
+        ],
+        "x-axonpush-sdk": true
       }
     },
     "/analytics/overview": {
@@ -11714,7 +12375,21 @@
         "summary": "Aggregate observability view (timeseries + latency + per-dimension breakdowns) in one call",
         "tags": [
           "analytics"
-        ]
+        ],
+        "x-axonpush-effect": "read",
+        "x-axonpush-mcp": true,
+        "x-axonpush-policy": {
+          "category": "org-read",
+          "grants": "reject-scoped",
+          "scopes": [
+            "observe:read"
+          ]
+        },
+        "x-axonpush-read-budget": true,
+        "x-axonpush-scopes": [
+          "observe:read"
+        ],
+        "x-axonpush-sdk": true
       }
     },
     "/analytics/timeseries": {
@@ -11943,7 +12618,21 @@
         "summary": "Time-bucketed traffic (counts, tokens, cost, latency, TTFT)",
         "tags": [
           "analytics"
-        ]
+        ],
+        "x-axonpush-effect": "read",
+        "x-axonpush-mcp": true,
+        "x-axonpush-policy": {
+          "category": "org-read",
+          "grants": "reject-scoped",
+          "scopes": [
+            "observe:read"
+          ]
+        },
+        "x-axonpush-read-budget": true,
+        "x-axonpush-scopes": [
+          "observe:read"
+        ],
+        "x-axonpush-sdk": true
       }
     },
     "/apps": {
@@ -11974,7 +12663,21 @@
         "summary": "List apps",
         "tags": [
           "apps"
-        ]
+        ],
+        "x-axonpush-effect": "write",
+        "x-axonpush-mcp": true,
+        "x-axonpush-policy": {
+          "category": "org-read",
+          "grants": "none",
+          "scopes": [
+            "apps:manage"
+          ],
+          "unboundKey": true
+        },
+        "x-axonpush-scopes": [
+          "apps:manage"
+        ],
+        "x-axonpush-sdk": true
       },
       "post": {
         "operationId": "apps.create",
@@ -12013,7 +12716,21 @@
         "summary": "Create an app",
         "tags": [
           "apps"
-        ]
+        ],
+        "x-axonpush-effect": "write",
+        "x-axonpush-mcp": true,
+        "x-axonpush-policy": {
+          "category": "org-config",
+          "grants": "none",
+          "scopes": [
+            "apps:manage"
+          ],
+          "unboundKey": true
+        },
+        "x-axonpush-scopes": [
+          "apps:manage"
+        ],
+        "x-axonpush-sdk": true
       }
     },
     "/apps/{appId}": {
@@ -12054,7 +12771,22 @@
         "summary": "Delete an app",
         "tags": [
           "apps"
-        ]
+        ],
+        "x-axonpush-effect": "write",
+        "x-axonpush-mcp": true,
+        "x-axonpush-policy": {
+          "category": "org-config",
+          "grants": "none",
+          "scopes": [
+            "apps:manage"
+          ],
+          "targetApp": true,
+          "unboundEnvironment": true
+        },
+        "x-axonpush-scopes": [
+          "apps:manage"
+        ],
+        "x-axonpush-sdk": true
       },
       "get": {
         "operationId": "apps.get",
@@ -12093,7 +12825,22 @@
         "summary": "Get an app",
         "tags": [
           "apps"
-        ]
+        ],
+        "x-axonpush-effect": "read",
+        "x-axonpush-mcp": true,
+        "x-axonpush-policy": {
+          "category": "org-read",
+          "grants": "none",
+          "scopes": [
+            "apps:manage"
+          ],
+          "targetApp": true,
+          "unboundEnvironment": true
+        },
+        "x-axonpush-scopes": [
+          "apps:manage"
+        ],
+        "x-axonpush-sdk": true
       },
       "patch": {
         "operationId": "apps.update",
@@ -12142,7 +12889,22 @@
         "summary": "Update an app",
         "tags": [
           "apps"
-        ]
+        ],
+        "x-axonpush-effect": "write",
+        "x-axonpush-mcp": true,
+        "x-axonpush-policy": {
+          "category": "org-config",
+          "grants": "none",
+          "scopes": [
+            "apps:manage"
+          ],
+          "targetApp": true,
+          "unboundEnvironment": true
+        },
+        "x-axonpush-scopes": [
+          "apps:manage"
+        ],
+        "x-axonpush-sdk": true
       }
     },
     "/apps/{appId}/channels": {
@@ -12183,7 +12945,22 @@
         "summary": "List channels for an app",
         "tags": [
           "channels"
-        ]
+        ],
+        "x-axonpush-effect": "read",
+        "x-axonpush-mcp": true,
+        "x-axonpush-policy": {
+          "category": "org-read",
+          "grants": "none",
+          "scopes": [
+            "channels:manage"
+          ],
+          "targetApp": true,
+          "unboundEnvironment": true
+        },
+        "x-axonpush-scopes": [
+          "channels:manage"
+        ],
+        "x-axonpush-sdk": true
       },
       "post": {
         "operationId": "channels.create",
@@ -12232,7 +13009,22 @@
         "summary": "Create a channel",
         "tags": [
           "channels"
-        ]
+        ],
+        "x-axonpush-effect": "write",
+        "x-axonpush-mcp": true,
+        "x-axonpush-policy": {
+          "category": "org-config",
+          "grants": "none",
+          "scopes": [
+            "channels:manage"
+          ],
+          "targetApp": true,
+          "unboundEnvironment": true
+        },
+        "x-axonpush-scopes": [
+          "channels:manage"
+        ],
+        "x-axonpush-sdk": true
       }
     },
     "/apps/{appId}/channels/{channelId}": {
@@ -12281,7 +13073,22 @@
         "summary": "Delete a channel",
         "tags": [
           "channels"
-        ]
+        ],
+        "x-axonpush-effect": "write",
+        "x-axonpush-mcp": true,
+        "x-axonpush-policy": {
+          "category": "org-config",
+          "grants": "none",
+          "scopes": [
+            "channels:manage"
+          ],
+          "targetApp": true,
+          "unboundEnvironment": true
+        },
+        "x-axonpush-scopes": [
+          "channels:manage"
+        ],
+        "x-axonpush-sdk": true
       },
       "get": {
         "operationId": "channels.get",
@@ -12328,7 +13135,22 @@
         "summary": "Get a channel",
         "tags": [
           "channels"
-        ]
+        ],
+        "x-axonpush-effect": "read",
+        "x-axonpush-mcp": true,
+        "x-axonpush-policy": {
+          "category": "org-read",
+          "grants": "none",
+          "scopes": [
+            "channels:manage"
+          ],
+          "targetApp": true,
+          "unboundEnvironment": true
+        },
+        "x-axonpush-scopes": [
+          "channels:manage"
+        ],
+        "x-axonpush-sdk": true
       },
       "put": {
         "operationId": "channels.update",
@@ -12385,7 +13207,22 @@
         "summary": "Update a channel",
         "tags": [
           "channels"
-        ]
+        ],
+        "x-axonpush-effect": "write",
+        "x-axonpush-mcp": true,
+        "x-axonpush-policy": {
+          "category": "org-config",
+          "grants": "none",
+          "scopes": [
+            "channels:manage"
+          ],
+          "targetApp": true,
+          "unboundEnvironment": true
+        },
+        "x-axonpush-scopes": [
+          "channels:manage"
+        ],
+        "x-axonpush-sdk": true
       }
     },
     "/audit-logs": {
@@ -12466,7 +13303,20 @@
         "summary": "List audit log entries",
         "tags": [
           "audit-logs"
-        ]
+        ],
+        "x-axonpush-effect": "read",
+        "x-axonpush-mcp": true,
+        "x-axonpush-policy": {
+          "category": "org-read",
+          "grants": "reject-scoped",
+          "scopes": [
+            "observe:read"
+          ]
+        },
+        "x-axonpush-scopes": [
+          "observe:read"
+        ],
+        "x-axonpush-sdk": true
       }
     },
     "/audit-logs/verify": {
@@ -12497,7 +13347,20 @@
         "summary": "Verify the tamper-evident audit hash chain",
         "tags": [
           "audit-logs"
-        ]
+        ],
+        "x-axonpush-effect": "read",
+        "x-axonpush-mcp": true,
+        "x-axonpush-policy": {
+          "category": "org-read",
+          "grants": "reject-scoped",
+          "scopes": [
+            "observe:read"
+          ]
+        },
+        "x-axonpush-scopes": [
+          "observe:read"
+        ],
+        "x-axonpush-sdk": true
       }
     },
     "/audit-trail": {
@@ -12571,7 +13434,241 @@
         "summary": "Query and export the decision audit trail",
         "tags": [
           "audit-trail"
-        ]
+        ],
+        "x-axonpush-effect": "read",
+        "x-axonpush-mcp": true,
+        "x-axonpush-policy": {
+          "category": "org-read",
+          "grants": "reject-scoped",
+          "scopes": [
+            "observe:read"
+          ]
+        },
+        "x-axonpush-scopes": [
+          "observe:read"
+        ],
+        "x-axonpush-sdk": true
+      }
+    },
+    "/billing/checkout": {
+      "post": {
+        "operationId": "billing.checkout",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CheckoutInputBody"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LinkOutputBody"
+                }
+              }
+            },
+            "description": "Created"
+          },
+          "default": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "summary": "Create a checkout link",
+        "tags": [
+          "billing"
+        ],
+        "x-axonpush-effect": "write",
+        "x-axonpush-mcp": false,
+        "x-axonpush-policy": {
+          "category": "session-admin",
+          "grants": "none"
+        },
+        "x-axonpush-sdk": true
+      }
+    },
+    "/billing/plans": {
+      "get": {
+        "operationId": "billing.plans",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PlansOutputBody"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "summary": "List billing plans",
+        "tags": [
+          "billing"
+        ],
+        "x-axonpush-effect": "read",
+        "x-axonpush-mcp": false,
+        "x-axonpush-policy": {
+          "category": "public",
+          "grants": "none"
+        },
+        "x-axonpush-sdk": true
+      }
+    },
+    "/billing/portal": {
+      "get": {
+        "operationId": "billing.portal",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LinkOutputBody"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "summary": "Get the customer portal link",
+        "tags": [
+          "billing"
+        ],
+        "x-axonpush-effect": "read",
+        "x-axonpush-mcp": false,
+        "x-axonpush-policy": {
+          "category": "session-admin",
+          "grants": "none"
+        },
+        "x-axonpush-sdk": true
+      }
+    },
+    "/billing/usage": {
+      "get": {
+        "operationId": "billing.usage",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UsageOutputBody"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "summary": "Get billing usage",
+        "tags": [
+          "billing"
+        ],
+        "x-axonpush-effect": "read",
+        "x-axonpush-mcp": false,
+        "x-axonpush-policy": {
+          "category": "session-admin",
+          "grants": "none"
+        },
+        "x-axonpush-sdk": true
+      }
+    },
+    "/billing/webhook": {
+      "post": {
+        "operationId": "billing.webhook",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "X-Signature",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/octet-stream": {
+              "schema": {
+                "contentMediaType": "application/octet-stream",
+                "format": "binary",
+                "type": "string"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WebhookOutputBody"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "summary": "LemonSqueezy webhook",
+        "tags": [
+          "billing"
+        ],
+        "x-axonpush-effect": "write",
+        "x-axonpush-mcp": false,
+        "x-axonpush-policy": {
+          "category": "external-auth",
+          "grants": "none"
+        },
+        "x-axonpush-sdk": true
       }
     },
     "/capabilities": {
@@ -12602,7 +13699,59 @@
         "summary": "Get deployment capabilities",
         "tags": [
           "capabilities"
-        ]
+        ],
+        "x-axonpush-effect": "read",
+        "x-axonpush-mcp": true,
+        "x-axonpush-policy": {
+          "category": "public",
+          "grants": "none"
+        },
+        "x-axonpush-sdk": true
+      }
+    },
+    "/capabilities/operations": {
+      "get": {
+        "operationId": "capabilities.operations",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OperationCapabilities"
+                }
+              }
+            },
+            "description": "OK",
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "default": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "summary": "Get operation permissions for the current caller",
+        "tags": [
+          "capabilities"
+        ],
+        "x-axonpush-effect": "read",
+        "x-axonpush-mcp": false,
+        "x-axonpush-policy": {
+          "category": "authenticated",
+          "grants": "none"
+        },
+        "x-axonpush-sdk": true
       }
     },
     "/environments": {
@@ -12633,7 +13782,20 @@
         "summary": "List environments",
         "tags": [
           "environments"
-        ]
+        ],
+        "x-axonpush-effect": "write",
+        "x-axonpush-mcp": true,
+        "x-axonpush-policy": {
+          "category": "org-read",
+          "grants": "none",
+          "scopes": [
+            "observe:read"
+          ]
+        },
+        "x-axonpush-scopes": [
+          "observe:read"
+        ],
+        "x-axonpush-sdk": true
       },
       "post": {
         "operationId": "environments.create",
@@ -12672,7 +13834,14 @@
         "summary": "Create an environment",
         "tags": [
           "environments"
-        ]
+        ],
+        "x-axonpush-effect": "write",
+        "x-axonpush-mcp": true,
+        "x-axonpush-policy": {
+          "category": "session-admin",
+          "grants": "none"
+        },
+        "x-axonpush-sdk": true
       }
     },
     "/environments/{slug}": {
@@ -12713,7 +13882,14 @@
         "summary": "Remove an environment",
         "tags": [
           "environments"
-        ]
+        ],
+        "x-axonpush-effect": "write",
+        "x-axonpush-mcp": true,
+        "x-axonpush-policy": {
+          "category": "session-admin",
+          "grants": "none"
+        },
+        "x-axonpush-sdk": true
       },
       "patch": {
         "operationId": "environments.update",
@@ -12762,7 +13938,14 @@
         "summary": "Update an environment",
         "tags": [
           "environments"
-        ]
+        ],
+        "x-axonpush-effect": "write",
+        "x-axonpush-mcp": true,
+        "x-axonpush-policy": {
+          "category": "session-admin",
+          "grants": "none"
+        },
+        "x-axonpush-sdk": true
       }
     },
     "/environments/{slug}/promote": {
@@ -12803,7 +13986,14 @@
         "summary": "Promote an environment to the org default",
         "tags": [
           "environments"
-        ]
+        ],
+        "x-axonpush-effect": "write",
+        "x-axonpush-mcp": true,
+        "x-axonpush-policy": {
+          "category": "session-admin",
+          "grants": "none"
+        },
+        "x-axonpush-sdk": true
       }
     },
     "/errors": {
@@ -12914,7 +14104,21 @@
         "summary": "List error Issues (grouped by fingerprint) with triage state",
         "tags": [
           "errors"
-        ]
+        ],
+        "x-axonpush-effect": "read",
+        "x-axonpush-mcp": true,
+        "x-axonpush-policy": {
+          "category": "org-read",
+          "grants": "reject-scoped",
+          "scopes": [
+            "observe:read"
+          ]
+        },
+        "x-axonpush-read-budget": true,
+        "x-axonpush-scopes": [
+          "observe:read"
+        ],
+        "x-axonpush-sdk": true
       }
     },
     "/errors/{fingerprint}": {
@@ -12976,7 +14180,21 @@
         "summary": "Get an error Issue: sample event, stack, breadcrumbs, tags, affected traces",
         "tags": [
           "errors"
-        ]
+        ],
+        "x-axonpush-effect": "read",
+        "x-axonpush-mcp": true,
+        "x-axonpush-policy": {
+          "category": "org-read",
+          "grants": "reject-scoped",
+          "scopes": [
+            "observe:read"
+          ]
+        },
+        "x-axonpush-read-budget": true,
+        "x-axonpush-scopes": [
+          "observe:read"
+        ],
+        "x-axonpush-sdk": true
       },
       "patch": {
         "operationId": "errors.triage",
@@ -13025,7 +14243,20 @@
         "summary": "Triage an error Issue (resolve, unresolve, ignore, mute, assign)",
         "tags": [
           "errors"
-        ]
+        ],
+        "x-axonpush-effect": "write",
+        "x-axonpush-mcp": true,
+        "x-axonpush-policy": {
+          "category": "org-config",
+          "grants": "reject-scoped",
+          "scopes": [
+            "observe:manage"
+          ]
+        },
+        "x-axonpush-scopes": [
+          "observe:manage"
+        ],
+        "x-axonpush-sdk": true
       }
     },
     "/errors/{fingerprint}/events": {
@@ -13097,7 +14328,21 @@
         "summary": "List occurrences of one error Issue (older/newer paging)",
         "tags": [
           "errors"
-        ]
+        ],
+        "x-axonpush-effect": "read",
+        "x-axonpush-mcp": true,
+        "x-axonpush-policy": {
+          "category": "org-read",
+          "grants": "reject-scoped",
+          "scopes": [
+            "observe:read"
+          ]
+        },
+        "x-axonpush-read-budget": true,
+        "x-axonpush-scopes": [
+          "observe:read"
+        ],
+        "x-axonpush-sdk": true
       }
     },
     "/event": {
@@ -13168,7 +14413,14 @@
         "summary": "Ingest a single event",
         "tags": [
           "event"
-        ]
+        ],
+        "x-axonpush-effect": "write",
+        "x-axonpush-mcp": false,
+        "x-axonpush-policy": {
+          "category": "external-auth",
+          "grants": "none"
+        },
+        "x-axonpush-sdk": true
       }
     },
     "/events": {
@@ -13402,7 +14654,99 @@
         "summary": "Search events with filters",
         "tags": [
           "events"
-        ]
+        ],
+        "x-axonpush-effect": "read",
+        "x-axonpush-mcp": true,
+        "x-axonpush-policy": {
+          "category": "org-read",
+          "grants": "reject-scoped",
+          "scopes": [
+            "observe:read"
+          ]
+        },
+        "x-axonpush-read-budget": true,
+        "x-axonpush-scopes": [
+          "observe:read"
+        ],
+        "x-axonpush-sdk": true
+      }
+    },
+    "/events/batch": {
+      "post": {
+        "operationId": "createEventBatch",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "x-axonpush-api-key",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "x-api-key",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "x-public-token",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "Authorization",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BatchInputBody"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BatchOutputBody"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "summary": "Durably accept events with individual results",
+        "tags": [
+          "event"
+        ],
+        "x-axonpush-effect": "write",
+        "x-axonpush-mcp": false,
+        "x-axonpush-policy": {
+          "category": "external-auth",
+          "grants": "none"
+        },
+        "x-axonpush-sdk": true
       }
     },
     "/export-destinations": {
@@ -13443,7 +14787,21 @@
         "summary": "List export destinations",
         "tags": [
           "export-destinations"
-        ]
+        ],
+        "x-axonpush-effect": "read",
+        "x-axonpush-mcp": true,
+        "x-axonpush-policy": {
+          "category": "sensitive-read",
+          "grants": "reject-scoped",
+          "scopes": [
+            "observe:read"
+          ],
+          "unboundKey": true
+        },
+        "x-axonpush-scopes": [
+          "observe:read"
+        ],
+        "x-axonpush-sdk": true
       },
       "post": {
         "operationId": "export.create",
@@ -13482,7 +14840,21 @@
         "summary": "Create an export destination",
         "tags": [
           "export-destinations"
-        ]
+        ],
+        "x-axonpush-effect": "write",
+        "x-axonpush-mcp": true,
+        "x-axonpush-policy": {
+          "category": "org-config",
+          "grants": "reject-scoped",
+          "scopes": [
+            "observe:manage"
+          ],
+          "unboundKey": true
+        },
+        "x-axonpush-scopes": [
+          "observe:manage"
+        ],
+        "x-axonpush-sdk": true
       }
     },
     "/export-destinations/{destinationId}": {
@@ -13523,7 +14895,21 @@
         "summary": "Deactivate an export destination",
         "tags": [
           "export-destinations"
-        ]
+        ],
+        "x-axonpush-effect": "write",
+        "x-axonpush-mcp": true,
+        "x-axonpush-policy": {
+          "category": "org-config",
+          "grants": "reject-scoped",
+          "scopes": [
+            "observe:manage"
+          ],
+          "unboundKey": true
+        },
+        "x-axonpush-scopes": [
+          "observe:manage"
+        ],
+        "x-axonpush-sdk": true
       },
       "get": {
         "operationId": "export.get",
@@ -13562,7 +14948,21 @@
         "summary": "Get an export destination",
         "tags": [
           "export-destinations"
-        ]
+        ],
+        "x-axonpush-effect": "read",
+        "x-axonpush-mcp": true,
+        "x-axonpush-policy": {
+          "category": "sensitive-read",
+          "grants": "reject-scoped",
+          "scopes": [
+            "observe:read"
+          ],
+          "unboundKey": true
+        },
+        "x-axonpush-scopes": [
+          "observe:read"
+        ],
+        "x-axonpush-sdk": true
       },
       "patch": {
         "operationId": "export.update",
@@ -13611,7 +15011,21 @@
         "summary": "Update an export destination",
         "tags": [
           "export-destinations"
-        ]
+        ],
+        "x-axonpush-effect": "write",
+        "x-axonpush-mcp": true,
+        "x-axonpush-policy": {
+          "category": "org-config",
+          "grants": "reject-scoped",
+          "scopes": [
+            "observe:manage"
+          ],
+          "unboundKey": true
+        },
+        "x-axonpush-scopes": [
+          "observe:manage"
+        ],
+        "x-axonpush-sdk": true
       }
     },
     "/export-destinations/{destinationId}/deliveries": {
@@ -13652,7 +15066,21 @@
         "summary": "List recent export deliveries",
         "tags": [
           "export-destinations"
-        ]
+        ],
+        "x-axonpush-effect": "read",
+        "x-axonpush-mcp": true,
+        "x-axonpush-policy": {
+          "category": "sensitive-read",
+          "grants": "reject-scoped",
+          "scopes": [
+            "observe:read"
+          ],
+          "unboundKey": true
+        },
+        "x-axonpush-scopes": [
+          "observe:read"
+        ],
+        "x-axonpush-sdk": true
       }
     },
     "/export-destinations/{destinationId}/test": {
@@ -13693,7 +15121,21 @@
         "summary": "Send a synthetic test event to an export destination",
         "tags": [
           "export-destinations"
-        ]
+        ],
+        "x-axonpush-effect": "write",
+        "x-axonpush-mcp": true,
+        "x-axonpush-policy": {
+          "category": "org-config",
+          "grants": "reject-scoped",
+          "scopes": [
+            "observe:manage"
+          ],
+          "unboundKey": true
+        },
+        "x-axonpush-scopes": [
+          "observe:manage"
+        ],
+        "x-axonpush-sdk": true
       }
     },
     "/feature-flags/me": {
@@ -13724,7 +15166,14 @@
         "summary": "Get feature flags",
         "tags": [
           "feature-flags"
-        ]
+        ],
+        "x-axonpush-effect": "read",
+        "x-axonpush-mcp": true,
+        "x-axonpush-policy": {
+          "category": "public",
+          "grants": "none"
+        },
+        "x-axonpush-sdk": true
       }
     },
     "/feedback": {
@@ -13788,7 +15237,14 @@
         "summary": "Submit feedback",
         "tags": [
           "feedback"
-        ]
+        ],
+        "x-axonpush-effect": "write",
+        "x-axonpush-mcp": false,
+        "x-axonpush-policy": {
+          "category": "public",
+          "grants": "none"
+        },
+        "x-axonpush-sdk": true
       }
     },
     "/healthz": {
@@ -13816,7 +15272,13 @@
             "description": "Error"
           }
         },
-        "summary": "Get healthz"
+        "x-axonpush-effect": "read",
+        "x-axonpush-mcp": false,
+        "x-axonpush-policy": {
+          "category": "public",
+          "grants": "none"
+        },
+        "x-axonpush-sdk": true
       }
     },
     "/invitations/accept": {
@@ -13857,7 +15319,14 @@
         "summary": "Accept an organization invitation by code",
         "tags": [
           "organization"
-        ]
+        ],
+        "x-axonpush-effect": "write",
+        "x-axonpush-mcp": true,
+        "x-axonpush-policy": {
+          "category": "personal-session",
+          "grants": "none"
+        },
+        "x-axonpush-sdk": true
       }
     },
     "/license": {
@@ -13888,7 +15357,14 @@
         "summary": "Get deployment licence state",
         "tags": [
           "license"
-        ]
+        ],
+        "x-axonpush-effect": "read",
+        "x-axonpush-mcp": false,
+        "x-axonpush-policy": {
+          "category": "public",
+          "grants": "none"
+        },
+        "x-axonpush-sdk": true
       }
     },
     "/mcp/connections": {
@@ -13920,9 +15396,19 @@
         "tags": [
           "mcp"
         ],
+        "x-axonpush-effect": "read",
+        "x-axonpush-mcp": false,
+        "x-axonpush-policy": {
+          "category": "org-read",
+          "grants": "none",
+          "scopes": [
+            "observe:read"
+          ]
+        },
         "x-axonpush-scopes": [
           "observe:read"
-        ]
+        ],
+        "x-axonpush-sdk": true
       }
     },
     "/organization": {
@@ -13953,7 +15439,20 @@
         "summary": "Get the caller's organization",
         "tags": [
           "organization"
-        ]
+        ],
+        "x-axonpush-effect": "read",
+        "x-axonpush-mcp": true,
+        "x-axonpush-policy": {
+          "category": "org-read",
+          "grants": "none",
+          "scopes": [
+            "observe:read"
+          ]
+        },
+        "x-axonpush-scopes": [
+          "observe:read"
+        ],
+        "x-axonpush-sdk": true
       },
       "patch": {
         "operationId": "organization.update",
@@ -13992,7 +15491,14 @@
         "summary": "Update organization settings",
         "tags": [
           "organization"
-        ]
+        ],
+        "x-axonpush-effect": "write",
+        "x-axonpush-mcp": true,
+        "x-axonpush-policy": {
+          "category": "session-admin",
+          "grants": "none"
+        },
+        "x-axonpush-sdk": true
       }
     },
     "/organizations/{orgId}": {
@@ -14033,7 +15539,15 @@
         "summary": "Delete an organization",
         "tags": [
           "organization"
-        ]
+        ],
+        "x-axonpush-effect": "write",
+        "x-axonpush-mcp": true,
+        "x-axonpush-policy": {
+          "category": "owner-only",
+          "grants": "none",
+          "targetOrg": true
+        },
+        "x-axonpush-sdk": true
       }
     },
     "/organizations/{orgId}/invitations": {
@@ -14074,7 +15588,15 @@
         "summary": "List organization invitations",
         "tags": [
           "organization"
-        ]
+        ],
+        "x-axonpush-effect": "read",
+        "x-axonpush-mcp": true,
+        "x-axonpush-policy": {
+          "category": "session-admin",
+          "grants": "none",
+          "targetOrg": true
+        },
+        "x-axonpush-sdk": true
       },
       "post": {
         "operationId": "organization.invitations.create",
@@ -14123,7 +15645,15 @@
         "summary": "Create an organization invitation",
         "tags": [
           "organization"
-        ]
+        ],
+        "x-axonpush-effect": "write",
+        "x-axonpush-mcp": true,
+        "x-axonpush-policy": {
+          "category": "session-admin",
+          "grants": "none",
+          "targetOrg": true
+        },
+        "x-axonpush-sdk": true
       }
     },
     "/organizations/{orgId}/invitations/{invitationId}": {
@@ -14172,7 +15702,15 @@
         "summary": "Cancel an organization invitation",
         "tags": [
           "organization"
-        ]
+        ],
+        "x-axonpush-effect": "write",
+        "x-axonpush-mcp": true,
+        "x-axonpush-policy": {
+          "category": "session-admin",
+          "grants": "none",
+          "targetOrg": true
+        },
+        "x-axonpush-sdk": true
       }
     },
     "/organizations/{orgId}/leave": {
@@ -14213,7 +15751,15 @@
         "summary": "Leave an organization",
         "tags": [
           "organization"
-        ]
+        ],
+        "x-axonpush-effect": "write",
+        "x-axonpush-mcp": true,
+        "x-axonpush-policy": {
+          "category": "session-member",
+          "grants": "none",
+          "targetOrg": true
+        },
+        "x-axonpush-sdk": true
       }
     },
     "/organizations/{orgId}/members": {
@@ -14254,7 +15800,15 @@
         "summary": "List organization members",
         "tags": [
           "organization"
-        ]
+        ],
+        "x-axonpush-effect": "read",
+        "x-axonpush-mcp": true,
+        "x-axonpush-policy": {
+          "category": "session-admin",
+          "grants": "none",
+          "targetOrg": true
+        },
+        "x-axonpush-sdk": true
       }
     },
     "/organizations/{orgId}/members/{userId}": {
@@ -14303,7 +15857,15 @@
         "summary": "Remove an organization member",
         "tags": [
           "organization"
-        ]
+        ],
+        "x-axonpush-effect": "write",
+        "x-axonpush-mcp": true,
+        "x-axonpush-policy": {
+          "category": "session-admin",
+          "grants": "none",
+          "targetOrg": true
+        },
+        "x-axonpush-sdk": true
       },
       "patch": {
         "operationId": "organization.members.updateRole",
@@ -14360,7 +15922,15 @@
         "summary": "Update an organization member's role",
         "tags": [
           "organization"
-        ]
+        ],
+        "x-axonpush-effect": "write",
+        "x-axonpush-mcp": true,
+        "x-axonpush-policy": {
+          "category": "session-admin",
+          "grants": "none",
+          "targetOrg": true
+        },
+        "x-axonpush-sdk": true
       }
     },
     "/organizations/{orgId}/telemetry-policy": {
@@ -14401,7 +15971,15 @@
         "summary": "Get the organization telemetry policy",
         "tags": [
           "organization"
-        ]
+        ],
+        "x-axonpush-effect": "read",
+        "x-axonpush-mcp": true,
+        "x-axonpush-policy": {
+          "category": "session-member",
+          "grants": "none",
+          "targetOrg": true
+        },
+        "x-axonpush-sdk": true
       },
       "patch": {
         "operationId": "organization.telemetryPolicy.update",
@@ -14450,7 +16028,15 @@
         "summary": "Update the organization telemetry policy",
         "tags": [
           "organization"
-        ]
+        ],
+        "x-axonpush-effect": "write",
+        "x-axonpush-mcp": true,
+        "x-axonpush-policy": {
+          "category": "session-admin",
+          "grants": "none",
+          "targetOrg": true
+        },
+        "x-axonpush-sdk": true
       }
     },
     "/organizations/{orgId}/transfer-ownership": {
@@ -14501,7 +16087,15 @@
         "summary": "Transfer organization ownership",
         "tags": [
           "organization"
-        ]
+        ],
+        "x-axonpush-effect": "write",
+        "x-axonpush-mcp": true,
+        "x-axonpush-policy": {
+          "category": "owner-only",
+          "grants": "none",
+          "targetOrg": true
+        },
+        "x-axonpush-sdk": true
       }
     },
     "/public-ingest-tokens": {
@@ -14532,7 +16126,14 @@
         "summary": "List public ingest tokens",
         "tags": [
           "public-tokens"
-        ]
+        ],
+        "x-axonpush-effect": "read",
+        "x-axonpush-mcp": false,
+        "x-axonpush-policy": {
+          "category": "session-admin",
+          "grants": "none"
+        },
+        "x-axonpush-sdk": true
       },
       "post": {
         "operationId": "tokens.create",
@@ -14571,7 +16172,14 @@
         "summary": "Create a public ingest token",
         "tags": [
           "public-tokens"
-        ]
+        ],
+        "x-axonpush-effect": "write",
+        "x-axonpush-mcp": false,
+        "x-axonpush-policy": {
+          "category": "session-admin",
+          "grants": "none"
+        },
+        "x-axonpush-sdk": true
       }
     },
     "/public-ingest-tokens/{tokenId}": {
@@ -14612,7 +16220,14 @@
         "summary": "Revoke a public ingest token",
         "tags": [
           "public-tokens"
-        ]
+        ],
+        "x-axonpush-effect": "write",
+        "x-axonpush-mcp": false,
+        "x-axonpush-policy": {
+          "category": "session-admin",
+          "grants": "none"
+        },
+        "x-axonpush-sdk": true
       }
     },
     "/session/bootstrap": {
@@ -14644,7 +16259,14 @@
         "summary": "Get the dashboard's startup reads in one request",
         "tags": [
           "session"
-        ]
+        ],
+        "x-axonpush-effect": "read",
+        "x-axonpush-mcp": false,
+        "x-axonpush-policy": {
+          "category": "personal-session",
+          "grants": "none"
+        },
+        "x-axonpush-sdk": true
       }
     },
     "/telemetry/events/{eventId}/content": {
@@ -14687,9 +16309,20 @@
         "tags": [
           "telemetry"
         ],
+        "x-axonpush-effect": "read",
+        "x-axonpush-mcp": true,
+        "x-axonpush-policy": {
+          "category": "sensitive-read",
+          "grants": "traces",
+          "scopes": [
+            "content:read"
+          ]
+        },
+        "x-axonpush-read-budget": true,
         "x-axonpush-scopes": [
           "content:read"
-        ]
+        ],
+        "x-axonpush-sdk": true
       }
     },
     "/telemetry/sessions/{sessionId}": {
@@ -14794,9 +16427,20 @@
         "tags": [
           "telemetry"
         ],
+        "x-axonpush-effect": "read",
+        "x-axonpush-mcp": true,
+        "x-axonpush-policy": {
+          "category": "org-read",
+          "grants": "traces",
+          "scopes": [
+            "observe:read"
+          ]
+        },
+        "x-axonpush-read-budget": true,
         "x-axonpush-scopes": [
           "observe:read"
-        ]
+        ],
+        "x-axonpush-sdk": true
       }
     },
     "/telemetry/subjects/{subjectType}/{subjectId}": {
@@ -14864,9 +16508,19 @@
         "tags": [
           "telemetry"
         ],
+        "x-axonpush-effect": "write",
+        "x-axonpush-mcp": true,
+        "x-axonpush-policy": {
+          "category": "org-config",
+          "grants": "reject-scoped",
+          "scopes": [
+            "content:erase"
+          ]
+        },
         "x-axonpush-scopes": [
           "content:erase"
-        ]
+        ],
+        "x-axonpush-sdk": true
       }
     },
     "/templates": {
@@ -14898,9 +16552,19 @@
         "tags": [
           "templates"
         ],
+        "x-axonpush-effect": "read",
+        "x-axonpush-mcp": true,
+        "x-axonpush-policy": {
+          "category": "org-read",
+          "grants": "resource",
+          "scopes": [
+            "observe:read"
+          ]
+        },
         "x-axonpush-scopes": [
           "observe:read"
-        ]
+        ],
+        "x-axonpush-sdk": true
       },
       "post": {
         "operationId": "templates.publish",
@@ -14940,9 +16604,19 @@
         "tags": [
           "templates"
         ],
+        "x-axonpush-effect": "write",
+        "x-axonpush-mcp": true,
+        "x-axonpush-policy": {
+          "category": "org-config",
+          "grants": "reject-scoped",
+          "scopes": [
+            "templates:publish"
+          ]
+        },
         "x-axonpush-scopes": [
           "templates:publish"
-        ]
+        ],
+        "x-axonpush-sdk": true
       }
     },
     "/trace-groups": {
@@ -15339,7 +17013,21 @@
         "summary": "Group traces by root operation and result",
         "tags": [
           "traces"
-        ]
+        ],
+        "x-axonpush-effect": "read",
+        "x-axonpush-mcp": true,
+        "x-axonpush-policy": {
+          "category": "org-read",
+          "grants": "traces",
+          "scopes": [
+            "observe:read"
+          ]
+        },
+        "x-axonpush-read-budget": true,
+        "x-axonpush-scopes": [
+          "observe:read"
+        ],
+        "x-axonpush-sdk": true
       }
     },
     "/trace-groups/{groupKey}/traces": {
@@ -15728,7 +17416,21 @@
         "summary": "List traces belonging to an exact request/result group",
         "tags": [
           "traces"
-        ]
+        ],
+        "x-axonpush-effect": "read",
+        "x-axonpush-mcp": true,
+        "x-axonpush-policy": {
+          "category": "org-read",
+          "grants": "traces",
+          "scopes": [
+            "observe:read"
+          ]
+        },
+        "x-axonpush-read-budget": true,
+        "x-axonpush-scopes": [
+          "observe:read"
+        ],
+        "x-axonpush-sdk": true
       }
     },
     "/traces": {
@@ -16108,7 +17810,21 @@
         "summary": "List traces over a time window",
         "tags": [
           "traces"
-        ]
+        ],
+        "x-axonpush-effect": "read",
+        "x-axonpush-mcp": true,
+        "x-axonpush-policy": {
+          "category": "org-read",
+          "grants": "traces",
+          "scopes": [
+            "observe:read"
+          ]
+        },
+        "x-axonpush-read-budget": true,
+        "x-axonpush-scopes": [
+          "observe:read"
+        ],
+        "x-axonpush-sdk": true
       }
     },
     "/traces/{traceId}": {
@@ -16173,7 +17889,21 @@
         "summary": "Get a trace's spans, ordered by time",
         "tags": [
           "traces"
-        ]
+        ],
+        "x-axonpush-effect": "read",
+        "x-axonpush-mcp": true,
+        "x-axonpush-policy": {
+          "category": "org-read",
+          "grants": "traces",
+          "scopes": [
+            "observe:read"
+          ]
+        },
+        "x-axonpush-read-budget": true,
+        "x-axonpush-scopes": [
+          "observe:read"
+        ],
+        "x-axonpush-sdk": true
       }
     },
     "/user/me": {
@@ -16204,7 +17934,14 @@
         "summary": "Get the current principal",
         "tags": [
           "user"
-        ]
+        ],
+        "x-axonpush-effect": "read",
+        "x-axonpush-mcp": true,
+        "x-axonpush-policy": {
+          "category": "personal-session",
+          "grants": "none"
+        },
+        "x-axonpush-sdk": true
       }
     },
     "/users/me": {
@@ -16245,7 +17982,14 @@
         "summary": "Update the current user's profile",
         "tags": [
           "user"
-        ]
+        ],
+        "x-axonpush-effect": "write",
+        "x-axonpush-mcp": true,
+        "x-axonpush-policy": {
+          "category": "personal-session",
+          "grants": "none"
+        },
+        "x-axonpush-sdk": true
       }
     },
     "/users/me/active-org": {
@@ -16286,7 +18030,14 @@
         "summary": "Set the current user's active organization",
         "tags": [
           "user"
-        ]
+        ],
+        "x-axonpush-effect": "write",
+        "x-axonpush-mcp": true,
+        "x-axonpush-policy": {
+          "category": "personal-session",
+          "grants": "none"
+        },
+        "x-axonpush-sdk": true
       }
     },
     "/users/me/organizations": {
@@ -16317,7 +18068,14 @@
         "summary": "List the current user's organizations",
         "tags": [
           "user"
-        ]
+        ],
+        "x-axonpush-effect": "read",
+        "x-axonpush-mcp": true,
+        "x-axonpush-policy": {
+          "category": "personal-session",
+          "grants": "none"
+        },
+        "x-axonpush-sdk": true
       }
     },
     "/v2/alerts": {
@@ -16348,7 +18106,20 @@
         "summary": "List alert rules",
         "tags": [
           "alerts"
-        ]
+        ],
+        "x-axonpush-effect": "read",
+        "x-axonpush-mcp": true,
+        "x-axonpush-policy": {
+          "category": "org-read",
+          "grants": "reject-scoped",
+          "scopes": [
+            "alerts:manage"
+          ]
+        },
+        "x-axonpush-scopes": [
+          "alerts:manage"
+        ],
+        "x-axonpush-sdk": true
       },
       "post": {
         "operationId": "alerts.create",
@@ -16387,7 +18158,20 @@
         "summary": "Create an alert rule",
         "tags": [
           "alerts"
-        ]
+        ],
+        "x-axonpush-effect": "write",
+        "x-axonpush-mcp": true,
+        "x-axonpush-policy": {
+          "category": "org-config",
+          "grants": "reject-scoped",
+          "scopes": [
+            "alerts:manage"
+          ]
+        },
+        "x-axonpush-scopes": [
+          "alerts:manage"
+        ],
+        "x-axonpush-sdk": true
       }
     },
     "/v2/alerts/{alertRuleId}": {
@@ -16428,7 +18212,20 @@
         "summary": "Delete an alert rule",
         "tags": [
           "alerts"
-        ]
+        ],
+        "x-axonpush-effect": "write",
+        "x-axonpush-mcp": true,
+        "x-axonpush-policy": {
+          "category": "org-config",
+          "grants": "reject-scoped",
+          "scopes": [
+            "alerts:manage"
+          ]
+        },
+        "x-axonpush-scopes": [
+          "alerts:manage"
+        ],
+        "x-axonpush-sdk": true
       },
       "patch": {
         "operationId": "alerts.update",
@@ -16477,7 +18274,20 @@
         "summary": "Update an alert rule",
         "tags": [
           "alerts"
-        ]
+        ],
+        "x-axonpush-effect": "write",
+        "x-axonpush-mcp": true,
+        "x-axonpush-policy": {
+          "category": "org-config",
+          "grants": "reject-scoped",
+          "scopes": [
+            "alerts:manage"
+          ]
+        },
+        "x-axonpush-scopes": [
+          "alerts:manage"
+        ],
+        "x-axonpush-sdk": true
       }
     },
     "/v2/alerts/{alertRuleId}/occurrences": {
@@ -16532,7 +18342,20 @@
         "summary": "List an alert rule's firing history",
         "tags": [
           "alerts"
-        ]
+        ],
+        "x-axonpush-effect": "read",
+        "x-axonpush-mcp": true,
+        "x-axonpush-policy": {
+          "category": "org-read",
+          "grants": "reject-scoped",
+          "scopes": [
+            "alerts:manage"
+          ]
+        },
+        "x-axonpush-scopes": [
+          "alerts:manage"
+        ],
+        "x-axonpush-sdk": true
       }
     },
     "/webhooks/deliveries/{endpointId}": {
@@ -16573,7 +18396,21 @@
         "summary": "List recent webhook deliveries",
         "tags": [
           "webhooks"
-        ]
+        ],
+        "x-axonpush-effect": "read",
+        "x-axonpush-mcp": true,
+        "x-axonpush-policy": {
+          "category": "org-config",
+          "grants": "reject-scoped",
+          "scopes": [
+            "webhooks:manage"
+          ],
+          "unboundKey": true
+        },
+        "x-axonpush-scopes": [
+          "webhooks:manage"
+        ],
+        "x-axonpush-sdk": true
       }
     },
     "/webhooks/endpoints": {
@@ -16614,7 +18451,21 @@
         "summary": "Create a webhook endpoint",
         "tags": [
           "webhooks"
-        ]
+        ],
+        "x-axonpush-effect": "write",
+        "x-axonpush-mcp": true,
+        "x-axonpush-policy": {
+          "category": "org-config",
+          "grants": "reject-scoped",
+          "scopes": [
+            "webhooks:manage"
+          ],
+          "unboundKey": true
+        },
+        "x-axonpush-scopes": [
+          "webhooks:manage"
+        ],
+        "x-axonpush-sdk": true
       }
     },
     "/webhooks/endpoints/channel/{channelId}": {
@@ -16655,7 +18506,21 @@
         "summary": "List webhook endpoints for a channel",
         "tags": [
           "webhooks"
-        ]
+        ],
+        "x-axonpush-effect": "read",
+        "x-axonpush-mcp": true,
+        "x-axonpush-policy": {
+          "category": "org-config",
+          "grants": "reject-scoped",
+          "scopes": [
+            "webhooks:manage"
+          ],
+          "unboundKey": true
+        },
+        "x-axonpush-scopes": [
+          "webhooks:manage"
+        ],
+        "x-axonpush-sdk": true
       }
     },
     "/webhooks/endpoints/{endpointId}": {
@@ -16696,7 +18561,21 @@
         "summary": "Deactivate a webhook endpoint",
         "tags": [
           "webhooks"
-        ]
+        ],
+        "x-axonpush-effect": "write",
+        "x-axonpush-mcp": true,
+        "x-axonpush-policy": {
+          "category": "org-config",
+          "grants": "reject-scoped",
+          "scopes": [
+            "webhooks:manage"
+          ],
+          "unboundKey": true
+        },
+        "x-axonpush-scopes": [
+          "webhooks:manage"
+        ],
+        "x-axonpush-sdk": true
       }
     },
     "/workspaces": {
@@ -16728,9 +18607,19 @@
         "tags": [
           "workspaces"
         ],
+        "x-axonpush-effect": "read",
+        "x-axonpush-mcp": true,
+        "x-axonpush-policy": {
+          "category": "org-read",
+          "grants": "resource",
+          "scopes": [
+            "observe:read"
+          ]
+        },
         "x-axonpush-scopes": [
           "observe:read"
-        ]
+        ],
+        "x-axonpush-sdk": true
       },
       "post": {
         "description": "A full spec is activated at once. A blank spec (no entities) becomes the shared draft and the workspace stays pending, with no activeRevision, until the draft is activated.",
@@ -16771,9 +18660,20 @@
         "tags": [
           "workspaces"
         ],
+        "x-axonpush-effect": "write",
+        "x-axonpush-mcp": true,
+        "x-axonpush-policy": {
+          "category": "org-config",
+          "grants": "reject-scoped",
+          "scopes": [
+            "workspaces:manage"
+          ],
+          "unboundEnvironment": true
+        },
         "x-axonpush-scopes": [
           "workspaces:manage"
-        ]
+        ],
+        "x-axonpush-sdk": true
       }
     },
     "/workspaces/preview": {
@@ -16815,9 +18715,19 @@
         "tags": [
           "workspaces"
         ],
+        "x-axonpush-effect": "read",
+        "x-axonpush-mcp": true,
+        "x-axonpush-policy": {
+          "category": "org-config",
+          "grants": "resource",
+          "scopes": [
+            "workspaces:manage"
+          ]
+        },
         "x-axonpush-scopes": [
           "workspaces:manage"
-        ]
+        ],
+        "x-axonpush-sdk": true
       }
     },
     "/workspaces/schema": {
@@ -16850,9 +18760,19 @@
         "tags": [
           "workspaces"
         ],
+        "x-axonpush-effect": "read",
+        "x-axonpush-mcp": true,
+        "x-axonpush-policy": {
+          "category": "org-read",
+          "grants": "resource",
+          "scopes": [
+            "observe:read"
+          ]
+        },
         "x-axonpush-scopes": [
           "observe:read"
-        ]
+        ],
+        "x-axonpush-sdk": true
       }
     },
     "/workspaces/validate": {
@@ -16894,9 +18814,19 @@
         "tags": [
           "workspaces"
         ],
+        "x-axonpush-effect": "read",
+        "x-axonpush-mcp": true,
+        "x-axonpush-policy": {
+          "category": "org-config",
+          "grants": "resource",
+          "scopes": [
+            "workspaces:manage"
+          ]
+        },
         "x-axonpush-scopes": [
           "workspaces:manage"
-        ]
+        ],
+        "x-axonpush-sdk": true
       }
     },
     "/workspaces/{workspaceId}": {
@@ -16938,9 +18868,19 @@
         "tags": [
           "workspaces"
         ],
+        "x-axonpush-effect": "read",
+        "x-axonpush-mcp": true,
+        "x-axonpush-policy": {
+          "category": "org-read",
+          "grants": "resource",
+          "scopes": [
+            "observe:read"
+          ]
+        },
         "x-axonpush-scopes": [
           "observe:read"
-        ]
+        ],
+        "x-axonpush-sdk": true
       }
     },
     "/workspaces/{workspaceId}/access-grants": {
@@ -16983,9 +18923,20 @@
         "tags": [
           "workspaces"
         ],
+        "x-axonpush-effect": "read",
+        "x-axonpush-mcp": true,
+        "x-axonpush-policy": {
+          "category": "org-config",
+          "grants": "reject-scoped",
+          "scopes": [
+            "workspaces:manage"
+          ],
+          "unboundEnvironment": true
+        },
         "x-axonpush-scopes": [
           "workspaces:manage"
-        ]
+        ],
+        "x-axonpush-sdk": true
       },
       "post": {
         "operationId": "workspaces.createAccessGrant",
@@ -17035,9 +18986,20 @@
         "tags": [
           "workspaces"
         ],
+        "x-axonpush-effect": "write",
+        "x-axonpush-mcp": true,
+        "x-axonpush-policy": {
+          "category": "org-config",
+          "grants": "reject-scoped",
+          "scopes": [
+            "workspaces:manage"
+          ],
+          "unboundEnvironment": true
+        },
         "x-axonpush-scopes": [
           "workspaces:manage"
-        ]
+        ],
+        "x-axonpush-sdk": true
       }
     },
     "/workspaces/{workspaceId}/access-grants/{grantId}": {
@@ -17088,9 +19050,20 @@
         "tags": [
           "workspaces"
         ],
+        "x-axonpush-effect": "write",
+        "x-axonpush-mcp": true,
+        "x-axonpush-policy": {
+          "category": "org-config",
+          "grants": "reject-scoped",
+          "scopes": [
+            "workspaces:manage"
+          ],
+          "unboundEnvironment": true
+        },
         "x-axonpush-scopes": [
           "workspaces:manage"
-        ]
+        ],
+        "x-axonpush-sdk": true
       },
       "patch": {
         "operationId": "workspaces.updateAccessGrant",
@@ -17149,9 +19122,20 @@
         "tags": [
           "workspaces"
         ],
+        "x-axonpush-effect": "write",
+        "x-axonpush-mcp": true,
+        "x-axonpush-policy": {
+          "category": "org-config",
+          "grants": "reject-scoped",
+          "scopes": [
+            "workspaces:manage"
+          ],
+          "unboundEnvironment": true
+        },
         "x-axonpush-scopes": [
           "workspaces:manage"
-        ]
+        ],
+        "x-axonpush-sdk": true
       }
     },
     "/workspaces/{workspaceId}/activate": {
@@ -17203,9 +19187,20 @@
         "tags": [
           "workspaces"
         ],
+        "x-axonpush-effect": "write",
+        "x-axonpush-mcp": true,
+        "x-axonpush-policy": {
+          "category": "org-config",
+          "grants": "reject-scoped",
+          "scopes": [
+            "workspaces:manage"
+          ],
+          "unboundEnvironment": true
+        },
         "x-axonpush-scopes": [
           "workspaces:manage"
-        ]
+        ],
+        "x-axonpush-sdk": true
       }
     },
     "/workspaces/{workspaceId}/activity": {
@@ -17409,9 +19404,20 @@
         "tags": [
           "activity"
         ],
+        "x-axonpush-effect": "read",
+        "x-axonpush-mcp": true,
+        "x-axonpush-policy": {
+          "category": "org-read",
+          "grants": "resource",
+          "scopes": [
+            "observe:read"
+          ]
+        },
+        "x-axonpush-read-budget": true,
         "x-axonpush-scopes": [
           "observe:read"
-        ]
+        ],
+        "x-axonpush-sdk": true
       }
     },
     "/workspaces/{workspaceId}/analytics": {
@@ -17494,9 +19500,20 @@
         "tags": [
           "activity"
         ],
+        "x-axonpush-effect": "read",
+        "x-axonpush-mcp": true,
+        "x-axonpush-policy": {
+          "category": "org-read",
+          "grants": "resource",
+          "scopes": [
+            "observe:read"
+          ]
+        },
+        "x-axonpush-read-budget": true,
         "x-axonpush-scopes": [
           "observe:read"
-        ]
+        ],
+        "x-axonpush-sdk": true
       }
     },
     "/workspaces/{workspaceId}/catalog": {
@@ -17565,9 +19582,19 @@
         "tags": [
           "workspaces"
         ],
+        "x-axonpush-effect": "read",
+        "x-axonpush-mcp": true,
+        "x-axonpush-policy": {
+          "category": "org-read",
+          "grants": "resource",
+          "scopes": [
+            "observe:read"
+          ]
+        },
         "x-axonpush-scopes": [
           "observe:read"
-        ]
+        ],
+        "x-axonpush-sdk": true
       }
     },
     "/workspaces/{workspaceId}/connect": {
@@ -17620,9 +19647,19 @@
         "tags": [
           "workspaces"
         ],
+        "x-axonpush-effect": "write",
+        "x-axonpush-mcp": true,
+        "x-axonpush-policy": {
+          "category": "org-config",
+          "grants": "reject-scoped",
+          "scopes": [
+            "workspaces:manage"
+          ]
+        },
         "x-axonpush-scopes": [
           "workspaces:manage"
-        ]
+        ],
+        "x-axonpush-sdk": true
       }
     },
     "/workspaces/{workspaceId}/describe": {
@@ -17665,9 +19702,19 @@
         "tags": [
           "workspaces"
         ],
+        "x-axonpush-effect": "read",
+        "x-axonpush-mcp": true,
+        "x-axonpush-policy": {
+          "category": "org-read",
+          "grants": "resource",
+          "scopes": [
+            "observe:read"
+          ]
+        },
         "x-axonpush-scopes": [
           "observe:read"
-        ]
+        ],
+        "x-axonpush-sdk": true
       }
     },
     "/workspaces/{workspaceId}/draft": {
@@ -17709,9 +19756,20 @@
         "tags": [
           "workspaces"
         ],
+        "x-axonpush-effect": "write",
+        "x-axonpush-mcp": true,
+        "x-axonpush-policy": {
+          "category": "org-config",
+          "grants": "reject-scoped",
+          "scopes": [
+            "workspaces:manage"
+          ],
+          "unboundEnvironment": true
+        },
         "x-axonpush-scopes": [
           "workspaces:manage"
-        ]
+        ],
+        "x-axonpush-sdk": true
       },
       "get": {
         "description": "The draft is shared by the dashboard and coding agents. Edit it with workspaces.applyDraftOps, review with workspaces.draftChanges and activate with workspaces.activateDraft. Call workspaces.describe first to learn the format.",
@@ -17752,9 +19810,20 @@
         "tags": [
           "workspaces"
         ],
+        "x-axonpush-effect": "write",
+        "x-axonpush-mcp": true,
+        "x-axonpush-policy": {
+          "category": "org-config",
+          "grants": "reject-scoped",
+          "scopes": [
+            "workspaces:manage"
+          ],
+          "unboundEnvironment": true
+        },
         "x-axonpush-scopes": [
-          "observe:read"
-        ]
+          "workspaces:manage"
+        ],
+        "x-axonpush-sdk": true
       },
       "put": {
         "operationId": "workspaces.replaceDraft",
@@ -17804,9 +19873,20 @@
         "tags": [
           "workspaces"
         ],
+        "x-axonpush-effect": "write",
+        "x-axonpush-mcp": true,
+        "x-axonpush-policy": {
+          "category": "org-config",
+          "grants": "reject-scoped",
+          "scopes": [
+            "workspaces:manage"
+          ],
+          "unboundEnvironment": true
+        },
         "x-axonpush-scopes": [
           "workspaces:manage"
-        ]
+        ],
+        "x-axonpush-sdk": true
       }
     },
     "/workspaces/{workspaceId}/draft/activate": {
@@ -17858,9 +19938,20 @@
         "tags": [
           "workspaces"
         ],
+        "x-axonpush-effect": "write",
+        "x-axonpush-mcp": true,
+        "x-axonpush-policy": {
+          "category": "org-config",
+          "grants": "reject-scoped",
+          "scopes": [
+            "workspaces:manage"
+          ],
+          "unboundEnvironment": true
+        },
         "x-axonpush-scopes": [
           "workspaces:manage"
-        ]
+        ],
+        "x-axonpush-sdk": true
       }
     },
     "/workspaces/{workspaceId}/draft/changes": {
@@ -17902,9 +19993,20 @@
         "tags": [
           "workspaces"
         ],
+        "x-axonpush-effect": "write",
+        "x-axonpush-mcp": true,
+        "x-axonpush-policy": {
+          "category": "org-config",
+          "grants": "reject-scoped",
+          "scopes": [
+            "workspaces:manage"
+          ],
+          "unboundEnvironment": true
+        },
         "x-axonpush-scopes": [
-          "observe:read"
-        ]
+          "workspaces:manage"
+        ],
+        "x-axonpush-sdk": true
       }
     },
     "/workspaces/{workspaceId}/draft/ops": {
@@ -17957,9 +20059,20 @@
         "tags": [
           "workspaces"
         ],
+        "x-axonpush-effect": "write",
+        "x-axonpush-mcp": true,
+        "x-axonpush-policy": {
+          "category": "org-config",
+          "grants": "reject-scoped",
+          "scopes": [
+            "workspaces:manage"
+          ],
+          "unboundEnvironment": true
+        },
         "x-axonpush-scopes": [
           "workspaces:manage"
-        ]
+        ],
+        "x-axonpush-sdk": true
       }
     },
     "/workspaces/{workspaceId}/entities/{entityType}/{entityId}": {
@@ -18027,9 +20140,19 @@
         "tags": [
           "activity"
         ],
+        "x-axonpush-effect": "write",
+        "x-axonpush-mcp": true,
+        "x-axonpush-policy": {
+          "category": "org-config",
+          "grants": "resource",
+          "scopes": [
+            "workspaces:manage"
+          ]
+        },
         "x-axonpush-scopes": [
           "workspaces:manage"
-        ]
+        ],
+        "x-axonpush-sdk": true
       }
     },
     "/workspaces/{workspaceId}/health": {
@@ -18240,9 +20363,20 @@
         "tags": [
           "activity"
         ],
+        "x-axonpush-effect": "read",
+        "x-axonpush-mcp": true,
+        "x-axonpush-policy": {
+          "category": "org-read",
+          "grants": "resource",
+          "scopes": [
+            "observe:read"
+          ]
+        },
+        "x-axonpush-read-budget": true,
         "x-axonpush-scopes": [
           "observe:read"
-        ]
+        ],
+        "x-axonpush-sdk": true
       }
     },
     "/workspaces/{workspaceId}/identify": {
@@ -18295,9 +20429,19 @@
         "tags": [
           "activity"
         ],
+        "x-axonpush-effect": "write",
+        "x-axonpush-mcp": true,
+        "x-axonpush-policy": {
+          "category": "publish",
+          "grants": "resource",
+          "scopes": [
+            "events:publish"
+          ]
+        },
         "x-axonpush-scopes": [
           "events:publish"
-        ]
+        ],
+        "x-axonpush-sdk": true
       }
     },
     "/workspaces/{workspaceId}/incidents": {
@@ -18501,9 +20645,20 @@
         "tags": [
           "activity"
         ],
+        "x-axonpush-effect": "read",
+        "x-axonpush-mcp": true,
+        "x-axonpush-policy": {
+          "category": "org-read",
+          "grants": "resource",
+          "scopes": [
+            "observe:read"
+          ]
+        },
+        "x-axonpush-read-budget": true,
         "x-axonpush-scopes": [
           "observe:read"
-        ]
+        ],
+        "x-axonpush-sdk": true
       }
     },
     "/workspaces/{workspaceId}/observations": {
@@ -18555,9 +20710,19 @@
         "tags": [
           "ingest"
         ],
+        "x-axonpush-effect": "write",
+        "x-axonpush-mcp": false,
+        "x-axonpush-policy": {
+          "category": "publish",
+          "grants": "reject-scoped",
+          "scopes": [
+            "events:publish"
+          ]
+        },
         "x-axonpush-scopes": [
           "events:publish"
-        ]
+        ],
+        "x-axonpush-sdk": true
       }
     },
     "/workspaces/{workspaceId}/observations/{sourceEventId}": {
@@ -18615,10 +20780,22 @@
         "tags": [
           "activity"
         ],
+        "x-axonpush-effect": "read",
+        "x-axonpush-mcp": true,
+        "x-axonpush-policy": {
+          "anyScope": true,
+          "category": "org-read",
+          "grants": "resource",
+          "scopes": [
+            "events:publish",
+            "observe:read"
+          ]
+        },
         "x-axonpush-scopes-anyOf": [
           "events:publish",
           "observe:read"
-        ]
+        ],
+        "x-axonpush-sdk": true
       }
     },
     "/workspaces/{workspaceId}/revisions": {
@@ -18660,9 +20837,19 @@
         "tags": [
           "workspaces"
         ],
+        "x-axonpush-effect": "read",
+        "x-axonpush-mcp": true,
+        "x-axonpush-policy": {
+          "category": "org-read",
+          "grants": "resource",
+          "scopes": [
+            "observe:read"
+          ]
+        },
         "x-axonpush-scopes": [
           "observe:read"
-        ]
+        ],
+        "x-axonpush-sdk": true
       },
       "post": {
         "operationId": "workspaces.saveRevision",
@@ -18712,9 +20899,20 @@
         "tags": [
           "workspaces"
         ],
+        "x-axonpush-effect": "write",
+        "x-axonpush-mcp": true,
+        "x-axonpush-policy": {
+          "category": "org-config",
+          "grants": "reject-scoped",
+          "scopes": [
+            "workspaces:manage"
+          ],
+          "unboundEnvironment": true
+        },
         "x-axonpush-scopes": [
           "workspaces:manage"
-        ]
+        ],
+        "x-axonpush-sdk": true
       }
     },
     "/workspaces/{workspaceId}/series": {
@@ -18875,9 +21073,20 @@
         "tags": [
           "activity"
         ],
+        "x-axonpush-effect": "read",
+        "x-axonpush-mcp": true,
+        "x-axonpush-policy": {
+          "category": "org-read",
+          "grants": "resource",
+          "scopes": [
+            "observe:read"
+          ]
+        },
+        "x-axonpush-read-budget": true,
         "x-axonpush-scopes": [
           "observe:read"
-        ]
+        ],
+        "x-axonpush-sdk": true
       }
     },
     "/workspaces/{workspaceId}/summary": {
@@ -19088,9 +21297,20 @@
         "tags": [
           "activity"
         ],
+        "x-axonpush-effect": "read",
+        "x-axonpush-mcp": true,
+        "x-axonpush-policy": {
+          "category": "org-read",
+          "grants": "resource",
+          "scopes": [
+            "observe:read"
+          ]
+        },
+        "x-axonpush-read-budget": true,
         "x-axonpush-scopes": [
           "observe:read"
-        ]
+        ],
+        "x-axonpush-sdk": true
       }
     },
     "/workspaces/{workspaceId}/timeline": {
@@ -19294,9 +21514,20 @@
         "tags": [
           "activity"
         ],
+        "x-axonpush-effect": "read",
+        "x-axonpush-mcp": true,
+        "x-axonpush-policy": {
+          "category": "org-read",
+          "grants": "resource",
+          "scopes": [
+            "observe:read"
+          ]
+        },
+        "x-axonpush-read-budget": true,
         "x-axonpush-scopes": [
           "observe:read"
-        ]
+        ],
+        "x-axonpush-sdk": true
       }
     },
     "/workspaces/{workspaceId}/views": {
@@ -19507,9 +21738,20 @@
         "tags": [
           "activity"
         ],
+        "x-axonpush-effect": "read",
+        "x-axonpush-mcp": true,
+        "x-axonpush-policy": {
+          "category": "org-read",
+          "grants": "resource",
+          "scopes": [
+            "observe:read"
+          ]
+        },
+        "x-axonpush-read-budget": true,
         "x-axonpush-scopes": [
           "observe:read"
-        ]
+        ],
+        "x-axonpush-sdk": true
       }
     }
   }

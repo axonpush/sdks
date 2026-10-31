@@ -162,9 +162,11 @@ The OTel-native path above is the recommended way to send traces. The legacy per
 | `AXONPUSH_TENANT_ID` | required | Tenant identifier. |
 | `AXONPUSH_BASE_URL` | `https://api.axonpush.xyz` | Override for self-hosted deployments. |
 | `AXONPUSH_ENVIRONMENT` | (none) | Stamped on every event for filtering. |
-| `AXONPUSH_TIMEOUT` | `30` | Per-request timeout in seconds. |
-| `AXONPUSH_MAX_RETRIES` | `3` | Maximum retry attempts. |
+| `AXONPUSH_TIMEOUT` | `30` | Total invocation timeout in seconds, including retries and response reading. |
+| `AXONPUSH_MAX_RETRIES` | `3` | Additional attempts for eligible reads and writes with stable deduplication identities. Other mutations run once. |
 | `AXONPUSH_FAIL_OPEN` | `true` | When true, publish failures are logged and swallowed. |
+
+Polly handles eligible retries within the invocation deadline. Caller cancellation is preserved. See [transport behavior](../../docs/infrastructure-libraries.md) for retry safety and lifecycle details.
 
 ## What spans you get from Semantic Kernel
 

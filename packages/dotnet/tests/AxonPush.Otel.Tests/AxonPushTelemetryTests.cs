@@ -72,6 +72,25 @@ public sealed class AxonPushTelemetryTests
     }
 
     [Fact]
+    public void OtlpExporter_DoesNotForwardCredentialOnRedirect()
+    {
+        using var destination = new MockOtlpReceiver();
+        destination.Start();
+        using var origin = new MockOtlpReceiver { RedirectLocation = destination.BaseUrl + "/v1/traces" };
+        origin.Start();
+        using var source = new ActivitySource("axonpush");
+        using var handle = AxonPushTelemetry.ConfigureTelemetry(o =>
+        {
+            o.BaseUrl = origin.BaseUrl;
+            o.ApiKey = "ak_synthetic";
+        });
+        using (source.StartActivity("redirect-test")) { }
+        handle.Flush(5000);
+        Assert.True(origin.Received);
+        Assert.False(destination.Received);
+    }
+
+    [Fact]
     public void RecordContent_MetadataOnly_EmitsNoEvents()
     {
         var source = new ActivitySource("axonpush.metadata-test");
@@ -138,6 +157,9 @@ internal sealed class MockOtlpReceiver : IDisposable
         _listener.Prefixes.Add($"http://127.0.0.1:{_port}/");
     }
 
+    public string? RedirectLocation { get; init; }
+    public bool Received => _received.Task.IsCompletedSuccessfully;
+
     public string BaseUrl => $"http://127.0.0.1:{_port}";
 
     public void Start()
@@ -188,7 +210,8 @@ internal sealed class MockOtlpReceiver : IDisposable
                 body));
 
             // A valid empty ExportTraceServiceResponse is zero bytes; 200 with empty body is fine.
-            context.Response.StatusCode = 200;
+            context.Response.StatusCode = RedirectLocation is null ? 200 : 307;
+            if (RedirectLocation is not null) context.Response.RedirectLocation = RedirectLocation;
             context.Response.ContentType = "application/x-protobuf";
             context.Response.Close();
         }

@@ -9,6 +9,8 @@ get-healthz
 # Ingest surfaces. Driven by a wire protocol, an exporter, or another vendor's
 # SDK (the transport layer), never by an axonpush resource method.
 featureFlags.me
+# Batch ingest is exposed by the generated wire client for telemetry exporters.
+createEventBatch
 
 # Console / admin surfaces. These back the hosted admin app, not a programmatic
 # client, so they are intentionally not part of the public SDK.
@@ -76,3 +78,10 @@ admin.users.restore
 
 # Dashboard session bootstrap; not an API-key SDK operation.
 session.bootstrap
+
+# Hosted billing UI and provider webhook; generated methods exist without SDK conveniences.
+billing.checkout
+billing.plans
+billing.portal
+billing.usage
+billing.webhook

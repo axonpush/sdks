@@ -43,9 +43,9 @@ def is_async_client(client: Any) -> bool:
     """Return ``True`` if ``client`` is an ``AsyncAxonPush`` or a duck-typed equivalent.
 
     The integration layer never imports the async client class at module
-    top-level (Stream A churn risk), so we feature-detect by checking
+    import time, so we feature-detect by checking
     whether ``client.events.publish`` is a coroutine function. The real
-    :class:`AsyncAxonPush` from Stream A is detected first via
+    :class:`AsyncAxonPush` is detected first via
     ``isinstance`` for symmetry with the sync path.
     """
     _AsyncAxonPush: Any

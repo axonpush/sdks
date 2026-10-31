@@ -222,7 +222,14 @@ def _install_processor(
     if channel_id is not None:
         headers["X-Axonpush-Channel"] = channel_id
 
+    # The exporter uses requests, whose default redirects retain X-API-Key.
+    # Native Session limits stop before dispatching to any redirect target.
+    from requests import Session
+
+    session = Session()
+    session.max_redirects = 0
     exporter = OTLPSpanExporter(
+        session=session,
         endpoint=endpoint,
         headers=headers,
         compression=Compression.Gzip,

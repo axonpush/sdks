@@ -1254,6 +1254,29 @@ export type AuditCapability = {
     formats: Array<string> | null;
 };
 
+export type BatchInputBody = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
+    events: Array<EventBody> | null;
+};
+
+export type BatchOutputBody = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
+    results: Array<BatchResult> | null;
+};
+
+export type BatchResult = {
+    errorCode?: string;
+    eventId?: string;
+    index: number;
+    status: string;
+};
+
 export type BillingEventDto = {
     createdAt: string;
     error?: string;
@@ -1327,6 +1350,21 @@ export type ChannelDto = {
     name: string;
     orgId: string;
     updatedAt?: string;
+};
+
+export type CheckoutInputBody = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
+    /**
+     * monthly or annual
+     */
+    cadence?: string;
+    /**
+     * pro or team
+     */
+    plan: string;
 };
 
 export type ConnectInputBody = {
@@ -2269,6 +2307,14 @@ export type LicenseStatus = {
     tier: string | null;
 };
 
+export type LinkOutputBody = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
+    url: string;
+};
+
 export type ListAbuseFlagsOutputBody = {
     /**
      * A URL to the JSON Schema for this object.
@@ -2493,6 +2539,21 @@ export type OkOutputBody = {
     ok: boolean;
 };
 
+export type OperationCapabilities = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
+    operations: Array<OperationCapability> | null;
+    registryRevision: string;
+};
+
+export type OperationCapability = {
+    availability: 'allowed' | 'denied' | 'conditional';
+    operationId: string;
+    reason?: string;
+};
+
 export type OpsInputBody = {
     /**
      * A URL to the JSON Schema for this object.
@@ -2635,10 +2696,40 @@ export type PatchErrorInputBody = {
     snoozeUntilUsers?: number;
 };
 
+export type PlanFeatures = {
+    auditLog?: boolean;
+    customRetention?: boolean;
+    rbac?: boolean;
+    sso?: boolean;
+};
+
+export type PlanLimits = {
+    events: number | null;
+    features: PlanFeatures;
+    hotRetentionDays: number | null;
+    lemonsqueezyVariants?: {
+        [key: string]: string;
+    };
+    priceAnnualUsd: number | null;
+    priceMonthlyUsd: number | null;
+    retentionDays: number | null;
+    seats: number | null;
+};
+
 export type PlanMrr = {
     count: number;
     mrrUsd: number;
     plan: string;
+};
+
+export type PlansOutputBody = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
+    plans: {
+        [key: string]: PlanLimits;
+    };
 };
 
 export type PublicIngestTokenDto = {
@@ -3062,6 +3153,22 @@ export type UpdateProfileInputBody = {
     lastName?: string;
 };
 
+export type UsageOutputBody = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
+    cycleStartedAt: string | null;
+    hasBillingPortal: boolean;
+    limit: number | null;
+    plan: string;
+    retentionDays: number | null;
+    seats: number | null;
+    subscriptionStatus: string;
+    trialEndsAt: string | null;
+    used: number;
+};
+
 export type UserDto = {
     createdAt: string;
     deletedAt?: string;
@@ -3115,6 +3222,16 @@ export type ViewsOutputBody = {
      */
     readonly $schema?: string;
     views: Array<ActivityViewResult> | null;
+};
+
+export type WebhookOutputBody = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
+    deduped?: boolean;
+    ok: boolean;
+    skipped?: string;
 };
 
 export type WorkspaceEntitiesOutputBody = {
@@ -3487,6 +3604,14 @@ export type AppDtoWritable = {
     updatedAt?: string;
 };
 
+export type BatchInputBodyWritable = {
+    events: Array<EventBodyWritable> | null;
+};
+
+export type BatchOutputBodyWritable = {
+    results: Array<BatchResult> | null;
+};
+
 export type BreakdownOutputBodyWritable = {
     dimension: string;
     rows: Array<BreakdownRowDto> | null;
@@ -3514,6 +3639,17 @@ export type ChannelDtoWritable = {
     name: string;
     orgId: string;
     updatedAt?: string;
+};
+
+export type CheckoutInputBodyWritable = {
+    /**
+     * monthly or annual
+     */
+    cadence?: string;
+    /**
+     * pro or team
+     */
+    plan: string;
 };
 
 export type ConnectInputBodyWritable = {
@@ -4051,6 +4187,10 @@ export type LicenseOutputBodyWritable = {
     tier?: string;
 };
 
+export type LinkOutputBodyWritable = {
+    url: string;
+};
+
 export type ListAbuseFlagsOutputBodyWritable = {
     flags: Array<AbuseFlagDto> | null;
 };
@@ -4152,6 +4292,11 @@ export type OkOutputBodyWritable = {
     ok: boolean;
 };
 
+export type OperationCapabilitiesWritable = {
+    operations: Array<OperationCapability> | null;
+    registryRevision: string;
+};
+
 export type OpsInputBodyWritable = {
     ops: Array<ActivityDraftOp> | null;
     /**
@@ -4208,6 +4353,12 @@ export type PatchErrorInputBodyWritable = {
      * Re-alert after this many affected users (for action=mute)
      */
     snoozeUntilUsers?: number;
+};
+
+export type PlansOutputBodyWritable = {
+    plans: {
+        [key: string]: PlanLimits;
+    };
 };
 
 export type ReplaceInputBodyWritable = {
@@ -4422,6 +4573,18 @@ export type UpdateProfileInputBodyWritable = {
     lastName?: string;
 };
 
+export type UsageOutputBodyWritable = {
+    cycleStartedAt: string | null;
+    hasBillingPortal: boolean;
+    limit: number | null;
+    plan: string;
+    retentionDays: number | null;
+    seats: number | null;
+    subscriptionStatus: string;
+    trialEndsAt: string | null;
+    used: number;
+};
+
 export type UserOrgDtoWritable = {
     organization: OrganizationDtoWritable;
     role: string;
@@ -4446,6 +4609,12 @@ export type VerifyResultWritable = {
 
 export type ViewsOutputBodyWritable = {
     views: Array<ActivityViewResult> | null;
+};
+
+export type WebhookOutputBodyWritable = {
+    deduped?: boolean;
+    ok: boolean;
+    skipped?: string;
 };
 
 export type WorkspaceEntitiesOutputBodyWritable = {
@@ -6195,6 +6364,134 @@ export type AudittrailGetResponses = {
 
 export type AudittrailGetResponse = AudittrailGetResponses[keyof AudittrailGetResponses];
 
+export type BillingCheckoutData = {
+    body: CheckoutInputBodyWritable;
+    path?: never;
+    query?: never;
+    url: '/billing/checkout';
+};
+
+export type BillingCheckoutErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type BillingCheckoutError = BillingCheckoutErrors[keyof BillingCheckoutErrors];
+
+export type BillingCheckoutResponses = {
+    /**
+     * Created
+     */
+    201: LinkOutputBody;
+};
+
+export type BillingCheckoutResponse = BillingCheckoutResponses[keyof BillingCheckoutResponses];
+
+export type BillingPlansData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/billing/plans';
+};
+
+export type BillingPlansErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type BillingPlansError = BillingPlansErrors[keyof BillingPlansErrors];
+
+export type BillingPlansResponses = {
+    /**
+     * OK
+     */
+    200: PlansOutputBody;
+};
+
+export type BillingPlansResponse = BillingPlansResponses[keyof BillingPlansResponses];
+
+export type BillingPortalData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/billing/portal';
+};
+
+export type BillingPortalErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type BillingPortalError = BillingPortalErrors[keyof BillingPortalErrors];
+
+export type BillingPortalResponses = {
+    /**
+     * OK
+     */
+    200: LinkOutputBody;
+};
+
+export type BillingPortalResponse = BillingPortalResponses[keyof BillingPortalResponses];
+
+export type BillingUsageData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/billing/usage';
+};
+
+export type BillingUsageErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type BillingUsageError = BillingUsageErrors[keyof BillingUsageErrors];
+
+export type BillingUsageResponses = {
+    /**
+     * OK
+     */
+    200: UsageOutputBody;
+};
+
+export type BillingUsageResponse = BillingUsageResponses[keyof BillingUsageResponses];
+
+export type BillingWebhookData = {
+    body: Blob | File;
+    headers?: {
+        'X-Signature'?: string;
+    };
+    path?: never;
+    query?: never;
+    url: '/billing/webhook';
+};
+
+export type BillingWebhookErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type BillingWebhookError = BillingWebhookErrors[keyof BillingWebhookErrors];
+
+export type BillingWebhookResponses = {
+    /**
+     * OK
+     */
+    200: WebhookOutputBody;
+};
+
+export type BillingWebhookResponse = BillingWebhookResponses[keyof BillingWebhookResponses];
+
 export type CapabilitiesGetData = {
     body?: never;
     path?: never;
@@ -6219,6 +6516,31 @@ export type CapabilitiesGetResponses = {
 };
 
 export type CapabilitiesGetResponse = CapabilitiesGetResponses[keyof CapabilitiesGetResponses];
+
+export type CapabilitiesOperationsData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/capabilities/operations';
+};
+
+export type CapabilitiesOperationsErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type CapabilitiesOperationsError = CapabilitiesOperationsErrors[keyof CapabilitiesOperationsErrors];
+
+export type CapabilitiesOperationsResponses = {
+    /**
+     * OK
+     */
+    200: OperationCapabilities;
+};
+
+export type CapabilitiesOperationsResponse = CapabilitiesOperationsResponses[keyof CapabilitiesOperationsResponses];
 
 export type EnvironmentsListData = {
     body?: never;
@@ -6644,6 +6966,37 @@ export type EventsSearchResponses = {
 };
 
 export type EventsSearchResponse = EventsSearchResponses[keyof EventsSearchResponses];
+
+export type CreateEventBatchData = {
+    body: BatchInputBodyWritable;
+    headers?: {
+        'x-axonpush-api-key'?: string;
+        'x-api-key'?: string;
+        'x-public-token'?: string;
+        Authorization?: string;
+    };
+    path?: never;
+    query?: never;
+    url: '/events/batch';
+};
+
+export type CreateEventBatchErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type CreateEventBatchError = CreateEventBatchErrors[keyof CreateEventBatchErrors];
+
+export type CreateEventBatchResponses = {
+    /**
+     * OK
+     */
+    200: BatchOutputBody;
+};
+
+export type CreateEventBatchResponse = CreateEventBatchResponses[keyof CreateEventBatchResponses];
 
 export type ExportListData = {
     body?: never;

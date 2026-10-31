@@ -1,15 +1,7 @@
 """Shared fixtures for integration unit tests.
 
-Stream D's tests deliberately do NOT go through the real
-:class:`axonpush.AxonPush` / :class:`AsyncAxonPush` clients — that would
-couple the integration layer to Stream A's transport and Stream B's
-resources, both of which are owned by other agents and may shift
-underneath us between commits.
-
-Instead we expose a duck-typed :class:`FakeSyncClient` /
-:class:`FakeAsyncClient` whose ``events.publish`` method records every
-call. The integrations rely only on ``client.events.publish(**kwargs)``
-per the v0.0.10 contract, so the fakes are a complete substitute.
+Duck-typed FakeSyncClient/FakeAsyncClient instances record events.publish calls
+without HTTP, keeping integration behavior independent from transport tests.
 """
 
 from __future__ import annotations

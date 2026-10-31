@@ -35,7 +35,7 @@ async function main() {
   });
   if (!created) throw new Error("createEndpoint returned null");
   console.log("created endpoint", created.endpointId);
-  console.log("signing secret (store now, only shown once):", created.rawSecret ?? "<none>");
+  // Store created.rawSecret in your receiver's secret store; never log it.
 
   const endpoints = await client.webhooks.listEndpoints(CHANNEL_ID);
   console.log(`channel has ${endpoints?.length ?? 0} endpoints`);

@@ -15,7 +15,7 @@ export type {
   ActivityWorkspace as Workspace,
   ActivityWorkspaceSpec as WorkspaceSpec,
 } from "./_internal/api/types.gen.js";
-// Core (Stream A)
+// Core
 export { AxonPush } from "./client.js";
 export type { AxonPushOptions } from "./config.js";
 export {
@@ -29,7 +29,7 @@ export {
   ServerError,
   ValidationError,
 } from "./errors.js";
-// Integrations — primitives + helpers (Stream D).
+// Integrations — primitives + helpers.
 // Framework-specific installers are reachable via
 // `@axonpush/sdk/integrations/<name>` per package.json `exports`.
 export {
@@ -85,7 +85,7 @@ export {
   createAxonPushWinstonTransport,
   type WinstonTransportConfig,
 } from "./integrations/winston.js";
-// Models + Resources (Stream B)
+// Models + Resources
 export type {
   App,
   CanonicalEventType,
@@ -113,7 +113,8 @@ export { ActivityResource } from "./resources/activity.js";
 export { AlertsResource } from "./resources/alerts.js";
 export { AnalyticsResource } from "./resources/analytics.js";
 export { AppsResource } from "./resources/apps.js";
-export { CapabilitiesResource } from "./resources/capabilities.js";
+export type { OperationAvailability, OperationCapabilities } from "./resources/capabilities.js";
+export { CapabilitiesResource, operationAvailability } from "./resources/capabilities.js";
 export { ChannelsResource } from "./resources/channels.js";
 export { EnvironmentsResource } from "./resources/environments.js";
 export { ErrorsResource } from "./resources/errors.js";

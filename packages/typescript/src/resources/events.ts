@@ -1,3 +1,4 @@
+import { randomUUID } from "node:crypto";
 import { createEvent, eventsSearch } from "../_internal/api/sdk.gen.js";
 import type { EventBody, EventsSearchData } from "../_internal/api/types.gen.js";
 import type { Event, EventDetails, EventType, SearchEventsOutputBody } from "../models.js";
@@ -5,7 +6,9 @@ import type { ResourceClient } from "./_client.js";
 
 /** Parameters accepted by {@link EventsResource.publish}. */
 export interface PublishParams {
-  /** Stable, caller-supplied identifier — used for dedupe. */
+  /** Cancel this invocation, including retry waits. */
+  signal?: AbortSignal;
+  /** Operation name or event identifier. Use dedupKey for retry identity. */
   identifier: string;
   /** Free-form JSON body. */
   payload: Record<string, unknown>;
@@ -135,14 +138,14 @@ export class EventsResource {
       sync: params.sync ?? false,
       ...(params.agentId !== undefined ? { agentId: params.agentId } : {}),
       ...(params.parentSpanId !== undefined ? { parentSpanId: params.parentSpanId } : {}),
-      ...(params.dedupKey !== undefined ? { dedupKey: params.dedupKey } : {}),
+      dedupKey: params.dedupKey || randomUUID(),
       ...(params.occurredAt !== undefined ? { occurredAt: params.occurredAt } : {}),
       ...(params.expiresAt !== undefined ? { expiresAt: params.expiresAt } : {}),
       ...(rawMeta !== undefined
         ? { metadata: this.client.redactTelemetry?.(rawMeta) ?? rawMeta }
         : {}),
     };
-    return this.client.invoke(createEvent, { body });
+    return this.client.invoke(createEvent, { body, signal: params.signal });
   }
 
   /**
