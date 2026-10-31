@@ -1,6 +1,7 @@
 {
   "source": "axonpush/server",
-  "sha": "24621d494944d5d63f942e56d309a358efa95a2c",
-  "ref": "feat/batched-telemetry-20261031",
-  "sha256": "c2f5c901e332cf379d04078ebf7df78c1c291508d144d06ee6960e1995f7707e"
+  "sha": "82ed4252bdc2c7acb4d4279ba6915f43c31109c0",
+  "ref": "master",
+  "sha256": "c2f5c901e332cf379d04078ebf7df78c1c291508d144d06ee6960e1995f7707e",
+  "workflow": "41215126956"
 }
