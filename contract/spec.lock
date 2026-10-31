@@ -1,6 +1,6 @@
 {
   "source": "axonpush/server",
-  "sha": "dbca10f55e820d0cf2101be9675cba69257efcc6",
+  "sha": "58b997b98bfb9a5311007101e6c1afb8cde34b7f",
   "ref": "perf/bounded-read-work-20261031",
-  "sha256": "c4cee366955bcd21456eeaf2982144907dfbb50f7bafcac91f19e917a294d653"
+  "sha256": "95fd58241792a043e8058767f90c86c329dcfb766a47f079c0d99635ad2b043f"
 }

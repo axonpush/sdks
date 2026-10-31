@@ -20557,7 +20557,7 @@
         "x-axonpush-mcp": false,
         "x-axonpush-policy": {
           "category": "publish",
-          "grants": "resource",
+          "grants": "reject-scoped",
           "scopes": [
             "events:publish"
           ]
