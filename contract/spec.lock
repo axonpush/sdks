@@ -1,7 +1,7 @@
 {
   "source": "axonpush/server",
-  "sha": "4e4b5fae246348b44aa3f30428a20876c7008f8f",
+  "sha": "23d060582567f51eebd4d24e34276a7ecc0c2c57",
   "ref": "feat/audit-platform-portable",
-  "sha256": "2c573f7b96aa9996841f2f9611a0f54b1fe5768f804197d9cd90c90d9a7e69ed",
+  "sha256": "9ec29cbf5103fafbeb15cef97c76adb31440509f5bbb1cb96b983c71f3d7df25",
   "generatedBy": "local contract synchronization"
 }

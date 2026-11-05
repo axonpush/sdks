@@ -24,6 +24,7 @@ const snake = (name: string) =>
   name
     .replace(/([a-z0-9])([A-Z])/g, "$1_$2")
     .replaceAll(".", "_")
+    .replaceAll("-", "_")
     .toLowerCase();
 const camel = (name: string) =>
   snake(name).replace(/_([a-z])/g, (_, letter) => letter.toUpperCase());
@@ -33,16 +34,25 @@ const pascal = (name: string) => {
 };
 let count = 0;
 for (const id of operationIds) {
-  const [group, method] = id.split(".");
+  const [group, ...parts] = id.split(".");
+  const method = ["audit", "auditProduct"].includes(group) ? parts.join(".") : parts[0];
+  const filename = snake(group);
   if (
-    !["workspaces", "templates", "observations", "activity", "telemetry", "capabilities"].includes(
-      group,
-    )
+    ![
+      "workspaces",
+      "templates",
+      "observations",
+      "activity",
+      "telemetry",
+      "capabilities",
+      "audit",
+      "auditProduct",
+    ].includes(group)
   )
     continue;
   for (const [file, token] of [
-    [`packages/typescript/src/resources/${group}.ts`, `${camel(id)},`],
-    [`packages/python/src/axonpush/resources/${group}.py`, snake(id)],
+    [`packages/typescript/src/resources/${filename}.ts`, `${camel(id)},`],
+    [`packages/python/src/axonpush/resources/${filename}.py`, snake(id)],
     [
       `packages/dotnet/src/AxonPush/Operations/${pascal(group)}Resource.g.cs`,
       `${pascal(method)}Async(`,

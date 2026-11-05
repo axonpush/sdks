@@ -15,3 +15,16 @@ export function taskMetadata(): Record<string, unknown> {
       }
     : {};
 }
+
+/** Copy task identity at admission, before a background/durable queue handoff. */
+export function captureTask<T extends { metadata?: Record<string, unknown> }>(params: T): T {
+  const metadata = taskMetadata();
+  return Object.keys(metadata).length
+    ? { ...params, metadata: { ...metadata, ...params.metadata } }
+    : params;
+}
+
+/** A long-lived worker must not inherit its creator's application task. */
+export function withoutEvidenceTask<T>(work: () => T): T {
+  return evidenceTasks.exit(work);
+}

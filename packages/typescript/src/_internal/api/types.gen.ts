@@ -37,6 +37,17 @@ export type AcceptInvitationOutputBody = {
     role: string;
 };
 
+export type AccessLogOutputBody = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
+    items: Array<{
+        [key: string]: unknown;
+    }> | null;
+    nextCursor?: string;
+};
+
 export type AccessRequestDto = {
     company: string;
     country?: string;
@@ -1367,6 +1378,119 @@ export type CheckoutInputBody = {
     plan: string;
 };
 
+export type ComplianceActionBody = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
+    identityVerified?: boolean;
+    reason?: string;
+    reply?: string;
+    report?: string;
+    reportKind?: string;
+    version: number;
+};
+
+export type ComplianceApplicability = {
+    audience: Array<string> | null;
+    audiences: Array<string> | null;
+    decidesOrAssists: Array<string> | null;
+    purposes: Array<string> | null;
+    regions: Array<string> | null;
+    riskTiers: Array<string> | null;
+    roles: Array<string> | null;
+};
+
+export type ComplianceControl = {
+    control: string;
+    framework: string;
+};
+
+export type ComplianceGrant = {
+    agentId: string;
+    enforcement: string;
+    mode: string;
+    rule: string;
+    system: string;
+    tool: string;
+};
+
+export type ComplianceMetrics = {
+    decisions: number;
+    denials: number;
+    events: number;
+    invalid: number;
+    medianDecisionMs: number;
+    noDeclaredTask: number;
+    notices: number;
+    offGoal: number;
+    overrideRate: number;
+    provenance: string;
+    reviewRate: number;
+    tasks: number;
+};
+
+export type ComplianceObligation = {
+    agentId: string;
+    applies: ComplianceApplicability;
+    clause: string;
+    confidence: string;
+    controls: Array<ComplianceControl> | null;
+    duty: string;
+    effectiveAt: string;
+    evidence: ObligationEvidenceStruct;
+    evidenceCount: number;
+    evidenceDisclaimer: string;
+    id: string;
+    law: string;
+    notes: string;
+    reviewStatus: string;
+    sourceUrl: string;
+    sources: Array<ComplianceSource> | null;
+    status: string;
+    verifiedAt: string;
+    watch: boolean;
+};
+
+export type ComplianceOverview = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
+    attention: Array<{
+        [key: string]: unknown;
+    }> | null;
+    counts: {
+        [key: string]: number;
+    };
+    evidenceDisclaimer: string;
+    integrity: {
+        [key: string]: unknown;
+    };
+    metrics: ComplianceMetrics;
+};
+
+export type ComplianceRecord = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
+    createdAt: string;
+    data: {
+        [key: string]: unknown;
+    };
+    id: string;
+    kind: string;
+    state: string;
+    updatedAt: string;
+    version: number;
+};
+
+export type ComplianceSource = {
+    label: string;
+    url: string;
+};
+
 export type ConnectInputBody = {
     /**
      * A URL to the JSON Schema for this object.
@@ -1483,6 +1607,18 @@ export type CreateEnvironmentInputBody = {
      * URL-safe slug; derived from name when omitted
      */
     slug?: string;
+};
+
+export type CreateHoldInputBody = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
+    agentId?: string;
+    from?: string;
+    name: string;
+    reason: string;
+    to?: string;
 };
 
 export type CreateInputBody = {
@@ -2100,6 +2236,19 @@ export type GetTraceOutputBody = {
     traceId: string;
 };
 
+export type GovernanceInputBody = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
+    /**
+     * Confirm shortening and preserving an immutable timestamped reason until the original expiry
+     */
+    confirm: boolean;
+    reason: string;
+    retainUntil: string;
+};
+
 export type GrantInputBody = {
     /**
      * A URL to the JSON Schema for this object.
@@ -2178,6 +2327,14 @@ export type HeatmapOutputBody = {
     timeBuckets: Array<string> | null;
 };
 
+export type HoldListOutputBody = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
+    holds: Array<LedgerHold> | null;
+};
+
 export type IdentifyInputBody = {
     /**
      * A URL to the JSON Schema for this object.
@@ -2209,6 +2366,31 @@ export type IdentifyOutputBody = {
      */
     dropped: Array<string> | null;
     profile: ActivityProfile;
+};
+
+export type ImportInputBody = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
+    csv: string;
+};
+
+export type ImportOutputBody = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
+    duplicates: number;
+    imported: number;
+};
+
+export type Inclusion = {
+    meta: Meta;
+    path: Array<string> | null;
+    root: string;
+    schema: string;
+    size: number;
 };
 
 export type IngestionStatusOutputBody = {
@@ -2291,6 +2473,91 @@ export type LatencyPercentilesDto = {
     p95TtftMs: number;
     p99DurationMs: number;
     p99TtftMs: number;
+};
+
+export type LedgerHold = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
+    agentId?: string;
+    createdAt: string;
+    createdBy: string;
+    from?: string;
+    id: string;
+    name: string;
+    reason: string;
+    releasedAt?: string;
+    state: string;
+    to?: string;
+};
+
+export type LedgerJob = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
+    createdAt: string;
+    cursor: string;
+    errorCode?: string;
+    id: string;
+    kind: string;
+    processed: number;
+    recoveryRequired: boolean;
+    result?: unknown;
+    state: string;
+    updatedAt: string;
+};
+
+export type LedgerPolicy = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
+    archiveContent: boolean;
+    configured: boolean;
+    days: number;
+    enabled: boolean;
+    lockMode: string;
+    maximumDays: number;
+    region: string;
+    revision: number;
+};
+
+export type LedgerPolicyUpdate = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
+    archiveContent: boolean;
+    confirmCompliance?: boolean;
+    days: 30 | 180 | 365 | 2555;
+    enabled: boolean;
+    lockMode: 'GOVERNANCE' | 'COMPLIANCE';
+    reason: string;
+    region: string;
+    revision: number;
+};
+
+export type LedgerSegment = {
+    bytesRaw: number;
+    bytesStored: number;
+    events: number;
+    lockedUntil: string;
+    periodStart: string;
+    root: string;
+    sealedAt: string;
+    segmentId: string;
+    state: string;
+    verifiedAt: string;
+};
+
+export type LedgerStorageTier = {
+    bytesStored: number;
+    estimatedMonthlyCost?: number;
+    objects: number;
+    pricePerGBMonth?: number;
+    storageClass: string;
 };
 
 export type LicenseOutputBody = {
@@ -2423,6 +2690,15 @@ export type ListInvitationsOutputBody = {
     invitations: Array<InvitationDto> | null;
 };
 
+export type ListJobsOutputBody = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
+    jobs: Array<LedgerJob> | null;
+    nextCursor?: string;
+};
+
 export type ListMembersOutputBody = {
     /**
      * A URL to the JSON Schema for this object.
@@ -2453,6 +2729,15 @@ export type ListOutputBody2 = {
      */
     readonly $schema?: string;
     data: Array<LogDto> | null;
+};
+
+export type ListOutputBody3 = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
+    items: Array<ComplianceRecord> | null;
+    nextCursor?: string;
 };
 
 export type ListTokensOutputBody = {
@@ -2486,6 +2771,23 @@ export type LogDto = {
     resourceType: string;
     seq?: number;
     source?: string;
+};
+
+export type Manifest = {
+    content: Object;
+    lockMode: string;
+    lockedUntil: string;
+    meta: Object;
+    orgId: string;
+    period: string;
+    previousHash: string;
+    region: string;
+    root: string;
+    rows: number;
+    schema: string;
+    sealHash: string;
+    sealedAt: string;
+    sequence: number;
 };
 
 export type MeDto = {
@@ -2525,6 +2827,44 @@ export type MessageOutputBody = {
      */
     readonly $schema?: string;
     message: string;
+};
+
+export type Meta = {
+    cipherHash: string;
+    ingestedAt: string;
+    keyId: string;
+    ordinal: number;
+    region: string;
+};
+
+export type NdaInputBody = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
+    accepted: boolean;
+    termsHash: string;
+};
+
+export type Object = {
+    bytes: number;
+    key: string;
+    sha256: string;
+    version: string;
+};
+
+export type ObligationEvidenceStruct = {
+    metric: string;
+    minCount: number;
+};
+
+export type ObligationsOutputBody = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
+    catalogueVersion: string;
+    items: Array<ComplianceObligation> | null;
 };
 
 export type OccurrencesOutputBody = {
@@ -2700,6 +3040,18 @@ export type PatchErrorInputBody = {
     snoozeUntilUsers?: number;
 };
 
+export type PatchInputBody = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
+    data: {
+        [key: string]: unknown;
+    };
+    state?: string;
+    version: number;
+};
+
 export type PlanFeatures = {
     auditLog?: boolean;
     customRetention?: boolean;
@@ -2736,6 +3088,38 @@ export type PlansOutputBody = {
     };
 };
 
+export type PolicyCheckInputBody = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
+    subjectRef: string;
+};
+
+export type PolicyOutputBody = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
+    agentId: string;
+    grants: Array<ComplianceGrant> | null;
+    mode: string;
+    optOut: boolean;
+    suspended: boolean;
+    version: number;
+};
+
+export type ProofOutputBody = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
+    eventId: string;
+    manifest: Manifest;
+    proof: Inclusion;
+    segmentId: string;
+};
+
 export type PublicIngestTokenDto = {
     active: boolean;
     appId?: string;
@@ -2747,6 +3131,44 @@ export type PublicIngestTokenDto = {
     orgId: string;
     prefix: string;
     tokenId: string;
+};
+
+export type PublicInputBody = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
+    agentId?: string;
+    email: string;
+    kind: string;
+    message: string;
+    name: string;
+};
+
+export type PublicWriteOutputBody = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
+    id: string;
+    state: string;
+};
+
+export type RecoverJobInputBody = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
+    confirmWorkerStopped: boolean;
+    reason: string;
+};
+
+export type ReleaseHoldInputBody = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
+    reason: string;
 };
 
 export type ReplaceInputBody = {
@@ -2791,6 +3213,33 @@ export type SearchUsersOutputBody = {
      */
     readonly $schema?: string;
     users: Array<UserDto> | null;
+};
+
+export type SegmentListOutputBody = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
+    nextCursor?: string;
+    segments: Array<LedgerSegment> | null;
+};
+
+export type SegmentOutputBody = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
+    bytesRaw: number;
+    bytesStored: number;
+    events: number;
+    lockedUntil: string;
+    manifest: Manifest;
+    periodStart: string;
+    root: string;
+    sealedAt: string;
+    segmentId: string;
+    state: string;
+    verifiedAt: string;
 };
 
 export type SessionBootstrap = {
@@ -2923,6 +3372,20 @@ export type SetTrialInputBody = {
     days: number;
 };
 
+export type ShareOutputBody = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
+    grant: {
+        [key: string]: unknown;
+    };
+    packs: Array<{
+        [key: string]: unknown;
+    }> | null;
+    readOnly: boolean;
+};
+
 export type StackFrameDto = {
     contextLine?: string;
     file?: string;
@@ -2936,6 +3399,50 @@ export type StackFrameDto = {
     };
 };
 
+export type StatusOutputBody = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
+    activeHolds: number;
+    anchorSequence: number;
+    bytesRaw: number;
+    bytesStored: number;
+    checkpointState: string;
+    configured: boolean;
+    enabled: boolean;
+    events: number;
+    headHash: string;
+    headSequence: number;
+    lastSealedAt?: string;
+    lastTimestampedAt?: string;
+    pendingJobs: number;
+    restoring: boolean;
+    segments: number;
+};
+
+export type StorageOutputBody = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
+    asOf: string;
+    complete: boolean;
+    coverage: string;
+    currency?: string;
+    estimated: boolean;
+    gigabyteBytes: number;
+    governanceLiftAvailable: boolean;
+    nextCursor?: string;
+    priceSource?: string;
+    pricesAsOf?: string;
+    pricingAvailable: boolean;
+    region: string;
+    scanned: number;
+    source: string;
+    tiers: Array<LedgerStorageTier> | null;
+};
+
 export type TagDistributionDto = {
     key: string;
     values: Array<TagValueCountDto> | null;
@@ -2944,6 +3451,17 @@ export type TagDistributionDto = {
 export type TagValueCountDto = {
     count: number;
     value: string;
+};
+
+export type TasksOutputBody = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
+    items: Array<{
+        [key: string]: unknown;
+    }> | null;
+    nextCursor?: string;
 };
 
 export type TelemetryPolicyOutputBody = {
@@ -3062,6 +3580,44 @@ export type TransferOwnershipInputBody = {
      * Member to promote to owner
      */
     userId: string;
+};
+
+export type TrustOutputBody = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
+    description: string;
+    disclaimer: string;
+    gatedDocuments: Array<{
+        [key: string]: string;
+    }> | null;
+    sections: {
+        [key: string]: unknown;
+    };
+    slug: string;
+    title: string;
+};
+
+export type TrustWriteInputBody = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
+    data: {
+        [key: string]: unknown;
+    };
+    version: number;
+};
+
+export type UnregisteredOutputBody = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
+    items: Array<{
+        [key: string]: unknown;
+    }> | null;
 };
 
 export type UpdateAppInputBody = {
@@ -3208,6 +3764,17 @@ export type ValidateOutputBody = {
     status: 'valid' | 'invalid';
 };
 
+export type VerifyOutputBody = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
+    events: number;
+    segmentId: string;
+    valid: boolean;
+    verifiedAt: string;
+};
+
 export type VerifyResult = {
     /**
      * A URL to the JSON Schema for this object.
@@ -3312,6 +3879,35 @@ export type WorkspaceTimelineOutputBody = {
     events: Array<ActivityRecord> | null;
 };
 
+export type WriteInputBody = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
+    data: {
+        [key: string]: unknown;
+    };
+    id?: string;
+    state?: string;
+};
+
+export type WriteOutputBody = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
+    accessToken?: string;
+    createdAt: string;
+    data: {
+        [key: string]: unknown;
+    };
+    id: string;
+    kind: string;
+    state: string;
+    updatedAt: string;
+    version: number;
+};
+
 export type AcceptInvitationInputBodyWritable = {
     /**
      * Invitation code from the invite link
@@ -3323,6 +3919,13 @@ export type AcceptInvitationOutputBodyWritable = {
     orgId: string;
     orgName: string;
     role: string;
+};
+
+export type AccessLogOutputBodyWritable = {
+    items: Array<{
+        [key: string]: unknown;
+    }> | null;
+    nextCursor?: string;
 };
 
 export type ActivateDraftInputBodyWritable = {
@@ -3656,6 +4259,41 @@ export type CheckoutInputBodyWritable = {
     plan: string;
 };
 
+export type ComplianceActionBodyWritable = {
+    identityVerified?: boolean;
+    reason?: string;
+    reply?: string;
+    report?: string;
+    reportKind?: string;
+    version: number;
+};
+
+export type ComplianceOverviewWritable = {
+    attention: Array<{
+        [key: string]: unknown;
+    }> | null;
+    counts: {
+        [key: string]: number;
+    };
+    evidenceDisclaimer: string;
+    integrity: {
+        [key: string]: unknown;
+    };
+    metrics: ComplianceMetrics;
+};
+
+export type ComplianceRecordWritable = {
+    createdAt: string;
+    data: {
+        [key: string]: unknown;
+    };
+    id: string;
+    kind: string;
+    state: string;
+    updatedAt: string;
+    version: number;
+};
+
 export type ConnectInputBodyWritable = {
     /**
      * Environment slug or id; defaults to the organisation's default, else production
@@ -3728,6 +4366,14 @@ export type CreateEnvironmentInputBodyWritable = {
      * URL-safe slug; derived from name when omitted
      */
     slug?: string;
+};
+
+export type CreateHoldInputBodyWritable = {
+    agentId?: string;
+    from?: string;
+    name: string;
+    reason: string;
+    to?: string;
 };
 
 export type CreateInputBodyWritable = {
@@ -4059,6 +4705,15 @@ export type GetTraceOutputBodyWritable = {
     traceId: string;
 };
 
+export type GovernanceInputBodyWritable = {
+    /**
+     * Confirm shortening and preserving an immutable timestamped reason until the original expiry
+     */
+    confirm: boolean;
+    reason: string;
+    retainUntil: string;
+};
+
 export type GrantInputBodyWritable = {
     /**
      * Attribute declared with scope: true
@@ -4106,6 +4761,10 @@ export type HeatmapOutputBodyWritable = {
     timeBuckets: Array<string> | null;
 };
 
+export type HoldListOutputBodyWritable = {
+    holds: Array<LedgerHoldWritable> | null;
+};
+
 export type IdentifyInputBodyWritable = {
     /**
      * Entity type declared in the active spec
@@ -4129,6 +4788,15 @@ export type IdentifyOutputBodyWritable = {
      */
     dropped: Array<string> | null;
     profile: ActivityProfile;
+};
+
+export type ImportInputBodyWritable = {
+    csv: string;
+};
+
+export type ImportOutputBodyWritable = {
+    duplicates: number;
+    imported: number;
 };
 
 export type IngestionStatusOutputBodyWritable = {
@@ -4181,6 +4849,54 @@ export type LatencyPercentilesDtoWritable = {
     p95TtftMs: number;
     p99DurationMs: number;
     p99TtftMs: number;
+};
+
+export type LedgerHoldWritable = {
+    agentId?: string;
+    createdAt: string;
+    createdBy: string;
+    from?: string;
+    id: string;
+    name: string;
+    reason: string;
+    releasedAt?: string;
+    state: string;
+    to?: string;
+};
+
+export type LedgerJobWritable = {
+    createdAt: string;
+    cursor: string;
+    errorCode?: string;
+    id: string;
+    kind: string;
+    processed: number;
+    recoveryRequired: boolean;
+    result?: unknown;
+    state: string;
+    updatedAt: string;
+};
+
+export type LedgerPolicyWritable = {
+    archiveContent: boolean;
+    configured: boolean;
+    days: number;
+    enabled: boolean;
+    lockMode: string;
+    maximumDays: number;
+    region: string;
+    revision: number;
+};
+
+export type LedgerPolicyUpdateWritable = {
+    archiveContent: boolean;
+    confirmCompliance?: boolean;
+    days: 30 | 180 | 365 | 2555;
+    enabled: boolean;
+    lockMode: 'GOVERNANCE' | 'COMPLIANCE';
+    reason: string;
+    region: string;
+    revision: number;
 };
 
 export type LicenseOutputBodyWritable = {
@@ -4247,6 +4963,11 @@ export type ListInvitationsOutputBodyWritable = {
     invitations: Array<InvitationDtoWritable> | null;
 };
 
+export type ListJobsOutputBodyWritable = {
+    jobs: Array<LedgerJobWritable> | null;
+    nextCursor?: string;
+};
+
 export type ListMembersOutputBodyWritable = {
     members: Array<MemberDto> | null;
 };
@@ -4261,6 +4982,11 @@ export type ListOutputBody1Writable = {
 
 export type ListOutputBody2Writable = {
     data: Array<LogDto> | null;
+};
+
+export type ListOutputBody3Writable = {
+    items: Array<ComplianceRecordWritable> | null;
+    nextCursor?: string;
 };
 
 export type ListTokensOutputBodyWritable = {
@@ -4286,6 +5012,16 @@ export type MeDtoWritable = {
 
 export type MessageOutputBodyWritable = {
     message: string;
+};
+
+export type NdaInputBodyWritable = {
+    accepted: boolean;
+    termsHash: string;
+};
+
+export type ObligationsOutputBodyWritable = {
+    catalogueVersion: string;
+    items: Array<ComplianceObligation> | null;
 };
 
 export type OccurrencesOutputBodyWritable = {
@@ -4359,10 +5095,60 @@ export type PatchErrorInputBodyWritable = {
     snoozeUntilUsers?: number;
 };
 
+export type PatchInputBodyWritable = {
+    data: {
+        [key: string]: unknown;
+    };
+    state?: string;
+    version: number;
+};
+
 export type PlansOutputBodyWritable = {
     plans: {
         [key: string]: PlanLimits;
     };
+};
+
+export type PolicyCheckInputBodyWritable = {
+    subjectRef: string;
+};
+
+export type PolicyOutputBodyWritable = {
+    agentId: string;
+    grants: Array<ComplianceGrant> | null;
+    mode: string;
+    optOut: boolean;
+    suspended: boolean;
+    version: number;
+};
+
+export type ProofOutputBodyWritable = {
+    eventId: string;
+    manifest: Manifest;
+    proof: Inclusion;
+    segmentId: string;
+};
+
+export type PublicInputBodyWritable = {
+    agentId?: string;
+    email: string;
+    kind: string;
+    message: string;
+    name: string;
+};
+
+export type PublicWriteOutputBodyWritable = {
+    id: string;
+    state: string;
+};
+
+export type RecoverJobInputBodyWritable = {
+    confirmWorkerStopped: boolean;
+    reason: string;
+};
+
+export type ReleaseHoldInputBodyWritable = {
+    reason: string;
 };
 
 export type ReplaceInputBodyWritable = {
@@ -4387,6 +5173,25 @@ export type SearchOrgsOutputBodyWritable = {
 
 export type SearchUsersOutputBodyWritable = {
     users: Array<UserDto> | null;
+};
+
+export type SegmentListOutputBodyWritable = {
+    nextCursor?: string;
+    segments: Array<LedgerSegment> | null;
+};
+
+export type SegmentOutputBodyWritable = {
+    bytesRaw: number;
+    bytesStored: number;
+    events: number;
+    lockedUntil: string;
+    manifest: Manifest;
+    periodStart: string;
+    root: string;
+    sealedAt: string;
+    segmentId: string;
+    state: string;
+    verifiedAt: string;
 };
 
 export type SessionBootstrapWritable = {
@@ -4479,6 +5284,59 @@ export type SetTrialInputBodyWritable = {
     days: number;
 };
 
+export type ShareOutputBodyWritable = {
+    grant: {
+        [key: string]: unknown;
+    };
+    packs: Array<{
+        [key: string]: unknown;
+    }> | null;
+    readOnly: boolean;
+};
+
+export type StatusOutputBodyWritable = {
+    activeHolds: number;
+    anchorSequence: number;
+    bytesRaw: number;
+    bytesStored: number;
+    checkpointState: string;
+    configured: boolean;
+    enabled: boolean;
+    events: number;
+    headHash: string;
+    headSequence: number;
+    lastSealedAt?: string;
+    lastTimestampedAt?: string;
+    pendingJobs: number;
+    restoring: boolean;
+    segments: number;
+};
+
+export type StorageOutputBodyWritable = {
+    asOf: string;
+    complete: boolean;
+    coverage: string;
+    currency?: string;
+    estimated: boolean;
+    gigabyteBytes: number;
+    governanceLiftAvailable: boolean;
+    nextCursor?: string;
+    priceSource?: string;
+    pricesAsOf?: string;
+    pricingAvailable: boolean;
+    region: string;
+    scanned: number;
+    source: string;
+    tiers: Array<LedgerStorageTier> | null;
+};
+
+export type TasksOutputBodyWritable = {
+    items: Array<{
+        [key: string]: unknown;
+    }> | null;
+    nextCursor?: string;
+};
+
 export type TelemetryPolicyOutputBodyWritable = {
     policy: unknown;
     version: number;
@@ -4514,6 +5372,32 @@ export type TransferOwnershipInputBodyWritable = {
      * Member to promote to owner
      */
     userId: string;
+};
+
+export type TrustOutputBodyWritable = {
+    description: string;
+    disclaimer: string;
+    gatedDocuments: Array<{
+        [key: string]: string;
+    }> | null;
+    sections: {
+        [key: string]: unknown;
+    };
+    slug: string;
+    title: string;
+};
+
+export type TrustWriteInputBodyWritable = {
+    data: {
+        [key: string]: unknown;
+    };
+    version: number;
+};
+
+export type UnregisteredOutputBodyWritable = {
+    items: Array<{
+        [key: string]: unknown;
+    }> | null;
 };
 
 export type UpdateAppInputBodyWritable = {
@@ -4603,6 +5487,13 @@ export type ValidateOutputBodyWritable = {
     status: 'valid' | 'invalid';
 };
 
+export type VerifyOutputBodyWritable = {
+    events: number;
+    segmentId: string;
+    valid: boolean;
+    verifiedAt: string;
+};
+
 export type VerifyResultWritable = {
     actual?: string;
     brokenAtSeq?: number;
@@ -4661,6 +5552,27 @@ export type WorkspaceTemplateListOutputBodyWritable = {
 
 export type WorkspaceTimelineOutputBodyWritable = {
     events: Array<ActivityRecord> | null;
+};
+
+export type WriteInputBodyWritable = {
+    data: {
+        [key: string]: unknown;
+    };
+    id?: string;
+    state?: string;
+};
+
+export type WriteOutputBodyWritable = {
+    accessToken?: string;
+    createdAt: string;
+    data: {
+        [key: string]: unknown;
+    };
+    id: string;
+    kind: string;
+    state: string;
+    updatedAt: string;
+    version: number;
 };
 
 export type AccessRequestCreateData = {
@@ -6367,6 +7279,2519 @@ export type AudittrailGetResponses = {
 };
 
 export type AudittrailGetResponse = AudittrailGetResponses[keyof AudittrailGetResponses];
+
+export type AuditProductAccessLogData = {
+    body?: never;
+    path?: never;
+    query?: {
+        limit?: number;
+        cursor?: string;
+    };
+    url: '/audit/access-log';
+};
+
+export type AuditProductAccessLogErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type AuditProductAccessLogError = AuditProductAccessLogErrors[keyof AuditProductAccessLogErrors];
+
+export type AuditProductAccessLogResponses = {
+    /**
+     * OK
+     */
+    200: AccessLogOutputBody;
+};
+
+export type AuditProductAccessLogResponse = AuditProductAccessLogResponses[keyof AuditProductAccessLogResponses];
+
+export type AuditProductAgentsListData = {
+    body?: never;
+    path?: never;
+    query?: {
+        limit?: number;
+        cursor?: string;
+    };
+    url: '/audit/agents';
+};
+
+export type AuditProductAgentsListErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type AuditProductAgentsListError = AuditProductAgentsListErrors[keyof AuditProductAgentsListErrors];
+
+export type AuditProductAgentsListResponses = {
+    /**
+     * OK
+     */
+    200: ListOutputBody3;
+};
+
+export type AuditProductAgentsListResponse = AuditProductAgentsListResponses[keyof AuditProductAgentsListResponses];
+
+export type AuditProductAgentsCreateData = {
+    body: WriteInputBodyWritable;
+    path?: never;
+    query?: never;
+    url: '/audit/agents';
+};
+
+export type AuditProductAgentsCreateErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type AuditProductAgentsCreateError = AuditProductAgentsCreateErrors[keyof AuditProductAgentsCreateErrors];
+
+export type AuditProductAgentsCreateResponses = {
+    /**
+     * OK
+     */
+    200: WriteOutputBody;
+};
+
+export type AuditProductAgentsCreateResponse = AuditProductAgentsCreateResponses[keyof AuditProductAgentsCreateResponses];
+
+export type AuditProductAgentsGetData = {
+    body?: never;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/audit/agents/{id}';
+};
+
+export type AuditProductAgentsGetErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type AuditProductAgentsGetError = AuditProductAgentsGetErrors[keyof AuditProductAgentsGetErrors];
+
+export type AuditProductAgentsGetResponses = {
+    /**
+     * OK
+     */
+    200: ComplianceRecord;
+};
+
+export type AuditProductAgentsGetResponse = AuditProductAgentsGetResponses[keyof AuditProductAgentsGetResponses];
+
+export type AuditProductAgentsUpdateData = {
+    body: PatchInputBodyWritable;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/audit/agents/{id}';
+};
+
+export type AuditProductAgentsUpdateErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type AuditProductAgentsUpdateError = AuditProductAgentsUpdateErrors[keyof AuditProductAgentsUpdateErrors];
+
+export type AuditProductAgentsUpdateResponses = {
+    /**
+     * OK
+     */
+    200: ComplianceRecord;
+};
+
+export type AuditProductAgentsUpdateResponse = AuditProductAgentsUpdateResponses[keyof AuditProductAgentsUpdateResponses];
+
+export type AuditProductAgentsChangesData = {
+    body?: never;
+    path: {
+        id: string;
+    };
+    query?: {
+        before?: number;
+        limit?: number;
+    };
+    url: '/audit/agents/{id}/changes';
+};
+
+export type AuditProductAgentsChangesErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type AuditProductAgentsChangesError = AuditProductAgentsChangesErrors[keyof AuditProductAgentsChangesErrors];
+
+export type AuditProductAgentsChangesResponses = {
+    /**
+     * OK
+     */
+    200: ChangesOutputBody;
+};
+
+export type AuditProductAgentsChangesResponse = AuditProductAgentsChangesResponses[keyof AuditProductAgentsChangesResponses];
+
+export type AuditProductAgentPolicyData = {
+    body?: never;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/audit/agents/{id}/policy';
+};
+
+export type AuditProductAgentPolicyErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type AuditProductAgentPolicyError = AuditProductAgentPolicyErrors[keyof AuditProductAgentPolicyErrors];
+
+export type AuditProductAgentPolicyResponses = {
+    /**
+     * OK
+     */
+    200: PolicyOutputBody;
+};
+
+export type AuditProductAgentPolicyResponse = AuditProductAgentPolicyResponses[keyof AuditProductAgentPolicyResponses];
+
+export type AuditProductAgentPolicyCheckData = {
+    body: PolicyCheckInputBodyWritable;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/audit/agents/{id}/policy/check';
+};
+
+export type AuditProductAgentPolicyCheckErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type AuditProductAgentPolicyCheckError = AuditProductAgentPolicyCheckErrors[keyof AuditProductAgentPolicyCheckErrors];
+
+export type AuditProductAgentPolicyCheckResponses = {
+    /**
+     * OK
+     */
+    200: PolicyOutputBody;
+};
+
+export type AuditProductAgentPolicyCheckResponse = AuditProductAgentPolicyCheckResponses[keyof AuditProductAgentPolicyCheckResponses];
+
+export type AuditProductAgentsResumeData = {
+    body: ComplianceActionBodyWritable;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/audit/agents/{id}/resume';
+};
+
+export type AuditProductAgentsResumeErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type AuditProductAgentsResumeError = AuditProductAgentsResumeErrors[keyof AuditProductAgentsResumeErrors];
+
+export type AuditProductAgentsResumeResponses = {
+    /**
+     * OK
+     */
+    200: ComplianceRecord;
+};
+
+export type AuditProductAgentsResumeResponse = AuditProductAgentsResumeResponses[keyof AuditProductAgentsResumeResponses];
+
+export type AuditProductAgentsSuspendData = {
+    body: ComplianceActionBodyWritable;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/audit/agents/{id}/suspend';
+};
+
+export type AuditProductAgentsSuspendErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type AuditProductAgentsSuspendError = AuditProductAgentsSuspendErrors[keyof AuditProductAgentsSuspendErrors];
+
+export type AuditProductAgentsSuspendResponses = {
+    /**
+     * OK
+     */
+    200: ComplianceRecord;
+};
+
+export type AuditProductAgentsSuspendResponse = AuditProductAgentsSuspendResponses[keyof AuditProductAgentsSuspendResponses];
+
+export type AuditProductAssessmentsListData = {
+    body?: never;
+    path?: never;
+    query?: {
+        limit?: number;
+        cursor?: string;
+    };
+    url: '/audit/assessments';
+};
+
+export type AuditProductAssessmentsListErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type AuditProductAssessmentsListError = AuditProductAssessmentsListErrors[keyof AuditProductAssessmentsListErrors];
+
+export type AuditProductAssessmentsListResponses = {
+    /**
+     * OK
+     */
+    200: ListOutputBody;
+};
+
+export type AuditProductAssessmentsListResponse = AuditProductAssessmentsListResponses[keyof AuditProductAssessmentsListResponses];
+
+export type AuditProductAssessmentsCreateData = {
+    body: WriteInputBodyWritable;
+    path?: never;
+    query?: never;
+    url: '/audit/assessments';
+};
+
+export type AuditProductAssessmentsCreateErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type AuditProductAssessmentsCreateError = AuditProductAssessmentsCreateErrors[keyof AuditProductAssessmentsCreateErrors];
+
+export type AuditProductAssessmentsCreateResponses = {
+    /**
+     * OK
+     */
+    200: WriteOutputBody;
+};
+
+export type AuditProductAssessmentsCreateResponse = AuditProductAssessmentsCreateResponses[keyof AuditProductAssessmentsCreateResponses];
+
+export type AuditProductAssessmentsGetData = {
+    body?: never;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/audit/assessments/{id}';
+};
+
+export type AuditProductAssessmentsGetErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type AuditProductAssessmentsGetError = AuditProductAssessmentsGetErrors[keyof AuditProductAssessmentsGetErrors];
+
+export type AuditProductAssessmentsGetResponses = {
+    /**
+     * OK
+     */
+    200: ComplianceRecord;
+};
+
+export type AuditProductAssessmentsGetResponse = AuditProductAssessmentsGetResponses[keyof AuditProductAssessmentsGetResponses];
+
+export type AuditProductAssessmentsUpdateData = {
+    body: PatchInputBodyWritable;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/audit/assessments/{id}';
+};
+
+export type AuditProductAssessmentsUpdateErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type AuditProductAssessmentsUpdateError = AuditProductAssessmentsUpdateErrors[keyof AuditProductAssessmentsUpdateErrors];
+
+export type AuditProductAssessmentsUpdateResponses = {
+    /**
+     * OK
+     */
+    200: ComplianceRecord;
+};
+
+export type AuditProductAssessmentsUpdateResponse = AuditProductAssessmentsUpdateResponses[keyof AuditProductAssessmentsUpdateResponses];
+
+export type AuditProductAssessmentsApproveData = {
+    body: ComplianceActionBodyWritable;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/audit/assessments/{id}/approve';
+};
+
+export type AuditProductAssessmentsApproveErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type AuditProductAssessmentsApproveError = AuditProductAssessmentsApproveErrors[keyof AuditProductAssessmentsApproveErrors];
+
+export type AuditProductAssessmentsApproveResponses = {
+    /**
+     * OK
+     */
+    200: ComplianceRecord;
+};
+
+export type AuditProductAssessmentsApproveResponse = AuditProductAssessmentsApproveResponses[keyof AuditProductAssessmentsApproveResponses];
+
+export type AuditProductAuditorGrantsListData = {
+    body?: never;
+    path?: never;
+    query?: {
+        limit?: number;
+        cursor?: string;
+    };
+    url: '/audit/auditor-grants';
+};
+
+export type AuditProductAuditorGrantsListErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type AuditProductAuditorGrantsListError = AuditProductAuditorGrantsListErrors[keyof AuditProductAuditorGrantsListErrors];
+
+export type AuditProductAuditorGrantsListResponses = {
+    /**
+     * OK
+     */
+    200: ListOutputBody;
+};
+
+export type AuditProductAuditorGrantsListResponse = AuditProductAuditorGrantsListResponses[keyof AuditProductAuditorGrantsListResponses];
+
+export type AuditProductAuditorGrantsCreateData = {
+    body: WriteInputBodyWritable;
+    path?: never;
+    query?: never;
+    url: '/audit/auditor-grants';
+};
+
+export type AuditProductAuditorGrantsCreateErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type AuditProductAuditorGrantsCreateError = AuditProductAuditorGrantsCreateErrors[keyof AuditProductAuditorGrantsCreateErrors];
+
+export type AuditProductAuditorGrantsCreateResponses = {
+    /**
+     * OK
+     */
+    200: WriteOutputBody;
+};
+
+export type AuditProductAuditorGrantsCreateResponse = AuditProductAuditorGrantsCreateResponses[keyof AuditProductAuditorGrantsCreateResponses];
+
+export type AuditProductAuditorGrantsGetData = {
+    body?: never;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/audit/auditor-grants/{id}';
+};
+
+export type AuditProductAuditorGrantsGetErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type AuditProductAuditorGrantsGetError = AuditProductAuditorGrantsGetErrors[keyof AuditProductAuditorGrantsGetErrors];
+
+export type AuditProductAuditorGrantsGetResponses = {
+    /**
+     * OK
+     */
+    200: ComplianceRecord;
+};
+
+export type AuditProductAuditorGrantsGetResponse = AuditProductAuditorGrantsGetResponses[keyof AuditProductAuditorGrantsGetResponses];
+
+export type AuditProductAuditorGrantsUpdateData = {
+    body: PatchInputBodyWritable;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/audit/auditor-grants/{id}';
+};
+
+export type AuditProductAuditorGrantsUpdateErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type AuditProductAuditorGrantsUpdateError = AuditProductAuditorGrantsUpdateErrors[keyof AuditProductAuditorGrantsUpdateErrors];
+
+export type AuditProductAuditorGrantsUpdateResponses = {
+    /**
+     * OK
+     */
+    200: ComplianceRecord;
+};
+
+export type AuditProductAuditorGrantsUpdateResponse = AuditProductAuditorGrantsUpdateResponses[keyof AuditProductAuditorGrantsUpdateResponses];
+
+export type AuditProductDestinationsListData = {
+    body?: never;
+    path?: never;
+    query?: {
+        limit?: number;
+        cursor?: string;
+    };
+    url: '/audit/destinations';
+};
+
+export type AuditProductDestinationsListErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type AuditProductDestinationsListError = AuditProductDestinationsListErrors[keyof AuditProductDestinationsListErrors];
+
+export type AuditProductDestinationsListResponses = {
+    /**
+     * OK
+     */
+    200: ListOutputBody;
+};
+
+export type AuditProductDestinationsListResponse = AuditProductDestinationsListResponses[keyof AuditProductDestinationsListResponses];
+
+export type AuditProductDestinationsCreateData = {
+    body: WriteInputBodyWritable;
+    path?: never;
+    query?: never;
+    url: '/audit/destinations';
+};
+
+export type AuditProductDestinationsCreateErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type AuditProductDestinationsCreateError = AuditProductDestinationsCreateErrors[keyof AuditProductDestinationsCreateErrors];
+
+export type AuditProductDestinationsCreateResponses = {
+    /**
+     * OK
+     */
+    200: WriteOutputBody;
+};
+
+export type AuditProductDestinationsCreateResponse = AuditProductDestinationsCreateResponses[keyof AuditProductDestinationsCreateResponses];
+
+export type AuditProductDestinationsGetData = {
+    body?: never;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/audit/destinations/{id}';
+};
+
+export type AuditProductDestinationsGetErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type AuditProductDestinationsGetError = AuditProductDestinationsGetErrors[keyof AuditProductDestinationsGetErrors];
+
+export type AuditProductDestinationsGetResponses = {
+    /**
+     * OK
+     */
+    200: ComplianceRecord;
+};
+
+export type AuditProductDestinationsGetResponse = AuditProductDestinationsGetResponses[keyof AuditProductDestinationsGetResponses];
+
+export type AuditProductDestinationsUpdateData = {
+    body: PatchInputBodyWritable;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/audit/destinations/{id}';
+};
+
+export type AuditProductDestinationsUpdateErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type AuditProductDestinationsUpdateError = AuditProductDestinationsUpdateErrors[keyof AuditProductDestinationsUpdateErrors];
+
+export type AuditProductDestinationsUpdateResponses = {
+    /**
+     * OK
+     */
+    200: ComplianceRecord;
+};
+
+export type AuditProductDestinationsUpdateResponse = AuditProductDestinationsUpdateResponses[keyof AuditProductDestinationsUpdateResponses];
+
+export type AuditProductDestinationsDeliverData = {
+    body: ComplianceActionBodyWritable;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/audit/destinations/{id}/deliver';
+};
+
+export type AuditProductDestinationsDeliverErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type AuditProductDestinationsDeliverError = AuditProductDestinationsDeliverErrors[keyof AuditProductDestinationsDeliverErrors];
+
+export type AuditProductDestinationsDeliverResponses = {
+    /**
+     * OK
+     */
+    200: ComplianceRecord;
+};
+
+export type AuditProductDestinationsDeliverResponse = AuditProductDestinationsDeliverResponses[keyof AuditProductDestinationsDeliverResponses];
+
+export type AuditProductGrantsListData = {
+    body?: never;
+    path?: never;
+    query?: {
+        limit?: number;
+        cursor?: string;
+    };
+    url: '/audit/grants';
+};
+
+export type AuditProductGrantsListErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type AuditProductGrantsListError = AuditProductGrantsListErrors[keyof AuditProductGrantsListErrors];
+
+export type AuditProductGrantsListResponses = {
+    /**
+     * OK
+     */
+    200: ListOutputBody;
+};
+
+export type AuditProductGrantsListResponse = AuditProductGrantsListResponses[keyof AuditProductGrantsListResponses];
+
+export type AuditProductGrantsCreateData = {
+    body: WriteInputBodyWritable;
+    path?: never;
+    query?: never;
+    url: '/audit/grants';
+};
+
+export type AuditProductGrantsCreateErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type AuditProductGrantsCreateError = AuditProductGrantsCreateErrors[keyof AuditProductGrantsCreateErrors];
+
+export type AuditProductGrantsCreateResponses = {
+    /**
+     * OK
+     */
+    200: WriteOutputBody;
+};
+
+export type AuditProductGrantsCreateResponse = AuditProductGrantsCreateResponses[keyof AuditProductGrantsCreateResponses];
+
+export type AuditProductGrantsGetData = {
+    body?: never;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/audit/grants/{id}';
+};
+
+export type AuditProductGrantsGetErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type AuditProductGrantsGetError = AuditProductGrantsGetErrors[keyof AuditProductGrantsGetErrors];
+
+export type AuditProductGrantsGetResponses = {
+    /**
+     * OK
+     */
+    200: ComplianceRecord;
+};
+
+export type AuditProductGrantsGetResponse = AuditProductGrantsGetResponses[keyof AuditProductGrantsGetResponses];
+
+export type AuditProductGrantsUpdateData = {
+    body: PatchInputBodyWritable;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/audit/grants/{id}';
+};
+
+export type AuditProductGrantsUpdateErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type AuditProductGrantsUpdateError = AuditProductGrantsUpdateErrors[keyof AuditProductGrantsUpdateErrors];
+
+export type AuditProductGrantsUpdateResponses = {
+    /**
+     * OK
+     */
+    200: ComplianceRecord;
+};
+
+export type AuditProductGrantsUpdateResponse = AuditProductGrantsUpdateResponses[keyof AuditProductGrantsUpdateResponses];
+
+export type AuditHoldsListData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/audit/holds';
+};
+
+export type AuditHoldsListErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type AuditHoldsListError = AuditHoldsListErrors[keyof AuditHoldsListErrors];
+
+export type AuditHoldsListResponses = {
+    /**
+     * OK
+     */
+    200: HoldListOutputBody;
+};
+
+export type AuditHoldsListResponse = AuditHoldsListResponses[keyof AuditHoldsListResponses];
+
+export type AuditHoldsCreateData = {
+    body: CreateHoldInputBodyWritable;
+    path?: never;
+    query?: never;
+    url: '/audit/holds';
+};
+
+export type AuditHoldsCreateErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type AuditHoldsCreateError = AuditHoldsCreateErrors[keyof AuditHoldsCreateErrors];
+
+export type AuditHoldsCreateResponses = {
+    /**
+     * Created
+     */
+    201: LedgerHold;
+};
+
+export type AuditHoldsCreateResponse = AuditHoldsCreateResponses[keyof AuditHoldsCreateResponses];
+
+export type AuditHoldsReleaseData = {
+    body: ReleaseHoldInputBodyWritable;
+    path: {
+        holdId: string;
+    };
+    query?: never;
+    url: '/audit/holds/{holdId}';
+};
+
+export type AuditHoldsReleaseErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type AuditHoldsReleaseError = AuditHoldsReleaseErrors[keyof AuditHoldsReleaseErrors];
+
+export type AuditHoldsReleaseResponses = {
+    /**
+     * OK
+     */
+    200: LedgerHold;
+};
+
+export type AuditHoldsReleaseResponse = AuditHoldsReleaseResponses[keyof AuditHoldsReleaseResponses];
+
+export type AuditProductIncidentsListData = {
+    body?: never;
+    path?: never;
+    query?: {
+        limit?: number;
+        cursor?: string;
+    };
+    url: '/audit/incidents';
+};
+
+export type AuditProductIncidentsListErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type AuditProductIncidentsListError = AuditProductIncidentsListErrors[keyof AuditProductIncidentsListErrors];
+
+export type AuditProductIncidentsListResponses = {
+    /**
+     * OK
+     */
+    200: ListOutputBody;
+};
+
+export type AuditProductIncidentsListResponse = AuditProductIncidentsListResponses[keyof AuditProductIncidentsListResponses];
+
+export type AuditProductIncidentsCreateData = {
+    body: WriteInputBodyWritable;
+    path?: never;
+    query?: never;
+    url: '/audit/incidents';
+};
+
+export type AuditProductIncidentsCreateErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type AuditProductIncidentsCreateError = AuditProductIncidentsCreateErrors[keyof AuditProductIncidentsCreateErrors];
+
+export type AuditProductIncidentsCreateResponses = {
+    /**
+     * OK
+     */
+    200: WriteOutputBody;
+};
+
+export type AuditProductIncidentsCreateResponse = AuditProductIncidentsCreateResponses[keyof AuditProductIncidentsCreateResponses];
+
+export type AuditProductIncidentsGetData = {
+    body?: never;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/audit/incidents/{id}';
+};
+
+export type AuditProductIncidentsGetErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type AuditProductIncidentsGetError = AuditProductIncidentsGetErrors[keyof AuditProductIncidentsGetErrors];
+
+export type AuditProductIncidentsGetResponses = {
+    /**
+     * OK
+     */
+    200: ComplianceRecord;
+};
+
+export type AuditProductIncidentsGetResponse = AuditProductIncidentsGetResponses[keyof AuditProductIncidentsGetResponses];
+
+export type AuditProductIncidentsUpdateData = {
+    body: PatchInputBodyWritable;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/audit/incidents/{id}';
+};
+
+export type AuditProductIncidentsUpdateErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type AuditProductIncidentsUpdateError = AuditProductIncidentsUpdateErrors[keyof AuditProductIncidentsUpdateErrors];
+
+export type AuditProductIncidentsUpdateResponses = {
+    /**
+     * OK
+     */
+    200: ComplianceRecord;
+};
+
+export type AuditProductIncidentsUpdateResponse = AuditProductIncidentsUpdateResponses[keyof AuditProductIncidentsUpdateResponses];
+
+export type AuditProductIncidentsFileData = {
+    body: ComplianceActionBodyWritable;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/audit/incidents/{id}/file';
+};
+
+export type AuditProductIncidentsFileErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type AuditProductIncidentsFileError = AuditProductIncidentsFileErrors[keyof AuditProductIncidentsFileErrors];
+
+export type AuditProductIncidentsFileResponses = {
+    /**
+     * OK
+     */
+    200: ComplianceRecord;
+};
+
+export type AuditProductIncidentsFileResponse = AuditProductIncidentsFileResponses[keyof AuditProductIncidentsFileResponses];
+
+export type AuditJobsData = {
+    body?: never;
+    path?: never;
+    query?: {
+        limit?: number;
+        cursor?: string;
+        state?: 'pending' | 'running' | 'succeeded' | 'failed';
+    };
+    url: '/audit/jobs';
+};
+
+export type AuditJobsErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type AuditJobsError = AuditJobsErrors[keyof AuditJobsErrors];
+
+export type AuditJobsResponses = {
+    /**
+     * OK
+     */
+    200: ListJobsOutputBody;
+};
+
+export type AuditJobsResponse = AuditJobsResponses[keyof AuditJobsResponses];
+
+export type AuditJobData = {
+    body?: never;
+    path: {
+        jobId: string;
+    };
+    query?: never;
+    url: '/audit/jobs/{jobId}';
+};
+
+export type AuditJobErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type AuditJobError = AuditJobErrors[keyof AuditJobErrors];
+
+export type AuditJobResponses = {
+    /**
+     * OK
+     */
+    200: LedgerJob;
+};
+
+export type AuditJobResponse = AuditJobResponses[keyof AuditJobResponses];
+
+export type AuditGovernanceReceiptData = {
+    body?: never;
+    path: {
+        jobId: string;
+    };
+    query?: never;
+    url: '/audit/jobs/{jobId}/governance-receipt';
+};
+
+export type AuditGovernanceReceiptErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type AuditGovernanceReceiptError = AuditGovernanceReceiptErrors[keyof AuditGovernanceReceiptErrors];
+
+export type AuditGovernanceReceiptResponses = {
+    /**
+     * OK
+     */
+    200: unknown;
+};
+
+export type AuditJobRecoverData = {
+    body: RecoverJobInputBodyWritable;
+    path: {
+        jobId: string;
+    };
+    query?: never;
+    url: '/audit/jobs/{jobId}/recover';
+};
+
+export type AuditJobRecoverErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type AuditJobRecoverError = AuditJobRecoverErrors[keyof AuditJobRecoverErrors];
+
+export type AuditJobRecoverResponses = {
+    /**
+     * OK
+     */
+    200: LedgerJob;
+};
+
+export type AuditJobRecoverResponse = AuditJobRecoverResponses[keyof AuditJobRecoverResponses];
+
+export type AuditJobRetryData = {
+    body?: never;
+    path: {
+        jobId: string;
+    };
+    query?: never;
+    url: '/audit/jobs/{jobId}/retry';
+};
+
+export type AuditJobRetryErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type AuditJobRetryError = AuditJobRetryErrors[keyof AuditJobRetryErrors];
+
+export type AuditJobRetryResponses = {
+    /**
+     * OK
+     */
+    200: LedgerJob;
+};
+
+export type AuditJobRetryResponse = AuditJobRetryResponses[keyof AuditJobRetryResponses];
+
+export type AuditProductNoticesListData = {
+    body?: never;
+    path?: never;
+    query?: {
+        limit?: number;
+        cursor?: string;
+    };
+    url: '/audit/notices';
+};
+
+export type AuditProductNoticesListErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type AuditProductNoticesListError = AuditProductNoticesListErrors[keyof AuditProductNoticesListErrors];
+
+export type AuditProductNoticesListResponses = {
+    /**
+     * OK
+     */
+    200: ListOutputBody;
+};
+
+export type AuditProductNoticesListResponse = AuditProductNoticesListResponses[keyof AuditProductNoticesListResponses];
+
+export type AuditProductNoticesCreateData = {
+    body: WriteInputBodyWritable;
+    path?: never;
+    query?: never;
+    url: '/audit/notices';
+};
+
+export type AuditProductNoticesCreateErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type AuditProductNoticesCreateError = AuditProductNoticesCreateErrors[keyof AuditProductNoticesCreateErrors];
+
+export type AuditProductNoticesCreateResponses = {
+    /**
+     * OK
+     */
+    200: WriteOutputBody;
+};
+
+export type AuditProductNoticesCreateResponse = AuditProductNoticesCreateResponses[keyof AuditProductNoticesCreateResponses];
+
+export type AuditProductNoticesGetData = {
+    body?: never;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/audit/notices/{id}';
+};
+
+export type AuditProductNoticesGetErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type AuditProductNoticesGetError = AuditProductNoticesGetErrors[keyof AuditProductNoticesGetErrors];
+
+export type AuditProductNoticesGetResponses = {
+    /**
+     * OK
+     */
+    200: ComplianceRecord;
+};
+
+export type AuditProductNoticesGetResponse = AuditProductNoticesGetResponses[keyof AuditProductNoticesGetResponses];
+
+export type AuditProductNoticesUpdateData = {
+    body: PatchInputBodyWritable;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/audit/notices/{id}';
+};
+
+export type AuditProductNoticesUpdateErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type AuditProductNoticesUpdateError = AuditProductNoticesUpdateErrors[keyof AuditProductNoticesUpdateErrors];
+
+export type AuditProductNoticesUpdateResponses = {
+    /**
+     * OK
+     */
+    200: ComplianceRecord;
+};
+
+export type AuditProductNoticesUpdateResponse = AuditProductNoticesUpdateResponses[keyof AuditProductNoticesUpdateResponses];
+
+export type AuditProductObligationsData = {
+    body?: never;
+    path?: never;
+    query?: {
+        agentId?: string;
+    };
+    url: '/audit/obligations';
+};
+
+export type AuditProductObligationsErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type AuditProductObligationsError = AuditProductObligationsErrors[keyof AuditProductObligationsErrors];
+
+export type AuditProductObligationsResponses = {
+    /**
+     * OK
+     */
+    200: ObligationsOutputBody;
+};
+
+export type AuditProductObligationsResponse = AuditProductObligationsResponses[keyof AuditProductObligationsResponses];
+
+export type AuditProductOversightTasksData = {
+    body?: never;
+    path?: never;
+    query?: {
+        agentId?: string;
+        limit?: number;
+        cursor?: string;
+    };
+    url: '/audit/oversight/tasks';
+};
+
+export type AuditProductOversightTasksErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type AuditProductOversightTasksError = AuditProductOversightTasksErrors[keyof AuditProductOversightTasksErrors];
+
+export type AuditProductOversightTasksResponses = {
+    /**
+     * OK
+     */
+    200: TasksOutputBody;
+};
+
+export type AuditProductOversightTasksResponse = AuditProductOversightTasksResponses[keyof AuditProductOversightTasksResponses];
+
+export type AuditProductOverviewData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/audit/overview';
+};
+
+export type AuditProductOverviewErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type AuditProductOverviewError = AuditProductOverviewErrors[keyof AuditProductOverviewErrors];
+
+export type AuditProductOverviewResponses = {
+    /**
+     * OK
+     */
+    200: ComplianceOverview;
+};
+
+export type AuditProductOverviewResponse = AuditProductOverviewResponses[keyof AuditProductOverviewResponses];
+
+export type AuditProductPacksListData = {
+    body?: never;
+    path?: never;
+    query?: {
+        limit?: number;
+        cursor?: string;
+    };
+    url: '/audit/packs';
+};
+
+export type AuditProductPacksListErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type AuditProductPacksListError = AuditProductPacksListErrors[keyof AuditProductPacksListErrors];
+
+export type AuditProductPacksListResponses = {
+    /**
+     * OK
+     */
+    200: ListOutputBody;
+};
+
+export type AuditProductPacksListResponse = AuditProductPacksListResponses[keyof AuditProductPacksListResponses];
+
+export type AuditProductPacksCreateData = {
+    body: WriteInputBodyWritable;
+    path?: never;
+    query?: never;
+    url: '/audit/packs';
+};
+
+export type AuditProductPacksCreateErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type AuditProductPacksCreateError = AuditProductPacksCreateErrors[keyof AuditProductPacksCreateErrors];
+
+export type AuditProductPacksCreateResponses = {
+    /**
+     * OK
+     */
+    200: WriteOutputBody;
+};
+
+export type AuditProductPacksCreateResponse = AuditProductPacksCreateResponses[keyof AuditProductPacksCreateResponses];
+
+export type AuditProductPacksGetData = {
+    body?: never;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/audit/packs/{id}';
+};
+
+export type AuditProductPacksGetErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type AuditProductPacksGetError = AuditProductPacksGetErrors[keyof AuditProductPacksGetErrors];
+
+export type AuditProductPacksGetResponses = {
+    /**
+     * OK
+     */
+    200: ComplianceRecord;
+};
+
+export type AuditProductPacksGetResponse = AuditProductPacksGetResponses[keyof AuditProductPacksGetResponses];
+
+export type AuditProductPacksUpdateData = {
+    body: PatchInputBodyWritable;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/audit/packs/{id}';
+};
+
+export type AuditProductPacksUpdateErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type AuditProductPacksUpdateError = AuditProductPacksUpdateErrors[keyof AuditProductPacksUpdateErrors];
+
+export type AuditProductPacksUpdateResponses = {
+    /**
+     * OK
+     */
+    200: ComplianceRecord;
+};
+
+export type AuditProductPacksUpdateResponse = AuditProductPacksUpdateResponses[keyof AuditProductPacksUpdateResponses];
+
+export type AuditProductPacksBuildData = {
+    body: ComplianceActionBodyWritable;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/audit/packs/{id}/build';
+};
+
+export type AuditProductPacksBuildErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type AuditProductPacksBuildError = AuditProductPacksBuildErrors[keyof AuditProductPacksBuildErrors];
+
+export type AuditProductPacksBuildResponses = {
+    /**
+     * OK
+     */
+    200: ComplianceRecord;
+};
+
+export type AuditProductPacksBuildResponse = AuditProductPacksBuildResponses[keyof AuditProductPacksBuildResponses];
+
+export type AuditProductPacksDownloadData = {
+    body?: never;
+    path: {
+        id: string;
+    };
+    query?: {
+        format?: 'json' | 'pdf';
+    };
+    url: '/audit/packs/{id}/download';
+};
+
+export type AuditProductPacksDownloadErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type AuditProductPacksDownloadError = AuditProductPacksDownloadErrors[keyof AuditProductPacksDownloadErrors];
+
+export type AuditProductPacksDownloadResponses = {
+    /**
+     * OK
+     */
+    200: string;
+};
+
+export type AuditProductPacksDownloadResponse = AuditProductPacksDownloadResponses[keyof AuditProductPacksDownloadResponses];
+
+export type AuditProductPeopleListData = {
+    body?: never;
+    path?: never;
+    query?: {
+        limit?: number;
+        cursor?: string;
+    };
+    url: '/audit/people';
+};
+
+export type AuditProductPeopleListErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type AuditProductPeopleListError = AuditProductPeopleListErrors[keyof AuditProductPeopleListErrors];
+
+export type AuditProductPeopleListResponses = {
+    /**
+     * OK
+     */
+    200: ListOutputBody;
+};
+
+export type AuditProductPeopleListResponse = AuditProductPeopleListResponses[keyof AuditProductPeopleListResponses];
+
+export type AuditProductPeopleCreateData = {
+    body: WriteInputBodyWritable;
+    path?: never;
+    query?: never;
+    url: '/audit/people';
+};
+
+export type AuditProductPeopleCreateErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type AuditProductPeopleCreateError = AuditProductPeopleCreateErrors[keyof AuditProductPeopleCreateErrors];
+
+export type AuditProductPeopleCreateResponses = {
+    /**
+     * OK
+     */
+    200: WriteOutputBody;
+};
+
+export type AuditProductPeopleCreateResponse = AuditProductPeopleCreateResponses[keyof AuditProductPeopleCreateResponses];
+
+export type AuditProductPeopleObservedData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/audit/people/observed';
+};
+
+export type AuditProductPeopleObservedErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type AuditProductPeopleObservedError = AuditProductPeopleObservedErrors[keyof AuditProductPeopleObservedErrors];
+
+export type AuditProductPeopleObservedResponses = {
+    /**
+     * OK
+     */
+    200: UnregisteredOutputBody;
+};
+
+export type AuditProductPeopleObservedResponse = AuditProductPeopleObservedResponses[keyof AuditProductPeopleObservedResponses];
+
+export type AuditProductPeopleGetData = {
+    body?: never;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/audit/people/{id}';
+};
+
+export type AuditProductPeopleGetErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type AuditProductPeopleGetError = AuditProductPeopleGetErrors[keyof AuditProductPeopleGetErrors];
+
+export type AuditProductPeopleGetResponses = {
+    /**
+     * OK
+     */
+    200: ComplianceRecord;
+};
+
+export type AuditProductPeopleGetResponse = AuditProductPeopleGetResponses[keyof AuditProductPeopleGetResponses];
+
+export type AuditProductPeopleUpdateData = {
+    body: PatchInputBodyWritable;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/audit/people/{id}';
+};
+
+export type AuditProductPeopleUpdateErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type AuditProductPeopleUpdateError = AuditProductPeopleUpdateErrors[keyof AuditProductPeopleUpdateErrors];
+
+export type AuditProductPeopleUpdateResponses = {
+    /**
+     * OK
+     */
+    200: ComplianceRecord;
+};
+
+export type AuditProductPeopleUpdateResponse = AuditProductPeopleUpdateResponses[keyof AuditProductPeopleUpdateResponses];
+
+export type AuditProofData = {
+    body?: never;
+    path: {
+        eventId: string;
+    };
+    query?: never;
+    url: '/audit/proofs/{eventId}';
+};
+
+export type AuditProofErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type AuditProofError = AuditProofErrors[keyof AuditProofErrors];
+
+export type AuditProofResponses = {
+    /**
+     * OK
+     */
+    200: ProofOutputBody;
+};
+
+export type AuditProofResponse = AuditProofResponses[keyof AuditProofResponses];
+
+export type AuditProductProvidersListData = {
+    body?: never;
+    path?: never;
+    query?: {
+        limit?: number;
+        cursor?: string;
+    };
+    url: '/audit/providers';
+};
+
+export type AuditProductProvidersListErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type AuditProductProvidersListError = AuditProductProvidersListErrors[keyof AuditProductProvidersListErrors];
+
+export type AuditProductProvidersListResponses = {
+    /**
+     * OK
+     */
+    200: ListOutputBody;
+};
+
+export type AuditProductProvidersListResponse = AuditProductProvidersListResponses[keyof AuditProductProvidersListResponses];
+
+export type AuditProductProvidersCreateData = {
+    body: WriteInputBodyWritable;
+    path?: never;
+    query?: never;
+    url: '/audit/providers';
+};
+
+export type AuditProductProvidersCreateErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type AuditProductProvidersCreateError = AuditProductProvidersCreateErrors[keyof AuditProductProvidersCreateErrors];
+
+export type AuditProductProvidersCreateResponses = {
+    /**
+     * OK
+     */
+    200: WriteOutputBody;
+};
+
+export type AuditProductProvidersCreateResponse = AuditProductProvidersCreateResponses[keyof AuditProductProvidersCreateResponses];
+
+export type AuditProductProvidersGetData = {
+    body?: never;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/audit/providers/{id}';
+};
+
+export type AuditProductProvidersGetErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type AuditProductProvidersGetError = AuditProductProvidersGetErrors[keyof AuditProductProvidersGetErrors];
+
+export type AuditProductProvidersGetResponses = {
+    /**
+     * OK
+     */
+    200: ComplianceRecord;
+};
+
+export type AuditProductProvidersGetResponse = AuditProductProvidersGetResponses[keyof AuditProductProvidersGetResponses];
+
+export type AuditProductProvidersUpdateData = {
+    body: PatchInputBodyWritable;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/audit/providers/{id}';
+};
+
+export type AuditProductProvidersUpdateErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type AuditProductProvidersUpdateError = AuditProductProvidersUpdateErrors[keyof AuditProductProvidersUpdateErrors];
+
+export type AuditProductProvidersUpdateResponses = {
+    /**
+     * OK
+     */
+    200: ComplianceRecord;
+};
+
+export type AuditProductProvidersUpdateResponse = AuditProductProvidersUpdateResponses[keyof AuditProductProvidersUpdateResponses];
+
+export type AuditReconcileData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/audit/reconcile';
+};
+
+export type AuditReconcileErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type AuditReconcileError = AuditReconcileErrors[keyof AuditReconcileErrors];
+
+export type AuditReconcileResponses = {
+    /**
+     * OK
+     */
+    200: LedgerJob;
+};
+
+export type AuditReconcileResponse = AuditReconcileResponses[keyof AuditReconcileResponses];
+
+export type AuditProductRequestsListData = {
+    body?: never;
+    path?: never;
+    query?: {
+        limit?: number;
+        cursor?: string;
+    };
+    url: '/audit/requests';
+};
+
+export type AuditProductRequestsListErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type AuditProductRequestsListError = AuditProductRequestsListErrors[keyof AuditProductRequestsListErrors];
+
+export type AuditProductRequestsListResponses = {
+    /**
+     * OK
+     */
+    200: ListOutputBody;
+};
+
+export type AuditProductRequestsListResponse = AuditProductRequestsListResponses[keyof AuditProductRequestsListResponses];
+
+export type AuditProductRequestsCreateData = {
+    body: WriteInputBodyWritable;
+    path?: never;
+    query?: never;
+    url: '/audit/requests';
+};
+
+export type AuditProductRequestsCreateErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type AuditProductRequestsCreateError = AuditProductRequestsCreateErrors[keyof AuditProductRequestsCreateErrors];
+
+export type AuditProductRequestsCreateResponses = {
+    /**
+     * OK
+     */
+    200: WriteOutputBody;
+};
+
+export type AuditProductRequestsCreateResponse = AuditProductRequestsCreateResponses[keyof AuditProductRequestsCreateResponses];
+
+export type AuditProductRequestsGetData = {
+    body?: never;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/audit/requests/{id}';
+};
+
+export type AuditProductRequestsGetErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type AuditProductRequestsGetError = AuditProductRequestsGetErrors[keyof AuditProductRequestsGetErrors];
+
+export type AuditProductRequestsGetResponses = {
+    /**
+     * OK
+     */
+    200: ComplianceRecord;
+};
+
+export type AuditProductRequestsGetResponse = AuditProductRequestsGetResponses[keyof AuditProductRequestsGetResponses];
+
+export type AuditProductRequestsUpdateData = {
+    body: PatchInputBodyWritable;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/audit/requests/{id}';
+};
+
+export type AuditProductRequestsUpdateErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type AuditProductRequestsUpdateError = AuditProductRequestsUpdateErrors[keyof AuditProductRequestsUpdateErrors];
+
+export type AuditProductRequestsUpdateResponses = {
+    /**
+     * OK
+     */
+    200: ComplianceRecord;
+};
+
+export type AuditProductRequestsUpdateResponse = AuditProductRequestsUpdateResponses[keyof AuditProductRequestsUpdateResponses];
+
+export type AuditProductRequestsExtendData = {
+    body: ComplianceActionBodyWritable;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/audit/requests/{id}/extend';
+};
+
+export type AuditProductRequestsExtendErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type AuditProductRequestsExtendError = AuditProductRequestsExtendErrors[keyof AuditProductRequestsExtendErrors];
+
+export type AuditProductRequestsExtendResponses = {
+    /**
+     * OK
+     */
+    200: ComplianceRecord;
+};
+
+export type AuditProductRequestsExtendResponse = AuditProductRequestsExtendResponses[keyof AuditProductRequestsExtendResponses];
+
+export type AuditProductRequestsFulfillData = {
+    body: ComplianceActionBodyWritable;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/audit/requests/{id}/fulfill';
+};
+
+export type AuditProductRequestsFulfillErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type AuditProductRequestsFulfillError = AuditProductRequestsFulfillErrors[keyof AuditProductRequestsFulfillErrors];
+
+export type AuditProductRequestsFulfillResponses = {
+    /**
+     * OK
+     */
+    200: ComplianceRecord;
+};
+
+export type AuditProductRequestsFulfillResponse = AuditProductRequestsFulfillResponses[keyof AuditProductRequestsFulfillResponses];
+
+export type AuditProductRequestsSendData = {
+    body: ComplianceActionBodyWritable;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/audit/requests/{id}/send';
+};
+
+export type AuditProductRequestsSendErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type AuditProductRequestsSendError = AuditProductRequestsSendErrors[keyof AuditProductRequestsSendErrors];
+
+export type AuditProductRequestsSendResponses = {
+    /**
+     * OK
+     */
+    200: ComplianceRecord;
+};
+
+export type AuditProductRequestsSendResponse = AuditProductRequestsSendResponses[keyof AuditProductRequestsSendResponses];
+
+export type AuditRetentionData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/audit/retention';
+};
+
+export type AuditRetentionErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type AuditRetentionError = AuditRetentionErrors[keyof AuditRetentionErrors];
+
+export type AuditRetentionResponses = {
+    /**
+     * OK
+     */
+    200: LedgerPolicy;
+};
+
+export type AuditRetentionResponse = AuditRetentionResponses[keyof AuditRetentionResponses];
+
+export type AuditRetentionUpdateData = {
+    body: LedgerPolicyUpdateWritable;
+    path?: never;
+    query?: never;
+    url: '/audit/retention';
+};
+
+export type AuditRetentionUpdateErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type AuditRetentionUpdateError = AuditRetentionUpdateErrors[keyof AuditRetentionUpdateErrors];
+
+export type AuditRetentionUpdateResponses = {
+    /**
+     * OK
+     */
+    200: LedgerPolicy;
+};
+
+export type AuditRetentionUpdateResponse = AuditRetentionUpdateResponses[keyof AuditRetentionUpdateResponses];
+
+export type AuditSegmentsData = {
+    body?: never;
+    path?: never;
+    query?: {
+        from?: string;
+        to?: string;
+        cursor?: string;
+        limit?: number;
+    };
+    url: '/audit/segments';
+};
+
+export type AuditSegmentsErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type AuditSegmentsError = AuditSegmentsErrors[keyof AuditSegmentsErrors];
+
+export type AuditSegmentsResponses = {
+    /**
+     * OK
+     */
+    200: SegmentListOutputBody;
+};
+
+export type AuditSegmentsResponse = AuditSegmentsResponses[keyof AuditSegmentsResponses];
+
+export type AuditSegmentGetData = {
+    body?: never;
+    path: {
+        segmentId: string;
+    };
+    query?: never;
+    url: '/audit/segments/{segmentId}';
+};
+
+export type AuditSegmentGetErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type AuditSegmentGetError = AuditSegmentGetErrors[keyof AuditSegmentGetErrors];
+
+export type AuditSegmentGetResponses = {
+    /**
+     * OK
+     */
+    200: SegmentOutputBody;
+};
+
+export type AuditSegmentGetResponse = AuditSegmentGetResponses[keyof AuditSegmentGetResponses];
+
+export type AuditContentData = {
+    body?: never;
+    path: {
+        segmentId: string;
+        eventId: string;
+    };
+    query?: never;
+    url: '/audit/segments/{segmentId}/content/{eventId}';
+};
+
+export type AuditContentErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type AuditContentError = AuditContentErrors[keyof AuditContentErrors];
+
+export type AuditContentResponses = {
+    /**
+     * OK
+     */
+    200: unknown;
+};
+
+export type AuditGovernanceLiftData = {
+    body: GovernanceInputBodyWritable;
+    path: {
+        segmentId: string;
+    };
+    query?: never;
+    url: '/audit/segments/{segmentId}/governance-lift';
+};
+
+export type AuditGovernanceLiftErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type AuditGovernanceLiftError = AuditGovernanceLiftErrors[keyof AuditGovernanceLiftErrors];
+
+export type AuditGovernanceLiftResponses = {
+    /**
+     * OK
+     */
+    200: LedgerJob;
+};
+
+export type AuditGovernanceLiftResponse = AuditGovernanceLiftResponses[keyof AuditGovernanceLiftResponses];
+
+export type AuditRestoreData = {
+    body?: never;
+    path: {
+        segmentId: string;
+    };
+    query?: never;
+    url: '/audit/segments/{segmentId}/restore';
+};
+
+export type AuditRestoreErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type AuditRestoreError = AuditRestoreErrors[keyof AuditRestoreErrors];
+
+export type AuditRestoreResponses = {
+    /**
+     * OK
+     */
+    200: LedgerJob;
+};
+
+export type AuditRestoreResponse = AuditRestoreResponses[keyof AuditRestoreResponses];
+
+export type AuditSegmentVerifyData = {
+    body?: never;
+    path: {
+        segmentId: string;
+    };
+    query?: never;
+    url: '/audit/segments/{segmentId}/verify';
+};
+
+export type AuditSegmentVerifyErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type AuditSegmentVerifyError = AuditSegmentVerifyErrors[keyof AuditSegmentVerifyErrors];
+
+export type AuditSegmentVerifyResponses = {
+    /**
+     * OK
+     */
+    200: VerifyOutputBody;
+};
+
+export type AuditSegmentVerifyResponse = AuditSegmentVerifyResponses[keyof AuditSegmentVerifyResponses];
+
+export type AuditProductShareGetData = {
+    body?: never;
+    path: {
+        token: string;
+    };
+    query?: never;
+    url: '/audit/share/{token}';
+};
+
+export type AuditProductShareGetErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type AuditProductShareGetError = AuditProductShareGetErrors[keyof AuditProductShareGetErrors];
+
+export type AuditProductShareGetResponses = {
+    /**
+     * OK
+     */
+    200: ShareOutputBody;
+};
+
+export type AuditProductShareGetResponse = AuditProductShareGetResponses[keyof AuditProductShareGetResponses];
+
+export type AuditProductShareNdaData = {
+    body: NdaInputBodyWritable;
+    path: {
+        token: string;
+    };
+    query?: never;
+    url: '/audit/share/{token}/nda';
+};
+
+export type AuditProductShareNdaErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type AuditProductShareNdaError = AuditProductShareNdaErrors[keyof AuditProductShareNdaErrors];
+
+export type AuditProductShareNdaResponses = {
+    /**
+     * OK
+     */
+    200: PublicWriteOutputBody;
+};
+
+export type AuditProductShareNdaResponse = AuditProductShareNdaResponses[keyof AuditProductShareNdaResponses];
+
+export type AuditProductShareDownloadData = {
+    body?: never;
+    path: {
+        token: string;
+        packId: string;
+    };
+    query?: {
+        format?: 'json' | 'pdf';
+    };
+    url: '/audit/share/{token}/packs/{packId}';
+};
+
+export type AuditProductShareDownloadErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type AuditProductShareDownloadError = AuditProductShareDownloadErrors[keyof AuditProductShareDownloadErrors];
+
+export type AuditProductShareDownloadResponses = {
+    /**
+     * OK
+     */
+    200: string;
+};
+
+export type AuditProductShareDownloadResponse = AuditProductShareDownloadResponses[keyof AuditProductShareDownloadResponses];
+
+export type AuditStatusData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/audit/status';
+};
+
+export type AuditStatusErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type AuditStatusError = AuditStatusErrors[keyof AuditStatusErrors];
+
+export type AuditStatusResponses = {
+    /**
+     * OK
+     */
+    200: StatusOutputBody;
+};
+
+export type AuditStatusResponse = AuditStatusResponses[keyof AuditStatusResponses];
+
+export type AuditStorageData = {
+    body?: never;
+    path?: never;
+    query?: {
+        cursor?: string;
+    };
+    url: '/audit/storage';
+};
+
+export type AuditStorageErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type AuditStorageError = AuditStorageErrors[keyof AuditStorageErrors];
+
+export type AuditStorageResponses = {
+    /**
+     * OK
+     */
+    200: StorageOutputBody;
+};
+
+export type AuditStorageResponse = AuditStorageResponses[keyof AuditStorageResponses];
+
+export type AuditProductTrainingListData = {
+    body?: never;
+    path?: never;
+    query?: {
+        limit?: number;
+        cursor?: string;
+    };
+    url: '/audit/training';
+};
+
+export type AuditProductTrainingListErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type AuditProductTrainingListError = AuditProductTrainingListErrors[keyof AuditProductTrainingListErrors];
+
+export type AuditProductTrainingListResponses = {
+    /**
+     * OK
+     */
+    200: ListOutputBody;
+};
+
+export type AuditProductTrainingListResponse = AuditProductTrainingListResponses[keyof AuditProductTrainingListResponses];
+
+export type AuditProductTrainingCreateData = {
+    body: WriteInputBodyWritable;
+    path?: never;
+    query?: never;
+    url: '/audit/training';
+};
+
+export type AuditProductTrainingCreateErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type AuditProductTrainingCreateError = AuditProductTrainingCreateErrors[keyof AuditProductTrainingCreateErrors];
+
+export type AuditProductTrainingCreateResponses = {
+    /**
+     * OK
+     */
+    200: WriteOutputBody;
+};
+
+export type AuditProductTrainingCreateResponse = AuditProductTrainingCreateResponses[keyof AuditProductTrainingCreateResponses];
+
+export type AuditProductTrainingImportData = {
+    body: ImportInputBodyWritable;
+    path?: never;
+    query?: never;
+    url: '/audit/training/import';
+};
+
+export type AuditProductTrainingImportErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type AuditProductTrainingImportError = AuditProductTrainingImportErrors[keyof AuditProductTrainingImportErrors];
+
+export type AuditProductTrainingImportResponses = {
+    /**
+     * OK
+     */
+    200: ImportOutputBody;
+};
+
+export type AuditProductTrainingImportResponse = AuditProductTrainingImportResponses[keyof AuditProductTrainingImportResponses];
+
+export type AuditProductTrainingGetData = {
+    body?: never;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/audit/training/{id}';
+};
+
+export type AuditProductTrainingGetErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type AuditProductTrainingGetError = AuditProductTrainingGetErrors[keyof AuditProductTrainingGetErrors];
+
+export type AuditProductTrainingGetResponses = {
+    /**
+     * OK
+     */
+    200: ComplianceRecord;
+};
+
+export type AuditProductTrainingGetResponse = AuditProductTrainingGetResponses[keyof AuditProductTrainingGetResponses];
+
+export type AuditProductTrainingUpdateData = {
+    body: PatchInputBodyWritable;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/audit/training/{id}';
+};
+
+export type AuditProductTrainingUpdateErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type AuditProductTrainingUpdateError = AuditProductTrainingUpdateErrors[keyof AuditProductTrainingUpdateErrors];
+
+export type AuditProductTrainingUpdateResponses = {
+    /**
+     * OK
+     */
+    200: ComplianceRecord;
+};
+
+export type AuditProductTrainingUpdateResponse = AuditProductTrainingUpdateResponses[keyof AuditProductTrainingUpdateResponses];
+
+export type AuditProductTrustGetData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/audit/trust';
+};
+
+export type AuditProductTrustGetErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type AuditProductTrustGetError = AuditProductTrustGetErrors[keyof AuditProductTrustGetErrors];
+
+export type AuditProductTrustGetResponses = {
+    /**
+     * OK
+     */
+    200: ComplianceRecord;
+};
+
+export type AuditProductTrustGetResponse = AuditProductTrustGetResponses[keyof AuditProductTrustGetResponses];
+
+export type AuditProductTrustUpdateData = {
+    body: TrustWriteInputBodyWritable;
+    path?: never;
+    query?: never;
+    url: '/audit/trust';
+};
+
+export type AuditProductTrustUpdateErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type AuditProductTrustUpdateError = AuditProductTrustUpdateErrors[keyof AuditProductTrustUpdateErrors];
+
+export type AuditProductTrustUpdateResponses = {
+    /**
+     * OK
+     */
+    200: ComplianceRecord;
+};
+
+export type AuditProductTrustUpdateResponse = AuditProductTrustUpdateResponses[keyof AuditProductTrustUpdateResponses];
+
+export type AuditProductUnregisteredData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/audit/unregistered-agents';
+};
+
+export type AuditProductUnregisteredErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type AuditProductUnregisteredError = AuditProductUnregisteredErrors[keyof AuditProductUnregisteredErrors];
+
+export type AuditProductUnregisteredResponses = {
+    /**
+     * OK
+     */
+    200: UnregisteredOutputBody;
+};
+
+export type AuditProductUnregisteredResponse = AuditProductUnregisteredResponses[keyof AuditProductUnregisteredResponses];
+
+export type AuditEvidenceVerifyData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/audit/verify';
+};
+
+export type AuditEvidenceVerifyErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type AuditEvidenceVerifyError = AuditEvidenceVerifyErrors[keyof AuditEvidenceVerifyErrors];
+
+export type AuditEvidenceVerifyResponses = {
+    /**
+     * OK
+     */
+    200: LedgerJob;
+};
+
+export type AuditEvidenceVerifyResponse = AuditEvidenceVerifyResponses[keyof AuditEvidenceVerifyResponses];
 
 export type BillingCheckoutData = {
     body: CheckoutInputBodyWritable;
@@ -8357,6 +11782,60 @@ export type TracesGetResponses = {
 };
 
 export type TracesGetResponse = TracesGetResponses[keyof TracesGetResponses];
+
+export type AuditProductPublicTrustData = {
+    body?: never;
+    path: {
+        slug: string;
+    };
+    query?: never;
+    url: '/trust/{slug}';
+};
+
+export type AuditProductPublicTrustErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type AuditProductPublicTrustError = AuditProductPublicTrustErrors[keyof AuditProductPublicTrustErrors];
+
+export type AuditProductPublicTrustResponses = {
+    /**
+     * OK
+     */
+    200: TrustOutputBody;
+};
+
+export type AuditProductPublicTrustResponse = AuditProductPublicTrustResponses[keyof AuditProductPublicTrustResponses];
+
+export type AuditProductPublicRequestData = {
+    body: PublicInputBodyWritable;
+    path: {
+        slug: string;
+    };
+    query?: never;
+    url: '/trust/{slug}/requests';
+};
+
+export type AuditProductPublicRequestErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type AuditProductPublicRequestError = AuditProductPublicRequestErrors[keyof AuditProductPublicRequestErrors];
+
+export type AuditProductPublicRequestResponses = {
+    /**
+     * OK
+     */
+    200: PublicWriteOutputBody;
+};
+
+export type AuditProductPublicRequestResponse = AuditProductPublicRequestResponses[keyof AuditProductPublicRequestResponses];
 
 export type UserMeData = {
     body?: never;

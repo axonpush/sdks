@@ -1,0 +1,285 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/axonpush/sdks/spec/evidence/v1/event.schema.json",
+  "title": "AxonPush SDK evidence publish envelope v1",
+  "description": "Customer assertions. Schema validation does not authenticate actors, establish completeness, or enforce application actions. Content fields may be omitted by the configured capture policy after acceptance.",
+  "type": "object",
+  "required": [
+    "identifier",
+    "eventType",
+    "payload",
+    "metadata"
+  ],
+  "properties": {
+    "identifier": {
+      "enum": [
+        "agent.task.start",
+        "agent.task.end",
+        "oversight.decision",
+        "policy.denied",
+        "notice.shown"
+      ]
+    },
+    "eventType": {
+      "const": "custom"
+    },
+    "channelId": {
+      "type": "string"
+    },
+    "agentId": {
+      "type": "string"
+    },
+    "payload": {
+      "type": "object"
+    },
+    "metadata": {
+      "type": "object",
+      "required": [
+        "axonpush.evidence.version",
+        "axonpush.evidence.kind",
+        "axonpush.evidence.origin"
+      ],
+      "properties": {
+        "axonpush.evidence.version": {
+          "const": 1
+        },
+        "axonpush.evidence.kind": {
+          "enum": [
+            "agent.task.start",
+            "agent.task.end",
+            "oversight.decision",
+            "policy.denied",
+            "notice.shown"
+          ]
+        },
+        "axonpush.evidence.origin": {
+          "const": "sdk_reported"
+        },
+        "axonpush.task_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "axonpush.parent_task_id": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "identifier": {
+            "const": "agent.task.start"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "payload": {
+            "type": "object",
+            "required": [
+              "goal"
+            ],
+            "properties": {
+              "goal": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          },
+          "metadata": {
+            "properties": {
+              "axonpush.evidence.kind": {
+                "const": "agent.task.start"
+              }
+            },
+            "required": [
+              "axonpush.task_id"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "identifier": {
+            "const": "agent.task.end"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "payload": {
+            "type": "object",
+            "required": [
+              "outcome"
+            ],
+            "properties": {
+              "outcome": {
+                "enum": [
+                  "succeeded",
+                  "failed"
+                ]
+              }
+            }
+          },
+          "metadata": {
+            "properties": {
+              "axonpush.evidence.kind": {
+                "const": "agent.task.end"
+              }
+            },
+            "required": [
+              "axonpush.task_id"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "identifier": {
+            "const": "oversight.decision"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "payload": {
+            "type": "object",
+            "required": [
+              "decision",
+              "actor",
+              "target_span_id"
+            ],
+            "properties": {
+              "decision": {
+                "enum": [
+                  "approved",
+                  "overrode",
+                  "stopped",
+                  "escalated"
+                ]
+              },
+              "actor": {
+                "type": "string",
+                "minLength": 1
+              },
+              "target_span_id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "reason": {
+                "type": "string"
+              },
+              "latency_ms": {
+                "type": "number",
+                "minimum": 0
+              }
+            }
+          },
+          "metadata": {
+            "properties": {
+              "axonpush.evidence.kind": {
+                "const": "oversight.decision"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "identifier": {
+            "const": "policy.denied"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "payload": {
+            "type": "object",
+            "required": [
+              "rule",
+              "tool",
+              "mode"
+            ],
+            "properties": {
+              "rule": {
+                "type": "string",
+                "minLength": 1
+              },
+              "tool": {
+                "type": "string",
+                "minLength": 1
+              },
+              "mode": {
+                "enum": [
+                  "shadow",
+                  "enforce"
+                ]
+              },
+              "reason": {
+                "type": "string"
+              }
+            }
+          },
+          "metadata": {
+            "properties": {
+              "axonpush.evidence.kind": {
+                "const": "policy.denied"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "identifier": {
+            "const": "notice.shown"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "payload": {
+            "type": "object",
+            "required": [
+              "notice_id",
+              "audience",
+              "channel"
+            ],
+            "properties": {
+              "notice_id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "audience": {
+                "type": "string",
+                "minLength": 1
+              },
+              "channel": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          },
+          "metadata": {
+            "properties": {
+              "axonpush.evidence.kind": {
+                "const": "notice.shown"
+              }
+            }
+          }
+        }
+      }
+    }
+  ]
+}

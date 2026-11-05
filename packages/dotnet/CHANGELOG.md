@@ -61,3 +61,11 @@ versioning is [SemVer](https://semver.org/spec/v2.0.0.html).
   and is not removed. Traces from both paths land in the same dashboard
   (`/v2/traces`), reconciled server-side through the OTLP normalizer, so call
   sites can migrate incrementally.
+
+## Unreleased audit platform
+
+- Add generated archive and audit-workflow resource methods from the shared
+  server contract, preserving authorization and response envelopes.
+- Publish versioned evidence schemas and trusted-key offline verification docs.
+- Preserve declared task identity across background publisher handoffs without
+  leaking task context between unrelated work.

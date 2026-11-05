@@ -41,7 +41,7 @@ import json
 import logging as _stdlib_logging
 import os
 from contextlib import contextmanager
-from typing import TYPE_CHECKING, Any, Iterator, Optional, Sequence, Set, Tuple
+from typing import TYPE_CHECKING, Any, Iterator, Optional, Sequence, Set, Tuple, cast
 
 try:
     from opentelemetry import trace as _trace_api
@@ -105,11 +105,11 @@ class TelemetryHandle:
 
     def shutdown(self) -> None:
         """Flush and stop the processor. Idempotent."""
-        self._processor.shutdown()  # type: ignore[no-untyped-call]
+        self._processor.shutdown()
 
     def tracer(self, name: str = "axonpush") -> "Tracer":
         """Return a tracer from the underlying provider."""
-        return self._provider.get_tracer(name)
+        return cast("Tracer", self._provider.get_tracer(name))
 
 
 def configure_telemetry(

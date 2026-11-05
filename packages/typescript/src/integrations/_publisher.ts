@@ -1,6 +1,7 @@
 import { AsyncLocalStorage } from "node:async_hooks";
 import PQueue from "p-queue";
 import type { AxonPush } from "../client.js";
+import { captureTask, withoutEvidenceTask } from "../evidence-context.js";
 import { logger as sdkLogger } from "../logger.js";
 import type { PublishParams } from "../resources/events.js";
 
@@ -121,6 +122,7 @@ export class BackgroundPublisher {
   }
 
   submit(params: PublishParams): void {
+    params = captureTask(params);
     if (this.closed) return;
     if (this.queue.length >= this.queueSize) {
       this.handleOverflow(params);
@@ -132,6 +134,7 @@ export class BackgroundPublisher {
 
   /** Await bounded admission. False means closed or admission waiters are full. */
   async submitAsync(params: PublishParams, opts: { signal?: AbortSignal } = {}): Promise<boolean> {
+    params = captureTask(params);
     opts.signal?.throwIfAborted();
     if (this.closed) return false;
     if (this.queue.length < this.queueSize) {
@@ -237,12 +240,14 @@ export class BackgroundPublisher {
         .add(async () => {
           try {
             await runInPublisherScope(() =>
-              this.client.events.publish({
-                ...params,
-                signal: params.signal
-                  ? AbortSignal.any([this.stop.signal, params.signal])
-                  : this.stop.signal,
-              }),
+              withoutEvidenceTask(() =>
+                this.client.events.publish({
+                  ...params,
+                  signal: params.signal
+                    ? AbortSignal.any([this.stop.signal, params.signal])
+                    : this.stop.signal,
+                }),
+              ),
             );
           } catch (err) {
             if (this.stop.signal.aborted) return;
