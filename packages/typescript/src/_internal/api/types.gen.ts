@@ -1649,14 +1649,18 @@ export type DecisionDto = {
     budgetApproaching?: string;
     costUsd: number;
     enforcementAction?: string;
+    eventId?: string;
     eventType: string;
     model?: string;
     occurredAt: string;
+    operationName?: string;
     parentSpanId?: string;
     provider?: string;
     semanticKind?: string;
+    source?: string;
     spanId?: string;
     status?: string;
+    taskId?: string;
     toolName?: string;
     traceId?: string;
 };

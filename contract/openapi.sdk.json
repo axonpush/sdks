@@ -4648,6 +4648,9 @@
           "enforcementAction": {
             "type": "string"
           },
+          "eventId": {
+            "type": "string"
+          },
           "eventType": {
             "type": "string"
           },
@@ -4655,6 +4658,9 @@
             "type": "string"
           },
           "occurredAt": {
+            "type": "string"
+          },
+          "operationName": {
             "type": "string"
           },
           "parentSpanId": {
@@ -4666,10 +4672,16 @@
           "semanticKind": {
             "type": "string"
           },
+          "source": {
+            "type": "string"
+          },
           "spanId": {
             "type": "string"
           },
           "status": {
+            "type": "string"
+          },
+          "taskId": {
             "type": "string"
           },
           "toolName": {
