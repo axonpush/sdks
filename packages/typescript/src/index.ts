@@ -29,6 +29,7 @@ export {
   ServerError,
   ValidationError,
 } from "./errors.js";
+export { EvidenceRecorder, type OversightDecision } from "./evidence.js";
 // Integrations — primitives + helpers.
 // Framework-specific installers are reachable via
 // `@axonpush/sdk/integrations/<name>` per package.json `exports`.

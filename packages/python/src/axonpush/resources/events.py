@@ -17,6 +17,7 @@ from axonpush._internal.api.models import (
 )
 from axonpush._internal.api.types import UNSET
 from axonpush._tracing import get_or_create_trace
+from axonpush._evidence_context import task_metadata
 from axonpush.models import Event, EventType
 
 if TYPE_CHECKING:
@@ -63,7 +64,7 @@ def _build_event_body(
     payload_dto.additional_properties = dict(redact(payload) if redact is not None else payload)
 
     metadata_dto: EventBodyMetadata | object = UNSET
-    canonical_metadata = dict(metadata or {})
+    canonical_metadata = {**task_metadata(), **(metadata or {})}
     if prompt_id is not None:
         canonical_metadata["gen_ai.prompt.id"] = prompt_id
     if prompt_version_id is not None:
