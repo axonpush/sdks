@@ -40,6 +40,7 @@ from axonpush.integrations._task_lifecycle import (
 
 if TYPE_CHECKING:
     from axonpush.client import AxonPush
+    from crewai.events.base_events import BaseEvent
 
 logger = logging.getLogger("axonpush")
 
@@ -160,7 +161,7 @@ class AxonPushCrewCallbacks:
                 elif len(pending) < 10_000:
                     pending[run_id] = outcome
 
-        listeners = [
+        listeners: list[tuple[type[BaseEvent], Callable[[Any, Any], None]]] = [
             (CrewKickoffStartedEvent, started),
             (CrewKickoffCompletedEvent, ended),
             (CrewKickoffFailedEvent, ended),
