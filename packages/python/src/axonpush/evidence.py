@@ -3,6 +3,7 @@
 Goals/reasons obey content capture and erasure settings. SDK-reported decisions
 do not authenticate their human actor and never enforce policy.
 """
+
 from __future__ import annotations
 
 from contextlib import asynccontextmanager, contextmanager
@@ -20,10 +21,18 @@ class EvidenceRecorder:
         self.events, self.channel_id, self.agent_id = events, channel_id, agent_id
 
     def _emit(self, kind: str, **payload: Any) -> Any:
-        return self.events.publish(identifier=kind, payload=payload,
-            channel_id=self.channel_id, agent_id=self.agent_id, event_type="custom",
-            metadata={"axonpush.evidence.version": 1, "axonpush.evidence.kind": kind,
-                      "axonpush.evidence.origin": "sdk_reported"})
+        return self.events.publish(
+            identifier=kind,
+            payload=payload,
+            channel_id=self.channel_id,
+            agent_id=self.agent_id,
+            event_type="custom",
+            metadata={
+                "axonpush.evidence.version": 1,
+                "axonpush.evidence.kind": kind,
+                "axonpush.evidence.origin": "sdk_reported",
+            },
+        )
 
     @contextmanager
     def task(self, goal: str) -> Iterator[str]:
@@ -47,10 +56,20 @@ class EvidenceRecorder:
         finally:
             current_task.reset(token)
 
-    def decision(self, decision: Decision, target_span_id: str, actor: str, reason: str | None = None) -> Any:
-        return self._emit("oversight.decision", decision=decision, target_span_id=target_span_id, actor=actor, reason=reason)
+    def decision(
+        self, decision: Decision, target_span_id: str, actor: str, reason: str | None = None
+    ) -> Any:
+        return self._emit(
+            "oversight.decision",
+            decision=decision,
+            target_span_id=target_span_id,
+            actor=actor,
+            reason=reason,
+        )
 
-    def denied(self, rule: str, tool: str, mode: Literal["shadow", "enforce"], reason: str | None = None) -> Any:
+    def denied(
+        self, rule: str, tool: str, mode: Literal["shadow", "enforce"], reason: str | None = None
+    ) -> Any:
         return self._emit("policy.denied", rule=rule, tool=tool, mode=mode, reason=reason)
 
     def notice_shown(self, notice_id: str, audience: str, channel: str) -> Any:
