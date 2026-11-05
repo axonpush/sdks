@@ -18,11 +18,18 @@ import {
   safePublishParams,
   truncate,
 } from "./_base.js";
+import {
+  type DeclaredTaskGoal,
+  FrameworkTaskLifecycle,
+  runDeclaredTask,
+  type TaskBoundary,
+} from "./_task_lifecycle.js";
 
 export interface MastraExporterConfig extends IntegrationConfig {
   serviceName?: string;
   serviceVersion?: string;
   release?: string;
+  taskGoal?: DeclaredTaskGoal;
 }
 
 const dateToNano = (value: Date | undefined): string | undefined =>
@@ -53,6 +60,7 @@ export class AxonPushMastraExporter implements ObservabilityExporter {
   private readonly serviceName: string;
   private readonly serviceVersion?: string;
   private readonly release?: string;
+  private readonly tasks: FrameworkTaskLifecycle;
 
   constructor(config: MastraExporterConfig) {
     this.client = config.client;
@@ -61,6 +69,7 @@ export class AxonPushMastraExporter implements ObservabilityExporter {
     this.serviceName = config.serviceName ?? "mastra";
     this.serviceVersion = config.serviceVersion;
     this.release = config.release;
+    this.tasks = new FrameworkTaskLifecycle(config.taskGoal, "mastra");
   }
 
   onTracingEvent(event: TracingEvent): Promise<void> {
@@ -68,9 +77,28 @@ export class AxonPushMastraExporter implements ObservabilityExporter {
   }
 
   async exportTracingEvent(event: TracingEvent): Promise<void> {
-    if (event.type !== "span_ended") return;
     const span = event.exportedSpan;
+    const key = `${span.traceId}:${span.id}`;
+    const parent = span.parentSpanId ? `${span.traceId}:${span.parentSpanId}` : undefined;
     const kind = semanticKind(String(span.type));
+    if (event.type === "span_started") {
+      const root =
+        !parent &&
+        !span.isInternal &&
+        !span.nestedUnderParent &&
+        ["agent", "workflow"].includes(kind);
+      const task = root
+        ? this.tasks.start(key, undefined, {
+            name: span.name,
+            input: span.input,
+            metadata: span.metadata,
+          })
+        : undefined;
+      this.tasks.metadata(key, parent);
+      if (task) await this.publishTask(task, span.traceId, span.id);
+      return;
+    }
+    if (event.type !== "span_ended") return;
     const attributes = {
       ...(span.attributes ?? {}),
       "gen_ai.operation.name": String(span.type),
@@ -104,7 +132,21 @@ export class AxonPushMastraExporter implements ObservabilityExporter {
         entityType: span.entityType,
         entityId: span.entityId,
         ...(span.metadata ?? {}),
+        ...this.tasks.metadata(key, parent),
       },
+    });
+    const task = this.tasks.finish(key, span.errorInfo ? "failed" : "succeeded");
+    if (task) await this.publishTask(task, span.traceId, span.id);
+  }
+
+  private publishTask(task: TaskBoundary, traceId: string, spanId: string): Promise<void> {
+    return this.publish({
+      identifier: task.identifier,
+      eventType: "custom",
+      payload: task.payload,
+      traceId,
+      spanId,
+      metadata: { framework: "mastra", ...task.metadata },
     });
   }
 
@@ -209,6 +251,20 @@ export class AxonPushMastraHooks {
       trace: this.trace,
       metadata: { framework: "mastra" },
     });
+  }
+
+  task<T>(goal: string, run: (taskId: string) => Promise<T>): Promise<T> {
+    return runDeclaredTask(
+      goal,
+      (event) => {
+        void safePublish(this.client, this.channelId, event.identifier, "custom", event.payload, {
+          agentId: this.agentId,
+          trace: this.trace,
+          metadata: { framework: "mastra", ...event.metadata },
+        });
+      },
+      run,
+    );
   }
 
   beforeToolUse(toolName: string, input?: unknown): void {

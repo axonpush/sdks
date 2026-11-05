@@ -11,6 +11,7 @@ import {
   safePublish,
   truncate,
 } from "./_base.js";
+import { type DeclaredTaskGoal, FrameworkTaskLifecycle } from "./_task_lifecycle.js";
 
 /**
  * LangChain.js callback handler.
@@ -34,13 +35,15 @@ export class AxonPushCallbackHandler {
   private agentId: string;
   private trace: TraceContext;
   private baseMeta: Record<string, unknown>;
+  private tasks: FrameworkTaskLifecycle;
 
-  constructor(config: IntegrationConfig) {
+  constructor(config: IntegrationConfig & { taskGoal?: DeclaredTaskGoal }) {
     this.client = config.client;
     this.channelId = coerceChannelId(config.channelId);
     this.agentId = config.agentId ?? "langchain";
     this.trace = initTrace(config.traceId);
     this.baseMeta = { framework: "langchain" };
+    this.tasks = new FrameworkTaskLifecycle(config.taskGoal, "langchain");
   }
 
   private emit(
@@ -55,6 +58,7 @@ export class AxonPushCallbackHandler {
     if (runId) meta.langchain_run_id = runId;
     if (parentRunId) meta.langchain_parent_run_id = parentRunId;
     if (extraMeta) Object.assign(meta, extraMeta);
+    Object.assign(meta, this.tasks.metadata(runId, parentRunId));
 
     void safePublish(this.client, this.channelId, identifier, eventType, payload, {
       agentId: this.agentId,
@@ -73,6 +77,12 @@ export class AxonPushCallbackHandler {
     runType?: string,
     runName?: string,
   ): void {
+    const task = this.tasks.start(runId, parentRunId, {
+      name: deriveRunnableName(serialized, runName, metadata),
+      input: inputs,
+      metadata,
+    });
+    if (task) this.emit(task.identifier, "custom", task.payload, runId, parentRunId, task.metadata);
     this.emit(
       "chain.start",
       "agent.start",
@@ -88,6 +98,8 @@ export class AxonPushCallbackHandler {
 
   handleChainEnd(outputs: Record<string, unknown>, runId?: string, parentRunId?: string): void {
     this.emit("chain.end", "agent.end", { outputs: truncate(outputs) }, runId, parentRunId);
+    const task = this.tasks.finish(runId, "succeeded");
+    if (task) this.emit(task.identifier, "custom", task.payload, runId, parentRunId, task.metadata);
   }
 
   handleChainError(err: Error, runId?: string, parentRunId?: string): void {
@@ -98,6 +110,8 @@ export class AxonPushCallbackHandler {
       runId,
       parentRunId,
     );
+    const task = this.tasks.finish(runId, "failed");
+    if (task) this.emit(task.identifier, "custom", task.payload, runId, parentRunId, task.metadata);
   }
 
   handleLLMStart(

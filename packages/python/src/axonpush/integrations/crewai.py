@@ -17,8 +17,12 @@ Install::
 from __future__ import annotations
 
 import logging
+from collections.abc import Callable
+from contextlib import AbstractContextManager
+from threading import RLock
 from typing import TYPE_CHECKING, Any, Dict, Literal, Optional
 
+from axonpush._evidence_context import task_metadata
 from axonpush._tracing import get_or_create_trace
 from axonpush.integrations._publisher import (
     BackgroundPublisher,
@@ -27,6 +31,12 @@ from axonpush.integrations._publisher import (
 )
 from axonpush.integrations._utils import coerce_channel_id
 from axonpush.models import EventType
+from axonpush.integrations._task_lifecycle import (
+    DeclaredTaskGoal,
+    FrameworkTaskLifecycle,
+    TaskBoundary,
+    declared_task,
+)
 
 if TYPE_CHECKING:
     from axonpush.client import AxonPush
@@ -52,6 +62,7 @@ class AxonPushCrewCallbacks:
         self._channel_id = coerce_channel_id(channel_id)
         self._agent_id = agent_id
         self._trace = get_or_create_trace(trace_id)
+        self._task_listeners: list[Callable[[], None]] = []
 
         resolved_mode = mode or "background"
         if resolved_mode == "background":
@@ -62,6 +73,111 @@ class AxonPushCrewCallbacks:
             )
         else:
             self._publisher = None
+
+    def task(self, goal: str) -> AbstractContextManager[str]:
+        """Wrap a complete kickoff when using older CrewAI callback APIs."""
+        return declared_task(goal, self._emit_task_boundary)
+
+    def _emit_task_boundary(self, boundary: TaskBoundary) -> None:
+        kind, payload, metadata = boundary
+        self._publish(kind, EventType.CUSTOM, payload, extra_metadata=metadata)
+
+    def listen_for_tasks(
+        self, task_goal: DeclaredTaskGoal, *, crew: Any = None
+    ) -> Callable[[], None]:
+        """Opt in to native kickoff start/completion/failure events.
+
+        Keep the returned stop function and call it before closing this handler.
+        Requires CrewAI's event_id / started_event_id correlation; older events
+        without those identifiers are left undeclared rather than guessed.
+        An optional crew limits this listener to that object.
+        """
+        try:
+            from crewai.events import (
+                crewai_event_bus,
+                CrewKickoffStartedEvent,
+                CrewKickoffCompletedEvent,
+                CrewKickoffFailedEvent,
+            )
+        except ImportError:
+            raise ImportError(
+                "Native task events require CrewAI with kickoff lifecycle events; use callbacks.task(goal) on older versions"
+            ) from None
+        lifecycle = FrameworkTaskLifecycle(task_goal, "crewai")
+        stopped = False
+        event_lock = RLock()
+        pending: dict[str, str] = {}
+        try:
+            from crewai.events.event_bus import is_replaying
+        except ImportError:
+
+            def is_replaying() -> bool:
+                return False
+
+        def selected(source: Any, event: Any) -> bool:
+            return (
+                not stopped
+                and not is_replaying()
+                and (crew is None or source is crew or getattr(event, "crew", None) is crew)
+            )
+
+        def started(source: Any, event: Any) -> None:
+            if not selected(source, event):
+                return
+            run_id = getattr(event, "event_id", None)
+            if not isinstance(run_id, str) or not run_id:
+                return
+            with event_lock:
+                boundary = lifecycle.start(
+                    run_id,
+                    None,
+                    name=getattr(event, "crew_name", None),
+                    input=getattr(event, "inputs", None),
+                )
+                if boundary:
+                    self._emit_task_boundary(boundary)
+                    outcome = pending.pop(run_id, None)
+                    if outcome:
+                        completed = lifecycle.finish(run_id, outcome)
+                        if completed:
+                            self._emit_task_boundary(completed)
+
+        def ended(source: Any, event: Any) -> None:
+            if not selected(source, event):
+                return
+            run_id = getattr(event, "started_event_id", None)
+            if not isinstance(run_id, str) or not run_id:
+                return
+            with event_lock:
+                outcome = "failed" if isinstance(event, CrewKickoffFailedEvent) else "succeeded"
+                boundary = lifecycle.finish(run_id, outcome)
+                if boundary:
+                    self._emit_task_boundary(boundary)
+                elif len(pending) < 10_000:
+                    pending[run_id] = outcome
+
+        listeners = [
+            (CrewKickoffStartedEvent, started),
+            (CrewKickoffCompletedEvent, ended),
+            (CrewKickoffFailedEvent, ended),
+        ]
+        for event_type, callback in listeners:
+            crewai_event_bus.on(event_type)(callback)
+
+        def stop() -> None:
+            nonlocal stopped
+            if stopped:
+                return
+            stopped = True
+            with event_lock:
+                lifecycle.clear()
+                pending.clear()
+            for event_type, callback in listeners:
+                crewai_event_bus.off(event_type, callback)
+            self._task_listeners.remove(stop)
+
+        self._task_listeners.append(stop)
+        return stop
 
     def on_crew_start(self) -> None:
         self._publish("crew.start", EventType.AGENT_START, {"framework": "crewai"})
@@ -121,6 +237,7 @@ class AxonPushCrewCallbacks:
         payload: Dict[str, Any],
         *,
         agent_id: Optional[str] = None,
+        extra_metadata: Optional[Dict[str, Any]] = None,
     ) -> None:
         try:
             publish_kwargs: Dict[str, Any] = {
@@ -131,7 +248,7 @@ class AxonPushCrewCallbacks:
                 "trace_id": self._trace.trace_id,
                 "span_id": self._trace.next_span_id(),
                 "event_type": event_type,
-                "metadata": {"framework": "crewai"},
+                "metadata": {"framework": "crewai", **task_metadata(), **(extra_metadata or {})},
             }
             if self._publisher is not None:
                 self._publisher.submit(publish_kwargs)
@@ -149,6 +266,8 @@ class AxonPushCrewCallbacks:
             self._publisher.flush(timeout)
 
     def close(self) -> None:
+        for stop in list(self._task_listeners):
+            stop()
         if self._publisher is not None:
             self._publisher.close()
             self._publisher = None

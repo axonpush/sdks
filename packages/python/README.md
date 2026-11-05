@@ -316,3 +316,5 @@ For internal contracts, the resource ownership matrix, the OpenAPI codegen layer
 ## License
 
 MIT
+
+See [declared framework task lifecycles](../../docs/framework-task-lifecycle.md) for opt-in root goals, failure boundaries and callback correlation.

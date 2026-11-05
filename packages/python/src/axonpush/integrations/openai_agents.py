@@ -25,6 +25,8 @@ Usage::
 from __future__ import annotations
 
 import logging
+from contextlib import asynccontextmanager
+from collections.abc import AsyncIterator
 from typing import TYPE_CHECKING, Any, Dict, Literal, Optional, Union
 
 try:
@@ -35,6 +37,7 @@ except ImportError:
         "Install it with: pip install axonpush[openai-agents]"
     ) from None
 
+from axonpush._evidence_context import task_metadata
 from axonpush._tracing import get_or_create_trace
 from axonpush.integrations._publisher import (
     AsyncBackgroundPublisher,
@@ -43,6 +46,7 @@ from axonpush.integrations._publisher import (
 )
 from axonpush.integrations._utils import coerce_channel_id
 from axonpush.models import EventType
+from axonpush.integrations._task_lifecycle import TaskBoundary, declared_task
 
 if TYPE_CHECKING:
     from axonpush.client import AsyncAxonPush
@@ -79,6 +83,17 @@ class AxonPushRunHooks(RunHooks[Any]):
         else:
             self._publisher = None
 
+    @asynccontextmanager
+    async def task(self, goal: str) -> AsyncIterator[str]:
+        """Await the complete Runner call/stream here; handoffs do not end the task."""
+
+        def emit(boundary: TaskBoundary) -> None:
+            kind, payload, metadata = boundary
+            self._publish(kind, EventType.CUSTOM, payload, extra_metadata=metadata)
+
+        with declared_task(goal, emit) as task_id:
+            yield task_id
+
     async def on_agent_start(self, context: RunContextWrapper[Any], agent: Agent[Any]) -> None:
         agent_name = getattr(agent, "name", None) or self._default_agent_id or "openai-agent"
         self._publish(
@@ -89,13 +104,16 @@ class AxonPushRunHooks(RunHooks[Any]):
         )
 
     async def on_agent_end(
-        self, context: RunContextWrapper[Any], agent: Agent[Any], output: str
+        self, context: RunContextWrapper[Any], agent: Agent[Any], output: object
     ) -> None:
         agent_name = getattr(agent, "name", None) or self._default_agent_id or "openai-agent"
         self._publish(
             "agent.run.end",
             EventType.AGENT_END,
-            {"agent_name": agent_name, "output_length": len(output)},
+            {
+                "agent_name": agent_name,
+                "output_length": len(output) if isinstance(output, str) else None,
+            },
             agent_id=agent_name,
         )
 
@@ -116,14 +134,17 @@ class AxonPushRunHooks(RunHooks[Any]):
         context: RunContextWrapper[Any],
         agent: Agent[Any],
         tool: Tool,
-        result: str,
+        result: object,
     ) -> None:
         agent_name = getattr(agent, "name", None) or "openai-agent"
         tool_name = getattr(tool, "name", "unknown")
         self._publish(
             f"tool.{tool_name}.end",
             EventType.AGENT_TOOL_CALL_END,
-            {"tool_name": tool_name, "result_length": len(result)},
+            {
+                "tool_name": tool_name,
+                "result_length": len(result) if isinstance(result, str) else None,
+            },
             agent_id=agent_name,
         )
 
@@ -149,6 +170,7 @@ class AxonPushRunHooks(RunHooks[Any]):
         payload: Dict[str, Any],
         *,
         agent_id: Optional[str] = None,
+        extra_metadata: Optional[Dict[str, Any]] = None,
     ) -> None:
         try:
             publish_kwargs: Dict[str, Any] = {
@@ -159,7 +181,11 @@ class AxonPushRunHooks(RunHooks[Any]):
                 "trace_id": self._trace.trace_id,
                 "span_id": self._trace.next_span_id(),
                 "event_type": event_type,
-                "metadata": {"framework": "openai-agents"},
+                "metadata": {
+                    "framework": "openai-agents",
+                    **task_metadata(),
+                    **(extra_metadata or {}),
+                },
             }
 
             if self._publisher is not None:
