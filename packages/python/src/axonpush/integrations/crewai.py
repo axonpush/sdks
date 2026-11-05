@@ -128,6 +128,8 @@ class AxonPushCrewCallbacks:
             if not isinstance(run_id, str) or not run_id:
                 return
             with event_lock:
+                if stopped:
+                    return
                 boundary = lifecycle.start(
                     run_id,
                     None,
@@ -149,6 +151,8 @@ class AxonPushCrewCallbacks:
             if not isinstance(run_id, str) or not run_id:
                 return
             with event_lock:
+                if stopped:
+                    return
                 outcome = "failed" if isinstance(event, CrewKickoffFailedEvent) else "succeeded"
                 boundary = lifecycle.finish(run_id, outcome)
                 if boundary:

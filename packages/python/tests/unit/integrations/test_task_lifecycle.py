@@ -199,6 +199,17 @@ def test_native_crewai_events_correlate_concurrent_executions_and_unregister(mon
     count = len(client.events.calls)
     bus.emit(Started, crew, event_id="a", inputs={"goal": "Duplicate start"})
     assert len(client.events.calls) == count
-    callbacks.close()
+    started_callback = bus.handlers[Started][0]
+
+    class ClosingStart(Started):
+        inputs = {"goal": "Must not emit after close"}
+
+        @property
+        def event_id(self):
+            callbacks.close()
+            return "closed-before-lock"
+
+    started_callback(crew, ClosingStart())
+    assert len(client.events.calls) == count
     stop()  # Idempotent unregister after close.
     assert not any(bus.handlers.values())
