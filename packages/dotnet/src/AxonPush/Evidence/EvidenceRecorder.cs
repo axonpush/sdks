@@ -62,9 +62,18 @@ public sealed class EvidenceRecorder(EventsResource events, string channelId, st
         EmitAsync("notice.shown", new() { ["notice_id"] = noticeId, ["audience"] = audience, ["channel"] = channel }, cancellationToken);
 
     private Task<PublishResult> EmitAsync(string kind, Dictionary<string, object?> payload, CancellationToken cancellationToken) =>
-        events.PublishAsync(new PublishRequest {
-            Identifier = kind, ChannelId = channelId, AgentId = agentId, EventType = "custom", Payload = payload,
-            Metadata = new Dictionary<string, object?> { ["axonpush.evidence.version"] = 1,
-                ["axonpush.evidence.kind"] = kind, ["axonpush.evidence.origin"] = "sdk_reported" }
+        events.PublishAsync(new PublishRequest
+        {
+            Identifier = kind,
+            ChannelId = channelId,
+            AgentId = agentId,
+            EventType = "custom",
+            Payload = payload,
+            Metadata = new Dictionary<string, object?>
+            {
+                ["axonpush.evidence.version"] = 1,
+                ["axonpush.evidence.kind"] = kind,
+                ["axonpush.evidence.origin"] = "sdk_reported"
+            }
         }, cancellationToken);
 }

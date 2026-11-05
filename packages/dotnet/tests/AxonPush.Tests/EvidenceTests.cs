@@ -25,8 +25,10 @@ public sealed class EvidenceTests
         using var http = new HttpClient(handler);
         using var client = new AxonPushClient(new AxonPushOptions { ApiKey = "test", TenantId = "test" }, http);
         var evidence = new EvidenceRecorder(client.Events, "channel", "agent");
-        await evidence.TaskAsync("Review a case", async (parent, token) => {
-            return await evidence.TaskAsync("Check a reference", async (child, inner) => {
+        await evidence.TaskAsync("Review a case", async (parent, token) =>
+        {
+            return await evidence.TaskAsync("Check a reference", async (child, inner) =>
+            {
                 await client.Events.PublishAsync(new PublishRequest { Identifier = "ordinary", ChannelId = "channel", Payload = new Dictionary<string, object?>() }, inner);
                 var metadata = handler.Bodies.Last().GetProperty("metadata");
                 Assert.Equal(child, metadata.GetProperty("axonpush.task_id").GetString());
