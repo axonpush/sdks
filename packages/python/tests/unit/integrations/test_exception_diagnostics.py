@@ -6,7 +6,12 @@ import traceback
 
 import pytest
 
-from axonpush.integrations._exceptions import exception_attributes
+from axonpush.integrations._exceptions import (
+    MAX_EXCEPTION_MESSAGE_CHARS,
+    MAX_EXCEPTION_STACK_CHARS,
+    exc_info_attributes,
+    exception_attributes,
+)
 from axonpush.integrations.logging_handler import AxonPushLoggingHandler
 
 
@@ -101,3 +106,69 @@ def test_framework_callback_keeps_the_actual_failure_traceback(fake_sync_client)
     attrs = fake_sync_client.events.calls[0]["payload"]["attributes"]
     assert attrs["exception.type"] == "ValueError"
     assert "in failed_operation" in attrs["exception.stacktrace"]
+
+
+def test_explicit_none_traceback_does_not_revive_the_exception_traceback():
+    try:
+        failed_operation()
+    except ValueError as error:
+        assert "exception.stacktrace" in exception_attributes(error)
+        assert "exception.stacktrace" not in exception_attributes(error, None)
+        assert "exception.stacktrace" not in exc_info_attributes((type(error), error, None))
+
+
+def test_explicit_none_preserves_stdlib_cause_semantics():
+    try:
+        try:
+            failed_operation()
+        except ValueError as cause:
+            raise RuntimeError("wrapper") from cause
+    except RuntimeError as error:
+        expected = "".join(traceback.format_exception(type(error), error, None))
+        actual = exception_attributes(error, None)["exception.stacktrace"]
+    assert actual == expected
+    assert "in failed_operation" in actual
+
+
+def test_exception_messages_and_preformatted_stacks_are_bounded(fake_sync_client):
+    try:
+        raise ValueError("x" * (2 * 1024 * 1024))
+    except ValueError as error:
+        attrs = exception_attributes(error)
+    assert len(attrs["exception.message"]) <= MAX_EXCEPTION_MESSAGE_CHARS
+    assert len(attrs["exception.stacktrace"]) <= MAX_EXCEPTION_STACK_CHARS
+    assert "truncated" in attrs["exception.stacktrace"]
+    assert (
+        "test_exception_messages_and_preformatted_stacks_are_bounded"
+        in attrs["exception.stacktrace"]
+    )
+
+    record = logging.LogRecord("test", logging.ERROR, __file__, 1, "original body", (), None)
+    record.exc_text = "x" * (2 * 1024 * 1024) + "\nValueError: fixture"
+    handler = AxonPushLoggingHandler(client=fake_sync_client, channel_id="test", mode="sync")
+    handler.handle(record)
+    handler.close()
+    payload = fake_sync_client.events.calls[0]["payload"]
+    assert payload["body"] == "original body"
+    assert len(payload["attributes"]["exception.stacktrace"]) <= MAX_EXCEPTION_STACK_CHARS
+    assert len(record.exc_text) > MAX_EXCEPTION_STACK_CHARS
+
+
+def test_structlog_bounds_duplicate_formatted_stack_without_mutating_record(fake_sync_client):
+    pytest.importorskip("structlog")
+    from axonpush.integrations.structlog import axonpush_structlog_processor
+
+    formatted = "x" * (2 * 1024 * 1024) + "\nValueError: fixture"
+    record = {"event": "original body", "exception": formatted}
+    processor = axonpush_structlog_processor(
+        client=fake_sync_client, channel_id="test", mode="sync"
+    )
+    try:
+        assert processor(None, "error", record) is record
+    finally:
+        processor.close()
+    payload = fake_sync_client.events.calls[0]["payload"]
+    assert payload["body"] == "original body"
+    assert len(payload["attributes"]["exception"]) <= MAX_EXCEPTION_STACK_CHARS
+    assert len(payload["attributes"]["exception.stacktrace"]) <= MAX_EXCEPTION_STACK_CHARS
+    assert record["exception"] == formatted

@@ -12,7 +12,7 @@ import {
   makePublisher,
   type PublisherHolder,
 } from "./_base.js";
-import { exceptionAttributes } from "./_exceptions.js";
+import { exceptionAttributes, exceptionSummary, isNativeError } from "./_exceptions.js";
 
 export { flushAfterInvocation } from "./_publisher.js";
 
@@ -182,6 +182,11 @@ function emitCaptured(
 ): void {
   const severity = SEVERITY_MAP[level];
   const body = formatBody(args, opts.maxBodyLength);
+  let exception: Record<string, string> = {};
+  for (const value of args) {
+    exception = exceptionAttributes(value);
+    if (Object.keys(exception).length) break;
+  }
 
   const payload: Record<string, unknown> = {
     timeUnixNano: String(Date.now() * 1_000_000),
@@ -191,7 +196,7 @@ function emitCaptured(
     attributes: {
       "log.iostream": level === "error" || level === "warn" ? "stderr" : "stdout",
       "log.source": "console",
-      ...args.map(exceptionAttributes).find((attributes) => Object.keys(attributes).length > 0),
+      ...exception,
     },
   };
 
@@ -224,13 +229,8 @@ function formatBody(args: unknown[], maxLength: number): unknown {
 }
 
 function safeStringify(v: unknown, maxLength: number): string {
-  const exception = exceptionAttributes(v);
-  if (Object.keys(exception).length) {
-    return truncateString(
-      [exception["exception.type"], exception["exception.message"]].filter(Boolean).join(": ") ||
-        "Error",
-      maxLength,
-    );
+  if (isNativeError(v)) {
+    return truncateString(exceptionSummary(v), maxLength);
   }
   try {
     const s = JSON.stringify(v, (_k, val) => (typeof val === "bigint" ? val.toString() : val), 2);

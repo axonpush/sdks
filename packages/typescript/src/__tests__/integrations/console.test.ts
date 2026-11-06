@@ -1,5 +1,6 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 import type { AxonPush } from "../../client.js";
+import { MAX_EXCEPTION_STACK_LENGTH } from "../../integrations/_exceptions.js";
 import { setupConsoleCapture } from "../../integrations/console.js";
 import type { PublishParams } from "../../resources/events.js";
 
@@ -17,6 +18,57 @@ function makeFakeClient() {
 }
 
 describe("console capture", () => {
+  it("bounds a large native Error before the publisher receives it", async () => {
+    const { client, published } = makeFakeClient();
+    console.error = vi.fn();
+    const error = new Error("fixture");
+    error.stack = `Error: fixture\n    at run (/app/worker.ts:42:9)\n${"x".repeat(2 * 1024 * 1024)}`;
+    const handle = setupConsoleCapture({ client, channelId: "ch-1", maxBodyLength: 16 });
+    try {
+      console.error(error);
+      await handle.flush(2000);
+    } finally {
+      await handle.close();
+    }
+    const payload = published[0]!.payload as Record<string, unknown>;
+    const attributes = payload.attributes as Record<string, string>;
+    expect(attributes["exception.stacktrace"]!.length).toBeLessThanOrEqual(
+      MAX_EXCEPTION_STACK_LENGTH,
+    );
+    expect(attributes["exception.stacktrace"]).toContain("diagnostic truncated");
+    expect(payload.body).toBe("Error: fixture");
+  });
+
+  it("preserves ordinary JSON bodies even when they have stack or error-like fields", async () => {
+    const { client, published } = makeFakeClient();
+    console.error = vi.fn();
+    const records = [
+      { stack: "worker-tier", pending: 3 },
+      {
+        name: "TypeError",
+        message: "a structured record",
+        stack: "TypeError: a structured record\n    at run (/app/worker.ts:42:9)",
+        pending: 3,
+      },
+    ];
+    const handle = setupConsoleCapture({ client, channelId: "ch-1" });
+    try {
+      for (const record of records) console.error(record);
+      await handle.flush(2000);
+    } finally {
+      await handle.close();
+    }
+    expect(published).toHaveLength(2);
+    for (let index = 0; index < records.length; index++) {
+      expect(
+        JSON.parse((published[index]!.payload as Record<string, unknown>).body as string),
+      ).toEqual(records[index]);
+    }
+    expect((published[0]!.payload as Record<string, unknown>).attributes).not.toHaveProperty(
+      "exception.stacktrace",
+    );
+  });
+
   it("preserves an Error's diagnostic stack instead of serializing it as an empty object", async () => {
     const { client, published } = makeFakeClient();
     console.error = vi.fn();

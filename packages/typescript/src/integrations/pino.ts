@@ -12,7 +12,7 @@ import {
   makePublisher,
   type PublisherHolder,
 } from "./_base.js";
-import { exceptionAttributes } from "./_exceptions.js";
+import { boundedExceptionContext, exceptionAttributes } from "./_exceptions.js";
 
 export { flushAfterInvocation } from "./_publisher.js";
 
@@ -110,10 +110,10 @@ export function createAxonPushPinoStream(config: PinoStreamConfig): AxonPushPino
 
     const { msg, time, level: _l, hostname, pid, ...rest } = record;
 
-    const attributes: Record<string, unknown> = {
+    const attributes = boundedExceptionContext({
       ...exceptionAttributes(record.err ?? record.error),
       ...rest,
-    };
+    });
     if (hostname !== undefined) attributes["host.name"] = hostname;
     if (pid !== undefined) attributes["process.pid"] = pid;
 

@@ -9,7 +9,12 @@ import {
   inPublisherScope,
   makePublisher,
 } from "./_base.js";
-import { exceptionAttributes } from "./_exceptions.js";
+import {
+  boundedExceptionContext,
+  exceptionAttributes,
+  exceptionSummary,
+  isNativeError,
+} from "./_exceptions.js";
 
 export { flushAfterInvocation } from "./_publisher.js";
 
@@ -126,16 +131,16 @@ export async function createAxonPushWinstonTransport(
         const severity = WINSTON_LEVELS[level] ?? WINSTON_LEVELS.info!;
 
         const { level: _l, message, timestamp, ...rest } = info;
-        const attributes = {
+        const attributes = boundedExceptionContext({
           ...exceptionAttributes(info),
           ...exceptionAttributes(info.error ?? info.err ?? message),
           ...rest,
-        };
+        });
 
         const payload: Record<string, unknown> = {
           severityNumber: severity.number,
           severityText: severity.text,
-          body: typeof message === "string" ? message : message,
+          body: isNativeError(message) ? exceptionSummary(message) : message,
           attributes: Object.keys(attributes).length > 0 ? attributes : undefined,
           resource: resourceOrUndefined,
         };
