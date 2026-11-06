@@ -132,6 +132,7 @@ auditProduct.providers.list
 auditProduct.providers.update
 auditProduct.public.request
 auditProduct.public.trust
+auditProduct.references
 auditProduct.requests.create
 auditProduct.requests.extend
 auditProduct.requests.fulfill

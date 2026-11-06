@@ -4331,6 +4331,71 @@
         ],
         "type": "object"
       },
+      "ComplianceReference": {
+        "additionalProperties": false,
+        "properties": {
+          "appId": {
+            "type": "string"
+          },
+          "available": {
+            "type": "boolean"
+          },
+          "description": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "environmentId": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string"
+          },
+          "isDefault": {
+            "type": "boolean"
+          },
+          "kind": {
+            "type": "string"
+          },
+          "label": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "role": {
+            "type": "string"
+          },
+          "state": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "kind",
+          "label",
+          "description",
+          "state",
+          "available"
+        ],
+        "type": "object"
+      },
+      "ComplianceReferenceDefaults": {
+        "additionalProperties": false,
+        "properties": {
+          "appId": {
+            "type": "string"
+          },
+          "environmentId": {
+            "type": "string"
+          },
+          "ownerUserId": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
       "ComplianceSource": {
         "additionalProperties": false,
         "properties": {
@@ -6207,6 +6272,7 @@
             "type": "string"
           },
           "stack": {
+            "description": "Captured frames in caller-first order; empty when no stack was captured",
             "items": {
               "$ref": "#/components/schemas/StackFrameDTO"
             },
@@ -7083,6 +7149,7 @@
             "type": "string"
           },
           "stack": {
+            "description": "Latest captured exception frames in crash-first order; empty when no stack was captured",
             "items": {
               "$ref": "#/components/schemas/StackFrameDTO"
             },
@@ -9546,6 +9613,43 @@
         ],
         "type": "object"
       },
+      "ReferenceOutputBody": {
+        "additionalProperties": false,
+        "properties": {
+          "$schema": {
+            "description": "A URL to the JSON Schema for this object.",
+            "examples": [
+              "https://example.com/schemas/ReferenceOutputBody.json"
+            ],
+            "format": "uri",
+            "readOnly": true,
+            "type": "string"
+          },
+          "defaults": {
+            "$ref": "#/components/schemas/ComplianceReferenceDefaults"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/ComplianceReference"
+            },
+            "type": [
+              "array",
+              "null"
+            ]
+          },
+          "nextCursor": {
+            "type": "string"
+          },
+          "searchWindow": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "items",
+          "defaults"
+        ],
+        "type": "object"
+      },
       "ReleaseHoldInputBody": {
         "additionalProperties": false,
         "properties": {
@@ -10111,6 +10215,11 @@
       "StackFrameDTO": {
         "additionalProperties": false,
         "properties": {
+          "column": {
+            "description": "1-based source column when captured; omitted when unknown",
+            "format": "int64",
+            "type": "integer"
+          },
           "contextLine": {
             "type": "string"
           },
@@ -19754,6 +19863,156 @@
         "x-axonpush-sdk": true
       }
     },
+    "/audit/references/{kind}": {
+      "get": {
+        "operationId": "auditProduct.references",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "kind",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "explode": false,
+            "in": "query",
+            "name": "q",
+            "schema": {
+              "maxLength": 160,
+              "type": "string"
+            }
+          },
+          {
+            "explode": false,
+            "in": "query",
+            "name": "limit",
+            "schema": {
+              "format": "int64",
+              "maximum": 100,
+              "minimum": 1,
+              "type": "integer"
+            }
+          },
+          {
+            "explode": false,
+            "in": "query",
+            "name": "cursor",
+            "schema": {
+              "maxLength": 2048,
+              "type": "string"
+            }
+          },
+          {
+            "explode": false,
+            "in": "query",
+            "name": "ids",
+            "schema": {
+              "maxLength": 16384,
+              "type": "string"
+            }
+          },
+          {
+            "explode": false,
+            "in": "query",
+            "name": "state",
+            "schema": {
+              "maxLength": 32,
+              "type": "string"
+            }
+          },
+          {
+            "explode": false,
+            "in": "query",
+            "name": "appId",
+            "schema": {
+              "maxLength": 128,
+              "type": "string"
+            }
+          },
+          {
+            "explode": false,
+            "in": "query",
+            "name": "environmentId",
+            "schema": {
+              "maxLength": 128,
+              "type": "string"
+            }
+          },
+          {
+            "explode": false,
+            "in": "query",
+            "name": "agentId",
+            "schema": {
+              "maxLength": 128,
+              "type": "string"
+            }
+          },
+          {
+            "explode": false,
+            "in": "query",
+            "name": "segmentId",
+            "schema": {
+              "maxLength": 256,
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReferenceOutputBody"
+                }
+              }
+            },
+            "description": "OK",
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "default": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "summary": "Search organization-scoped labeled relationship choices",
+        "tags": [
+          "audit-product"
+        ],
+        "x-axonpush-effect": "read",
+        "x-axonpush-mcp": true,
+        "x-axonpush-policy": {
+          "anyScope": true,
+          "category": "org-read",
+          "grants": "reject-scoped",
+          "scopes": [
+            "audit:read",
+            "audit:manage",
+            "requests:manage"
+          ],
+          "unboundKey": true
+        },
+        "x-axonpush-scopes-anyOf": [
+          "audit:read",
+          "audit:manage",
+          "requests:manage"
+        ],
+        "x-axonpush-sdk": true
+      }
+    },
     "/audit/requests": {
       "get": {
         "operationId": "auditProduct.requests.list",
@@ -27812,7 +28071,7 @@
     },
     "/workspaces/{workspaceId}/connect": {
       "post": {
-        "description": "Get everything the application needs to send data to this workspace, so nobody copies keys from the dashboard.\n\nCall it after the workspace spec is active (or at least drafted). It mints a key that can only publish (events:publish), bound to this workspace's application and one environment, and returns it once with the API URL, OTLP settings, a Sentry DSN when available, a ready-to-write env map and SDK snippets.\n\nWrite the returned env into the app's local secret file (for example .env.local, or the project's existing secret convention), make sure that file is git-ignored, and never commit, print or paste the key. Then add the SDK observe and identify calls and send a test event.\n\nCalling it again for the same environment and purpose does not mint another key: it returns the existing key's metadata without the secret. If the secret was lost, call again with rotate: true, which revokes the old key and mints a new one.",
+        "description": "Get everything the application needs to send data to this workspace, so nobody copies keys from the dashboard.\n\nCall it after the workspace spec is active (or at least drafted). It mints a key that can only publish (events:publish), bound to this workspace's application and one environment, and returns it once with the API URL, OTLP settings, a Sentry DSN when available, a ready-to-write env map and SDK snippets.\n\nWrite the returned env into the app's local secret file (for example .env.local, or the project's existing secret convention), make sure that file is git-ignored, and never commit, print or paste the key. Then add the SDK observe and identify calls and send a test event. Also wire the application's existing logging, OpenTelemetry or Sentry error integration so exceptions retain their original traceback and source locations; business observations alone do not install exception capture. Reuse the existing provider and capture policy, correlate trace/span ids where available, and verify a controlled exception locally or in a test environment. Do not create synthetic production errors.\n\nCalling it again for the same environment and purpose does not mint another key: it returns the existing key's metadata without the secret. If the secret was lost, call again with rotate: true, which revokes the old key and mints a new one.",
         "operationId": "workspaces.connect",
         "parameters": [
           {
@@ -27877,7 +28136,7 @@
     },
     "/workspaces/{workspaceId}/describe": {
       "get": {
-        "description": "Call this first when you are setting up or changing what axonpush stores for an application.\n\naxonpush adapts per installation. A workspace spec declares, as data, what this application stores:\n- attributes: the data dictionary. Every attribute key the app may send, with a type, an optional role and a personal flag. Undeclared keys are dropped at ingest and counted.\n- entities: the things being tracked (for example agent, ticket, order). Each lists the attribute keys it stores (fields), the keys identify() may set (profile), terminal states, and the events that update it.\n- funnels, views and alerts: what the dashboard shows and what pages people.\n\nTo change the spec, never rewrite it blindly: read the shared draft (workspaces.draft), send typed edits with workspaces.applyDraftOps using the draft's version, check workspaces.draftChanges, and ask the user to review before workspaces.activateDraft. Use workspaces.catalog to see which events and attributes the app really sends.\n\nSETTING UP AN APPLICATION (the user does not copy anything from the dashboard):\n1. Call workspaces_describe (this tool) and read the codebase to find what is worth tracking.\n2. Draft the data dictionary, entities and events with workspaces_draft and workspaces_applyDraftOps; explain any personal attributes to the user first.\n3. Ask the user to review and activate the draft in the dashboard, or call workspaces_activateDraft if they approve in the chat.\n4. Call workspaces_connect and write the returned env into the app's git-ignored env file (.env.local or the project's secret convention). Never commit, print or paste the key.\n5. Add the SDK observe calls where the events happen and identify calls for profile attributes, reading the env written in the previous step.\n6. Send one test event from the app and confirm it appears in workspaces_catalog.\n\nThe response contains a plain-language summary of this workspace, the setup steps, the full format reference, the role list and the op catalogue with examples.",
+        "description": "Call this first when you are setting up or changing what axonpush stores for an application.\n\naxonpush adapts per installation. A workspace spec declares, as data, what this application stores:\n- attributes: the data dictionary. Every attribute key the app may send, with a type, an optional role and a personal flag. Undeclared keys are dropped at ingest and counted.\n- entities: the things being tracked (for example agent, ticket, order). Each lists the attribute keys it stores (fields), the keys identify() may set (profile), terminal states, and the events that update it.\n- funnels, views and alerts: what the dashboard shows and what pages people.\n\nTo change the spec, never rewrite it blindly: read the shared draft (workspaces.draft), send typed edits with workspaces.applyDraftOps using the draft's version, check workspaces.draftChanges, and ask the user to review before workspaces.activateDraft. Use workspaces.catalog to see which events and attributes the app really sends.\n\nSETTING UP AN APPLICATION (the user does not copy anything from the dashboard):\n1. Call workspaces_describe (this tool) and read the codebase to find what is worth tracking.\n2. Draft the data dictionary, entities and events with workspaces_draft and workspaces_applyDraftOps; explain any personal attributes to the user first.\n3. Ask the user to review and activate the draft in the dashboard, or call workspaces_activateDraft if they approve in the chat.\n4. Call workspaces_connect and write the returned env into the app's git-ignored env file (.env.local or the project's secret convention). Never commit, print or paste the key.\n5. Add the SDK observe calls where the events happen and identify calls for profile attributes, reading the env written in the previous step.\n6. Wire the application's existing logging, OpenTelemetry or Sentry error integration (or its supported SDK adapter) so exceptions retain their original traceback and source locations. Correlate technical events and business observations with trace/span ids where available; do not put raw exceptions in business attributes.\n7. Send one test event from the app and confirm it appears in workspaces_catalog.\n8. Verify exception capture with a controlled failure locally or in a test environment, and confirm the traceback and file/line locations reach the error detail. Explain missing capture instead of claiming success. Do not create synthetic production errors.\n\nThe response contains a plain-language summary of this workspace, the setup steps, the full format reference, the role list and the op catalogue with examples.",
         "operationId": "workspaces.describe",
         "parameters": [
           {
