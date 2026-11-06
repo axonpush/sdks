@@ -34,6 +34,7 @@ except ImportError:
     ) from None
 
 from axonpush._tracing import get_or_create_trace
+from axonpush.integrations._exceptions import exception_payload
 from axonpush.integrations._publisher import (
     AsyncBackgroundPublisher,
     BackgroundPublisher,
@@ -274,7 +275,7 @@ class AxonPushCallbackHandler(_DeclaredTaskCallbacks, BaseCallbackHandler):
         self._publish(
             "chain.error",
             EventType.AGENT_ERROR,
-            {"error": str(error), "error_type": type(error).__name__},
+            exception_payload(error),
             run_id=run_id,
             parent_run_id=parent_run_id,
         )
@@ -379,7 +380,7 @@ class AxonPushCallbackHandler(_DeclaredTaskCallbacks, BaseCallbackHandler):
         self._publish(
             "tool.error",
             EventType.AGENT_ERROR,
-            {"error": str(error), "error_type": type(error).__name__},
+            exception_payload(error),
             run_id=run_id,
             parent_run_id=parent_run_id,
         )
@@ -523,7 +524,7 @@ class AsyncAxonPushCallbackHandler(_DeclaredTaskCallbacks, AsyncCallbackHandler)
         self._publish(
             "chain.error",
             EventType.AGENT_ERROR,
-            {"error": str(error), "error_type": type(error).__name__},
+            exception_payload(error),
             run_id=run_id,
             parent_run_id=parent_run_id,
         )
@@ -628,7 +629,7 @@ class AsyncAxonPushCallbackHandler(_DeclaredTaskCallbacks, AsyncCallbackHandler)
         self._publish(
             "tool.error",
             EventType.AGENT_ERROR,
-            {"error": str(error), "error_type": type(error).__name__},
+            exception_payload(error),
             run_id=run_id,
             parent_run_id=parent_run_id,
         )

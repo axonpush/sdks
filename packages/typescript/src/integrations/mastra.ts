@@ -18,6 +18,7 @@ import {
   safePublishParams,
   truncate,
 } from "./_base.js";
+import { exceptionPayload } from "./_exceptions.js";
 import {
   type DeclaredTaskGoal,
   FrameworkTaskLifecycle,
@@ -298,8 +299,7 @@ export class AxonPushMastraHooks {
   onWorkflowError(workflowName: string, error: Error): void {
     this.emit("workflow.error", "agent.error", {
       workflow_name: workflowName,
-      error: error.message,
-      error_type: error.name,
+      ...exceptionPayload(error),
     });
   }
 }

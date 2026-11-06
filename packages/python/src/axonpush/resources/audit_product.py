@@ -20,6 +20,7 @@ from axonpush._internal.api.models import (
     PolicyOutputBody,
     PublicInputBody,
     PublicWriteOutputBody,
+    ReferenceOutputBody,
     ShareOutputBody,
     TasksOutputBody,
     TrustOutputBody,
@@ -162,6 +163,7 @@ from axonpush._internal.api.api.audit_product import (
 from axonpush._internal.api.api.audit_product import (
     audit_product_providers_update as _providers_update_op,
 )
+from axonpush._internal.api.api.audit_product import audit_product_references as _references_op
 from axonpush._internal.api.api.audit_product import (
     audit_product_requests_list as _requests_list_op,
 )
@@ -463,6 +465,14 @@ class AuditProduct:
     def providers_update(self, id: str, body: PatchInputBody) -> ComplianceRecord | None:
         """Update providers resource with optimistic version."""
         return self._client._invoke(_providers_update_op, id=id, body=body)
+
+    def references(
+        self, kind: str, params: Mapping[str, Any] | None = None
+    ) -> ReferenceOutputBody | None:
+        """Search organization-scoped labeled relationship choices."""
+        return self._client._invoke(
+            _references_op, kind=kind, **{k: v for k, v in (params or {}).items() if v is not None}
+        )
 
     def requests_list(self, params: Mapping[str, Any] | None = None) -> ListOutputBody | None:
         """List requests."""
@@ -833,6 +843,14 @@ class AsyncAuditProduct:
     async def providers_update(self, id: str, body: PatchInputBody) -> ComplianceRecord | None:
         """Update providers resource with optimistic version."""
         return await self._client._invoke(_providers_update_op, id=id, body=body)
+
+    async def references(
+        self, kind: str, params: Mapping[str, Any] | None = None
+    ) -> ReferenceOutputBody | None:
+        """Search organization-scoped labeled relationship choices."""
+        return await self._client._invoke(
+            _references_op, kind=kind, **{k: v for k, v in (params or {}).items() if v is not None}
+        )
 
     async def requests_list(self, params: Mapping[str, Any] | None = None) -> ListOutputBody | None:
         """List requests."""
