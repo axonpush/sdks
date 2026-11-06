@@ -410,3 +410,11 @@ See `git log` and the previous CHANGELOG entries reproduced below.
 - **ID parameters are now strings** on `apps.*`, `channels.*`,
   `apiKeys.revoke`, `webhooks.*`. `events.list(channelId)` /
   `events.publish({ channelId })` accepted `string | number`.
+
+## Unreleased audit platform
+
+- Add generated archive and audit-workflow resource methods from the shared
+  server contract, preserving authorization and response envelopes.
+- Publish versioned evidence schemas and trusted-key offline verification docs.
+- Preserve declared task identity across background publisher handoffs without
+  leaking task context between unrelated work.

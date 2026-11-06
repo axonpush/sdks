@@ -20,6 +20,6 @@ public sealed class EventsResource
     public Task<PublishResult> PublishAsync(PublishRequest request, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(request);
-        return _transport.PostEventAsync(request, cancellationToken);
+        return _transport.PostEventAsync(Evidence.EvidenceContext.Attach(request), cancellationToken);
     }
 }

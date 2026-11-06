@@ -14,7 +14,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 spec = json.loads((ROOT / "contract/openapi.sdk.json").read_text())
 schemas = spec["components"]["schemas"]
-groups = {"workspaces": "Workspaces", "templates": "Templates", "observations": "Observations", "activity": "Activity", "telemetry": "Telemetry", "capabilities": "Capabilities"}
+groups = {"workspaces": "Workspaces", "templates": "Templates", "observations": "Observations", "activity": "Activity", "telemetry": "Telemetry", "capabilities": "Capabilities", "audit": "Audit", "auditProduct": "AuditProduct"}
 ops: dict[str, list[dict]] = {g: [] for g in groups}
 
 
@@ -49,7 +49,7 @@ for path, item in spec["paths"].items():
         responses = [r for code, r in operation["responses"].items() if code.startswith("2")]
         response = responses[0].get("content", {}).get("application/json", {}).get("schema", {})
         body_required = operation.get("requestBody", {}).get("required", False)
-        ops[group].append(dict(oid=oid, path=path, verb=verb, name=oid.split(".")[-1], body=ref(body), body_required=body_required, response=ref(response), params=operation.get("parameters", []), tag=operation["tags"][0], summary=operation.get("summary", "")))
+        ops[group].append(dict(oid=oid, path=path, verb=verb, name=camel(oid.split(".",1)[1]) if group in ("audit","auditProduct") else oid.split(".")[-1], body=ref(body), body_required=body_required, response=ref(response), params=operation.get("parameters", []), tag=operation["tags"][0], summary=operation.get("summary", "")))
 
 for group, cls in groups.items():
     # Capabilities keeps its published get() facade and pure discovery helper.
@@ -96,8 +96,8 @@ for group, cls in groups.items():
                 args.append('params: Mapping[str, Any] | None = None')
                 call.append('**{k: v for k, v in (params or {}).items() if v is not None}')
             py += ['', f'    {"async " if asynchronous else ""}def {snake(x["name"])}({", ".join(args)}) -> {x["response"] or "Any"} | None:', '        """' + x['summary'] + '."""', f'        return {"await " if asynchronous else ""}self._client._invoke(_{snake(x["name"])}_op{", " if call else ""}{", ".join(call)})']
-    (ROOT / f'packages/typescript/src/resources/{group}.ts').write_text('\n'.join(ts).replace('EventDTO', 'EventDto'))
-    (ROOT / f'packages/python/src/axonpush/resources/{group}.py').write_text('\n'.join(py) + '\n')
+    (ROOT / f'packages/typescript/src/resources/{snake(group)}.ts').write_text('\n'.join(ts).replace('EventDTO', 'EventDto'))
+    (ROOT / f'packages/python/src/axonpush/resources/{snake(group)}.py').write_text('\n'.join(py) + '\n')
 
 # .NET has no general generated OpenAPI client. Emit just this shared operations
 # graph; explicit JSON names prevent camel/snake casing drift across languages.
@@ -211,8 +211,8 @@ for group, cls in groups.items():
     (dotnet / (cls + 'Resource.g.cs')).write_text('\n'.join(lines))
 print(f'Generated {sum(map(len, ops.values()))} operations for Python, TypeScript and .NET')
 
-subprocess.run(["bun", "--no-env-file", "x", "biome", "check", "--write", *[f"packages/typescript/src/resources/{g}.ts" for g in groups]], cwd=ROOT, check=True)
-python_paths = [f"src/axonpush/resources/{g}.py" for g in groups]
+subprocess.run(["bun", "--no-env-file", "x", "biome", "check", "--write", *[f"packages/typescript/src/resources/{snake(g)}.ts" for g in groups]], cwd=ROOT, check=True)
+python_paths = [f"src/axonpush/resources/{snake(g)}.py" for g in groups]
 subprocess.run(["uv", "run", "ruff", "check", "--fix", *python_paths], cwd=ROOT / "packages/python", check=True)
 subprocess.run(["uv", "run", "ruff", "format", *python_paths], cwd=ROOT / "packages/python", check=True)
 

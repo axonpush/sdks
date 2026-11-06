@@ -1,0 +1,143 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/axonpush/sdks/spec/evidence/v1/manifest.schema.json",
+  "title": "AxonPush sealed segment manifest v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema",
+    "orgId",
+    "region",
+    "period",
+    "sequence",
+    "previousHash",
+    "root",
+    "rows",
+    "meta",
+    "content",
+    "lockMode",
+    "lockedUntil",
+    "sealedAt",
+    "sealHash"
+  ],
+  "properties": {
+    "schema": {
+      "const": "axonpush.evidence.segment.v1"
+    },
+    "orgId": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 256
+    },
+    "region": {
+      "type": "string",
+      "minLength": 1
+    },
+    "period": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "sequence": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 9007199254740991
+    },
+    "previousHash": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "root": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "rows": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 5000
+    },
+    "meta": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "key",
+        "version",
+        "sha256",
+        "bytes"
+      ],
+      "properties": {
+        "key": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1023
+        },
+        "version": {
+          "type": "string",
+          "minLength": 1,
+          "not": {
+            "const": "null"
+          }
+        },
+        "sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "bytes": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 67108864
+        }
+      }
+    },
+    "content": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "key",
+        "version",
+        "sha256",
+        "bytes"
+      ],
+      "properties": {
+        "key": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1023
+        },
+        "version": {
+          "type": "string",
+          "minLength": 1,
+          "not": {
+            "const": "null"
+          }
+        },
+        "sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "bytes": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 67108864
+        }
+      }
+    },
+    "lockMode": {
+      "enum": [
+        "GOVERNANCE",
+        "COMPLIANCE"
+      ]
+    },
+    "lockedUntil": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "sealedAt": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "sealHash": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    }
+  }
+}

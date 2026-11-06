@@ -49,6 +49,7 @@ from axonpush.integrations._utils import (
     safe_serialize,
 )
 from axonpush.models import EventType
+from axonpush.integrations._task_lifecycle import DeclaredTaskGoal, FrameworkTaskLifecycle
 
 if TYPE_CHECKING:
     from axonpush.client import AsyncAxonPush, AxonPush
@@ -128,7 +129,62 @@ def _publish_kwargs(
     return out
 
 
-class AxonPushCallbackHandler(BaseCallbackHandler):
+class _DeclaredTaskCallbacks:
+    _tasks: FrameworkTaskLifecycle
+
+    def _publish(
+        self,
+        identifier: str,
+        event_type: EventType,
+        payload: Dict[str, Any],
+        *,
+        run_id: UUID | None = None,
+        parent_run_id: UUID | None = None,
+        extra_metadata: Dict[str, Any] | None = None,
+    ) -> None:
+        raise NotImplementedError
+
+    def _declared_start(
+        self,
+        run_id: UUID,
+        parent_run_id: UUID | None,
+        name: str,
+        inputs: dict[str, Any],
+        metadata: dict[str, Any] | None,
+    ) -> None:
+        task = self._tasks.start(
+            str(run_id),
+            str(parent_run_id) if parent_run_id else None,
+            name=name,
+            input=inputs,
+            metadata=metadata,
+        )
+        if task:
+            kind, payload, evidence = task
+            self._publish(
+                kind,
+                EventType.CUSTOM,
+                payload,
+                run_id=run_id,
+                parent_run_id=parent_run_id,
+                extra_metadata=evidence,
+            )
+
+    def _declared_end(self, run_id: UUID, parent_run_id: UUID | None, outcome: str) -> None:
+        task = self._tasks.finish(str(run_id), outcome)
+        if task:
+            kind, payload, evidence = task
+            self._publish(
+                kind,
+                EventType.CUSTOM,
+                payload,
+                run_id=run_id,
+                parent_run_id=parent_run_id,
+                extra_metadata=evidence,
+            )
+
+
+class AxonPushCallbackHandler(_DeclaredTaskCallbacks, BaseCallbackHandler):
     """Sync LangChain callback handler that publishes to AxonPush."""
 
     def __init__(
@@ -139,11 +195,13 @@ class AxonPushCallbackHandler(BaseCallbackHandler):
         agent_id: str = "langchain",
         trace_id: Optional[str] = None,
         metadata: Optional[Dict[str, Any]] = None,
+        task_goal: DeclaredTaskGoal | None = None,
         mode: Optional[Literal["background", "sync", "rq"]] = None,
         queue_size: int = DEFAULT_QUEUE_SIZE,
         shutdown_timeout: float = DEFAULT_SHUTDOWN_TIMEOUT_S,
         rq_options: Optional[Dict[str, Any]] = None,
     ) -> None:
+        self._tasks = FrameworkTaskLifecycle(task_goal, "langchain")
         self._client = client
         self._channel_id = coerce_channel_id(channel_id)
         self._agent_id = agent_id
@@ -169,6 +227,13 @@ class AxonPushCallbackHandler(BaseCallbackHandler):
         parent_run_id: Optional[UUID] = None,
         **kwargs: Any,
     ) -> None:
+        self._declared_start(
+            run_id,
+            parent_run_id,
+            derive_runnable_name(serialized, kwargs),
+            inputs,
+            kwargs.get("metadata"),
+        )
         self._publish(
             "chain.start",
             EventType.AGENT_START,
@@ -196,6 +261,7 @@ class AxonPushCallbackHandler(BaseCallbackHandler):
             run_id=run_id,
             parent_run_id=parent_run_id,
         )
+        self._declared_end(run_id, parent_run_id, "succeeded")
 
     def on_chain_error(
         self,
@@ -212,6 +278,7 @@ class AxonPushCallbackHandler(BaseCallbackHandler):
             run_id=run_id,
             parent_run_id=parent_run_id,
         )
+        self._declared_end(run_id, parent_run_id, "failed")
 
     def on_llm_start(
         self,
@@ -336,7 +403,13 @@ class AxonPushCallbackHandler(BaseCallbackHandler):
                 agent_id=self._agent_id,
                 trace_id=self._trace.trace_id,
                 span_id=self._trace.next_span_id(),
-                metadata=self._base_metadata,
+                metadata={
+                    **self._base_metadata,
+                    **self._tasks.metadata(
+                        str(run_id) if run_id else None,
+                        str(parent_run_id) if parent_run_id else None,
+                    ),
+                },
                 run_id=run_id,
                 parent_run_id=parent_run_id,
                 extra_metadata=extra_metadata,
@@ -362,7 +435,7 @@ class AxonPushCallbackHandler(BaseCallbackHandler):
             self._publisher = None
 
 
-class AsyncAxonPushCallbackHandler(AsyncCallbackHandler):
+class AsyncAxonPushCallbackHandler(_DeclaredTaskCallbacks, AsyncCallbackHandler):
     """Async LangChain callback handler that publishes to AxonPush."""
 
     def __init__(
@@ -373,10 +446,12 @@ class AsyncAxonPushCallbackHandler(AsyncCallbackHandler):
         agent_id: str = "langchain",
         trace_id: Optional[str] = None,
         metadata: Optional[Dict[str, Any]] = None,
+        task_goal: DeclaredTaskGoal | None = None,
         mode: Optional[Literal["background", "sync", "rq"]] = None,
         max_pending: int = DEFAULT_QUEUE_SIZE,
         rq_options: Optional[Dict[str, Any]] = None,
     ) -> None:
+        self._tasks = FrameworkTaskLifecycle(task_goal, "langchain")
         self._client = client
         self._channel_id = coerce_channel_id(channel_id)
         self._agent_id = agent_id
@@ -401,6 +476,13 @@ class AsyncAxonPushCallbackHandler(AsyncCallbackHandler):
         parent_run_id: Optional[UUID] = None,
         **kwargs: Any,
     ) -> None:
+        self._declared_start(
+            run_id,
+            parent_run_id,
+            derive_runnable_name(serialized, kwargs),
+            inputs,
+            kwargs.get("metadata"),
+        )
         self._publish(
             "chain.start",
             EventType.AGENT_START,
@@ -428,6 +510,7 @@ class AsyncAxonPushCallbackHandler(AsyncCallbackHandler):
             run_id=run_id,
             parent_run_id=parent_run_id,
         )
+        self._declared_end(run_id, parent_run_id, "succeeded")
 
     async def on_chain_error(
         self,
@@ -444,6 +527,7 @@ class AsyncAxonPushCallbackHandler(AsyncCallbackHandler):
             run_id=run_id,
             parent_run_id=parent_run_id,
         )
+        self._declared_end(run_id, parent_run_id, "failed")
 
     async def on_llm_start(
         self,
@@ -568,7 +652,13 @@ class AsyncAxonPushCallbackHandler(AsyncCallbackHandler):
                 agent_id=self._agent_id,
                 trace_id=self._trace.trace_id,
                 span_id=self._trace.next_span_id(),
-                metadata=self._base_metadata,
+                metadata={
+                    **self._base_metadata,
+                    **self._tasks.metadata(
+                        str(run_id) if run_id else None,
+                        str(parent_run_id) if parent_run_id else None,
+                    ),
+                },
                 run_id=run_id,
                 parent_run_id=parent_run_id,
                 extra_metadata=extra_metadata,

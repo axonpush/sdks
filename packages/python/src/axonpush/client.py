@@ -43,6 +43,8 @@ from axonpush._redaction import redact_telemetry
 if TYPE_CHECKING:
     from axonpush._internal.api.client import AuthenticatedClient
     from axonpush._internal.api.models import ActivityIngestReport, IdentifyOutputBody
+    from axonpush.resources.audit import Audit, AsyncAudit
+    from axonpush.resources.audit_product import AuditProduct, AsyncAuditProduct
     from axonpush.resources.workspaces import Workspaces, AsyncWorkspaces
     from axonpush.resources.templates import Templates, AsyncTemplates
     from axonpush.resources.observations import Observations, AsyncObservations
@@ -307,6 +309,16 @@ class AxonPush:
 
         module = importlib.import_module(f"axonpush.resources.{module_name}")
         return getattr(module, class_name)(self)
+
+    @property
+    def audit(self) -> Audit:
+        """Typed audit operations (lazy import)."""
+        return cast("Audit", self._resource("audit", "Audit"))
+
+    @property
+    def audit_product(self) -> AuditProduct:
+        """Typed audit operations (lazy import)."""
+        return cast("AuditProduct", self._resource("audit_product", "AuditProduct"))
 
     @property
     def workspaces(self) -> Workspaces:
@@ -628,6 +640,16 @@ class AsyncAxonPush:
 
         module = importlib.import_module(f"axonpush.resources.{module_name}")
         return getattr(module, class_name)(self)
+
+    @property
+    def audit(self) -> AsyncAudit:
+        """Typed audit operations (lazy import)."""
+        return cast("AsyncAudit", self._resource("audit", "AsyncAudit"))
+
+    @property
+    def audit_product(self) -> AsyncAuditProduct:
+        """Typed audit operations (lazy import)."""
+        return cast("AsyncAuditProduct", self._resource("audit_product", "AsyncAuditProduct"))
 
     @property
     def workspaces(self) -> AsyncWorkspaces:

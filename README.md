@@ -132,3 +132,29 @@ Session timeline calls accept `cursor` and `replayOnly` (`replay_only` in Python
 Use `replayOnly: true` to query recording chunks without walking ordinary session
 events. Do not combine a cursor with an offset. Content still requires explicit,
 audited reads. See each package changelog for release availability.
+
+### Audit platform feature release
+
+The matching audit-platform server contract adds generated `audit` and
+`auditProduct` resources (Python: `audit`, `audit_product`; .NET: `Audit`,
+`AuditProduct`). They reuse the client's authenticated transport and preserve
+server response/pagination envelopes. Management operations fail closed even
+when passive observation is configured fail-open. Use appropriate audit/request
+scopes and discover operation availability; passive ingest credentials do not
+receive management privileges by default.
+
+```ts
+const segments = await client.audit.segments({ limit: 20 });
+const agents = await client.auditProduct.agentsList({ limit: 20 });
+```
+
+Declared tasks propagate through in-process background and durable publisher
+handoffs without leaking a worker creator's task into unrelated later events.
+Framework root capture is opt-in with an actual goal; see the integration docs
+for native root hooks and explicit runner scopes where hooks cannot report a
+whole run's outcome. Reported human actors remain customer assertions.
+
+The public MIT-licensed [v1 evidence specification](spec/evidence/v1/README.md)
+defines the event vocabulary, manifest schema and cryptographic format. Offline
+verification requires an independently trusted checkpoint or issuer key. This
+feature branch is not a claim that an older published SDK exposes these APIs.

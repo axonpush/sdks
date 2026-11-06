@@ -29,6 +29,7 @@ export {
   ServerError,
   ValidationError,
 } from "./errors.js";
+export { EvidenceRecorder, type OversightDecision } from "./evidence.js";
 // Integrations — primitives + helpers.
 // Framework-specific installers are reachable via
 // `@axonpush/sdk/integrations/<name>` per package.json `exports`.
@@ -113,6 +114,8 @@ export { ActivityResource } from "./resources/activity.js";
 export { AlertsResource } from "./resources/alerts.js";
 export { AnalyticsResource } from "./resources/analytics.js";
 export { AppsResource } from "./resources/apps.js";
+export { AuditResource } from "./resources/audit.js";
+export { AuditProductResource } from "./resources/audit_product.js";
 export type { OperationAvailability, OperationCapabilities } from "./resources/capabilities.js";
 export { CapabilitiesResource, operationAvailability } from "./resources/capabilities.js";
 export { ChannelsResource } from "./resources/channels.js";

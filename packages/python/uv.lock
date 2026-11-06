@@ -385,6 +385,7 @@ dev = [
     { name = "respx" },
     { name = "ruff" },
     { name = "tomli", marker = "python_full_version < '3.11'" },
+    { name = "types-requests" },
 ]
 langchain = [
     { name = "langchain-core" },
@@ -452,6 +453,7 @@ requires-dist = [
     { name = "structlog", marker = "extra == 'structlog'", specifier = ">=24.0.0" },
     { name = "tenacity", specifier = ">=9.1,<10" },
     { name = "tomli", marker = "python_full_version < '3.11' and extra == 'dev'", specifier = ">=2.0" },
+    { name = "types-requests", marker = "extra == 'dev'", specifier = ">=2.32.4.20260107" },
 ]
 provides-extras = ["langchain", "openai-agents", "anthropic", "crewai", "deepagents", "loguru", "structlog", "rq", "sentry", "otel", "all", "dev"]
 

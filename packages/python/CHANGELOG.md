@@ -575,3 +575,11 @@ silently dedupe by `identifier`, same as before.
 ## [0.0.9] – earlier
 
 Previous PyPI release. No CHANGELOG entry.
+
+## Unreleased audit platform
+
+- Add generated archive and audit-workflow resource methods from the shared
+  server contract, preserving authorization and response envelopes.
+- Publish versioned evidence schemas and trusted-key offline verification docs.
+- Preserve declared task identity across background publisher handoffs without
+  leaking task context between unrelated work.

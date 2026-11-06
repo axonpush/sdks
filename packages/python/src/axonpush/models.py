@@ -37,6 +37,7 @@ class EventType(str, Enum):
     serialize as their raw value (e.g. ``"agent.start"``).
     """
 
+    CUSTOM = "custom"
     AGENT_START = "agent.start"
     AGENT_END = "agent.end"
     AGENT_ERROR = "agent.error"

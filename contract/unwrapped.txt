@@ -50,8 +50,6 @@ user.me.update
 # Not wrapped yet. Each is a real gap: wrap it (add a resource method) or delete
 # the endpoint. Deferred from the current refresh, which covered the observability
 # and governance data plane (dashboards, errors, analytics, govern/spend policies).
-audit.list
-audit.verify
 audittrail.get
 export.create
 export.delete

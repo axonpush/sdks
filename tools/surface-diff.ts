@@ -113,6 +113,8 @@ for (const resource of resources) {
 
 const dotnet = dotnetOperationsSurface();
 for (const resource of [
+  "audit",
+  "auditproduct",
   "activity",
   "observations",
   "templates",

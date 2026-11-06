@@ -37,6 +37,8 @@ from axonpush.models import (
     WebhookDelivery,
     WebhookEndpoint,
 )
+from axonpush.resources.audit import Audit, AsyncAudit
+from axonpush.resources.audit_product import AuditProduct, AsyncAuditProduct
 from axonpush.resources.workspaces import Workspaces, AsyncWorkspaces
 from axonpush.resources.templates import Templates, AsyncTemplates
 from axonpush.resources.observations import Observations, AsyncObservations
@@ -79,6 +81,10 @@ except ImportError:
     _HAS_TELEMETRY = False
 
 __all__ = [
+    "Audit",
+    "AsyncAudit",
+    "AuditProduct",
+    "AsyncAuditProduct",
     "Workspaces",
     "AsyncWorkspaces",
     "Templates",

@@ -2,7 +2,7 @@
 
 import type { Client, Options as Options2, TDataShape } from './client/index.js';
 import { client } from './client.gen.js';
-import type { AccessRequestCreateData, AccessRequestCreateErrors, AccessRequestCreateResponses, ActivityAnalyticsData, ActivityAnalyticsErrors, ActivityAnalyticsResponses, ActivityDeleteEntityData, ActivityDeleteEntityErrors, ActivityDeleteEntityResponses, ActivityEntitiesData, ActivityEntitiesErrors, ActivityEntitiesResponses, ActivityHealthData, ActivityHealthErrors, ActivityHealthResponses, ActivityIdentifyData, ActivityIdentifyErrors, ActivityIdentifyResponses, ActivityIncidentsData, ActivityIncidentsErrors, ActivityIncidentsResponses, ActivitySeriesData, ActivitySeriesErrors, ActivitySeriesResponses, ActivitySummaryData, ActivitySummaryErrors, ActivitySummaryResponses, ActivityTimelineData, ActivityTimelineErrors, ActivityTimelineResponses, ActivityViewsData, ActivityViewsErrors, ActivityViewsResponses, AdminAbuseFlagsListData, AdminAbuseFlagsListErrors, AdminAbuseFlagsListResponses, AdminAbuseFlagsReviewData, AdminAbuseFlagsReviewErrors, AdminAbuseFlagsReviewResponses, AdminAbuseFlagsSuspendData, AdminAbuseFlagsSuspendErrors, AdminAbuseFlagsSuspendResponses, AdminAccessRequestsListData, AdminAccessRequestsListErrors, AdminAccessRequestsListResponses, AdminAccessRequestsSetStatusData, AdminAccessRequestsSetStatusErrors, AdminAccessRequestsSetStatusResponses, AdminBillingEventsListData, AdminBillingEventsListErrors, AdminBillingEventsListResponses, AdminFeedbackListData, AdminFeedbackListErrors, AdminFeedbackListResponses, AdminFeedbackSetStatusData, AdminFeedbackSetStatusErrors, AdminFeedbackSetStatusResponses, AdminOrgsDeleteData, AdminOrgsDeleteErrors, AdminOrgsDeleteResponses, AdminOrgsDisableData, AdminOrgsDisableErrors, AdminOrgsDisableResponses, AdminOrgsEnableData, AdminOrgsEnableErrors, AdminOrgsEnableResponses, AdminOrgsGetData, AdminOrgsGetErrors, AdminOrgsGetResponses, AdminOrgsSearchData, AdminOrgsSearchErrors, AdminOrgsSearchResponses, AdminOrgsSetBillingData, AdminOrgsSetBillingErrors, AdminOrgsSetBillingResponses, AdminOrgsSetLimitsData, AdminOrgsSetLimitsErrors, AdminOrgsSetLimitsResponses, AdminOrgsSetPlanData, AdminOrgsSetPlanErrors, AdminOrgsSetPlanResponses, AdminOrgsSetStatusData, AdminOrgsSetStatusErrors, AdminOrgsSetStatusResponses, AdminOrgsSetTrialData, AdminOrgsSetTrialErrors, AdminOrgsSetTrialResponses, AdminOverviewData, AdminOverviewErrors, AdminOverviewResponses, AdminUsersDeleteData, AdminUsersDeleteErrors, AdminUsersDeleteResponses, AdminUsersDisableData, AdminUsersDisableErrors, AdminUsersDisableResponses, AdminUsersEnableData, AdminUsersEnableErrors, AdminUsersEnableResponses, AdminUsersRestoreData, AdminUsersRestoreErrors, AdminUsersRestoreResponses, AdminUsersSearchData, AdminUsersSearchErrors, AdminUsersSearchResponses, AlertsCreateData, AlertsCreateErrors, AlertsCreateResponses, AlertsDeleteData, AlertsDeleteErrors, AlertsDeleteResponses, AlertsListData, AlertsListErrors, AlertsListResponses, AlertsOccurrencesData, AlertsOccurrencesErrors, AlertsOccurrencesResponses, AlertsUpdateData, AlertsUpdateErrors, AlertsUpdateResponses, AnalyticsBreakdownData, AnalyticsBreakdownErrors, AnalyticsBreakdownResponses, AnalyticsDiffData, AnalyticsDiffErrors, AnalyticsDiffResponses, AnalyticsDimensionsData, AnalyticsDimensionsErrors, AnalyticsDimensionsResponses, AnalyticsDimensionValuesData, AnalyticsDimensionValuesErrors, AnalyticsDimensionValuesResponses, AnalyticsHeatmapData, AnalyticsHeatmapErrors, AnalyticsHeatmapResponses, AnalyticsIngestionStatusData, AnalyticsIngestionStatusErrors, AnalyticsIngestionStatusResponses, AnalyticsLatencyData, AnalyticsLatencyErrors, AnalyticsLatencyResponses, AnalyticsOverviewData, AnalyticsOverviewErrors, AnalyticsOverviewResponses, AnalyticsTimeseriesData, AnalyticsTimeseriesErrors, AnalyticsTimeseriesResponses, AppsCreateData, AppsCreateErrors, AppsCreateResponses, AppsDeleteData, AppsDeleteErrors, AppsDeleteResponses, AppsGetData, AppsGetErrors, AppsGetResponses, AppsListData, AppsListErrors, AppsListResponses, AppsUpdateData, AppsUpdateErrors, AppsUpdateResponses, AuditListData, AuditListErrors, AuditListResponses, AudittrailGetData, AudittrailGetErrors, AudittrailGetResponses, AuditVerifyData, AuditVerifyErrors, AuditVerifyResponses, BillingCheckoutData, BillingCheckoutErrors, BillingCheckoutResponses, BillingPlansData, BillingPlansErrors, BillingPlansResponses, BillingPortalData, BillingPortalErrors, BillingPortalResponses, BillingUsageData, BillingUsageErrors, BillingUsageResponses, BillingWebhookData, BillingWebhookErrors, BillingWebhookResponses, CapabilitiesGetData, CapabilitiesGetErrors, CapabilitiesGetResponses, CapabilitiesOperationsData, CapabilitiesOperationsErrors, CapabilitiesOperationsResponses, ChannelsCreateData, ChannelsCreateErrors, ChannelsCreateResponses, ChannelsDeleteData, ChannelsDeleteErrors, ChannelsDeleteResponses, ChannelsGetData, ChannelsGetErrors, ChannelsGetResponses, ChannelsListData, ChannelsListErrors, ChannelsListResponses, ChannelsUpdateData, ChannelsUpdateErrors, ChannelsUpdateResponses, CreateEventBatchData, CreateEventBatchErrors, CreateEventBatchResponses, CreateEventData, CreateEventErrors, CreateEventResponses, EnvironmentsCreateData, EnvironmentsCreateErrors, EnvironmentsCreateResponses, EnvironmentsDeleteData, EnvironmentsDeleteErrors, EnvironmentsDeleteResponses, EnvironmentsListData, EnvironmentsListErrors, EnvironmentsListResponses, EnvironmentsPromoteData, EnvironmentsPromoteErrors, EnvironmentsPromoteResponses, EnvironmentsUpdateData, EnvironmentsUpdateErrors, EnvironmentsUpdateResponses, ErrorsEventsData, ErrorsEventsErrors, ErrorsEventsResponses, ErrorsGetData, ErrorsGetErrors, ErrorsGetResponses, ErrorsListData, ErrorsListErrors, ErrorsListResponses, ErrorsTriageData, ErrorsTriageErrors, ErrorsTriageResponses, EventsSearchData, EventsSearchErrors, EventsSearchResponses, ExportCreateData, ExportCreateErrors, ExportCreateResponses, ExportDeleteData, ExportDeleteErrors, ExportDeleteResponses, ExportGetData, ExportGetErrors, ExportGetResponses, ExportListData, ExportListDeliveriesData, ExportListDeliveriesErrors, ExportListDeliveriesResponses, ExportListErrors, ExportListResponses, ExportTestData, ExportTestErrors, ExportTestResponses, ExportUpdateData, ExportUpdateErrors, ExportUpdateResponses, FeatureFlagsMeData, FeatureFlagsMeErrors, FeatureFlagsMeResponses, FeedbackCreateData, FeedbackCreateErrors, FeedbackCreateResponses, GetHealthzData, GetHealthzErrors, GetHealthzResponses, LicenseGetData, LicenseGetErrors, LicenseGetResponses, McpConnectionsData, McpConnectionsErrors, McpConnectionsResponses, ObservationsAcceptData, ObservationsAcceptErrors, ObservationsAcceptResponses, ObservationsReceiptData, ObservationsReceiptErrors, ObservationsReceiptResponses, OrganizationDeleteData, OrganizationDeleteErrors, OrganizationDeleteResponses, OrganizationGetData, OrganizationGetErrors, OrganizationGetResponses, OrganizationInvitationsAcceptData, OrganizationInvitationsAcceptErrors, OrganizationInvitationsAcceptResponses, OrganizationInvitationsCancelData, OrganizationInvitationsCancelErrors, OrganizationInvitationsCancelResponses, OrganizationInvitationsCreateData, OrganizationInvitationsCreateErrors, OrganizationInvitationsCreateResponses, OrganizationInvitationsListData, OrganizationInvitationsListErrors, OrganizationInvitationsListResponses, OrganizationLeaveData, OrganizationLeaveErrors, OrganizationLeaveResponses, OrganizationMembersListData, OrganizationMembersListErrors, OrganizationMembersListResponses, OrganizationMembersRemoveData, OrganizationMembersRemoveErrors, OrganizationMembersRemoveResponses, OrganizationMembersUpdateRoleData, OrganizationMembersUpdateRoleErrors, OrganizationMembersUpdateRoleResponses, OrganizationTelemetryPolicyGetData, OrganizationTelemetryPolicyGetErrors, OrganizationTelemetryPolicyGetResponses, OrganizationTelemetryPolicyUpdateData, OrganizationTelemetryPolicyUpdateErrors, OrganizationTelemetryPolicyUpdateResponses, OrganizationTransferOwnershipData, OrganizationTransferOwnershipErrors, OrganizationTransferOwnershipResponses, OrganizationUpdateData, OrganizationUpdateErrors, OrganizationUpdateResponses, SessionBootstrapData, SessionBootstrapErrors, SessionBootstrapResponses, TelemetryContentData, TelemetryContentErrors, TelemetryContentResponses, TelemetryEraseData, TelemetryEraseErrors, TelemetryEraseResponses, TelemetryTimelineData, TelemetryTimelineErrors, TelemetryTimelineResponses, TemplatesListData, TemplatesListErrors, TemplatesListResponses, TemplatesPublishData, TemplatesPublishErrors, TemplatesPublishResponses, TokensCreateData, TokensCreateErrors, TokensCreateResponses, TokensListData, TokensListErrors, TokensListResponses, TokensRevokeData, TokensRevokeErrors, TokensRevokeResponses, TracesGetData, TracesGetErrors, TracesGetResponses, TracesGroupMembersData, TracesGroupMembersErrors, TracesGroupMembersResponses, TracesGroupsData, TracesGroupsErrors, TracesGroupsResponses, TracesListData, TracesListErrors, TracesListResponses, UserMeData, UserMeErrors, UserMeOrganizationsData, UserMeOrganizationsErrors, UserMeOrganizationsResponses, UserMeResponses, UserMeSetActiveOrgData, UserMeSetActiveOrgErrors, UserMeSetActiveOrgResponses, UserMeUpdateData, UserMeUpdateErrors, UserMeUpdateResponses, WebhooksCreateEndpointData, WebhooksCreateEndpointErrors, WebhooksCreateEndpointResponses, WebhooksDeleteEndpointData, WebhooksDeleteEndpointErrors, WebhooksDeleteEndpointResponses, WebhooksListDeliveriesData, WebhooksListDeliveriesErrors, WebhooksListDeliveriesResponses, WebhooksListEndpointsData, WebhooksListEndpointsErrors, WebhooksListEndpointsResponses, WorkspacesActivateData, WorkspacesActivateDraftData, WorkspacesActivateDraftErrors, WorkspacesActivateDraftResponses, WorkspacesActivateErrors, WorkspacesActivateResponses, WorkspacesApplyDraftOpsData, WorkspacesApplyDraftOpsErrors, WorkspacesApplyDraftOpsResponses, WorkspacesCatalogData, WorkspacesCatalogErrors, WorkspacesCatalogResponses, WorkspacesConnectData, WorkspacesConnectErrors, WorkspacesConnectResponses, WorkspacesCreateAccessGrantData, WorkspacesCreateAccessGrantErrors, WorkspacesCreateAccessGrantResponses, WorkspacesCreateData, WorkspacesCreateErrors, WorkspacesCreateResponses, WorkspacesDeleteAccessGrantData, WorkspacesDeleteAccessGrantErrors, WorkspacesDeleteAccessGrantResponses, WorkspacesDescribeData, WorkspacesDescribeErrors, WorkspacesDescribeResponses, WorkspacesDiscardDraftData, WorkspacesDiscardDraftErrors, WorkspacesDiscardDraftResponses, WorkspacesDraftChangesData, WorkspacesDraftChangesErrors, WorkspacesDraftChangesResponses, WorkspacesDraftData, WorkspacesDraftErrors, WorkspacesDraftResponses, WorkspacesGetData, WorkspacesGetErrors, WorkspacesGetResponses, WorkspacesListAccessGrantsData, WorkspacesListAccessGrantsErrors, WorkspacesListAccessGrantsResponses, WorkspacesListData, WorkspacesListErrors, WorkspacesListResponses, WorkspacesPreviewData, WorkspacesPreviewErrors, WorkspacesPreviewResponses, WorkspacesReplaceDraftData, WorkspacesReplaceDraftErrors, WorkspacesReplaceDraftResponses, WorkspacesRevisionsData, WorkspacesRevisionsErrors, WorkspacesRevisionsResponses, WorkspacesSaveRevisionData, WorkspacesSaveRevisionErrors, WorkspacesSaveRevisionResponses, WorkspacesSchemaData, WorkspacesSchemaErrors, WorkspacesSchemaResponses, WorkspacesUpdateAccessGrantData, WorkspacesUpdateAccessGrantErrors, WorkspacesUpdateAccessGrantResponses, WorkspacesValidateData, WorkspacesValidateErrors, WorkspacesValidateResponses } from './types.gen.js';
+import type { AccessRequestCreateData, AccessRequestCreateErrors, AccessRequestCreateResponses, ActivityAnalyticsData, ActivityAnalyticsErrors, ActivityAnalyticsResponses, ActivityDeleteEntityData, ActivityDeleteEntityErrors, ActivityDeleteEntityResponses, ActivityEntitiesData, ActivityEntitiesErrors, ActivityEntitiesResponses, ActivityHealthData, ActivityHealthErrors, ActivityHealthResponses, ActivityIdentifyData, ActivityIdentifyErrors, ActivityIdentifyResponses, ActivityIncidentsData, ActivityIncidentsErrors, ActivityIncidentsResponses, ActivitySeriesData, ActivitySeriesErrors, ActivitySeriesResponses, ActivitySummaryData, ActivitySummaryErrors, ActivitySummaryResponses, ActivityTimelineData, ActivityTimelineErrors, ActivityTimelineResponses, ActivityViewsData, ActivityViewsErrors, ActivityViewsResponses, AdminAbuseFlagsListData, AdminAbuseFlagsListErrors, AdminAbuseFlagsListResponses, AdminAbuseFlagsReviewData, AdminAbuseFlagsReviewErrors, AdminAbuseFlagsReviewResponses, AdminAbuseFlagsSuspendData, AdminAbuseFlagsSuspendErrors, AdminAbuseFlagsSuspendResponses, AdminAccessRequestsListData, AdminAccessRequestsListErrors, AdminAccessRequestsListResponses, AdminAccessRequestsSetStatusData, AdminAccessRequestsSetStatusErrors, AdminAccessRequestsSetStatusResponses, AdminBillingEventsListData, AdminBillingEventsListErrors, AdminBillingEventsListResponses, AdminFeedbackListData, AdminFeedbackListErrors, AdminFeedbackListResponses, AdminFeedbackSetStatusData, AdminFeedbackSetStatusErrors, AdminFeedbackSetStatusResponses, AdminOrgsDeleteData, AdminOrgsDeleteErrors, AdminOrgsDeleteResponses, AdminOrgsDisableData, AdminOrgsDisableErrors, AdminOrgsDisableResponses, AdminOrgsEnableData, AdminOrgsEnableErrors, AdminOrgsEnableResponses, AdminOrgsGetData, AdminOrgsGetErrors, AdminOrgsGetResponses, AdminOrgsSearchData, AdminOrgsSearchErrors, AdminOrgsSearchResponses, AdminOrgsSetBillingData, AdminOrgsSetBillingErrors, AdminOrgsSetBillingResponses, AdminOrgsSetLimitsData, AdminOrgsSetLimitsErrors, AdminOrgsSetLimitsResponses, AdminOrgsSetPlanData, AdminOrgsSetPlanErrors, AdminOrgsSetPlanResponses, AdminOrgsSetStatusData, AdminOrgsSetStatusErrors, AdminOrgsSetStatusResponses, AdminOrgsSetTrialData, AdminOrgsSetTrialErrors, AdminOrgsSetTrialResponses, AdminOverviewData, AdminOverviewErrors, AdminOverviewResponses, AdminUsersDeleteData, AdminUsersDeleteErrors, AdminUsersDeleteResponses, AdminUsersDisableData, AdminUsersDisableErrors, AdminUsersDisableResponses, AdminUsersEnableData, AdminUsersEnableErrors, AdminUsersEnableResponses, AdminUsersRestoreData, AdminUsersRestoreErrors, AdminUsersRestoreResponses, AdminUsersSearchData, AdminUsersSearchErrors, AdminUsersSearchResponses, AlertsCreateData, AlertsCreateErrors, AlertsCreateResponses, AlertsDeleteData, AlertsDeleteErrors, AlertsDeleteResponses, AlertsListData, AlertsListErrors, AlertsListResponses, AlertsOccurrencesData, AlertsOccurrencesErrors, AlertsOccurrencesResponses, AlertsUpdateData, AlertsUpdateErrors, AlertsUpdateResponses, AnalyticsBreakdownData, AnalyticsBreakdownErrors, AnalyticsBreakdownResponses, AnalyticsDiffData, AnalyticsDiffErrors, AnalyticsDiffResponses, AnalyticsDimensionsData, AnalyticsDimensionsErrors, AnalyticsDimensionsResponses, AnalyticsDimensionValuesData, AnalyticsDimensionValuesErrors, AnalyticsDimensionValuesResponses, AnalyticsHeatmapData, AnalyticsHeatmapErrors, AnalyticsHeatmapResponses, AnalyticsIngestionStatusData, AnalyticsIngestionStatusErrors, AnalyticsIngestionStatusResponses, AnalyticsLatencyData, AnalyticsLatencyErrors, AnalyticsLatencyResponses, AnalyticsOverviewData, AnalyticsOverviewErrors, AnalyticsOverviewResponses, AnalyticsTimeseriesData, AnalyticsTimeseriesErrors, AnalyticsTimeseriesResponses, AppsCreateData, AppsCreateErrors, AppsCreateResponses, AppsDeleteData, AppsDeleteErrors, AppsDeleteResponses, AppsGetData, AppsGetErrors, AppsGetResponses, AppsListData, AppsListErrors, AppsListResponses, AppsUpdateData, AppsUpdateErrors, AppsUpdateResponses, AuditContentData, AuditContentErrors, AuditContentResponses, AuditEvidenceVerifyData, AuditEvidenceVerifyErrors, AuditEvidenceVerifyResponses, AuditGovernanceLiftData, AuditGovernanceLiftErrors, AuditGovernanceLiftResponses, AuditGovernanceReceiptData, AuditGovernanceReceiptErrors, AuditGovernanceReceiptResponses, AuditHoldsCreateData, AuditHoldsCreateErrors, AuditHoldsCreateResponses, AuditHoldsListData, AuditHoldsListErrors, AuditHoldsListResponses, AuditHoldsReleaseData, AuditHoldsReleaseErrors, AuditHoldsReleaseResponses, AuditJobData, AuditJobErrors, AuditJobRecoverData, AuditJobRecoverErrors, AuditJobRecoverResponses, AuditJobResponses, AuditJobRetryData, AuditJobRetryErrors, AuditJobRetryResponses, AuditJobsData, AuditJobsErrors, AuditJobsResponses, AuditListData, AuditListErrors, AuditListResponses, AuditProductAccessLogData, AuditProductAccessLogErrors, AuditProductAccessLogResponses, AuditProductAgentPolicyCheckData, AuditProductAgentPolicyCheckErrors, AuditProductAgentPolicyCheckResponses, AuditProductAgentPolicyData, AuditProductAgentPolicyErrors, AuditProductAgentPolicyResponses, AuditProductAgentsChangesData, AuditProductAgentsChangesErrors, AuditProductAgentsChangesResponses, AuditProductAgentsCreateData, AuditProductAgentsCreateErrors, AuditProductAgentsCreateResponses, AuditProductAgentsGetData, AuditProductAgentsGetErrors, AuditProductAgentsGetResponses, AuditProductAgentsListData, AuditProductAgentsListErrors, AuditProductAgentsListResponses, AuditProductAgentsResumeData, AuditProductAgentsResumeErrors, AuditProductAgentsResumeResponses, AuditProductAgentsSuspendData, AuditProductAgentsSuspendErrors, AuditProductAgentsSuspendResponses, AuditProductAgentsUpdateData, AuditProductAgentsUpdateErrors, AuditProductAgentsUpdateResponses, AuditProductAssessmentsApproveData, AuditProductAssessmentsApproveErrors, AuditProductAssessmentsApproveResponses, AuditProductAssessmentsCreateData, AuditProductAssessmentsCreateErrors, AuditProductAssessmentsCreateResponses, AuditProductAssessmentsGetData, AuditProductAssessmentsGetErrors, AuditProductAssessmentsGetResponses, AuditProductAssessmentsListData, AuditProductAssessmentsListErrors, AuditProductAssessmentsListResponses, AuditProductAssessmentsUpdateData, AuditProductAssessmentsUpdateErrors, AuditProductAssessmentsUpdateResponses, AuditProductAuditorGrantsCreateData, AuditProductAuditorGrantsCreateErrors, AuditProductAuditorGrantsCreateResponses, AuditProductAuditorGrantsGetData, AuditProductAuditorGrantsGetErrors, AuditProductAuditorGrantsGetResponses, AuditProductAuditorGrantsListData, AuditProductAuditorGrantsListErrors, AuditProductAuditorGrantsListResponses, AuditProductAuditorGrantsUpdateData, AuditProductAuditorGrantsUpdateErrors, AuditProductAuditorGrantsUpdateResponses, AuditProductDestinationsCreateData, AuditProductDestinationsCreateErrors, AuditProductDestinationsCreateResponses, AuditProductDestinationsDeliverData, AuditProductDestinationsDeliverErrors, AuditProductDestinationsDeliverResponses, AuditProductDestinationsGetData, AuditProductDestinationsGetErrors, AuditProductDestinationsGetResponses, AuditProductDestinationsListData, AuditProductDestinationsListErrors, AuditProductDestinationsListResponses, AuditProductDestinationsUpdateData, AuditProductDestinationsUpdateErrors, AuditProductDestinationsUpdateResponses, AuditProductGrantsCreateData, AuditProductGrantsCreateErrors, AuditProductGrantsCreateResponses, AuditProductGrantsGetData, AuditProductGrantsGetErrors, AuditProductGrantsGetResponses, AuditProductGrantsListData, AuditProductGrantsListErrors, AuditProductGrantsListResponses, AuditProductGrantsUpdateData, AuditProductGrantsUpdateErrors, AuditProductGrantsUpdateResponses, AuditProductIncidentsCreateData, AuditProductIncidentsCreateErrors, AuditProductIncidentsCreateResponses, AuditProductIncidentsFileData, AuditProductIncidentsFileErrors, AuditProductIncidentsFileResponses, AuditProductIncidentsGetData, AuditProductIncidentsGetErrors, AuditProductIncidentsGetResponses, AuditProductIncidentsListData, AuditProductIncidentsListErrors, AuditProductIncidentsListResponses, AuditProductIncidentsUpdateData, AuditProductIncidentsUpdateErrors, AuditProductIncidentsUpdateResponses, AuditProductNoticesCreateData, AuditProductNoticesCreateErrors, AuditProductNoticesCreateResponses, AuditProductNoticesGetData, AuditProductNoticesGetErrors, AuditProductNoticesGetResponses, AuditProductNoticesListData, AuditProductNoticesListErrors, AuditProductNoticesListResponses, AuditProductNoticesUpdateData, AuditProductNoticesUpdateErrors, AuditProductNoticesUpdateResponses, AuditProductObligationsData, AuditProductObligationsErrors, AuditProductObligationsResponses, AuditProductOversightTasksData, AuditProductOversightTasksErrors, AuditProductOversightTasksResponses, AuditProductOverviewData, AuditProductOverviewErrors, AuditProductOverviewResponses, AuditProductPacksBuildData, AuditProductPacksBuildErrors, AuditProductPacksBuildResponses, AuditProductPacksCreateData, AuditProductPacksCreateErrors, AuditProductPacksCreateResponses, AuditProductPacksDownloadData, AuditProductPacksDownloadErrors, AuditProductPacksDownloadResponses, AuditProductPacksGetData, AuditProductPacksGetErrors, AuditProductPacksGetResponses, AuditProductPacksListData, AuditProductPacksListErrors, AuditProductPacksListResponses, AuditProductPacksUpdateData, AuditProductPacksUpdateErrors, AuditProductPacksUpdateResponses, AuditProductPeopleCreateData, AuditProductPeopleCreateErrors, AuditProductPeopleCreateResponses, AuditProductPeopleGetData, AuditProductPeopleGetErrors, AuditProductPeopleGetResponses, AuditProductPeopleListData, AuditProductPeopleListErrors, AuditProductPeopleListResponses, AuditProductPeopleObservedData, AuditProductPeopleObservedErrors, AuditProductPeopleObservedResponses, AuditProductPeopleUpdateData, AuditProductPeopleUpdateErrors, AuditProductPeopleUpdateResponses, AuditProductProvidersCreateData, AuditProductProvidersCreateErrors, AuditProductProvidersCreateResponses, AuditProductProvidersGetData, AuditProductProvidersGetErrors, AuditProductProvidersGetResponses, AuditProductProvidersListData, AuditProductProvidersListErrors, AuditProductProvidersListResponses, AuditProductProvidersUpdateData, AuditProductProvidersUpdateErrors, AuditProductProvidersUpdateResponses, AuditProductPublicRequestData, AuditProductPublicRequestErrors, AuditProductPublicRequestResponses, AuditProductPublicTrustData, AuditProductPublicTrustErrors, AuditProductPublicTrustResponses, AuditProductRequestsCreateData, AuditProductRequestsCreateErrors, AuditProductRequestsCreateResponses, AuditProductRequestsExtendData, AuditProductRequestsExtendErrors, AuditProductRequestsExtendResponses, AuditProductRequestsFulfillData, AuditProductRequestsFulfillErrors, AuditProductRequestsFulfillResponses, AuditProductRequestsGetData, AuditProductRequestsGetErrors, AuditProductRequestsGetResponses, AuditProductRequestsListData, AuditProductRequestsListErrors, AuditProductRequestsListResponses, AuditProductRequestsSendData, AuditProductRequestsSendErrors, AuditProductRequestsSendResponses, AuditProductRequestsUpdateData, AuditProductRequestsUpdateErrors, AuditProductRequestsUpdateResponses, AuditProductShareDownloadData, AuditProductShareDownloadErrors, AuditProductShareDownloadResponses, AuditProductShareGetData, AuditProductShareGetErrors, AuditProductShareGetResponses, AuditProductShareNdaData, AuditProductShareNdaErrors, AuditProductShareNdaResponses, AuditProductTrainingCreateData, AuditProductTrainingCreateErrors, AuditProductTrainingCreateResponses, AuditProductTrainingGetData, AuditProductTrainingGetErrors, AuditProductTrainingGetResponses, AuditProductTrainingImportData, AuditProductTrainingImportErrors, AuditProductTrainingImportResponses, AuditProductTrainingListData, AuditProductTrainingListErrors, AuditProductTrainingListResponses, AuditProductTrainingUpdateData, AuditProductTrainingUpdateErrors, AuditProductTrainingUpdateResponses, AuditProductTrustGetData, AuditProductTrustGetErrors, AuditProductTrustGetResponses, AuditProductTrustUpdateData, AuditProductTrustUpdateErrors, AuditProductTrustUpdateResponses, AuditProductUnregisteredData, AuditProductUnregisteredErrors, AuditProductUnregisteredResponses, AuditProofData, AuditProofErrors, AuditProofResponses, AuditReconcileData, AuditReconcileErrors, AuditReconcileResponses, AuditRestoreData, AuditRestoreErrors, AuditRestoreResponses, AuditRetentionData, AuditRetentionErrors, AuditRetentionResponses, AuditRetentionUpdateData, AuditRetentionUpdateErrors, AuditRetentionUpdateResponses, AuditSegmentGetData, AuditSegmentGetErrors, AuditSegmentGetResponses, AuditSegmentsData, AuditSegmentsErrors, AuditSegmentsResponses, AuditSegmentVerifyData, AuditSegmentVerifyErrors, AuditSegmentVerifyResponses, AuditStatusData, AuditStatusErrors, AuditStatusResponses, AuditStorageData, AuditStorageErrors, AuditStorageResponses, AudittrailGetData, AudittrailGetErrors, AudittrailGetResponses, AuditVerifyData, AuditVerifyErrors, AuditVerifyResponses, BillingCheckoutData, BillingCheckoutErrors, BillingCheckoutResponses, BillingPlansData, BillingPlansErrors, BillingPlansResponses, BillingPortalData, BillingPortalErrors, BillingPortalResponses, BillingUsageData, BillingUsageErrors, BillingUsageResponses, BillingWebhookData, BillingWebhookErrors, BillingWebhookResponses, CapabilitiesGetData, CapabilitiesGetErrors, CapabilitiesGetResponses, CapabilitiesOperationsData, CapabilitiesOperationsErrors, CapabilitiesOperationsResponses, ChannelsCreateData, ChannelsCreateErrors, ChannelsCreateResponses, ChannelsDeleteData, ChannelsDeleteErrors, ChannelsDeleteResponses, ChannelsGetData, ChannelsGetErrors, ChannelsGetResponses, ChannelsListData, ChannelsListErrors, ChannelsListResponses, ChannelsUpdateData, ChannelsUpdateErrors, ChannelsUpdateResponses, CreateEventBatchData, CreateEventBatchErrors, CreateEventBatchResponses, CreateEventData, CreateEventErrors, CreateEventResponses, EnvironmentsCreateData, EnvironmentsCreateErrors, EnvironmentsCreateResponses, EnvironmentsDeleteData, EnvironmentsDeleteErrors, EnvironmentsDeleteResponses, EnvironmentsListData, EnvironmentsListErrors, EnvironmentsListResponses, EnvironmentsPromoteData, EnvironmentsPromoteErrors, EnvironmentsPromoteResponses, EnvironmentsUpdateData, EnvironmentsUpdateErrors, EnvironmentsUpdateResponses, ErrorsEventsData, ErrorsEventsErrors, ErrorsEventsResponses, ErrorsGetData, ErrorsGetErrors, ErrorsGetResponses, ErrorsListData, ErrorsListErrors, ErrorsListResponses, ErrorsTriageData, ErrorsTriageErrors, ErrorsTriageResponses, EventsSearchData, EventsSearchErrors, EventsSearchResponses, ExportCreateData, ExportCreateErrors, ExportCreateResponses, ExportDeleteData, ExportDeleteErrors, ExportDeleteResponses, ExportGetData, ExportGetErrors, ExportGetResponses, ExportListData, ExportListDeliveriesData, ExportListDeliveriesErrors, ExportListDeliveriesResponses, ExportListErrors, ExportListResponses, ExportTestData, ExportTestErrors, ExportTestResponses, ExportUpdateData, ExportUpdateErrors, ExportUpdateResponses, FeatureFlagsMeData, FeatureFlagsMeErrors, FeatureFlagsMeResponses, FeedbackCreateData, FeedbackCreateErrors, FeedbackCreateResponses, GetHealthzData, GetHealthzErrors, GetHealthzResponses, LicenseGetData, LicenseGetErrors, LicenseGetResponses, McpConnectionsData, McpConnectionsErrors, McpConnectionsResponses, ObservationsAcceptData, ObservationsAcceptErrors, ObservationsAcceptResponses, ObservationsReceiptData, ObservationsReceiptErrors, ObservationsReceiptResponses, OrganizationDeleteData, OrganizationDeleteErrors, OrganizationDeleteResponses, OrganizationGetData, OrganizationGetErrors, OrganizationGetResponses, OrganizationInvitationsAcceptData, OrganizationInvitationsAcceptErrors, OrganizationInvitationsAcceptResponses, OrganizationInvitationsCancelData, OrganizationInvitationsCancelErrors, OrganizationInvitationsCancelResponses, OrganizationInvitationsCreateData, OrganizationInvitationsCreateErrors, OrganizationInvitationsCreateResponses, OrganizationInvitationsListData, OrganizationInvitationsListErrors, OrganizationInvitationsListResponses, OrganizationLeaveData, OrganizationLeaveErrors, OrganizationLeaveResponses, OrganizationMembersListData, OrganizationMembersListErrors, OrganizationMembersListResponses, OrganizationMembersRemoveData, OrganizationMembersRemoveErrors, OrganizationMembersRemoveResponses, OrganizationMembersUpdateRoleData, OrganizationMembersUpdateRoleErrors, OrganizationMembersUpdateRoleResponses, OrganizationTelemetryPolicyGetData, OrganizationTelemetryPolicyGetErrors, OrganizationTelemetryPolicyGetResponses, OrganizationTelemetryPolicyUpdateData, OrganizationTelemetryPolicyUpdateErrors, OrganizationTelemetryPolicyUpdateResponses, OrganizationTransferOwnershipData, OrganizationTransferOwnershipErrors, OrganizationTransferOwnershipResponses, OrganizationUpdateData, OrganizationUpdateErrors, OrganizationUpdateResponses, SessionBootstrapData, SessionBootstrapErrors, SessionBootstrapResponses, TelemetryContentData, TelemetryContentErrors, TelemetryContentResponses, TelemetryEraseData, TelemetryEraseErrors, TelemetryEraseResponses, TelemetryTimelineData, TelemetryTimelineErrors, TelemetryTimelineResponses, TemplatesListData, TemplatesListErrors, TemplatesListResponses, TemplatesPublishData, TemplatesPublishErrors, TemplatesPublishResponses, TokensCreateData, TokensCreateErrors, TokensCreateResponses, TokensListData, TokensListErrors, TokensListResponses, TokensRevokeData, TokensRevokeErrors, TokensRevokeResponses, TracesGetData, TracesGetErrors, TracesGetResponses, TracesGroupMembersData, TracesGroupMembersErrors, TracesGroupMembersResponses, TracesGroupsData, TracesGroupsErrors, TracesGroupsResponses, TracesListData, TracesListErrors, TracesListResponses, UserMeData, UserMeErrors, UserMeOrganizationsData, UserMeOrganizationsErrors, UserMeOrganizationsResponses, UserMeResponses, UserMeSetActiveOrgData, UserMeSetActiveOrgErrors, UserMeSetActiveOrgResponses, UserMeUpdateData, UserMeUpdateErrors, UserMeUpdateResponses, WebhooksCreateEndpointData, WebhooksCreateEndpointErrors, WebhooksCreateEndpointResponses, WebhooksDeleteEndpointData, WebhooksDeleteEndpointErrors, WebhooksDeleteEndpointResponses, WebhooksListDeliveriesData, WebhooksListDeliveriesErrors, WebhooksListDeliveriesResponses, WebhooksListEndpointsData, WebhooksListEndpointsErrors, WebhooksListEndpointsResponses, WorkspacesActivateData, WorkspacesActivateDraftData, WorkspacesActivateDraftErrors, WorkspacesActivateDraftResponses, WorkspacesActivateErrors, WorkspacesActivateResponses, WorkspacesApplyDraftOpsData, WorkspacesApplyDraftOpsErrors, WorkspacesApplyDraftOpsResponses, WorkspacesCatalogData, WorkspacesCatalogErrors, WorkspacesCatalogResponses, WorkspacesConnectData, WorkspacesConnectErrors, WorkspacesConnectResponses, WorkspacesCreateAccessGrantData, WorkspacesCreateAccessGrantErrors, WorkspacesCreateAccessGrantResponses, WorkspacesCreateData, WorkspacesCreateErrors, WorkspacesCreateResponses, WorkspacesDeleteAccessGrantData, WorkspacesDeleteAccessGrantErrors, WorkspacesDeleteAccessGrantResponses, WorkspacesDescribeData, WorkspacesDescribeErrors, WorkspacesDescribeResponses, WorkspacesDiscardDraftData, WorkspacesDiscardDraftErrors, WorkspacesDiscardDraftResponses, WorkspacesDraftChangesData, WorkspacesDraftChangesErrors, WorkspacesDraftChangesResponses, WorkspacesDraftData, WorkspacesDraftErrors, WorkspacesDraftResponses, WorkspacesGetData, WorkspacesGetErrors, WorkspacesGetResponses, WorkspacesListAccessGrantsData, WorkspacesListAccessGrantsErrors, WorkspacesListAccessGrantsResponses, WorkspacesListData, WorkspacesListErrors, WorkspacesListResponses, WorkspacesPreviewData, WorkspacesPreviewErrors, WorkspacesPreviewResponses, WorkspacesReplaceDraftData, WorkspacesReplaceDraftErrors, WorkspacesReplaceDraftResponses, WorkspacesRevisionsData, WorkspacesRevisionsErrors, WorkspacesRevisionsResponses, WorkspacesSaveRevisionData, WorkspacesSaveRevisionErrors, WorkspacesSaveRevisionResponses, WorkspacesSchemaData, WorkspacesSchemaErrors, WorkspacesSchemaResponses, WorkspacesUpdateAccessGrantData, WorkspacesUpdateAccessGrantErrors, WorkspacesUpdateAccessGrantResponses, WorkspacesValidateData, WorkspacesValidateErrors, WorkspacesValidateResponses } from './types.gen.js';
 
 export type Options<TData extends TDataShape = TDataShape, ThrowOnError extends boolean = boolean, TResponse = unknown> = Options2<TData, ThrowOnError, TResponse> & {
     /**
@@ -353,6 +353,770 @@ export const auditVerify = <ThrowOnError extends boolean = false>(options?: Opti
  * Query and export the decision audit trail
  */
 export const audittrailGet = <ThrowOnError extends boolean = false>(options?: Options<AudittrailGetData, ThrowOnError>) => (options?.client ?? client).get<AudittrailGetResponses, AudittrailGetErrors, ThrowOnError>({ url: '/audit-trail', ...options });
+
+/**
+ * Read scoped auditor access records
+ */
+export const auditProductAccessLog = <ThrowOnError extends boolean = false>(options?: Options<AuditProductAccessLogData, ThrowOnError>) => (options?.client ?? client).get<AuditProductAccessLogResponses, AuditProductAccessLogErrors, ThrowOnError>({ url: '/audit/access-log', ...options });
+
+/**
+ * List agents
+ */
+export const auditProductAgentsList = <ThrowOnError extends boolean = false>(options?: Options<AuditProductAgentsListData, ThrowOnError>) => (options?.client ?? client).get<AuditProductAgentsListResponses, AuditProductAgentsListErrors, ThrowOnError>({ url: '/audit/agents', ...options });
+
+/**
+ * Create agents resource
+ */
+export const auditProductAgentsCreate = <ThrowOnError extends boolean = false>(options: Options<AuditProductAgentsCreateData, ThrowOnError>) => (options.client ?? client).post<AuditProductAgentsCreateResponses, AuditProductAgentsCreateErrors, ThrowOnError>({
+    url: '/audit/agents',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * Read agents resource
+ */
+export const auditProductAgentsGet = <ThrowOnError extends boolean = false>(options: Options<AuditProductAgentsGetData, ThrowOnError>) => (options.client ?? client).get<AuditProductAgentsGetResponses, AuditProductAgentsGetErrors, ThrowOnError>({ url: '/audit/agents/{id}', ...options });
+
+/**
+ * Update agents resource with optimistic version
+ */
+export const auditProductAgentsUpdate = <ThrowOnError extends boolean = false>(options: Options<AuditProductAgentsUpdateData, ThrowOnError>) => (options.client ?? client).patch<AuditProductAgentsUpdateResponses, AuditProductAgentsUpdateErrors, ThrowOnError>({
+    url: '/audit/agents/{id}',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * Read agent revision history
+ */
+export const auditProductAgentsChanges = <ThrowOnError extends boolean = false>(options: Options<AuditProductAgentsChangesData, ThrowOnError>) => (options.client ?? client).get<AuditProductAgentsChangesResponses, AuditProductAgentsChangesErrors, ThrowOnError>({ url: '/audit/agents/{id}/changes', ...options });
+
+/**
+ * Read the declared policy for a bound agent
+ */
+export const auditProductAgentPolicy = <ThrowOnError extends boolean = false>(options: Options<AuditProductAgentPolicyData, ThrowOnError>) => (options.client ?? client).get<AuditProductAgentPolicyResponses, AuditProductAgentPolicyErrors, ThrowOnError>({ url: '/audit/agents/{id}/policy', ...options });
+
+/**
+ * Check a declared subject opt-out without putting identifiers in URLs
+ */
+export const auditProductAgentPolicyCheck = <ThrowOnError extends boolean = false>(options: Options<AuditProductAgentPolicyCheckData, ThrowOnError>) => (options.client ?? client).post<AuditProductAgentPolicyCheckResponses, AuditProductAgentPolicyCheckErrors, ThrowOnError>({
+    url: '/audit/agents/{id}/policy/check',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * Apply resume workflow
+ */
+export const auditProductAgentsResume = <ThrowOnError extends boolean = false>(options: Options<AuditProductAgentsResumeData, ThrowOnError>) => (options.client ?? client).post<AuditProductAgentsResumeResponses, AuditProductAgentsResumeErrors, ThrowOnError>({
+    url: '/audit/agents/{id}/resume',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * Apply suspend workflow
+ */
+export const auditProductAgentsSuspend = <ThrowOnError extends boolean = false>(options: Options<AuditProductAgentsSuspendData, ThrowOnError>) => (options.client ?? client).post<AuditProductAgentsSuspendResponses, AuditProductAgentsSuspendErrors, ThrowOnError>({
+    url: '/audit/agents/{id}/suspend',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * List assessments
+ */
+export const auditProductAssessmentsList = <ThrowOnError extends boolean = false>(options?: Options<AuditProductAssessmentsListData, ThrowOnError>) => (options?.client ?? client).get<AuditProductAssessmentsListResponses, AuditProductAssessmentsListErrors, ThrowOnError>({ url: '/audit/assessments', ...options });
+
+/**
+ * Create assessments resource
+ */
+export const auditProductAssessmentsCreate = <ThrowOnError extends boolean = false>(options: Options<AuditProductAssessmentsCreateData, ThrowOnError>) => (options.client ?? client).post<AuditProductAssessmentsCreateResponses, AuditProductAssessmentsCreateErrors, ThrowOnError>({
+    url: '/audit/assessments',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * Read assessments resource
+ */
+export const auditProductAssessmentsGet = <ThrowOnError extends boolean = false>(options: Options<AuditProductAssessmentsGetData, ThrowOnError>) => (options.client ?? client).get<AuditProductAssessmentsGetResponses, AuditProductAssessmentsGetErrors, ThrowOnError>({ url: '/audit/assessments/{id}', ...options });
+
+/**
+ * Update assessments resource with optimistic version
+ */
+export const auditProductAssessmentsUpdate = <ThrowOnError extends boolean = false>(options: Options<AuditProductAssessmentsUpdateData, ThrowOnError>) => (options.client ?? client).patch<AuditProductAssessmentsUpdateResponses, AuditProductAssessmentsUpdateErrors, ThrowOnError>({
+    url: '/audit/assessments/{id}',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * Apply approve workflow
+ */
+export const auditProductAssessmentsApprove = <ThrowOnError extends boolean = false>(options: Options<AuditProductAssessmentsApproveData, ThrowOnError>) => (options.client ?? client).post<AuditProductAssessmentsApproveResponses, AuditProductAssessmentsApproveErrors, ThrowOnError>({
+    url: '/audit/assessments/{id}/approve',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * List auditor-grants
+ */
+export const auditProductAuditorGrantsList = <ThrowOnError extends boolean = false>(options?: Options<AuditProductAuditorGrantsListData, ThrowOnError>) => (options?.client ?? client).get<AuditProductAuditorGrantsListResponses, AuditProductAuditorGrantsListErrors, ThrowOnError>({ url: '/audit/auditor-grants', ...options });
+
+/**
+ * Create auditor-grants resource
+ */
+export const auditProductAuditorGrantsCreate = <ThrowOnError extends boolean = false>(options: Options<AuditProductAuditorGrantsCreateData, ThrowOnError>) => (options.client ?? client).post<AuditProductAuditorGrantsCreateResponses, AuditProductAuditorGrantsCreateErrors, ThrowOnError>({
+    url: '/audit/auditor-grants',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * Read auditor-grants resource
+ */
+export const auditProductAuditorGrantsGet = <ThrowOnError extends boolean = false>(options: Options<AuditProductAuditorGrantsGetData, ThrowOnError>) => (options.client ?? client).get<AuditProductAuditorGrantsGetResponses, AuditProductAuditorGrantsGetErrors, ThrowOnError>({ url: '/audit/auditor-grants/{id}', ...options });
+
+/**
+ * Update auditor-grants resource with optimistic version
+ */
+export const auditProductAuditorGrantsUpdate = <ThrowOnError extends boolean = false>(options: Options<AuditProductAuditorGrantsUpdateData, ThrowOnError>) => (options.client ?? client).patch<AuditProductAuditorGrantsUpdateResponses, AuditProductAuditorGrantsUpdateErrors, ThrowOnError>({
+    url: '/audit/auditor-grants/{id}',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * List destinations
+ */
+export const auditProductDestinationsList = <ThrowOnError extends boolean = false>(options?: Options<AuditProductDestinationsListData, ThrowOnError>) => (options?.client ?? client).get<AuditProductDestinationsListResponses, AuditProductDestinationsListErrors, ThrowOnError>({ url: '/audit/destinations', ...options });
+
+/**
+ * Create destinations resource
+ */
+export const auditProductDestinationsCreate = <ThrowOnError extends boolean = false>(options: Options<AuditProductDestinationsCreateData, ThrowOnError>) => (options.client ?? client).post<AuditProductDestinationsCreateResponses, AuditProductDestinationsCreateErrors, ThrowOnError>({
+    url: '/audit/destinations',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * Read destinations resource
+ */
+export const auditProductDestinationsGet = <ThrowOnError extends boolean = false>(options: Options<AuditProductDestinationsGetData, ThrowOnError>) => (options.client ?? client).get<AuditProductDestinationsGetResponses, AuditProductDestinationsGetErrors, ThrowOnError>({ url: '/audit/destinations/{id}', ...options });
+
+/**
+ * Update destinations resource with optimistic version
+ */
+export const auditProductDestinationsUpdate = <ThrowOnError extends boolean = false>(options: Options<AuditProductDestinationsUpdateData, ThrowOnError>) => (options.client ?? client).patch<AuditProductDestinationsUpdateResponses, AuditProductDestinationsUpdateErrors, ThrowOnError>({
+    url: '/audit/destinations/{id}',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * Apply deliver workflow
+ */
+export const auditProductDestinationsDeliver = <ThrowOnError extends boolean = false>(options: Options<AuditProductDestinationsDeliverData, ThrowOnError>) => (options.client ?? client).post<AuditProductDestinationsDeliverResponses, AuditProductDestinationsDeliverErrors, ThrowOnError>({
+    url: '/audit/destinations/{id}/deliver',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * List grants
+ */
+export const auditProductGrantsList = <ThrowOnError extends boolean = false>(options?: Options<AuditProductGrantsListData, ThrowOnError>) => (options?.client ?? client).get<AuditProductGrantsListResponses, AuditProductGrantsListErrors, ThrowOnError>({ url: '/audit/grants', ...options });
+
+/**
+ * Create grants resource
+ */
+export const auditProductGrantsCreate = <ThrowOnError extends boolean = false>(options: Options<AuditProductGrantsCreateData, ThrowOnError>) => (options.client ?? client).post<AuditProductGrantsCreateResponses, AuditProductGrantsCreateErrors, ThrowOnError>({
+    url: '/audit/grants',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * Read grants resource
+ */
+export const auditProductGrantsGet = <ThrowOnError extends boolean = false>(options: Options<AuditProductGrantsGetData, ThrowOnError>) => (options.client ?? client).get<AuditProductGrantsGetResponses, AuditProductGrantsGetErrors, ThrowOnError>({ url: '/audit/grants/{id}', ...options });
+
+/**
+ * Update grants resource with optimistic version
+ */
+export const auditProductGrantsUpdate = <ThrowOnError extends boolean = false>(options: Options<AuditProductGrantsUpdateData, ThrowOnError>) => (options.client ?? client).patch<AuditProductGrantsUpdateResponses, AuditProductGrantsUpdateErrors, ThrowOnError>({
+    url: '/audit/grants/{id}',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * List legal holds
+ */
+export const auditHoldsList = <ThrowOnError extends boolean = false>(options?: Options<AuditHoldsListData, ThrowOnError>) => (options?.client ?? client).get<AuditHoldsListResponses, AuditHoldsListErrors, ThrowOnError>({ url: '/audit/holds', ...options });
+
+/**
+ * Apply a recorded legal hold
+ */
+export const auditHoldsCreate = <ThrowOnError extends boolean = false>(options: Options<AuditHoldsCreateData, ThrowOnError>) => (options.client ?? client).post<AuditHoldsCreateResponses, AuditHoldsCreateErrors, ThrowOnError>({
+    url: '/audit/holds',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * Release a recorded legal hold
+ */
+export const auditHoldsRelease = <ThrowOnError extends boolean = false>(options: Options<AuditHoldsReleaseData, ThrowOnError>) => (options.client ?? client).delete<AuditHoldsReleaseResponses, AuditHoldsReleaseErrors, ThrowOnError>({
+    url: '/audit/holds/{holdId}',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * List incidents
+ */
+export const auditProductIncidentsList = <ThrowOnError extends boolean = false>(options?: Options<AuditProductIncidentsListData, ThrowOnError>) => (options?.client ?? client).get<AuditProductIncidentsListResponses, AuditProductIncidentsListErrors, ThrowOnError>({ url: '/audit/incidents', ...options });
+
+/**
+ * Create incidents resource
+ */
+export const auditProductIncidentsCreate = <ThrowOnError extends boolean = false>(options: Options<AuditProductIncidentsCreateData, ThrowOnError>) => (options.client ?? client).post<AuditProductIncidentsCreateResponses, AuditProductIncidentsCreateErrors, ThrowOnError>({
+    url: '/audit/incidents',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * Read incidents resource
+ */
+export const auditProductIncidentsGet = <ThrowOnError extends boolean = false>(options: Options<AuditProductIncidentsGetData, ThrowOnError>) => (options.client ?? client).get<AuditProductIncidentsGetResponses, AuditProductIncidentsGetErrors, ThrowOnError>({ url: '/audit/incidents/{id}', ...options });
+
+/**
+ * Update incidents resource with optimistic version
+ */
+export const auditProductIncidentsUpdate = <ThrowOnError extends boolean = false>(options: Options<AuditProductIncidentsUpdateData, ThrowOnError>) => (options.client ?? client).patch<AuditProductIncidentsUpdateResponses, AuditProductIncidentsUpdateErrors, ThrowOnError>({
+    url: '/audit/incidents/{id}',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * Apply file workflow
+ */
+export const auditProductIncidentsFile = <ThrowOnError extends boolean = false>(options: Options<AuditProductIncidentsFileData, ThrowOnError>) => (options.client ?? client).post<AuditProductIncidentsFileResponses, AuditProductIncidentsFileErrors, ThrowOnError>({
+    url: '/audit/incidents/{id}/file',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * List recent archive operations
+ */
+export const auditJobs = <ThrowOnError extends boolean = false>(options?: Options<AuditJobsData, ThrowOnError>) => (options?.client ?? client).get<AuditJobsResponses, AuditJobsErrors, ThrowOnError>({ url: '/audit/jobs', ...options });
+
+/**
+ * Read verification or restoration progress
+ */
+export const auditJob = <ThrowOnError extends boolean = false>(options: Options<AuditJobData, ThrowOnError>) => (options.client ?? client).get<AuditJobResponses, AuditJobErrors, ThrowOnError>({ url: '/audit/jobs/{jobId}', ...options });
+
+/**
+ * Download and revalidate the immutable timestamped governance reason
+ */
+export const auditGovernanceReceipt = <ThrowOnError extends boolean = false>(options: Options<AuditGovernanceReceiptData, ThrowOnError>) => (options.client ?? client).get<AuditGovernanceReceiptResponses, AuditGovernanceReceiptErrors, ThrowOnError>({ url: '/audit/jobs/{jobId}/governance-receipt', ...options });
+
+/**
+ * Recover an abandoned job after stopping its old worker
+ */
+export const auditJobRecover = <ThrowOnError extends boolean = false>(options: Options<AuditJobRecoverData, ThrowOnError>) => (options.client ?? client).post<AuditJobRecoverResponses, AuditJobRecoverErrors, ThrowOnError>({
+    url: '/audit/jobs/{jobId}/recover',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * Retry a failed archive operation
+ */
+export const auditJobRetry = <ThrowOnError extends boolean = false>(options: Options<AuditJobRetryData, ThrowOnError>) => (options.client ?? client).post<AuditJobRetryResponses, AuditJobRetryErrors, ThrowOnError>({ url: '/audit/jobs/{jobId}/retry', ...options });
+
+/**
+ * List notices
+ */
+export const auditProductNoticesList = <ThrowOnError extends boolean = false>(options?: Options<AuditProductNoticesListData, ThrowOnError>) => (options?.client ?? client).get<AuditProductNoticesListResponses, AuditProductNoticesListErrors, ThrowOnError>({ url: '/audit/notices', ...options });
+
+/**
+ * Create notices resource
+ */
+export const auditProductNoticesCreate = <ThrowOnError extends boolean = false>(options: Options<AuditProductNoticesCreateData, ThrowOnError>) => (options.client ?? client).post<AuditProductNoticesCreateResponses, AuditProductNoticesCreateErrors, ThrowOnError>({
+    url: '/audit/notices',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * Read notices resource
+ */
+export const auditProductNoticesGet = <ThrowOnError extends boolean = false>(options: Options<AuditProductNoticesGetData, ThrowOnError>) => (options.client ?? client).get<AuditProductNoticesGetResponses, AuditProductNoticesGetErrors, ThrowOnError>({ url: '/audit/notices/{id}', ...options });
+
+/**
+ * Update notices resource with optimistic version
+ */
+export const auditProductNoticesUpdate = <ThrowOnError extends boolean = false>(options: Options<AuditProductNoticesUpdateData, ThrowOnError>) => (options.client ?? client).patch<AuditProductNoticesUpdateResponses, AuditProductNoticesUpdateErrors, ThrowOnError>({
+    url: '/audit/notices/{id}',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * Evaluate recorded evidence against the versioned catalogue
+ */
+export const auditProductObligations = <ThrowOnError extends boolean = false>(options?: Options<AuditProductObligationsData, ThrowOnError>) => (options?.client ?? client).get<AuditProductObligationsResponses, AuditProductObligationsErrors, ThrowOnError>({ url: '/audit/obligations', ...options });
+
+/**
+ * Read task-scoped oversight and drift evidence
+ */
+export const auditProductOversightTasks = <ThrowOnError extends boolean = false>(options?: Options<AuditProductOversightTasksData, ThrowOnError>) => (options?.client ?? client).get<AuditProductOversightTasksResponses, AuditProductOversightTasksErrors, ThrowOnError>({ url: '/audit/oversight/tasks', ...options });
+
+/**
+ * Read audit evidence overview
+ */
+export const auditProductOverview = <ThrowOnError extends boolean = false>(options?: Options<AuditProductOverviewData, ThrowOnError>) => (options?.client ?? client).get<AuditProductOverviewResponses, AuditProductOverviewErrors, ThrowOnError>({ url: '/audit/overview', ...options });
+
+/**
+ * List packs
+ */
+export const auditProductPacksList = <ThrowOnError extends boolean = false>(options?: Options<AuditProductPacksListData, ThrowOnError>) => (options?.client ?? client).get<AuditProductPacksListResponses, AuditProductPacksListErrors, ThrowOnError>({ url: '/audit/packs', ...options });
+
+/**
+ * Create packs resource
+ */
+export const auditProductPacksCreate = <ThrowOnError extends boolean = false>(options: Options<AuditProductPacksCreateData, ThrowOnError>) => (options.client ?? client).post<AuditProductPacksCreateResponses, AuditProductPacksCreateErrors, ThrowOnError>({
+    url: '/audit/packs',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * Read packs resource
+ */
+export const auditProductPacksGet = <ThrowOnError extends boolean = false>(options: Options<AuditProductPacksGetData, ThrowOnError>) => (options.client ?? client).get<AuditProductPacksGetResponses, AuditProductPacksGetErrors, ThrowOnError>({ url: '/audit/packs/{id}', ...options });
+
+/**
+ * Update packs resource with optimistic version
+ */
+export const auditProductPacksUpdate = <ThrowOnError extends boolean = false>(options: Options<AuditProductPacksUpdateData, ThrowOnError>) => (options.client ?? client).patch<AuditProductPacksUpdateResponses, AuditProductPacksUpdateErrors, ThrowOnError>({
+    url: '/audit/packs/{id}',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * Apply build workflow
+ */
+export const auditProductPacksBuild = <ThrowOnError extends boolean = false>(options: Options<AuditProductPacksBuildData, ThrowOnError>) => (options.client ?? client).post<AuditProductPacksBuildResponses, AuditProductPacksBuildErrors, ThrowOnError>({
+    url: '/audit/packs/{id}/build',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * Download a signed evidence pack
+ */
+export const auditProductPacksDownload = <ThrowOnError extends boolean = false>(options: Options<AuditProductPacksDownloadData, ThrowOnError>) => (options.client ?? client).get<AuditProductPacksDownloadResponses, AuditProductPacksDownloadErrors, ThrowOnError>({ url: '/audit/packs/{id}/download', ...options });
+
+/**
+ * List people
+ */
+export const auditProductPeopleList = <ThrowOnError extends boolean = false>(options?: Options<AuditProductPeopleListData, ThrowOnError>) => (options?.client ?? client).get<AuditProductPeopleListResponses, AuditProductPeopleListErrors, ThrowOnError>({ url: '/audit/people', ...options });
+
+/**
+ * Create people resource
+ */
+export const auditProductPeopleCreate = <ThrowOnError extends boolean = false>(options: Options<AuditProductPeopleCreateData, ThrowOnError>) => (options.client ?? client).post<AuditProductPeopleCreateResponses, AuditProductPeopleCreateErrors, ThrowOnError>({
+    url: '/audit/people',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * List reported decision actors
+ */
+export const auditProductPeopleObserved = <ThrowOnError extends boolean = false>(options?: Options<AuditProductPeopleObservedData, ThrowOnError>) => (options?.client ?? client).get<AuditProductPeopleObservedResponses, AuditProductPeopleObservedErrors, ThrowOnError>({ url: '/audit/people/observed', ...options });
+
+/**
+ * Read people resource
+ */
+export const auditProductPeopleGet = <ThrowOnError extends boolean = false>(options: Options<AuditProductPeopleGetData, ThrowOnError>) => (options.client ?? client).get<AuditProductPeopleGetResponses, AuditProductPeopleGetErrors, ThrowOnError>({ url: '/audit/people/{id}', ...options });
+
+/**
+ * Update people resource with optimistic version
+ */
+export const auditProductPeopleUpdate = <ThrowOnError extends boolean = false>(options: Options<AuditProductPeopleUpdateData, ThrowOnError>) => (options.client ?? client).patch<AuditProductPeopleUpdateResponses, AuditProductPeopleUpdateErrors, ThrowOnError>({
+    url: '/audit/people/{id}',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * Download an event inclusion proof
+ */
+export const auditProof = <ThrowOnError extends boolean = false>(options: Options<AuditProofData, ThrowOnError>) => (options.client ?? client).get<AuditProofResponses, AuditProofErrors, ThrowOnError>({ url: '/audit/proofs/{eventId}', ...options });
+
+/**
+ * List providers
+ */
+export const auditProductProvidersList = <ThrowOnError extends boolean = false>(options?: Options<AuditProductProvidersListData, ThrowOnError>) => (options?.client ?? client).get<AuditProductProvidersListResponses, AuditProductProvidersListErrors, ThrowOnError>({ url: '/audit/providers', ...options });
+
+/**
+ * Create providers resource
+ */
+export const auditProductProvidersCreate = <ThrowOnError extends boolean = false>(options: Options<AuditProductProvidersCreateData, ThrowOnError>) => (options.client ?? client).post<AuditProductProvidersCreateResponses, AuditProductProvidersCreateErrors, ThrowOnError>({
+    url: '/audit/providers',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * Read providers resource
+ */
+export const auditProductProvidersGet = <ThrowOnError extends boolean = false>(options: Options<AuditProductProvidersGetData, ThrowOnError>) => (options.client ?? client).get<AuditProductProvidersGetResponses, AuditProductProvidersGetErrors, ThrowOnError>({ url: '/audit/providers/{id}', ...options });
+
+/**
+ * Update providers resource with optimistic version
+ */
+export const auditProductProvidersUpdate = <ThrowOnError extends boolean = false>(options: Options<AuditProductProvidersUpdateData, ThrowOnError>) => (options.client ?? client).patch<AuditProductProvidersUpdateResponses, AuditProductProvidersUpdateErrors, ThrowOnError>({
+    url: '/audit/providers/{id}',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * Reconcile restored hot copies with permanent erasures
+ */
+export const auditReconcile = <ThrowOnError extends boolean = false>(options?: Options<AuditReconcileData, ThrowOnError>) => (options?.client ?? client).post<AuditReconcileResponses, AuditReconcileErrors, ThrowOnError>({ url: '/audit/reconcile', ...options });
+
+/**
+ * List requests
+ */
+export const auditProductRequestsList = <ThrowOnError extends boolean = false>(options?: Options<AuditProductRequestsListData, ThrowOnError>) => (options?.client ?? client).get<AuditProductRequestsListResponses, AuditProductRequestsListErrors, ThrowOnError>({ url: '/audit/requests', ...options });
+
+/**
+ * Create requests resource
+ */
+export const auditProductRequestsCreate = <ThrowOnError extends boolean = false>(options: Options<AuditProductRequestsCreateData, ThrowOnError>) => (options.client ?? client).post<AuditProductRequestsCreateResponses, AuditProductRequestsCreateErrors, ThrowOnError>({
+    url: '/audit/requests',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * Read requests resource
+ */
+export const auditProductRequestsGet = <ThrowOnError extends boolean = false>(options: Options<AuditProductRequestsGetData, ThrowOnError>) => (options.client ?? client).get<AuditProductRequestsGetResponses, AuditProductRequestsGetErrors, ThrowOnError>({ url: '/audit/requests/{id}', ...options });
+
+/**
+ * Update requests resource with optimistic version
+ */
+export const auditProductRequestsUpdate = <ThrowOnError extends boolean = false>(options: Options<AuditProductRequestsUpdateData, ThrowOnError>) => (options.client ?? client).patch<AuditProductRequestsUpdateResponses, AuditProductRequestsUpdateErrors, ThrowOnError>({
+    url: '/audit/requests/{id}',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * Apply extend workflow
+ */
+export const auditProductRequestsExtend = <ThrowOnError extends boolean = false>(options: Options<AuditProductRequestsExtendData, ThrowOnError>) => (options.client ?? client).post<AuditProductRequestsExtendResponses, AuditProductRequestsExtendErrors, ThrowOnError>({
+    url: '/audit/requests/{id}/extend',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * Apply fulfill workflow
+ */
+export const auditProductRequestsFulfill = <ThrowOnError extends boolean = false>(options: Options<AuditProductRequestsFulfillData, ThrowOnError>) => (options.client ?? client).post<AuditProductRequestsFulfillResponses, AuditProductRequestsFulfillErrors, ThrowOnError>({
+    url: '/audit/requests/{id}/fulfill',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * Apply send workflow
+ */
+export const auditProductRequestsSend = <ThrowOnError extends boolean = false>(options: Options<AuditProductRequestsSendData, ThrowOnError>) => (options.client ?? client).post<AuditProductRequestsSendResponses, AuditProductRequestsSendErrors, ThrowOnError>({
+    url: '/audit/requests/{id}/send',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * Read regional retention policy
+ */
+export const auditRetention = <ThrowOnError extends boolean = false>(options?: Options<AuditRetentionData, ThrowOnError>) => (options?.client ?? client).get<AuditRetentionResponses, AuditRetentionErrors, ThrowOnError>({ url: '/audit/retention', ...options });
+
+/**
+ * Update regional retention policy
+ */
+export const auditRetentionUpdate = <ThrowOnError extends boolean = false>(options: Options<AuditRetentionUpdateData, ThrowOnError>) => (options.client ?? client).put<AuditRetentionUpdateResponses, AuditRetentionUpdateErrors, ThrowOnError>({
+    url: '/audit/retention',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * List sealed archive parts
+ */
+export const auditSegments = <ThrowOnError extends boolean = false>(options?: Options<AuditSegmentsData, ThrowOnError>) => (options?.client ?? client).get<AuditSegmentsResponses, AuditSegmentsErrors, ThrowOnError>({ url: '/audit/segments', ...options });
+
+/**
+ * Read a sealed manifest
+ */
+export const auditSegmentGet = <ThrowOnError extends boolean = false>(options: Options<AuditSegmentGetData, ThrowOnError>) => (options.client ?? client).get<AuditSegmentGetResponses, AuditSegmentGetErrors, ThrowOnError>({ url: '/audit/segments/{segmentId}', ...options });
+
+/**
+ * Read restored authorized content
+ */
+export const auditContent = <ThrowOnError extends boolean = false>(options: Options<AuditContentData, ThrowOnError>) => (options.client ?? client).get<AuditContentResponses, AuditContentErrors, ThrowOnError>({ url: '/audit/segments/{segmentId}/content/{eventId}', ...options });
+
+/**
+ * Request separately authorized governance retention shortening with an immutable reason
+ */
+export const auditGovernanceLift = <ThrowOnError extends boolean = false>(options: Options<AuditGovernanceLiftData, ThrowOnError>) => (options.client ?? client).post<AuditGovernanceLiftResponses, AuditGovernanceLiftErrors, ThrowOnError>({
+    url: '/audit/segments/{segmentId}/governance-lift',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * Request cold archive restoration
+ */
+export const auditRestore = <ThrowOnError extends boolean = false>(options: Options<AuditRestoreData, ThrowOnError>) => (options.client ?? client).post<AuditRestoreResponses, AuditRestoreErrors, ThrowOnError>({ url: '/audit/segments/{segmentId}/restore', ...options });
+
+/**
+ * Verify immutable archive bytes
+ */
+export const auditSegmentVerify = <ThrowOnError extends boolean = false>(options: Options<AuditSegmentVerifyData, ThrowOnError>) => (options.client ?? client).post<AuditSegmentVerifyResponses, AuditSegmentVerifyErrors, ThrowOnError>({ url: '/audit/segments/{segmentId}/verify', ...options });
+
+/**
+ * Read expiring pack-scoped auditor access
+ */
+export const auditProductShareGet = <ThrowOnError extends boolean = false>(options: Options<AuditProductShareGetData, ThrowOnError>) => (options.client ?? client).get<AuditProductShareGetResponses, AuditProductShareGetErrors, ThrowOnError>({ url: '/audit/share/{token}', ...options });
+
+/**
+ * Accept configured NDA terms for an auditor access link
+ */
+export const auditProductShareNda = <ThrowOnError extends boolean = false>(options: Options<AuditProductShareNdaData, ThrowOnError>) => (options.client ?? client).post<AuditProductShareNdaResponses, AuditProductShareNdaErrors, ThrowOnError>({
+    url: '/audit/share/{token}/nda',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * Download a pack within live auditor scope
+ */
+export const auditProductShareDownload = <ThrowOnError extends boolean = false>(options: Options<AuditProductShareDownloadData, ThrowOnError>) => (options.client ?? client).get<AuditProductShareDownloadResponses, AuditProductShareDownloadErrors, ThrowOnError>({ url: '/audit/share/{token}/packs/{packId}', ...options });
+
+/**
+ * Read archive integrity and storage status
+ */
+export const auditStatus = <ThrowOnError extends boolean = false>(options?: Options<AuditStatusData, ThrowOnError>) => (options?.client ?? client).get<AuditStatusResponses, AuditStatusErrors, ThrowOnError>({ url: '/audit/status', ...options });
+
+/**
+ * Read bounded projected storage tiers and configured price estimates
+ */
+export const auditStorage = <ThrowOnError extends boolean = false>(options?: Options<AuditStorageData, ThrowOnError>) => (options?.client ?? client).get<AuditStorageResponses, AuditStorageErrors, ThrowOnError>({ url: '/audit/storage', ...options });
+
+/**
+ * List training
+ */
+export const auditProductTrainingList = <ThrowOnError extends boolean = false>(options?: Options<AuditProductTrainingListData, ThrowOnError>) => (options?.client ?? client).get<AuditProductTrainingListResponses, AuditProductTrainingListErrors, ThrowOnError>({ url: '/audit/training', ...options });
+
+/**
+ * Create training resource
+ */
+export const auditProductTrainingCreate = <ThrowOnError extends boolean = false>(options: Options<AuditProductTrainingCreateData, ThrowOnError>) => (options.client ?? client).post<AuditProductTrainingCreateResponses, AuditProductTrainingCreateErrors, ThrowOnError>({
+    url: '/audit/training',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * Atomically import training completion CSV
+ */
+export const auditProductTrainingImport = <ThrowOnError extends boolean = false>(options: Options<AuditProductTrainingImportData, ThrowOnError>) => (options.client ?? client).post<AuditProductTrainingImportResponses, AuditProductTrainingImportErrors, ThrowOnError>({
+    url: '/audit/training/import',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * Read training resource
+ */
+export const auditProductTrainingGet = <ThrowOnError extends boolean = false>(options: Options<AuditProductTrainingGetData, ThrowOnError>) => (options.client ?? client).get<AuditProductTrainingGetResponses, AuditProductTrainingGetErrors, ThrowOnError>({ url: '/audit/training/{id}', ...options });
+
+/**
+ * Update training resource with optimistic version
+ */
+export const auditProductTrainingUpdate = <ThrowOnError extends boolean = false>(options: Options<AuditProductTrainingUpdateData, ThrowOnError>) => (options.client ?? client).patch<AuditProductTrainingUpdateResponses, AuditProductTrainingUpdateErrors, ThrowOnError>({
+    url: '/audit/training/{id}',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * Read trust-page publication settings
+ */
+export const auditProductTrustGet = <ThrowOnError extends boolean = false>(options?: Options<AuditProductTrustGetData, ThrowOnError>) => (options?.client ?? client).get<AuditProductTrustGetResponses, AuditProductTrustGetErrors, ThrowOnError>({ url: '/audit/trust', ...options });
+
+/**
+ * Publish explicitly selected trust-page sections
+ */
+export const auditProductTrustUpdate = <ThrowOnError extends boolean = false>(options: Options<AuditProductTrustUpdateData, ThrowOnError>) => (options.client ?? client).put<AuditProductTrustUpdateResponses, AuditProductTrustUpdateErrors, ThrowOnError>({
+    url: '/audit/trust',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * List observed unregistered agents
+ */
+export const auditProductUnregistered = <ThrowOnError extends boolean = false>(options?: Options<AuditProductUnregisteredData, ThrowOnError>) => (options?.client ?? client).get<AuditProductUnregisteredResponses, AuditProductUnregisteredErrors, ThrowOnError>({ url: '/audit/unregistered-agents', ...options });
+
+/**
+ * Start bounded seal-chain verification
+ */
+export const auditEvidenceVerify = <ThrowOnError extends boolean = false>(options?: Options<AuditEvidenceVerifyData, ThrowOnError>) => (options?.client ?? client).post<AuditEvidenceVerifyResponses, AuditEvidenceVerifyErrors, ThrowOnError>({ url: '/audit/verify', ...options });
 
 /**
  * Create a checkout link
@@ -771,6 +1535,23 @@ export const tracesList = <ThrowOnError extends boolean = false>(options?: Optio
  * Get a trace's spans, ordered by time
  */
 export const tracesGet = <ThrowOnError extends boolean = false>(options: Options<TracesGetData, ThrowOnError>) => (options.client ?? client).get<TracesGetResponses, TracesGetErrors, ThrowOnError>({ url: '/traces/{traceId}', ...options });
+
+/**
+ * Read explicitly published trust evidence
+ */
+export const auditProductPublicTrust = <ThrowOnError extends boolean = false>(options: Options<AuditProductPublicTrustData, ThrowOnError>) => (options.client ?? client).get<AuditProductPublicTrustResponses, AuditProductPublicTrustErrors, ThrowOnError>({ url: '/trust/{slug}', ...options });
+
+/**
+ * Submit a rate-limited concern or evidence access request
+ */
+export const auditProductPublicRequest = <ThrowOnError extends boolean = false>(options: Options<AuditProductPublicRequestData, ThrowOnError>) => (options.client ?? client).post<AuditProductPublicRequestResponses, AuditProductPublicRequestErrors, ThrowOnError>({
+    url: '/trust/{slug}/requests',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
 
 /**
  * Get the current principal
