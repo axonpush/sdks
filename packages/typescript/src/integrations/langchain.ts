@@ -11,6 +11,7 @@ import {
   safePublish,
   truncate,
 } from "./_base.js";
+import { exceptionAttributes } from "./_exceptions.js";
 import { type DeclaredTaskGoal, FrameworkTaskLifecycle } from "./_task_lifecycle.js";
 
 /**
@@ -106,7 +107,7 @@ export class AxonPushCallbackHandler {
     this.emit(
       "chain.error",
       "agent.error",
-      { error: err.message, error_type: err.name },
+      { error: err.message, error_type: err.name, attributes: exceptionAttributes(err) },
       runId,
       parentRunId,
     );
@@ -178,7 +179,7 @@ export class AxonPushCallbackHandler {
     this.emit(
       "tool.error",
       "agent.error",
-      { error: err.message, error_type: err.name },
+      { error: err.message, error_type: err.name, attributes: exceptionAttributes(err) },
       runId,
       parentRunId,
     );
@@ -188,7 +189,7 @@ export class AxonPushCallbackHandler {
     this.emit(
       "llm.error",
       "agent.error",
-      { error: err.message, error_type: err.name },
+      { error: err.message, error_type: err.name, attributes: exceptionAttributes(err) },
       runId,
       parentRunId,
     );

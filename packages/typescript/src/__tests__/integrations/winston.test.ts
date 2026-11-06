@@ -23,6 +23,28 @@ interface AxonPushTransport {
 }
 
 describe("winston transport", () => {
+  it("keeps non-enumerable native Error diagnostics", async () => {
+    const { client, published } = makeFakeClient();
+    const transport = (await createAxonPushWinstonTransport({
+      client,
+      channelId: "ch-1",
+    })) as AxonPushTransport;
+    const error = Object.assign(new TypeError("diagnostic failure"), { level: "error" });
+    error.stack = "TypeError: diagnostic failure\n    at run (/app/worker.ts:42:9)";
+    await new Promise<void>((resolve) =>
+      transport.log(error as unknown as Record<string, unknown>, resolve),
+    );
+    await transport.flushAxonPush(2000);
+    transport.close();
+    const payload = published[0]!.payload as Record<string, unknown>;
+    expect(payload.body).toBe("diagnostic failure");
+    expect(payload.attributes).toMatchObject({
+      "exception.type": "TypeError",
+      "exception.message": "diagnostic failure",
+      "exception.stacktrace": error.stack,
+    });
+  });
+
   it("logs a record and publishes an app.log event", async () => {
     const { client, published } = makeFakeClient();
     const transport = (await createAxonPushWinstonTransport({

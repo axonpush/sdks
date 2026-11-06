@@ -12,6 +12,7 @@ import {
   makePublisher,
   type PublisherHolder,
 } from "./_base.js";
+import { exceptionAttributes } from "./_exceptions.js";
 
 export { flushAfterInvocation } from "./_publisher.js";
 
@@ -190,6 +191,7 @@ function emitCaptured(
     attributes: {
       "log.iostream": level === "error" || level === "warn" ? "stderr" : "stdout",
       "log.source": "console",
+      ...args.map(exceptionAttributes).find((attributes) => Object.keys(attributes).length > 0),
     },
   };
 
@@ -222,9 +224,17 @@ function formatBody(args: unknown[], maxLength: number): unknown {
 }
 
 function safeStringify(v: unknown, maxLength: number): string {
+  const exception = exceptionAttributes(v);
+  if (Object.keys(exception).length) {
+    return truncateString(
+      [exception["exception.type"], exception["exception.message"]].filter(Boolean).join(": ") ||
+        "Error",
+      maxLength,
+    );
+  }
   try {
     const s = JSON.stringify(v, (_k, val) => (typeof val === "bigint" ? val.toString() : val), 2);
-    return truncateString(s, maxLength);
+    return truncateString(typeof s === "string" ? s : String(v), maxLength);
   } catch {
     return truncateString(String(v), maxLength);
   }

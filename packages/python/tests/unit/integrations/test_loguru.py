@@ -160,6 +160,11 @@ def test_loguru_native_adapter_preserves_exception_traceback(fake_sync_client, m
     attrs = fake_sync_client.events.calls[0]["payload"]["attributes"]
     assert attrs["exception.type"] == "ValueError"
     assert attrs["exception.message"] == "synthetic failure"
+    assert "test_loguru.py" in attrs["exception.stacktrace"]
+    assert (
+        "in test_loguru_native_adapter_preserves_exception_traceback"
+        in attrs["exception.stacktrace"]
+    )
 
 
 def test_enqueue_keeps_origin_time_thread_and_json_body(fake_sync_client):

@@ -17,6 +17,27 @@ function makeFakeClient() {
 }
 
 describe("console capture", () => {
+  it("preserves an Error's diagnostic stack instead of serializing it as an empty object", async () => {
+    const { client, published } = makeFakeClient();
+    console.error = vi.fn();
+    const error = new TypeError("diagnostic failure");
+    error.stack = "TypeError: diagnostic failure\n    at failedOperation (/app/worker.ts:42:9)";
+    const handle = setupConsoleCapture({ client, channelId: "ch-1" });
+    try {
+      console.error("operation failed", error);
+      await handle.flush(2000);
+    } finally {
+      await handle.close();
+    }
+    const payload = published[0]!.payload as Record<string, unknown>;
+    expect(payload.body).toBe("operation failed TypeError: diagnostic failure");
+    expect(payload.attributes).toMatchObject({
+      "exception.type": "TypeError",
+      "exception.message": "diagnostic failure",
+      "exception.stacktrace": error.stack,
+    });
+  });
+
   const origLog = console.log;
   const origInfo = console.info;
   const origWarn = console.warn;

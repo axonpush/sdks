@@ -18,6 +18,7 @@ import {
   safePublishParams,
   truncate,
 } from "./_base.js";
+import { exceptionAttributes } from "./_exceptions.js";
 import {
   type DeclaredTaskGoal,
   FrameworkTaskLifecycle,
@@ -300,6 +301,7 @@ export class AxonPushMastraHooks {
       workflow_name: workflowName,
       error: error.message,
       error_type: error.name,
+      attributes: exceptionAttributes(error),
     });
   }
 }
