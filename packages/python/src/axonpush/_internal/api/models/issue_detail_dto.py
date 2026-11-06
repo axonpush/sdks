@@ -29,7 +29,8 @@ class IssueDetailDTO:
         breadcrumbs (list[BreadcrumbDTO] | None):
         issue (ErrorIssueDTO):
         occurrences (list[IssueBucketDTO] | None):
-        stack (list[StackFrameDTO] | None):
+        stack (list[StackFrameDTO] | None): Latest captured exception frames in crash-first order; empty when no stack
+            was captured
         tags (list[TagDistributionDTO] | None):
         schema (str | Unset): A URL to the JSON Schema for this object.
         breadcrumbs_truncated (bool | Unset):

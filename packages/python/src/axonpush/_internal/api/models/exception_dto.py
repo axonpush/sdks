@@ -19,7 +19,7 @@ T = TypeVar("T", bound="ExceptionDTO")
 class ExceptionDTO:
     """
     Attributes:
-        stack (list[StackFrameDTO] | None):
+        stack (list[StackFrameDTO] | None): Captured frames in caller-first order; empty when no stack was captured
         message (str | Unset):
         type_ (str | Unset):
     """

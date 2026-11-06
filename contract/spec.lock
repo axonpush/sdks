@@ -1,7 +1,7 @@
 {
   "source": "axonpush/server",
-  "sha": "94f4c61a6da652c64ff5edd2e44f0a67f6983de3",
-  "ref": "master",
-  "sha256": "9ec29cbf5103fafbeb15cef97c76adb31440509f5bbb1cb96b983c71f3d7df25",
+  "sha": "63e15e1cf4115b32f886f483b652546aa0de5855",
+  "ref": "fix/audit-and-error-diagnostics",
+  "sha256": "ba0fde1de3d49181caa982cd9b04eca62d635f07e8bbd1b3ede0efb700a91cfb",
   "generatedBy": "reviewed local contract synchronization"
 }

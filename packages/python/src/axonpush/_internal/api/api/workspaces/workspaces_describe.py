@@ -82,7 +82,14 @@ def sync_detailed(
     (.env.local or the project's secret convention). Never commit, print or paste the key.
     5. Add the SDK observe calls where the events happen and identify calls for profile attributes,
     reading the env written in the previous step.
-    6. Send one test event from the app and confirm it appears in workspaces_catalog.
+    6. Wire the application's existing logging, OpenTelemetry or Sentry error integration (or its
+    supported SDK adapter) so exceptions retain their original traceback and source locations. Correlate
+    technical events and business observations with trace/span ids where available; do not put raw
+    exceptions in business attributes.
+    7. Send one test event from the app and confirm it appears in workspaces_catalog.
+    8. Verify exception capture with a controlled failure locally or in a test environment, and confirm
+    the traceback and file/line locations reach the error detail. Explain missing capture instead of
+    claiming success. Do not create synthetic production errors.
 
     The response contains a plain-language summary of this workspace, the setup steps, the full format
     reference, the role list and the op catalogue with examples.
@@ -142,7 +149,14 @@ def sync(
     (.env.local or the project's secret convention). Never commit, print or paste the key.
     5. Add the SDK observe calls where the events happen and identify calls for profile attributes,
     reading the env written in the previous step.
-    6. Send one test event from the app and confirm it appears in workspaces_catalog.
+    6. Wire the application's existing logging, OpenTelemetry or Sentry error integration (or its
+    supported SDK adapter) so exceptions retain their original traceback and source locations. Correlate
+    technical events and business observations with trace/span ids where available; do not put raw
+    exceptions in business attributes.
+    7. Send one test event from the app and confirm it appears in workspaces_catalog.
+    8. Verify exception capture with a controlled failure locally or in a test environment, and confirm
+    the traceback and file/line locations reach the error detail. Explain missing capture instead of
+    claiming success. Do not create synthetic production errors.
 
     The response contains a plain-language summary of this workspace, the setup steps, the full format
     reference, the role list and the op catalogue with examples.
@@ -197,7 +211,14 @@ async def asyncio_detailed(
     (.env.local or the project's secret convention). Never commit, print or paste the key.
     5. Add the SDK observe calls where the events happen and identify calls for profile attributes,
     reading the env written in the previous step.
-    6. Send one test event from the app and confirm it appears in workspaces_catalog.
+    6. Wire the application's existing logging, OpenTelemetry or Sentry error integration (or its
+    supported SDK adapter) so exceptions retain their original traceback and source locations. Correlate
+    technical events and business observations with trace/span ids where available; do not put raw
+    exceptions in business attributes.
+    7. Send one test event from the app and confirm it appears in workspaces_catalog.
+    8. Verify exception capture with a controlled failure locally or in a test environment, and confirm
+    the traceback and file/line locations reach the error detail. Explain missing capture instead of
+    claiming success. Do not create synthetic production errors.
 
     The response contains a plain-language summary of this workspace, the setup steps, the full format
     reference, the role list and the op catalogue with examples.
@@ -255,7 +276,14 @@ async def asyncio(
     (.env.local or the project's secret convention). Never commit, print or paste the key.
     5. Add the SDK observe calls where the events happen and identify calls for profile attributes,
     reading the env written in the previous step.
-    6. Send one test event from the app and confirm it appears in workspaces_catalog.
+    6. Wire the application's existing logging, OpenTelemetry or Sentry error integration (or its
+    supported SDK adapter) so exceptions retain their original traceback and source locations. Correlate
+    technical events and business observations with trace/span ids where available; do not put raw
+    exceptions in business attributes.
+    7. Send one test event from the app and confirm it appears in workspaces_catalog.
+    8. Verify exception capture with a controlled failure locally or in a test environment, and confirm
+    the traceback and file/line locations reach the error detail. Explain missing capture instead of
+    claiming success. Do not create synthetic production errors.
 
     The response contains a plain-language summary of this workspace, the setup steps, the full format
     reference, the role list and the op catalogue with examples.

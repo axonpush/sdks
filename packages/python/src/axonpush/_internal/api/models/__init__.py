@@ -157,6 +157,8 @@ from .compliance_overview_counts import ComplianceOverviewCounts
 from .compliance_overview_integrity import ComplianceOverviewIntegrity
 from .compliance_record import ComplianceRecord
 from .compliance_record_data import ComplianceRecordData
+from .compliance_reference import ComplianceReference
+from .compliance_reference_defaults import ComplianceReferenceDefaults
 from .compliance_source import ComplianceSource
 from .connect_input_body import ConnectInputBody
 from .connection import Connection
@@ -319,6 +321,7 @@ from .public_ingest_token_dto import PublicIngestTokenDTO
 from .public_input_body import PublicInputBody
 from .public_write_output_body import PublicWriteOutputBody
 from .recover_job_input_body import RecoverJobInputBody
+from .reference_output_body import ReferenceOutputBody
 from .release_hold_input_body import ReleaseHoldInputBody
 from .replace_input_body import ReplaceInputBody
 from .revision_list_output_body import RevisionListOutputBody
@@ -567,6 +570,8 @@ __all__ = (
     "ComplianceOverviewIntegrity",
     "ComplianceRecord",
     "ComplianceRecordData",
+    "ComplianceReference",
+    "ComplianceReferenceDefaults",
     "ComplianceSource",
     "ConnectInputBody",
     "Connection",
@@ -729,6 +734,7 @@ __all__ = (
     "PublicInputBody",
     "PublicWriteOutputBody",
     "RecoverJobInputBody",
+    "ReferenceOutputBody",
     "ReleaseHoldInputBody",
     "ReplaceInputBody",
     "RevisionListOutputBody",
