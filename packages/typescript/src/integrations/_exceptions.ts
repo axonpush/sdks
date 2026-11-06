@@ -4,7 +4,11 @@ const MAX_EXCEPTION_TYPE_LENGTH = 256;
 const TRUNCATED = "\n[axonpush diagnostic truncated]";
 
 function bounded(value: string, limit: number): string {
-  return value.length <= limit ? value : value.slice(0, limit - TRUNCATED.length) + TRUNCATED;
+  if (value.length <= limit) return value;
+  // A sliced string can retain the multi-megabyte original in V8. Copy the
+  // bounded prefix before queueing so the diagnostic budget also bounds memory.
+  const prefix = value.slice(0, limit - TRUNCATED.length);
+  return new TextDecoder().decode(new TextEncoder().encode(prefix)) + TRUNCATED;
 }
 
 function stringProperty(value: object, key: string): string | undefined {
