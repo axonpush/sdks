@@ -57,6 +57,7 @@ import {
   auditProductProvidersUpdate,
   auditProductPublicRequest,
   auditProductPublicTrust,
+  auditProductReferences,
   auditProductRequestsCreate,
   auditProductRequestsExtend,
   auditProductRequestsFulfill,
@@ -93,6 +94,7 @@ import type {
   AuditProductPacksListData,
   AuditProductPeopleListData,
   AuditProductProvidersListData,
+  AuditProductReferencesData,
   AuditProductRequestsListData,
   AuditProductShareDownloadData,
   AuditProductTrainingListData,
@@ -111,6 +113,7 @@ import type {
   PolicyOutputBody,
   PublicInputBody,
   PublicWriteOutputBody,
+  ReferenceOutputBody,
   ShareOutputBody,
   TasksOutputBody,
   TrustOutputBody,
@@ -433,6 +436,14 @@ export class AuditProductResource {
   /** Update providers resource with optimistic version. `PATCH /audit/providers/{id}` */
   async providersUpdate(id: string, body: PatchInputBody): Promise<ComplianceRecord | null> {
     return this.client.invoke(auditProductProvidersUpdate, { path: { id }, body });
+  }
+
+  /** Search organization-scoped labeled relationship choices. `GET /audit/references/{kind}` */
+  async references(
+    kind: string,
+    query: AuditProductReferencesData["query"] = {},
+  ): Promise<ReferenceOutputBody | null> {
+    return this.client.invoke(auditProductReferences, { path: { kind }, query });
   }
 
   /** List requests. `GET /audit/requests` */

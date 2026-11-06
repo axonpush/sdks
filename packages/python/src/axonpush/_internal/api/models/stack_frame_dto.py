@@ -20,6 +20,7 @@ class StackFrameDTO:
     """
     Attributes:
         in_app (bool):
+        column (int | Unset): 1-based source column when captured; omitted when unknown
         context_line (str | Unset):
         file (str | Unset):
         function (str | Unset):
@@ -30,6 +31,7 @@ class StackFrameDTO:
     """
 
     in_app: bool
+    column: int | Unset = UNSET
     context_line: str | Unset = UNSET
     file: str | Unset = UNSET
     function: str | Unset = UNSET
@@ -42,6 +44,8 @@ class StackFrameDTO:
         from ..models.stack_frame_dto_variables import StackFrameDTOVariables
 
         in_app = self.in_app
+
+        column = self.column
 
         context_line = self.context_line
 
@@ -80,6 +84,8 @@ class StackFrameDTO:
                 "inApp": in_app,
             }
         )
+        if column is not UNSET:
+            field_dict["column"] = column
         if context_line is not UNSET:
             field_dict["contextLine"] = context_line
         if file is not UNSET:
@@ -103,6 +109,8 @@ class StackFrameDTO:
 
         d = dict(src_dict)
         in_app = d.pop("inApp")
+
+        column = d.pop("column", UNSET)
 
         context_line = d.pop("contextLine", UNSET)
 
@@ -155,6 +163,7 @@ class StackFrameDTO:
 
         stack_frame_dto = cls(
             in_app=in_app,
+            column=column,
             context_line=context_line,
             file=file,
             function=function,

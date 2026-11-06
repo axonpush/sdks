@@ -1350,6 +1350,44 @@ public sealed record ComplianceRecord
     public long Version { get; init; }
 }
 
+public sealed record ComplianceReference
+{
+    [JsonPropertyName("appId")]
+    public string? AppId { get; init; }
+    [JsonPropertyName("available")]
+    public bool Available { get; init; }
+    [JsonPropertyName("description")]
+    public string Description { get; init; } = default!;
+    [JsonPropertyName("email")]
+    public string? Email { get; init; }
+    [JsonPropertyName("environmentId")]
+    public string? EnvironmentId { get; init; }
+    [JsonPropertyName("id")]
+    public string Id { get; init; } = default!;
+    [JsonPropertyName("isDefault")]
+    public bool? IsDefault { get; init; }
+    [JsonPropertyName("kind")]
+    public string Kind { get; init; } = default!;
+    [JsonPropertyName("label")]
+    public string Label { get; init; } = default!;
+    [JsonPropertyName("name")]
+    public string? Name { get; init; }
+    [JsonPropertyName("role")]
+    public string? Role { get; init; }
+    [JsonPropertyName("state")]
+    public string State { get; init; } = default!;
+}
+
+public sealed record ComplianceReferenceDefaults
+{
+    [JsonPropertyName("appId")]
+    public string? AppId { get; init; }
+    [JsonPropertyName("environmentId")]
+    public string? EnvironmentId { get; init; }
+    [JsonPropertyName("ownerUserId")]
+    public string? OwnerUserId { get; init; }
+}
+
 public sealed record ComplianceSource
 {
     [JsonPropertyName("label")]
@@ -1990,6 +2028,18 @@ public sealed record RecoverJobInputBody
     public bool ConfirmWorkerStopped { get; init; }
     [JsonPropertyName("reason")]
     public string Reason { get; init; } = default!;
+}
+
+public sealed record ReferenceOutputBody
+{
+    [JsonPropertyName("defaults")]
+    public ComplianceReferenceDefaults Defaults { get; init; } = default!;
+    [JsonPropertyName("items")]
+    public IReadOnlyList<ComplianceReference>? Items { get; init; } = default!;
+    [JsonPropertyName("nextCursor")]
+    public string? NextCursor { get; init; }
+    [JsonPropertyName("searchWindow")]
+    public string? SearchWindow { get; init; }
 }
 
 public sealed record ReleaseHoldInputBody

@@ -11,6 +11,7 @@ import {
   safePublish,
   truncate,
 } from "./_base.js";
+import { exceptionPayload } from "./_exceptions.js";
 import { type DeclaredTaskGoal, FrameworkTaskLifecycle } from "./_task_lifecycle.js";
 
 /**
@@ -103,13 +104,7 @@ export class AxonPushCallbackHandler {
   }
 
   handleChainError(err: Error, runId?: string, parentRunId?: string): void {
-    this.emit(
-      "chain.error",
-      "agent.error",
-      { error: err.message, error_type: err.name },
-      runId,
-      parentRunId,
-    );
+    this.emit("chain.error", "agent.error", exceptionPayload(err), runId, parentRunId);
     const task = this.tasks.finish(runId, "failed");
     if (task) this.emit(task.identifier, "custom", task.payload, runId, parentRunId, task.metadata);
   }
@@ -175,22 +170,10 @@ export class AxonPushCallbackHandler {
   }
 
   handleToolError(err: Error, runId?: string, parentRunId?: string): void {
-    this.emit(
-      "tool.error",
-      "agent.error",
-      { error: err.message, error_type: err.name },
-      runId,
-      parentRunId,
-    );
+    this.emit("tool.error", "agent.error", exceptionPayload(err), runId, parentRunId);
   }
 
   handleLLMError(err: Error, runId?: string, parentRunId?: string): void {
-    this.emit(
-      "llm.error",
-      "agent.error",
-      { error: err.message, error_type: err.name },
-      runId,
-      parentRunId,
-    );
+    this.emit("llm.error", "agent.error", exceptionPayload(err), runId, parentRunId);
   }
 }

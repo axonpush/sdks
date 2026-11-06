@@ -50,6 +50,11 @@ except ImportError:
     ) from None
 
 from axonpush._tracing import current_trace, get_or_create_trace
+from axonpush.integrations._exceptions import (
+    bound_exception_attributes,
+    bounded_stack,
+    exc_info_attributes,
+)
 from axonpush.integrations._otel_payload import (
     build_log_payload,
     severity_from_text,
@@ -180,9 +185,16 @@ class _AxonPushStructlogProcessor:
 
         attributes: Dict[str, Any] = {}
         for key, value in event_dict.items():
-            if key in ("event", "level", "timestamp", "time"):
+            if key in ("event", "level", "timestamp", "time", "exc_info"):
                 continue
             attributes[key] = value
+
+        attributes.update(exc_info_attributes(event_dict.get("exc_info")))
+        formatted = event_dict.get("exception")
+        if isinstance(formatted, str) and formatted:
+            attributes["exception"] = bounded_stack(formatted)
+            if not attributes.get("exception.stacktrace"):
+                attributes["exception.stacktrace"] = attributes["exception"]
 
         ts_value = event_dict.get("timestamp") or event_dict.get("time")
         if isinstance(ts_value, (int, float)):
@@ -203,7 +215,7 @@ class _AxonPushStructlogProcessor:
             severity_number=severity_number,
             severity_text=severity_text,
             time_unix_nano=time_unix_nano,
-            attributes=attributes or None,
+            attributes=bound_exception_attributes(attributes) or None,
             resource=self._resource,
         )
 

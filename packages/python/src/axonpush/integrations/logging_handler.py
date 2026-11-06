@@ -48,6 +48,11 @@ from typing import (
 )
 
 from axonpush._tracing import current_trace, get_or_create_trace
+from axonpush.integrations._exceptions import (
+    bound_exception_attributes,
+    bounded_stack,
+    exc_info_attributes,
+)
 from axonpush.integrations._otel_payload import (
     build_log_payload,
     severity_from_python_level,
@@ -258,14 +263,10 @@ class AxonPushLoggingHandler(logging.Handler):
                 continue
             attributes[key] = value
 
-        if record.exc_info:
-            attributes["exception.type"] = (
-                record.exc_info[0].__name__ if record.exc_info[0] else None
-            )
-            attributes["exception.message"] = (
-                str(record.exc_info[1]) if record.exc_info[1] else None
-            )
-        return attributes
+        attributes.update(exc_info_attributes(record.exc_info))
+        if record.exc_text and not attributes.get("exception.stacktrace"):
+            attributes["exception.stacktrace"] = bounded_stack(record.exc_text)
+        return bound_exception_attributes(attributes)
 
     def emit(self, record: logging.LogRecord) -> None:
         if in_publisher_path():

@@ -17,6 +17,26 @@ function makeFakeClient() {
 }
 
 describe("pino stream", () => {
+  it("promotes Pino's serialized err into standard exception attributes", async () => {
+    const { client, published } = makeFakeClient();
+    const stream = createAxonPushPinoStream({ client, channelId: "ch-1" });
+    const err = {
+      type: "TypeError",
+      message: "diagnostic failure",
+      stack: "TypeError: diagnostic failure\n    at run (/app/worker.ts:42:9)",
+    };
+    stream.write(JSON.stringify({ level: 50, msg: "operation failed", err }));
+    await stream.flush(2000);
+    await stream.close();
+    const payload = published[0]!.payload as Record<string, unknown>;
+    expect(payload.attributes).toMatchObject({
+      "exception.type": err.type,
+      "exception.message": err.message,
+      "exception.stacktrace": err.stack,
+      err,
+    });
+  });
+
   it("parses a Pino JSON record and publishes an app.log event", async () => {
     const { client, published } = makeFakeClient();
     const stream = createAxonPushPinoStream({
