@@ -47,6 +47,7 @@ import queue
 import threading
 import time
 import weakref
+from axonpush._evidence_context import capture_task, current_task
 from functools import wraps
 from typing import (
     TYPE_CHECKING,
@@ -243,17 +244,20 @@ class BackgroundPublisher:
                 if item is None:
                     return
                 token = _in_publisher_path.set(True)
+                task_token = current_task.set(None)
                 try:
                     self._client.events.publish(**item)
                 except Exception as exc:
                     _log_publish_failure(exc)
                 finally:
+                    current_task.reset(task_token)
                     _in_publisher_path.reset(token)
             finally:
                 self._queue.task_done()
 
     def submit(self, publish_kwargs: PublishKwargs) -> None:
         """Enqueue a publish, dropping per ``overflow_policy`` when full."""
+        publish_kwargs = capture_task(publish_kwargs)
         if self._closed:
             return
         try:
@@ -375,6 +379,7 @@ class AsyncBackgroundPublisher:
                 if item is None:
                     return
                 token = _in_publisher_path.set(True)
+                task_token = current_task.set(None)
                 try:
                     await self._client.events.publish(**item)
                 except asyncio.CancelledError:
@@ -383,12 +388,14 @@ class AsyncBackgroundPublisher:
                 except Exception as exc:
                     _log_publish_failure(exc)
                 finally:
+                    current_task.reset(task_token)
                     _in_publisher_path.reset(token)
             finally:
                 q.task_done()
 
     def submit(self, publish_kwargs: PublishKwargs) -> None:
         """Enqueue a publish on the running event loop, drop on full."""
+        publish_kwargs = capture_task(publish_kwargs)
         if self._closed:
             return
         q = self._ensure_worker()
@@ -515,6 +522,7 @@ class RqPublisher:
         self._closed = False
 
     def submit(self, publish_kwargs: PublishKwargs) -> None:
+        publish_kwargs = capture_task(publish_kwargs)
         if self._closed:
             return
         try:

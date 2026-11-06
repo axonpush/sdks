@@ -1,7 +1,9 @@
 import type { AxonPush } from "../client.js";
+import { taskMetadata } from "../evidence-context.js";
 import type { EventType } from "../index.js";
 import type { TraceContext } from "../tracing.js";
 import { coerceChannelId, type IntegrationConfig, initTrace, safePublish } from "./_base.js";
+import { runDeclaredTask } from "./_task_lifecycle.js";
 
 /**
  * OpenAI Agents JS run hooks.
@@ -36,8 +38,23 @@ export class AxonPushRunHooks {
     void safePublish(this.client, this.channelId, identifier, eventType, payload, {
       agentId: agentId ?? this.defaultAgentId,
       trace: this.trace,
-      metadata: { framework: "openai-agents" },
+      metadata: { framework: "openai-agents", ...taskMetadata() },
     });
+  }
+
+  /** Await the complete Runner.run call here. Agent handoffs do not close the root task. */
+  task<T>(goal: string, run: (taskId: string) => Promise<T>): Promise<T> {
+    return runDeclaredTask(
+      goal,
+      (event) => {
+        void safePublish(this.client, this.channelId, event.identifier, "custom", event.payload, {
+          agentId: this.defaultAgentId,
+          trace: this.trace,
+          metadata: { framework: "openai-agents", ...event.metadata },
+        });
+      },
+      run,
+    );
   }
 
   async onAgentStart(_context: unknown, agent: any): Promise<void> {

@@ -14,6 +14,8 @@ import { ActivityResource } from "./resources/activity.js";
 import { AlertsResource } from "./resources/alerts.js";
 import { AnalyticsResource } from "./resources/analytics.js";
 import { AppsResource } from "./resources/apps.js";
+import { AuditResource } from "./resources/audit.js";
+import { AuditProductResource } from "./resources/audit_product.js";
 import { CapabilitiesResource } from "./resources/capabilities.js";
 import { ChannelsResource } from "./resources/channels.js";
 import { EnvironmentsResource } from "./resources/environments.js";
@@ -42,6 +44,8 @@ export class AxonPush {
   /** Per-instance transport; carries this facade's settings, no shared slot. */
   private readonly transport: Transport;
 
+  readonly audit: AuditResource;
+  readonly auditProduct: AuditProductResource;
   readonly workspaces: WorkspacesResource;
   readonly templates: TemplatesResource;
   readonly observations: ObservationsResource;
@@ -82,6 +86,8 @@ export class AxonPush {
   constructor(options?: AxonPushOptions) {
     this.settings = resolveSettings(options);
     this.transport = new Transport(this.settings);
+    this.audit = new AuditResource(this);
+    this.auditProduct = new AuditProductResource(this);
     this.workspaces = new WorkspacesResource(this);
     this.templates = new TemplatesResource(this);
     this.observations = new ObservationsResource(this);

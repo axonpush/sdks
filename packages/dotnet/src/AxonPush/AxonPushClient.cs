@@ -26,6 +26,8 @@ public sealed class AxonPushClient : IDisposable, IAsyncDisposable
         ArgumentNullException.ThrowIfNull(options);
         _transport = new AxonPushTransport(options, httpClient, loggerFactory);
         Events = new EventsResource(_transport);
+        Audit = new AuditResource(_transport);
+        AuditProduct = new AuditProductResource(_transport);
         Workspaces = new WorkspacesResource(_transport);
         Templates = new TemplatesResource(_transport);
         Observations = new ObservationsResource(_transport);
@@ -37,6 +39,8 @@ public sealed class AxonPushClient : IDisposable, IAsyncDisposable
 
     /// <summary>The events resource (POST /events).</summary>
     public EventsResource Events { get; }
+    public AuditResource Audit { get; }
+    public AuditProductResource AuditProduct { get; }
     public WorkspacesResource Workspaces { get; }
     public TemplatesResource Templates { get; }
     public ObservationsResource Observations { get; }

@@ -1,6 +1,7 @@
 import { randomUUID } from "node:crypto";
 import { createEvent, eventsSearch } from "../_internal/api/sdk.gen.js";
 import type { EventBody, EventsSearchData } from "../_internal/api/types.gen.js";
+import { taskMetadata } from "../evidence-context.js";
 import type { Event, EventDetails, EventType, SearchEventsOutputBody } from "../models.js";
 import type { ResourceClient } from "./_client.js";
 
@@ -115,18 +116,21 @@ export class EventsResource {
       params.promptId !== undefined ||
       params.promptVersionId !== undefined ||
       params.parentEventId !== undefined;
-    const rawMeta = hasMeta
-      ? {
-          ...(params.metadata ?? {}),
-          ...(params.promptId === undefined ? {} : { "gen_ai.prompt.id": params.promptId }),
-          ...(params.promptVersionId === undefined
-            ? {}
-            : { "gen_ai.prompt.version": params.promptVersionId }),
-          ...(params.parentEventId === undefined
-            ? {}
-            : { "axonpush.parent_event_id": params.parentEventId }),
-        }
-      : undefined;
+    const contextMeta = taskMetadata();
+    const rawMeta =
+      hasMeta || Object.keys(contextMeta).length > 0
+        ? {
+            ...contextMeta,
+            ...(params.metadata ?? {}),
+            ...(params.promptId === undefined ? {} : { "gen_ai.prompt.id": params.promptId }),
+            ...(params.promptVersionId === undefined
+              ? {}
+              : { "gen_ai.prompt.version": params.promptVersionId }),
+            ...(params.parentEventId === undefined
+              ? {}
+              : { "axonpush.parent_event_id": params.parentEventId }),
+          }
+        : undefined;
 
     const body: EventBody = {
       identifier: params.identifier,

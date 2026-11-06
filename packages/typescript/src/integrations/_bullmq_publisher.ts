@@ -1,4 +1,5 @@
 import type { AxonPush } from "../client.js";
+import { captureTask, withoutEvidenceTask } from "../evidence-context.js";
 import { logger as sdkLogger } from "../logger.js";
 import type { PublishParams } from "../resources/events.js";
 
@@ -86,6 +87,7 @@ export class BullMQPublisher {
   }
 
   submit(params: PublishParams): void {
+    params = captureTask(params);
     if (this.closed) {
       this.dropped++;
       return;
@@ -169,11 +171,13 @@ export async function createBullMQWorker(
     queueName,
     async (job) => {
       const params = job.data as PublishParams;
-      await (
-        opts.client as unknown as {
-          events: { publish(p: PublishParams): Promise<unknown> };
-        }
-      ).events.publish(params);
+      await withoutEvidenceTask(() =>
+        (
+          opts.client as unknown as {
+            events: { publish(p: PublishParams): Promise<unknown> };
+          }
+        ).events.publish(params),
+      );
     },
     { connection: opts.connection },
   );

@@ -353,3 +353,5 @@ MIT.
 Issues and PRs welcome at [github.com/axonpush/sdks](https://github.com/axonpush/sdks).
 Please run `bun run lint && bun run typecheck && bun run test` before
 sending a PR.
+
+See [declared framework task lifecycles](../../docs/framework-task-lifecycle.md) for opt-in root goals, failure boundaries and callback correlation.
