@@ -1,7 +1,7 @@
 {
   "source": "axonpush/server",
-  "sha": "63e15e1cf4115b32f886f483b652546aa0de5855",
-  "ref": "fix/audit-and-error-diagnostics",
+  "sha": "2ff3deabc36b5944b0ec7a550486b7444276d51f",
+  "ref": "master",
   "sha256": "ba0fde1de3d49181caa982cd9b04eca62d635f07e8bbd1b3ede0efb700a91cfb",
-  "generatedBy": "reviewed local contract synchronization"
+  "workflow": "42257920023"
 }
