@@ -1486,6 +1486,27 @@ export type ComplianceRecord = {
     version: number;
 };
 
+export type ComplianceReference = {
+    appId?: string;
+    available: boolean;
+    description: string;
+    email?: string;
+    environmentId?: string;
+    id: string;
+    isDefault?: boolean;
+    kind: string;
+    label: string;
+    name?: string;
+    role?: string;
+    state: string;
+};
+
+export type ComplianceReferenceDefaults = {
+    appId?: string;
+    environmentId?: string;
+    ownerUserId?: string;
+};
+
 export type ComplianceSource = {
     label: string;
     url: string;
@@ -2165,6 +2186,9 @@ export type EventOutputBody = {
 
 export type ExceptionDto = {
     message?: string;
+    /**
+     * Captured frames in caller-first order; empty when no stack was captured
+     */
     stack: Array<StackFrameDto> | null;
     type?: string;
 };
@@ -2437,6 +2461,9 @@ export type IssueDetailDto = {
     resolvedInRelease?: string;
     sampleEvent?: EventDto;
     snoozeUntil?: string;
+    /**
+     * Latest captured exception frames in crash-first order; empty when no stack was captured
+     */
     stack: Array<StackFrameDto> | null;
     tags: Array<TagDistributionDto> | null;
 };
@@ -3163,6 +3190,17 @@ export type RecoverJobInputBody = {
     reason: string;
 };
 
+export type ReferenceOutputBody = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
+    defaults: ComplianceReferenceDefaults;
+    items: Array<ComplianceReference> | null;
+    nextCursor?: string;
+    searchWindow?: string;
+};
+
 export type ReleaseHoldInputBody = {
     /**
      * A URL to the JSON Schema for this object.
@@ -3387,6 +3425,10 @@ export type ShareOutputBody = {
 };
 
 export type StackFrameDto = {
+    /**
+     * 1-based source column when captured; omitted when unknown
+     */
+    column?: number;
     contextLine?: string;
     file?: string;
     function?: string;
@@ -4826,6 +4868,9 @@ export type IssueDetailDtoWritable = {
     resolvedInRelease?: string;
     sampleEvent?: EventDtoWritable;
     snoozeUntil?: string;
+    /**
+     * Latest captured exception frames in crash-first order; empty when no stack was captured
+     */
     stack: Array<StackFrameDto> | null;
     tags: Array<TagDistributionDto> | null;
 };
@@ -5145,6 +5190,13 @@ export type PublicWriteOutputBodyWritable = {
 export type RecoverJobInputBodyWritable = {
     confirmWorkerStopped: boolean;
     reason: string;
+};
+
+export type ReferenceOutputBodyWritable = {
+    defaults: ComplianceReferenceDefaults;
+    items: Array<ComplianceReference> | null;
+    nextCursor?: string;
+    searchWindow?: string;
 };
 
 export type ReleaseHoldInputBodyWritable = {
@@ -9022,6 +9074,43 @@ export type AuditReconcileResponses = {
 };
 
 export type AuditReconcileResponse = AuditReconcileResponses[keyof AuditReconcileResponses];
+
+export type AuditProductReferencesData = {
+    body?: never;
+    path: {
+        kind: string;
+    };
+    query?: {
+        q?: string;
+        limit?: number;
+        cursor?: string;
+        ids?: string;
+        state?: string;
+        appId?: string;
+        environmentId?: string;
+        agentId?: string;
+        segmentId?: string;
+    };
+    url: '/audit/references/{kind}';
+};
+
+export type AuditProductReferencesErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type AuditProductReferencesError = AuditProductReferencesErrors[keyof AuditProductReferencesErrors];
+
+export type AuditProductReferencesResponses = {
+    /**
+     * OK
+     */
+    200: ReferenceOutputBody;
+};
+
+export type AuditProductReferencesResponse = AuditProductReferencesResponses[keyof AuditProductReferencesResponses];
 
 export type AuditProductRequestsListData = {
     body?: never;

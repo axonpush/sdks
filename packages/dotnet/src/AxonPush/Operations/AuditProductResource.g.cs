@@ -425,6 +425,22 @@ public sealed class AuditProductResource
         return _transport.SendAsync<ComplianceRecord>(HttpMethod.Patch, path, body, cancellationToken);
     }
 
+    /// <summary>Search organization-scoped labeled relationship choices.</summary>
+    public Task<ReferenceOutputBody?> ReferencesAsync(string kind, string? q = null, long? limit = null, string? cursor = null, string? ids = null, string? state = null, string? appId = null, string? environmentId = null, string? agentId = null, string? segmentId = null, CancellationToken cancellationToken = default)
+    {
+        var path = $"audit/references/{Uri.EscapeDataString(kind)}";
+        path = AddQuery(path, "q", q);
+        path = AddQuery(path, "limit", limit);
+        path = AddQuery(path, "cursor", cursor);
+        path = AddQuery(path, "ids", ids);
+        path = AddQuery(path, "state", state);
+        path = AddQuery(path, "appId", appId);
+        path = AddQuery(path, "environmentId", environmentId);
+        path = AddQuery(path, "agentId", agentId);
+        path = AddQuery(path, "segmentId", segmentId);
+        return _transport.SendAsync<ReferenceOutputBody>(HttpMethod.Get, path, null, cancellationToken);
+    }
+
     /// <summary>List requests.</summary>
     public Task<ListOutputBody?> RequestsListAsync(long? limit = null, string? cursor = null, CancellationToken cancellationToken = default)
     {

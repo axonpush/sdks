@@ -76,7 +76,12 @@ def sync_detailed(
 
     Write the returned env into the app's local secret file (for example .env.local, or the project's
     existing secret convention), make sure that file is git-ignored, and never commit, print or paste
-    the key. Then add the SDK observe and identify calls and send a test event.
+    the key. Then add the SDK observe and identify calls and send a test event. Also wire the
+    application's existing logging, OpenTelemetry or Sentry error integration so exceptions retain their
+    original traceback and source locations; business observations alone do not install exception
+    capture. Reuse the existing provider and capture policy, correlate trace/span ids where available,
+    and verify a controlled exception locally or in a test environment. Do not create synthetic
+    production errors.
 
     Calling it again for the same environment and purpose does not mint another key: it returns the
     existing key's metadata without the secret. If the secret was lost, call again with rotate: true,
@@ -124,7 +129,12 @@ def sync(
 
     Write the returned env into the app's local secret file (for example .env.local, or the project's
     existing secret convention), make sure that file is git-ignored, and never commit, print or paste
-    the key. Then add the SDK observe and identify calls and send a test event.
+    the key. Then add the SDK observe and identify calls and send a test event. Also wire the
+    application's existing logging, OpenTelemetry or Sentry error integration so exceptions retain their
+    original traceback and source locations; business observations alone do not install exception
+    capture. Reuse the existing provider and capture policy, correlate trace/span ids where available,
+    and verify a controlled exception locally or in a test environment. Do not create synthetic
+    production errors.
 
     Calling it again for the same environment and purpose does not mint another key: it returns the
     existing key's metadata without the secret. If the secret was lost, call again with rotate: true,
@@ -167,7 +177,12 @@ async def asyncio_detailed(
 
     Write the returned env into the app's local secret file (for example .env.local, or the project's
     existing secret convention), make sure that file is git-ignored, and never commit, print or paste
-    the key. Then add the SDK observe and identify calls and send a test event.
+    the key. Then add the SDK observe and identify calls and send a test event. Also wire the
+    application's existing logging, OpenTelemetry or Sentry error integration so exceptions retain their
+    original traceback and source locations; business observations alone do not install exception
+    capture. Reuse the existing provider and capture policy, correlate trace/span ids where available,
+    and verify a controlled exception locally or in a test environment. Do not create synthetic
+    production errors.
 
     Calling it again for the same environment and purpose does not mint another key: it returns the
     existing key's metadata without the secret. If the secret was lost, call again with rotate: true,
@@ -213,7 +228,12 @@ async def asyncio(
 
     Write the returned env into the app's local secret file (for example .env.local, or the project's
     existing secret convention), make sure that file is git-ignored, and never commit, print or paste
-    the key. Then add the SDK observe and identify calls and send a test event.
+    the key. Then add the SDK observe and identify calls and send a test event. Also wire the
+    application's existing logging, OpenTelemetry or Sentry error integration so exceptions retain their
+    original traceback and source locations; business observations alone do not install exception
+    capture. Reuse the existing provider and capture policy, correlate trace/span ids where available,
+    and verify a controlled exception locally or in a test environment. Do not create synthetic
+    production errors.
 
     Calling it again for the same environment and purpose does not mint another key: it returns the
     existing key's metadata without the secret. If the secret was lost, call again with rotate: true,
