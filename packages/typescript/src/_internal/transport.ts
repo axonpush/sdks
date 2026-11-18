@@ -57,7 +57,10 @@ function attachInterceptors(client: Client, getSettings: () => ResolvedSettings)
       request.headers.set(header, s.apiKey);
     }
     if (s.tenantId) request.headers.set("x-tenant-id", s.tenantId);
-    if (s.environment) request.headers.set("X-Axonpush-Environment", s.environment);
+    if (s.environment && !request.headers.has("X-Axonpush-Environment")) {
+      request.headers.set("X-Axonpush-Environment", s.environment);
+    }
+    const environment = request.headers.get("X-Axonpush-Environment") ?? undefined;
     const trace = currentTrace();
     if (trace) {
       const spanId = trace.nextSpanId();
@@ -66,8 +69,8 @@ function attachInterceptors(client: Client, getSettings: () => ResolvedSettings)
       request.headers.set("traceparent", trace.traceparent(spanId));
       const baggage = [
         s.orgId ? `axonpush.org_id=${encodeURIComponent(s.orgId)}` : undefined,
-        s.environment
-          ? `deployment.environment.name=${encodeURIComponent(s.environment)}`
+        environment
+          ? `deployment.environment.name=${encodeURIComponent(environment)}`
           : undefined,
       ].filter(Boolean);
       if (baggage.length > 0) request.headers.set("baggage", baggage.join(","));

@@ -38,10 +38,9 @@ export interface PublishParams {
   /** Immutable prompt version, emitted as `gen_ai.prompt.version`. */
   promptVersionId?: string;
   /**
-   * Environment slug override. Only honoured when the API key has
-   * `allowEnvironmentOverride=true`. Falls through to the client's
-   * default environment when omitted. Sent via the `X-Axonpush-Environment`
-   * request header by the transport, not the body.
+   * Environment slug for this event, sent as the `X-Axonpush-Environment`
+   * header (never in the body). Must be within the API key's environment
+   * binding. Falls back to the client's default environment when omitted.
    */
   environment?: string;
   /**
@@ -83,6 +82,12 @@ export interface EventSearchParams {
   toolName?: string;
   /** Filter by semantic kind (`agent`, `tool`, `llm`, `retriever`, `db`, `http`, `log`). */
   semanticKind?: string;
+  /** Filter by `service.name`. */
+  serviceName?: string;
+  /** Filter by operation name. */
+  operationName?: string;
+  /** Filter by error type. */
+  errorType?: string;
   /** Case-insensitive contains match on search text. */
   q?: string;
   /** JSONB attribute key for equality filter (paired with `attrValue`). */
@@ -149,7 +154,11 @@ export class EventsResource {
         ? { metadata: this.client.redactTelemetry?.(rawMeta) ?? rawMeta }
         : {}),
     };
-    return this.client.invoke(createEvent, { body, signal: params.signal });
+    return this.client.invoke(createEvent, {
+      body,
+      signal: params.signal,
+      ...(params.environment ? { headers: { "X-Axonpush-Environment": params.environment } } : {}),
+    });
   }
 
   /**
@@ -178,6 +187,9 @@ export class EventsResource {
       ...(p.agentName !== undefined ? { agentName: p.agentName } : {}),
       ...(p.toolName !== undefined ? { toolName: p.toolName } : {}),
       ...(p.semanticKind !== undefined ? { semanticKind: p.semanticKind } : {}),
+      ...(p.serviceName !== undefined ? { serviceName: p.serviceName } : {}),
+      ...(p.operationName !== undefined ? { operationName: p.operationName } : {}),
+      ...(p.errorType !== undefined ? { errorType: p.errorType } : {}),
       ...(p.q !== undefined ? { q: p.q } : {}),
       ...(p.attrKey !== undefined ? { attrKey: p.attrKey } : {}),
       ...(p.attrValue !== undefined ? { attrValue: p.attrValue } : {}),

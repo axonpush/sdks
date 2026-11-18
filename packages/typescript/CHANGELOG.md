@@ -7,6 +7,9 @@
 - Preserve original event occurrence time and stable retry identity.
 - Remove gateway routing helpers and runtime moderation/governance/spend enforcement resources from the public SDK surface. Passive tracing, errors, usage and observational alerts remain.
 - **Breaking:** `installSentry` takes `publicToken` (a `pt_` public ingest token, or `AXONPUSH_PUBLIC_TOKEN`) instead of `apiKey`, and `buildSentryDsn` takes a public token; the server refuses API keys for Sentry ingest. The DSN project segment is now an integer derived from the channel id (new `sentryProjectId` export), as Sentry SDKs reject non-integer project ids. `channelId` is optional.
+- Fix the per-call `environment` on `events.publish` being silently ignored; it is now sent as the `X-Axonpush-Environment` header and overrides the client default.
+- `traces.list` passes through every `GET /traces` filter (`q`, `service`, `operation`, `model`, `agent`, `tool`, `errorsOnly`, `minDurationMs`, `sort`, ...); previously all but the window and paging were dropped. `TraceListParams` is now the generated query type.
+- `events.search` accepts `serviceName`, `operationName` and `errorType`.
 
 
 ## [0.0.12]

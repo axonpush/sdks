@@ -156,3 +156,35 @@ describe("bounded trace reads", () => {
     expect(result?.nextCursor).toBe("next");
   });
 });
+
+describe("TracesResource.list", () => {
+  it("passes every GET /traces filter through and drops undefined ones", async () => {
+    const { client, calls } = makeClient();
+    await new TracesResource(client).list({
+      since: "2026-01-01T00:00:00Z",
+      limit: 10,
+      q: "timeout",
+      service: ["api"],
+      model: ["gpt-x"],
+      errorsOnly: true,
+      minDurationMs: 500,
+      sort: "duration_desc",
+      activityClass: "business",
+      agent: undefined,
+    });
+    expect(calls[0]?.op).toBe(ops.tracesList);
+    expect(calls[0]?.args).toEqual({
+      query: {
+        since: "2026-01-01T00:00:00Z",
+        limit: 10,
+        q: "timeout",
+        service: ["api"],
+        model: ["gpt-x"],
+        errorsOnly: true,
+        minDurationMs: 500,
+        sort: "duration_desc",
+        activityClass: "business",
+      },
+    });
+  });
+});
