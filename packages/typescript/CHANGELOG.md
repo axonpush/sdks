@@ -11,6 +11,7 @@
 - `traces.list` passes through every `GET /traces` filter (`q`, `service`, `operation`, `model`, `agent`, `tool`, `errorsOnly`, `minDurationMs`, `sort`, ...); previously all but the window and paging were dropped. `TraceListParams` is now the generated query type.
 - `events.search` accepts `serviceName`, `operationName` and `errorType`.
 - Add the `@axonpush/sdk/integrations/bullmq` sub-path export.
+- Widen the `@opentelemetry/sdk-trace-base`, `sdk-trace-node` and `resources` peer ranges to `^1.18` to match the docs; nothing newer is used. The 2.x SDK is not supported (`configureTelemetry` uses the 1.x `Resource` class and `addSpanProcessor`).
 
 
 ## [0.0.12]
