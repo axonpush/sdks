@@ -247,6 +247,17 @@ class TestSearch:
         assert op is _search_op
         assert kwargs == {"channel_id": CHANNEL_ID, "event_type": "agent.start", "limit": 10}
 
+    def test_search_forwards_service_operation_and_error_filters(self) -> None:
+        fake = FakeSyncClient(return_value=None)
+        Events(fake).search(service_name="api", operation_name="GET /x", error_type="ValueError")
+
+        _, kwargs = fake.calls[0]
+        assert kwargs == {
+            "service_name": "api",
+            "operation_name": "GET /x",
+            "error_type": "ValueError",
+        }
+
 
 class TestAsyncEvents:
     @pytest.mark.asyncio

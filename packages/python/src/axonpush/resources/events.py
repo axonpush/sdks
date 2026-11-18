@@ -139,7 +139,7 @@ class Events:
             prompt_id: Optional prompt registry identifier (folded into metadata).
             prompt_version_id: Optional prompt version (folded into metadata).
             environment: Optional environment for this event, sent as the
-                `X-Axonpush-Environment` header. Overrides the client default.
+                ``X-Axonpush-Environment`` header. Overrides the client default.
 
         Returns:
             The :class:`Event` ingest ack (``event_id`` + ``status``), or
@@ -186,6 +186,9 @@ class Events:
         agent_name: str | None = None,
         tool_name: str | None = None,
         semantic_kind: str | None = None,
+        service_name: str | None = None,
+        operation_name: str | None = None,
+        error_type: str | None = None,
         q: str | None = None,
         attr_key: str | None = None,
         attr_value: str | None = None,
@@ -210,6 +213,9 @@ class Events:
             tool_name: Filter by tool name (``gen_ai.tool.name``).
             semantic_kind: Filter by semantic kind (``agent``, ``tool``,
                 ``llm``, ``retriever``, ``db``, ``http``, ``log``).
+            service_name: Filter by ``service.name``.
+            operation_name: Filter by operation name.
+            error_type: Filter by error type.
             q: Case-insensitive free-text match over event fields.
             attr_key: Attribute key to match.
             attr_value: Attribute value to match.
@@ -234,6 +240,9 @@ class Events:
                 "agent_name": agent_name,
                 "tool_name": tool_name,
                 "semantic_kind": semantic_kind,
+                "service_name": service_name,
+                "operation_name": operation_name,
+                "error_type": error_type,
                 "q": q,
                 "attr_key": attr_key,
                 "attr_value": attr_value,
@@ -305,6 +314,9 @@ class AsyncEvents:
         agent_name: str | None = None,
         tool_name: str | None = None,
         semantic_kind: str | None = None,
+        service_name: str | None = None,
+        operation_name: str | None = None,
+        error_type: str | None = None,
         q: str | None = None,
         attr_key: str | None = None,
         attr_value: str | None = None,
@@ -326,6 +338,9 @@ class AsyncEvents:
                 "agent_name": agent_name,
                 "tool_name": tool_name,
                 "semantic_kind": semantic_kind,
+                "service_name": service_name,
+                "operation_name": operation_name,
+                "error_type": error_type,
                 "q": q,
                 "attr_key": attr_key,
                 "attr_value": attr_value,
