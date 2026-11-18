@@ -145,7 +145,7 @@ import { AxonPushCallbackHandler } from "@axonpush/sdk/integrations/langchain";
 | `createAxonPushWinstonTransport` | winston transport. |
 | `setupConsoleCapture` | Mirror `console.*` to axonpush. |
 | `BackgroundPublisher` | Bounded in-memory publish queue (used by transports). |
-| `BullMQPublisher` | Forward events through a BullMQ queue. |
+| `BullMQPublisher` / `createBullMQWorker` | Forward events through a BullMQ queue (`@axonpush/sdk/integrations/bullmq`). |
 | `safePublish` / `truncate` / `coerceChannelId` | Building blocks for custom integrations. |
 
 Each integration accepts the same `IntegrationConfig`:

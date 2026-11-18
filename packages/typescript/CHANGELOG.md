@@ -10,6 +10,7 @@
 - Fix the per-call `environment` on `events.publish` being silently ignored; it is now sent as the `X-Axonpush-Environment` header and overrides the client default.
 - `traces.list` passes through every `GET /traces` filter (`q`, `service`, `operation`, `model`, `agent`, `tool`, `errorsOnly`, `minDurationMs`, `sort`, ...); previously all but the window and paging were dropped. `TraceListParams` is now the generated query type.
 - `events.search` accepts `serviceName`, `operationName` and `errorType`.
+- Add the `@axonpush/sdk/integrations/bullmq` sub-path export.
 
 
 ## [0.0.12]
