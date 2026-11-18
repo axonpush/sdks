@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import type { AxonPush } from "../../client.js";
 import { BullMQPublisher } from "../../integrations/_bullmq_publisher.js";
+import * as bullmqEntry from "../../integrations/bullmq.js";
 import type { PublishParams } from "../../resources/events.js";
 
 function makeParams(id: string): PublishParams {
@@ -113,5 +114,12 @@ describe("BullMQPublisher", () => {
     });
 
     await publisher.close();
+  });
+});
+
+describe("integrations/bullmq sub-path", () => {
+  it("re-exports the BullMQ publisher and worker factory", () => {
+    expect(bullmqEntry.BullMQPublisher).toBe(BullMQPublisher);
+    expect(typeof bullmqEntry.createBullMQWorker).toBe("function");
   });
 });

@@ -20,8 +20,8 @@ export { flushAfterInvocation } from "./_publisher.js";
  * ship spans to AxonPush by adding this exporter to its tracer
  * provider.
  *
- * Tested against `@opentelemetry/api@^1.7` and
- * `@opentelemetry/sdk-trace-base@^1.18`. Both are OPTIONAL peer deps:
+ * Requires `@opentelemetry/api@^1.9` and the 1.x SDK
+ * (`@opentelemetry/sdk-trace-base@^1.18`). Both are OPTIONAL peer deps:
  *   npm install @opentelemetry/api @opentelemetry/sdk-trace-base
  *
  * **Protocol**: this exporter ships each span via

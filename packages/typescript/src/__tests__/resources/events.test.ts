@@ -132,6 +132,28 @@ describe("EventsResource.publish", () => {
 
     expect(client.getOrCreateTrace).toHaveBeenCalledWith("tr_caller");
   });
+
+  it("sends a per-call environment as a header, never in the body", async () => {
+    const { client, calls } = makeClient("production");
+    await new EventsResource(client).publish({
+      identifier: "i",
+      payload: {},
+      channelId: "c",
+      environment: "staging",
+    });
+    const args = calls[0]?.args as {
+      body: Record<string, unknown>;
+      headers?: Record<string, string>;
+    };
+    expect(args.headers).toEqual({ "X-Axonpush-Environment": "staging" });
+    expect(args.body.environment).toBeUndefined();
+  });
+
+  it("sends no header when environment is omitted", async () => {
+    const { client, calls } = makeClient("production");
+    await new EventsResource(client).publish({ identifier: "i", payload: {}, channelId: "c" });
+    expect((calls[0]?.args as { headers?: unknown }).headers).toBeUndefined();
+  });
 });
 
 describe("EventsResource.search", () => {
@@ -146,6 +168,20 @@ describe("EventsResource.search", () => {
       channelId: "ch",
       appId: "app",
       source: "sentry",
+    });
+  });
+
+  it("forwards service, operation and error type filters", async () => {
+    const { client, calls } = makeClient();
+    await new EventsResource(client).search({
+      serviceName: "api",
+      operationName: "GET /x",
+      errorType: "TypeError",
+    });
+    expect((calls[0]?.args as { query: Record<string, unknown> }).query).toEqual({
+      serviceName: "api",
+      operationName: "GET /x",
+      errorType: "TypeError",
     });
   });
 });

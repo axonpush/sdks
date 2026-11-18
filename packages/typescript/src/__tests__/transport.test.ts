@@ -51,6 +51,24 @@ describe("transport interceptors", () => {
     expect(captured?.get("x-axonpush-environment")).toBe("production");
   });
 
+  it("lets a per-call X-Axonpush-Environment header override the client default", async () => {
+    let captured: Headers | undefined;
+    server.use(
+      http.get(`${BASE}/healthz`, ({ request }) => {
+        captured = request.headers;
+        return HttpResponse.json({ status: "ok" });
+      }),
+    );
+
+    await invokeSync(
+      getHealthz,
+      { headers: { "X-Axonpush-Environment": "staging" } },
+      { failOpen: false, maxRetries: 0 },
+    );
+
+    expect(captured?.get("x-axonpush-environment")).toBe("staging");
+  });
+
   it("attaches X-Axonpush-Trace-Id when a trace context is bound", async () => {
     let captured: Headers | undefined;
     server.use(

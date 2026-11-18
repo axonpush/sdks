@@ -57,9 +57,9 @@ class TestOTelExporter:
         assert len(fake_sync_client.events.calls) == 2
         child = fake_sync_client.events.calls[0]
         parent = fake_sync_client.events.calls[1]
-        assert "parent_event_id" in child
-        assert child["parent_event_id"] == parent["span_id"]
-        assert "parent_event_id" not in parent
+        assert "parent_span_id" in child
+        assert child["parent_span_id"] == parent["span_id"]
+        assert "parent_span_id" not in parent
 
     def test_invalid_mode_rejected(self, fake_sync_client: FakeSyncClient) -> None:
         with pytest.raises(ValueError, match="mode must be"):

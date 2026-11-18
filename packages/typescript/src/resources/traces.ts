@@ -12,20 +12,19 @@ import type {
   TracesGetData,
   TracesGroupMembersData,
   TracesGroupsData,
+  TracesListData,
 } from "../_internal/api/types.gen.js";
 import type { ResourceClient } from "./_client.js";
 
-/** Query parameters for {@link TracesResource.list}. `GET /traces` */
-export interface TraceListParams {
-  /** RFC3339 window start (defaults to 24h before `until`). */
-  since?: string;
-  /** RFC3339 window end (defaults to now). */
-  until?: string;
-  /** Max traces to return (default 50, max 500). */
-  limit?: number;
-  /** Rows to skip for paging. */
-  offset?: number;
-}
+/**
+ * Query parameters for {@link TracesResource.list}. `GET /traces`
+ *
+ * Every filter the endpoint accepts: window and paging (`since`, `until`,
+ * `limit`, `offset`), free text (`q`), facet filters (`service`,
+ * `operation`, `model`, `agent`, `tool`, ...), `errorsOnly`,
+ * `minDurationMs` and `sort`.
+ */
+export type TraceListParams = NonNullable<TracesListData["query"]>;
 
 /**
  * List traces and fetch a single trace's spans.
@@ -50,16 +49,13 @@ export class TracesResource {
   /**
    * List traces newest-first. `GET /traces`
    *
-   * @param params - Optional window & pagination.
+   * @param params - Optional window, pagination and filters.
    * @returns List envelope `{ traces }`, or `null` on fail-open error.
    */
   async list(params: TraceListParams = {}): Promise<ListTracesOutputBody | null> {
-    const query = {
-      ...(params.since !== undefined ? { since: params.since } : {}),
-      ...(params.until !== undefined ? { until: params.until } : {}),
-      ...(params.limit !== undefined ? { limit: params.limit } : {}),
-      ...(params.offset !== undefined ? { offset: params.offset } : {}),
-    };
+    const query = Object.fromEntries(
+      Object.entries(params).filter(([, value]) => value !== undefined),
+    ) as TraceListParams;
     return this.client.invoke(tracesList, { query });
   }
 

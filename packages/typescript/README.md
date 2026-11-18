@@ -140,12 +140,12 @@ import { AxonPushCallbackHandler } from "@axonpush/sdk/integrations/langchain";
 | `AxonPushMastraHooks` | Mastra agent hooks. |
 | `axonPushADKCallbacks` | Google ADK callback bundle. |
 | `AxonPushSpanExporter` | OTel `SpanExporter`. |
-| `installSentry(Sentry, opts)` | Builds the axonpush DSN and calls `Sentry.init`. |
+| `installSentry(Sentry, opts)` | Builds the axonpush DSN from a `pt_` public ingest token (`publicToken` or `AXONPUSH_PUBLIC_TOKEN`) and calls `Sentry.init`. API keys are refused by Sentry ingest. |
 | `createAxonPushPinoStream` | pino transport stream. |
 | `createAxonPushWinstonTransport` | winston transport. |
 | `setupConsoleCapture` | Mirror `console.*` to axonpush. |
 | `BackgroundPublisher` | Bounded in-memory publish queue (used by transports). |
-| `BullMQPublisher` | Forward events through a BullMQ queue. |
+| `BullMQPublisher` / `createBullMQWorker` | Forward events through a BullMQ queue (`@axonpush/sdk/integrations/bullmq`). |
 | `safePublish` / `truncate` / `coerceChannelId` | Building blocks for custom integrations. |
 
 Each integration accepts the same `IntegrationConfig`:
@@ -301,7 +301,7 @@ calls to `/event` payloads) still works and is kept for compatibility, but
 it is being superseded by OTel-native. Frame it as the compatibility path:
 keep it if you already depend on channel fan-out on the events plane,
 otherwise reach for `@axonpush/sdk/telemetry`. Traces from both land in the
-same dashboard (`/v2/traces`); the server reconciles them through the OTLP
+same trace views (`GET /traces`); the server reconciles them through the OTLP
 normalizer, so you can migrate call sites incrementally without a gap in
 your traces.
 

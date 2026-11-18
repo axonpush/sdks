@@ -37,7 +37,7 @@ public sealed class AxonPushClient : IDisposable, IAsyncDisposable
 
     }
 
-    /// <summary>The events resource (POST /events).</summary>
+    /// <summary>The events resource (POST /event).</summary>
     public EventsResource Events { get; }
     public AuditResource Audit { get; }
     public AuditProductResource AuditProduct { get; }

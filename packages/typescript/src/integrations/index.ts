@@ -50,6 +50,7 @@ export {
   type InstallSentryOptions,
   installSentry,
   type SentryLike,
+  sentryProjectId,
 } from "./sentry.js";
 export { axonPushMiddleware } from "./vercel-ai.js";
 export {
