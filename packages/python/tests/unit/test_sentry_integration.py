@@ -112,6 +112,7 @@ class TestInstallSentry:
         with pytest.raises(ValueError, match="public ingest token"):
             install_sentry(public_token="ak_x")
         assert sentry_stub == []
+
     def test_environment_and_release_forwarded(self, sentry_stub):
         install_sentry(
             public_token="pt_x",
