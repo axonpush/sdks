@@ -9,6 +9,7 @@
 - Fix nested LangChain and Deep Agents runs and OpenTelemetry child spans being dropped: parent linkage is now sent as `parent_span_id`.
 - `events.publish` accepts `environment=`, sent as the `X-Axonpush-Environment` header. Fixes the logging handler and OpenTelemetry exporter failing on every publish when `environment` was set.
 - `events.search` accepts `service_name`, `operation_name` and `error_type`.
+- **Breaking:** `install_sentry` takes `public_token` (a `pt_` public ingest token, or `AXONPUSH_PUBLIC_TOKEN`) instead of `api_key`; the server refuses API keys for Sentry ingest. The DSN project segment is now an integer derived from the channel id, as Sentry SDKs reject non-integer project ids. `channel_id` is optional.
 
 
 All notable changes to the axonpush Python SDK are documented here. The
