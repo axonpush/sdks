@@ -23,7 +23,7 @@ export AXONPUSH_ENVIRONMENT=development          # optional
 | `06-error-handling.ts` | Catch `AuthenticationError`, `NotFoundError`, `RateLimitError`, `RetryableError`. | - |
 | `07-langchain.ts` | Drive `AxonPushCallbackHandler` from a synthetic LangChain runtree. | optional `@langchain/core` |
 | `08-winston-logger.ts` | Ship winston log records as `app.log` events with severity mapping. | optional `winston`, `winston-transport` |
-| `09-sentry.ts` | Build the axonpush DSN and call `installSentry(Sentry, opts)`. | optional `@sentry/node` |
+| `09-sentry.ts` | Build the axonpush DSN from a `pt_` public ingest token and call `installSentry(Sentry, opts)`. | optional `@sentry/node` |
 | `10-otel-export.ts` | Register `AxonPushSpanExporter` with a `BasicTracerProvider`. | optional `@opentelemetry/api`, `@opentelemetry/sdk-trace-base` |
 
 Public ingest tokens can publish but cannot run management or search examples.

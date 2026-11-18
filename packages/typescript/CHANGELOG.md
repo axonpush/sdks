@@ -6,6 +6,7 @@
 - Add contract-generated business workspace, template, observation and activity resources; immutable revisions, rebuild activation and rollback, pinned template provenance, receipt/projection separation and lifecycle queries.
 - Preserve original event occurrence time and stable retry identity.
 - Remove gateway routing helpers and runtime moderation/governance/spend enforcement resources from the public SDK surface. Passive tracing, errors, usage and observational alerts remain.
+- **Breaking:** `installSentry` takes `publicToken` (a `pt_` public ingest token, or `AXONPUSH_PUBLIC_TOKEN`) instead of `apiKey`, and `buildSentryDsn` takes a public token; the server refuses API keys for Sentry ingest. The DSN project segment is now an integer derived from the channel id (new `sentryProjectId` export), as Sentry SDKs reject non-integer project ids. `channelId` is optional.
 
 
 ## [0.0.12]

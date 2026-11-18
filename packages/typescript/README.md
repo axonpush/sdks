@@ -140,7 +140,7 @@ import { AxonPushCallbackHandler } from "@axonpush/sdk/integrations/langchain";
 | `AxonPushMastraHooks` | Mastra agent hooks. |
 | `axonPushADKCallbacks` | Google ADK callback bundle. |
 | `AxonPushSpanExporter` | OTel `SpanExporter`. |
-| `installSentry(Sentry, opts)` | Builds the axonpush DSN and calls `Sentry.init`. |
+| `installSentry(Sentry, opts)` | Builds the axonpush DSN from a `pt_` public ingest token (`publicToken` or `AXONPUSH_PUBLIC_TOKEN`) and calls `Sentry.init`. API keys are refused by Sentry ingest. |
 | `createAxonPushPinoStream` | pino transport stream. |
 | `createAxonPushWinstonTransport` | winston transport. |
 | `setupConsoleCapture` | Mirror `console.*` to axonpush. |
