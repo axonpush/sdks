@@ -69,9 +69,7 @@ function attachInterceptors(client: Client, getSettings: () => ResolvedSettings)
       request.headers.set("traceparent", trace.traceparent(spanId));
       const baggage = [
         s.orgId ? `axonpush.org_id=${encodeURIComponent(s.orgId)}` : undefined,
-        environment
-          ? `deployment.environment.name=${encodeURIComponent(environment)}`
-          : undefined,
+        environment ? `deployment.environment.name=${encodeURIComponent(environment)}` : undefined,
       ].filter(Boolean);
       if (baggage.length > 0) request.headers.set("baggage", baggage.join(","));
     }

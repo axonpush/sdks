@@ -141,7 +141,10 @@ describe("EventsResource.publish", () => {
       channelId: "c",
       environment: "staging",
     });
-    const args = calls[0]?.args as { body: Record<string, unknown>; headers?: Record<string, string> };
+    const args = calls[0]?.args as {
+      body: Record<string, unknown>;
+      headers?: Record<string, string>;
+    };
     expect(args.headers).toEqual({ "X-Axonpush-Environment": "staging" });
     expect(args.body.environment).toBeUndefined();
   });
