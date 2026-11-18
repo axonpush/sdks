@@ -16,6 +16,7 @@ from axonpush._internal.api.models import (
     EventBodyPayload,
 )
 from axonpush._internal.api.types import UNSET
+from axonpush._internal.transport import environment_header
 from axonpush._tracing import get_or_create_trace
 from axonpush._evidence_context import task_metadata
 from axonpush.models import Event, EventType
@@ -120,6 +121,7 @@ class Events:
         prompt_version_id: str | None = None,
         occurred_at: datetime | None = None,
         expires_at: datetime | None = None,
+        environment: str | None = None,
     ) -> Event | None:
         """Publish a single event to a channel via ``POST /event``.
 
@@ -136,6 +138,8 @@ class Events:
             metadata: Free-form metadata map.
             prompt_id: Optional prompt registry identifier (folded into metadata).
             prompt_version_id: Optional prompt version (folded into metadata).
+            environment: Optional environment for this event, sent as the
+                `X-Axonpush-Environment` header. Overrides the client default.
 
         Returns:
             The :class:`Event` ingest ack (``event_id`` + ``status``), or
@@ -162,7 +166,8 @@ class Events:
             occurred_at=occurred_at,
             expires_at=expires_at,
         )
-        return self._client._invoke(_create_op, body=body)
+        with environment_header(environment):
+            return self._client._invoke(_create_op, body=body)
 
     def search(
         self,
@@ -260,6 +265,7 @@ class AsyncEvents:
         prompt_version_id: str | None = None,
         occurred_at: datetime | None = None,
         expires_at: datetime | None = None,
+        environment: str | None = None,
     ) -> Event | None:
         """Publish a single event to a channel. See :meth:`Events.publish`."""
         body = _build_event_body(
@@ -279,7 +285,8 @@ class AsyncEvents:
             occurred_at=occurred_at,
             expires_at=expires_at,
         )
-        return await self._client._invoke(_create_op, body=body)
+        with environment_header(environment):
+            return await self._client._invoke(_create_op, body=body)
 
     async def search(
         self,

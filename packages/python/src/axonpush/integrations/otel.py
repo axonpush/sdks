@@ -231,7 +231,7 @@ class AxonPushSpanExporter(SpanExporter):
             "metadata": {"framework": "opentelemetry"},
         }
         if parent_span_id:
-            publish_kwargs["parent_event_id"] = parent_span_id
+            publish_kwargs["parent_span_id"] = parent_span_id
         if self._environment is not None:
             publish_kwargs["environment"] = self._environment
 

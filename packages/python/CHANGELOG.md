@@ -6,6 +6,8 @@
 - Add contract-generated business workspace, template, observation and activity resources; immutable revisions, rebuild activation and rollback, pinned template provenance, receipt/projection separation and lifecycle queries.
 - Preserve original event occurrence time and stable retry identity.
 - Remove gateway routing helpers and runtime moderation/governance/spend enforcement resources from the public SDK surface. Passive tracing, errors, usage and observational alerts remain.
+- Fix nested LangChain and Deep Agents runs and OpenTelemetry child spans being dropped: parent linkage is now sent as `parent_span_id`.
+- `events.publish` accepts `environment=`, sent as the `X-Axonpush-Environment` header. Fixes the logging handler and OpenTelemetry exporter failing on every publish when `environment` was set.
 
 
 All notable changes to the axonpush Python SDK are documented here. The

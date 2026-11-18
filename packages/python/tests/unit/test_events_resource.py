@@ -197,6 +197,36 @@ class TestPublishBody:
         finally:
             client.close()
 
+    def test_per_call_environment_is_a_header_not_a_body_field(self) -> None:
+        import json
+
+        import httpx
+
+        from axonpush import AxonPush
+
+        seen: list[httpx.Request] = []
+
+        def handler(request: httpx.Request) -> httpx.Response:
+            seen.append(request)
+            return httpx.Response(200, json={"eventId": "ev_1", "status": "queued"})
+
+        client = AxonPush(
+            api_key="ak_test",
+            tenant_id="org_test",
+            base_url="http://example.test",
+            environment="production",
+        )
+        try:
+            client.http.get_httpx_client()._transport = httpx.MockTransport(handler)
+            client.events.publish("a", {}, channel_id=CHANNEL_ID, environment="staging")
+            client.events.publish("b", {}, channel_id=CHANNEL_ID)
+        finally:
+            client.close()
+
+        assert seen[0].headers["X-Axonpush-Environment"] == "staging"
+        assert seen[1].headers["X-Axonpush-Environment"] == "production"
+        assert "environment" not in json.loads(seen[0].content)
+
 
 class TestSearch:
     def test_search_calls_search_op_with_no_args(self) -> None:

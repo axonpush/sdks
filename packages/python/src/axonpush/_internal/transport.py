@@ -152,6 +152,9 @@ def _inject_request_headers(request: httpx.Request) -> None:
         request.extensions["timeout"] = {
             kind: remaining for kind in ("connect", "read", "write", "pool")
         }
+    environment = _environment_override.get()
+    if environment is not None:
+        request.headers["X-Axonpush-Environment"] = environment
     ctx = current_trace()
     if ctx is not None:
         span_id = ctx.next_span_id()
@@ -299,7 +302,33 @@ _deadline: contextvars.ContextVar[float | None] = contextvars.ContextVar(
 _retry_safe: contextvars.ContextVar[list[bool] | None] = contextvars.ContextVar(
     "axonpush_retry_safe", default=None
 )
+_environment_override: contextvars.ContextVar[str | None] = contextvars.ContextVar(
+    "axonpush_environment_override", default=None
+)
 _jitter = wait_exponential_jitter(initial=0.25, max=4, jitter=0.25)
+
+
+class environment_header:
+    """Send ``X-Axonpush-Environment`` on requests made inside this block.
+
+    Overrides the client-level environment for one call; ``None`` is a no-op.
+    """
+
+    __slots__ = ("_environment", "_token")
+
+    def __init__(self, environment: str | None) -> None:
+        self._environment = environment
+        self._token: contextvars.Token[str | None] | None = None
+
+    def __enter__(self) -> "environment_header":
+        if self._environment is not None:
+            self._token = _environment_override.set(self._environment)
+        return self
+
+    def __exit__(self, *exc: Any) -> None:
+        if self._token is not None:
+            _environment_override.reset(self._token)
+            self._token = None
 
 
 def _retry_wait(state: Any) -> float:
@@ -387,4 +416,5 @@ __all__ = [
     "build_sync_client",
     "call_with_retries_async",
     "call_with_retries_sync",
+    "environment_header",
 ]
