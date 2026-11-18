@@ -303,7 +303,7 @@ def handler(event, context):
 
 ### Which should I use
 
-The OTel-native path above is the recommended way to send traces. The legacy per-framework event-model exporter (`axonpush.integrations.otel.AxonPushSpanExporter`, which maps calls to `/event` payloads) still works and is kept for compatibility, but it is being superseded by OTel-native. Frame it as the compatibility path: keep it if you already depend on channel fan-out on the events plane, otherwise reach for `axonpush.telemetry`. Traces from both land in the same dashboard (`/v2/traces`); the server reconciles them through the OTLP normalizer, so you can migrate call sites incrementally without a gap in your traces.
+The OTel-native path above is the recommended way to send traces. The legacy per-framework event-model exporter (`axonpush.integrations.otel.AxonPushSpanExporter`, which maps calls to `/event` payloads) still works and is kept for compatibility, but it is being superseded by OTel-native. Frame it as the compatibility path: keep it if you already depend on channel fan-out on the events plane, otherwise reach for `axonpush.telemetry`. Traces from both land in the same trace views (`GET /traces`); the server reconciles them through the OTLP normalizer, so you can migrate call sites incrementally without a gap in your traces.
 
 ## Examples
 
