@@ -6,15 +6,15 @@ import httpx
 
 from ... import errors
 from ...client import AuthenticatedClient, Client
-from ...models.create_input_body_3 import CreateInputBody3
-from ...models.create_output_body import CreateOutputBody
+from ...models.create_input_body_4 import CreateInputBody4
+from ...models.create_output_body_1 import CreateOutputBody1
 from ...models.error_model import ErrorModel
 from ...types import UNSET, Response, Unset
 
 
 def _get_kwargs(
     *,
-    body: CreateInputBody3,
+    body: CreateInputBody4,
     cf_connecting_ip: str | Unset = UNSET,
     x_forwarded_for: str | Unset = UNSET,
     x_real_ip: str | Unset = UNSET,
@@ -44,9 +44,9 @@ def _get_kwargs(
 
 def _parse_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> CreateOutputBody | ErrorModel:
+) -> CreateOutputBody1 | ErrorModel:
     if response.status_code == 201:
-        response_201 = CreateOutputBody.from_dict(response.json())
+        response_201 = CreateOutputBody1.from_dict(response.json())
 
         return response_201
 
@@ -57,7 +57,7 @@ def _parse_response(
 
 def _build_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> Response[CreateOutputBody | ErrorModel]:
+) -> Response[CreateOutputBody1 | ErrorModel]:
     return Response(
         status_code=HTTPStatus(response.status_code),
         content=response.content,
@@ -69,25 +69,25 @@ def _build_response(
 def sync_detailed(
     *,
     client: AuthenticatedClient | Client,
-    body: CreateInputBody3,
+    body: CreateInputBody4,
     cf_connecting_ip: str | Unset = UNSET,
     x_forwarded_for: str | Unset = UNSET,
     x_real_ip: str | Unset = UNSET,
-) -> Response[CreateOutputBody | ErrorModel]:
+) -> Response[CreateOutputBody1 | ErrorModel]:
     """Submit feedback
 
     Args:
         cf_connecting_ip (str | Unset):
         x_forwarded_for (str | Unset):
         x_real_ip (str | Unset):
-        body (CreateInputBody3):
+        body (CreateInputBody4):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[CreateOutputBody | ErrorModel]
+        Response[CreateOutputBody1 | ErrorModel]
     """
 
     kwargs = _get_kwargs(
@@ -107,25 +107,25 @@ def sync_detailed(
 def sync(
     *,
     client: AuthenticatedClient | Client,
-    body: CreateInputBody3,
+    body: CreateInputBody4,
     cf_connecting_ip: str | Unset = UNSET,
     x_forwarded_for: str | Unset = UNSET,
     x_real_ip: str | Unset = UNSET,
-) -> CreateOutputBody | ErrorModel | None:
+) -> CreateOutputBody1 | ErrorModel | None:
     """Submit feedback
 
     Args:
         cf_connecting_ip (str | Unset):
         x_forwarded_for (str | Unset):
         x_real_ip (str | Unset):
-        body (CreateInputBody3):
+        body (CreateInputBody4):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        CreateOutputBody | ErrorModel
+        CreateOutputBody1 | ErrorModel
     """
 
     return sync_detailed(
@@ -140,25 +140,25 @@ def sync(
 async def asyncio_detailed(
     *,
     client: AuthenticatedClient | Client,
-    body: CreateInputBody3,
+    body: CreateInputBody4,
     cf_connecting_ip: str | Unset = UNSET,
     x_forwarded_for: str | Unset = UNSET,
     x_real_ip: str | Unset = UNSET,
-) -> Response[CreateOutputBody | ErrorModel]:
+) -> Response[CreateOutputBody1 | ErrorModel]:
     """Submit feedback
 
     Args:
         cf_connecting_ip (str | Unset):
         x_forwarded_for (str | Unset):
         x_real_ip (str | Unset):
-        body (CreateInputBody3):
+        body (CreateInputBody4):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[CreateOutputBody | ErrorModel]
+        Response[CreateOutputBody1 | ErrorModel]
     """
 
     kwargs = _get_kwargs(
@@ -176,25 +176,25 @@ async def asyncio_detailed(
 async def asyncio(
     *,
     client: AuthenticatedClient | Client,
-    body: CreateInputBody3,
+    body: CreateInputBody4,
     cf_connecting_ip: str | Unset = UNSET,
     x_forwarded_for: str | Unset = UNSET,
     x_real_ip: str | Unset = UNSET,
-) -> CreateOutputBody | ErrorModel | None:
+) -> CreateOutputBody1 | ErrorModel | None:
     """Submit feedback
 
     Args:
         cf_connecting_ip (str | Unset):
         x_forwarded_for (str | Unset):
         x_real_ip (str | Unset):
-        body (CreateInputBody3):
+        body (CreateInputBody4):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        CreateOutputBody | ErrorModel
+        CreateOutputBody1 | ErrorModel
     """
 
     return (

@@ -17,7 +17,7 @@ from axonpush._internal.api.models import (
     ActivityWorkspaceSpec,
     ChangesOutputBody,
     ConnectInputBody,
-    CreateInputBody,
+    CreateInputBody1,
     GrantInputBody,
     GrantListOutputBody,
     GrantUpdateInputBody,
@@ -74,7 +74,7 @@ class Workspaces:
         """List organization workspaces."""
         return self._client._invoke(_list_op)
 
-    def create(self, body: CreateInputBody) -> ActivityWorkspace | None:
+    def create(self, body: CreateInputBody1) -> ActivityWorkspace | None:
         """Create a workspace for an application, from a full or blank spec."""
         return self._client._invoke(_create_op, body=body)
 
@@ -187,7 +187,7 @@ class AsyncWorkspaces:
         """List organization workspaces."""
         return await self._client._invoke(_list_op)
 
-    async def create(self, body: CreateInputBody) -> ActivityWorkspace | None:
+    async def create(self, body: CreateInputBody1) -> ActivityWorkspace | None:
         """Create a workspace for an application, from a full or blank spec."""
         return await self._client._invoke(_create_op, body=body)
 

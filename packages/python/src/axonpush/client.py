@@ -41,6 +41,7 @@ from axonpush._observe import (
 from axonpush._redaction import redact_telemetry
 
 if TYPE_CHECKING:
+    from axonpush.resources.workflows import Workflows, AsyncWorkflows
     from axonpush._internal.api.client import AuthenticatedClient
     from axonpush._internal.api.models import ActivityIngestReport, IdentifyOutputBody
     from axonpush.resources.audit import Audit, AsyncAudit
@@ -324,6 +325,11 @@ class AxonPush:
     def workspaces(self) -> Workspaces:
         """Typed workspaces operations (lazy import)."""
         return cast("Workspaces", self._resource("workspaces", "Workspaces"))
+
+    @property
+    def workflows(self) -> Workflows:
+        """Contracts and verification; stored receipts do not mean verified."""
+        return cast("Workflows", self._resource("workflows", "Workflows"))
 
     @property
     def templates(self) -> Templates:
@@ -655,6 +661,11 @@ class AsyncAxonPush:
     def workspaces(self) -> AsyncWorkspaces:
         """Typed workspaces operations (lazy import)."""
         return cast("AsyncWorkspaces", self._resource("workspaces", "AsyncWorkspaces"))
+
+    @property
+    def workflows(self) -> AsyncWorkflows:
+        """Contracts and verification; stored receipts do not mean verified."""
+        return cast("AsyncWorkflows", self._resource("workflows", "AsyncWorkflows"))
 
     @property
     def templates(self) -> AsyncTemplates:

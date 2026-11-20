@@ -40,6 +40,7 @@ for (const id of operationIds) {
   if (
     ![
       "workspaces",
+      "workflows",
       "templates",
       "observations",
       "activity",

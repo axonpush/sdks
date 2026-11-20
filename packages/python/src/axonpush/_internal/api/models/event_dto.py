@@ -6,6 +6,7 @@ from typing import TYPE_CHECKING, Any, BinaryIO, Generator, TextIO, TypeVar
 from attrs import define as _attrs_define
 from attrs import field as _attrs_field
 
+from ..models.event_dto_origin import EventDTOOrigin
 from ..types import UNSET, Unset
 
 T = TypeVar("T", bound="EventDTO")
@@ -43,6 +44,7 @@ class EventDTO:
         input_tokens (int | Unset):
         metadata (Any | Unset):
         operation_name (str | Unset):
+        origin (EventDTOOrigin | Unset): archive when read from the encrypted archive; omitted for hot rows
         output_tokens (int | Unset):
         parent_span_id (str | Unset):
         payload (Any | Unset):
@@ -90,6 +92,7 @@ class EventDTO:
     input_tokens: int | Unset = UNSET
     metadata: Any | Unset = UNSET
     operation_name: str | Unset = UNSET
+    origin: EventDTOOrigin | Unset = UNSET
     output_tokens: int | Unset = UNSET
     parent_span_id: str | Unset = UNSET
     payload: Any | Unset = UNSET
@@ -163,6 +166,10 @@ class EventDTO:
         metadata = self.metadata
 
         operation_name = self.operation_name
+
+        origin: str | Unset = UNSET
+        if not isinstance(self.origin, Unset):
+            origin = self.origin.value
 
         output_tokens = self.output_tokens
 
@@ -251,6 +258,8 @@ class EventDTO:
             field_dict["metadata"] = metadata
         if operation_name is not UNSET:
             field_dict["operationName"] = operation_name
+        if origin is not UNSET:
+            field_dict["origin"] = origin
         if output_tokens is not UNSET:
             field_dict["outputTokens"] = output_tokens
         if parent_span_id is not UNSET:
@@ -347,6 +356,13 @@ class EventDTO:
 
         operation_name = d.pop("operationName", UNSET)
 
+        _origin = d.pop("origin", UNSET)
+        origin: EventDTOOrigin | Unset
+        if isinstance(_origin, Unset):
+            origin = UNSET
+        else:
+            origin = EventDTOOrigin(_origin)
+
         output_tokens = d.pop("outputTokens", UNSET)
 
         parent_span_id = d.pop("parentSpanId", UNSET)
@@ -411,6 +427,7 @@ class EventDTO:
             input_tokens=input_tokens,
             metadata=metadata,
             operation_name=operation_name,
+            origin=origin,
             output_tokens=output_tokens,
             parent_span_id=parent_span_id,
             payload=payload,

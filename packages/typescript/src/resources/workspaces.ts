@@ -37,7 +37,7 @@ import type {
   ActivityWorkspaceSpec,
   ChangesOutputBody,
   ConnectInputBody,
-  CreateInputBody,
+  CreateInputBody1,
   GrantInputBody,
   GrantListOutputBody,
   GrantUpdateInputBody,
@@ -62,7 +62,7 @@ export class WorkspacesResource {
   }
 
   /** Create a workspace for an application, from a full or blank spec. `POST /workspaces` */
-  async create(body: CreateInputBody): Promise<ActivityWorkspace | null> {
+  async create(body: CreateInputBody1): Promise<ActivityWorkspace | null> {
     return this.client.invoke(workspacesCreate, { body });
   }
 

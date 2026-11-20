@@ -92,6 +92,24 @@ export type ActivateInputBody = {
     revision: string;
 };
 
+export type ActivateInputBody1 = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
+    version_id: string;
+};
+
+export type ActivationOutputBody = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
+    versions: {
+        [key: string]: string;
+    };
+};
+
 export type ActivityActivation = {
     /**
      * Stage that admits an entity to the cohort
@@ -340,6 +358,10 @@ export type ActivityConnectResult = {
      */
     readonly $schema?: string;
     apiUrl: string;
+    /**
+     * For agents: the user opens this link to reveal the key (and Sentry DSN) once; env holds placeholders
+     */
+    claim?: Link;
     /**
      * True when this call minted a new key
      */
@@ -1260,6 +1282,41 @@ export type AppDto = {
     updatedAt?: string;
 };
 
+export type ArchiveFetchOutputBody = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
+    /**
+     * Poll GET /archive-fetches/{jobId}
+     */
+    jobId: string;
+    /**
+     * Archive parts the trace spans
+     */
+    segments: number;
+    state: 'queued' | 'running' | 'ready' | 'failed' | 'gone';
+};
+
+export type AttachmentDto = {
+    /**
+     * event.attachment | event.minidump | event.view_hierarchy | ...
+     */
+    attachmentType: string;
+    contentType: string;
+    createdAt: string;
+    filename: string;
+    id: string;
+    /**
+     * Minidumps are stored raw, without native symbolication
+     */
+    notSymbolicated?: boolean;
+    sentryEventId?: string;
+    size: number;
+    spanId?: string;
+    traceId?: string;
+};
+
 export type AuditCapability = {
     enabled: boolean;
     formats: Array<string> | null;
@@ -1327,6 +1384,17 @@ export type BreakdownRowDto = {
     totalTokens: number;
 };
 
+export type Bundle = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
+    compiler_version: string;
+    contract: Contract;
+    semantic_hash: string;
+    source_hash: string;
+};
+
 export type CapabilitiesOutputBody = {
     /**
      * A URL to the JSON Schema for this object.
@@ -1337,6 +1405,39 @@ export type CapabilitiesOutputBody = {
     featureFlags: FeatureFlags;
     license: LicenseStatus;
     version: string;
+};
+
+export type Case = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
+    dispositions: {
+        [key: string]: Disposition;
+    };
+    input: Input;
+    key: string;
+    pending: boolean;
+    result: Result;
+    revision: number;
+    version_id: string;
+    workflow: string;
+};
+
+export type CaseSchema = {
+    fields?: {
+        [key: string]: string;
+    };
+    key: string;
+};
+
+export type CasesOutputBody = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
+    cases: Array<Case> | null;
+    next_cursor?: string;
 };
 
 export type ChangesOutputBody = {
@@ -1376,6 +1477,21 @@ export type CheckoutInputBody = {
      * pro or team
      */
     plan: string;
+};
+
+export type ClaimedKey = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
+    envName: string;
+    key: string;
+    keyId: string;
+    organizationId: string;
+    /**
+     * SENTRY_DSN minted alongside the key by workspaces.connect
+     */
+    sentryDsn?: string;
 };
 
 export type ComplianceActionBody = {
@@ -1549,10 +1665,30 @@ export type ConnectionsOutputBody = {
     connections: Array<Connection> | null;
 };
 
+export type Contract = {
+    case: CaseSchema;
+    facts: {
+        [key: string]: FactSchema;
+    };
+    presentation: Presentation;
+    requirements: {
+        [key: string]: Requirement;
+    };
+    schema_version: number;
+    workflow: string;
+};
+
 export type Controls = {
     analytics: AnalyticsCapability;
     auditTrail: AuditCapability;
     dataAccess: DataAccessCapability;
+};
+
+export type Coverage = {
+    checked_at: string;
+    complete_through: string;
+    healthy: boolean;
+    source: string;
 };
 
 export type CreateAppInputBody = {
@@ -1647,6 +1783,26 @@ export type CreateInputBody = {
      * A URL to the JSON Schema for this object.
      */
     readonly $schema?: string;
+    /**
+     * Bind the key to one application
+     */
+    appId?: string;
+    /**
+     * Bind the key to one environment
+     */
+    environmentId?: string;
+    name: string;
+    /**
+     * Any of events:publish, events:read, observe:read
+     */
+    scopes: Array<string> | null;
+};
+
+export type CreateInputBody1 = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
     appId: string;
     /**
      * A blank spec ({"name": "My workspace"}) is enough; build the rest through the draft
@@ -1654,7 +1810,7 @@ export type CreateInputBody = {
     spec: ActivityWorkspaceSpec;
 };
 
-export type CreateInputBody1 = {
+export type CreateInputBody2 = {
     /**
      * A URL to the JSON Schema for this object.
      */
@@ -1664,19 +1820,25 @@ export type CreateInputBody1 = {
     destinationType: 'email' | 'webhook';
     enabled?: boolean;
     environmentId?: string;
-    metric: 'error_count' | 'error_rate' | 'latency_ms' | 'cost_usd' | 'lifecycle_open';
+    metric: 'error_count' | 'error_rate' | 'latency_ms' | 'cost_usd' | 'lifecycle_open' | 'monitor_failed' | 'crash_free_rate';
     model?: string;
     /**
      * Alert rule display name
      */
     name: string;
     operator: 'gt' | 'gte' | 'lt' | 'lte';
+    /**
+     * Release scope; for crash_free_rate, the release whose sessions are measured (empty = all releases)
+     */
     release?: string;
+    /**
+     * Service name; the workflow stage for lifecycle_open; the monitor slug for monitor_failed
+     */
     service?: string;
     threshold: number;
 };
 
-export type CreateInputBody2 = {
+export type CreateInputBody3 = {
     /**
      * A URL to the JSON Schema for this object.
      */
@@ -1698,7 +1860,7 @@ export type CreateInputBody2 = {
     signals: Array<string> | null;
 };
 
-export type CreateInputBody3 = {
+export type CreateInputBody4 = {
     /**
      * A URL to the JSON Schema for this object.
      */
@@ -1710,7 +1872,7 @@ export type CreateInputBody3 = {
     message: string;
 };
 
-export type CreateInputBody4 = {
+export type CreateInputBody5 = {
     /**
      * A URL to the JSON Schema for this object.
      */
@@ -1736,7 +1898,60 @@ export type CreateInvitationInputBody = {
     role: 'user' | 'admin' | 'owner';
 };
 
+export type CreateOrganizationInputBody = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
+    description?: string;
+    name: string;
+    /**
+     * URL name: lowercase letters, digits and single hyphens
+     */
+    slug: string;
+};
+
+export type CreateOrganizationOutputBody = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
+    hint?: string;
+    organization: CreatedOrganizationDto;
+    /**
+     * True when the organisation is beyond the free allowance and must be activated with a paid plan before it ingests
+     */
+    paymentRequired: boolean;
+};
+
 export type CreateOutputBody = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
+    alertRuleId: string;
+    appId?: string;
+    createdAt: string;
+    destination: string;
+    destinationType: string;
+    enabled: boolean;
+    environmentId?: string;
+    metric: string;
+    model?: string;
+    name: string;
+    operator: string;
+    orgId: string;
+    release?: string;
+    service?: string;
+    threshold: number;
+    updatedAt: string;
+    /**
+     * Signs webhook deliveries (X-AxonPush-Timestamp, X-AxonPush-Signature-V2); only returned on create and rotate
+     */
+    webhookSecret: string;
+};
+
+export type CreateOutputBody1 = {
     /**
      * A URL to the JSON Schema for this object.
      */
@@ -1744,7 +1959,7 @@ export type CreateOutputBody = {
     id: string;
 };
 
-export type CreateOutputBody1 = {
+export type CreateOutputBody2 = {
     /**
      * A URL to the JSON Schema for this object.
      */
@@ -1793,6 +2008,30 @@ export type CreateTokenOutputBody = {
     tokenId: string;
 };
 
+export type CreatedKey = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
+    /**
+     * For agents: the user opens this link to reveal the key once
+     */
+    claim?: Link;
+    id: string;
+    /**
+     * The raw key, shown once. Never returned to agents
+     */
+    key?: string;
+    name: string;
+    scopes: Array<string> | null;
+};
+
+export type CreatedOrganizationDto = {
+    id: string;
+    name: string;
+    slug: string;
+};
+
 export type DataAccessCapability = {
     aggregateRetentionDays: number;
     description: string;
@@ -1820,6 +2059,32 @@ export type DecisionDto = {
     taskId?: string;
     toolName?: string;
     traceId?: string;
+};
+
+export type Definition = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
+    bundle: Bundle;
+    id: string;
+    source: string;
+};
+
+export type DefinitionListBody = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
+    definitions: Array<Definition> | null;
+};
+
+export type DeleteMonitorOutputBody = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
+    deleted: boolean;
 };
 
 export type DeleteOutputBody = {
@@ -1927,12 +2192,32 @@ export type DiffInputBody = {
     selection: DiffCohortDto;
 };
 
+export type DiffInputBody1 = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
+    against: string;
+    source: string;
+};
+
 export type DiffOutputBody = {
     /**
      * A URL to the JSON Schema for this object.
      */
     readonly $schema?: string;
     attributes: Array<DiffAttributeDto> | null;
+};
+
+export type DiffOutputBody1 = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
+    after: Bundle;
+    before: Bundle;
+    semantic_changed: boolean;
+    source_changed: boolean;
 };
 
 export type DiffValueDto = {
@@ -1972,6 +2257,18 @@ export type DimensionsOutputBody = {
     dimensions: Array<DimensionDto> | null;
 };
 
+export type Disposition = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
+    actor: string;
+    at: string;
+    owner?: string;
+    reason: string;
+    state: string;
+};
+
 export type EndpointDto = {
     active: boolean;
     channelId: string;
@@ -2008,6 +2305,14 @@ export type EraseEvidenceOutputBody = {
      * A URL to the JSON Schema for this object.
      */
     readonly $schema?: string;
+    /**
+     * Events scrubbed by this call (at most 500)
+     */
+    erased: number;
+    /**
+     * True when more events for the subject remain; call again until false. The subject is tombstoned on the first call, so remaining events are already hidden from reads.
+     */
+    more: boolean;
     status: string;
 };
 
@@ -2024,6 +2329,33 @@ export type ErrorDetail = {
      * The value at the given location
      */
     value?: unknown;
+};
+
+export type ErrorFeedbackDto = {
+    associatedEventId?: string;
+    /**
+     * available | not_loaded
+     */
+    contentState: string;
+    email?: string;
+    eventId: string;
+    /**
+     * event (associated Sentry event id) | trace (shared trace)
+     */
+    matchedBy: string;
+    message?: string;
+    name?: string;
+    occurredAt: string;
+    traceId?: string;
+    url?: string;
+};
+
+export type ErrorFeedbackOutputBody = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
+    feedback: Array<ErrorFeedbackDto> | null;
 };
 
 export type ErrorIssueDto = {
@@ -2153,6 +2485,10 @@ export type EventDto = {
     occurredAt: string;
     operationName?: string;
     orgId: string;
+    /**
+     * archive when read from the encrypted archive; omitted for hot rows
+     */
+    origin?: 'archive';
     outputTokens?: number;
     parentSpanId?: string;
     payload?: unknown;
@@ -2204,6 +2540,36 @@ export type ExportDeliveryDto = {
     statusCode?: number;
 };
 
+export type Fact = {
+    case_id: string;
+    event: string;
+    fields: {
+        [key: string]: unknown;
+    };
+    id: string;
+    occurred_at: string;
+    received_at?: string;
+    source: string;
+    span_id?: string;
+    trace_id?: string;
+};
+
+export type FactSchema = {
+    evidence_class?: string;
+    fields: {
+        [key: string]: string;
+    };
+};
+
+export type FactsInputBody = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
+    input: Input;
+    workflow: string;
+};
+
 export type FeatureFlags = {
     /**
      * A URL to the JSON Schema for this object.
@@ -2215,6 +2581,10 @@ export type FeatureFlags = {
     environments: boolean;
     mcpServer: boolean;
     sentryIngest: boolean;
+};
+
+export type Features = {
+    compliance: boolean;
 };
 
 export type FeedbackDto = {
@@ -2229,6 +2599,28 @@ export type FeedbackDto = {
     reviewedBy?: string;
     status: string;
     userId?: string;
+};
+
+export type FetchStatusOutputBody = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
+    /**
+     * Why a failed fetch failed
+     */
+    error?: string;
+    jobId: string;
+    /**
+     * Suggested poll delay; 0 once finished
+     */
+    retryAfterMs: number;
+    segments: number;
+    segmentsDone: number;
+    /**
+     * gone means the history was erased or has expired
+     */
+    state: 'queued' | 'running' | 'ready' | 'failed' | 'gone';
 };
 
 export type GetOrgOutputBody = {
@@ -2254,6 +2646,10 @@ export type GetTraceOutputBody = {
      * A URL to the JSON Schema for this object.
      */
     readonly $schema?: string;
+    /**
+     * true when the spans were read from the archive (traces.getArchived)
+     */
+    archived?: boolean;
     hasMore: boolean;
     nextCursor?: string;
     spans: Array<EventDto> | null;
@@ -2417,12 +2813,42 @@ export type Inclusion = {
     size: number;
 };
 
+export type IngestCategoryTotalDto = {
+    accepted: number;
+    category: string;
+    dropped: number;
+};
+
+export type IngestOutcomeDto = {
+    category: string;
+    quantity: number;
+    reason: string;
+    /**
+     * sdk (client reports) | server (ingestion)
+     */
+    source: string;
+};
+
 export type IngestionStatusOutputBody = {
     /**
      * A URL to the JSON Schema for this object.
      */
     readonly $schema?: string;
     everIngested: boolean;
+};
+
+export type Input = {
+    case_fields?: {
+        [key: string]: unknown;
+    };
+    case_id: string;
+    coverage: Array<Coverage> | null;
+    facts: Array<Fact> | null;
+    now?: string;
+    previous?: Array<Obligation> | null;
+    subjects?: {
+        [key: string]: string;
+    };
 };
 
 export type InvitationDto = {
@@ -2605,6 +3031,18 @@ export type LicenseStatus = {
     tier: string | null;
 };
 
+export type Link = {
+    /**
+     * Environment variable the claimed key belongs in
+     */
+    envName: string;
+    expiresAt: string;
+    /**
+     * Open this in the dashboard, signed in as the same user, to reveal the key once
+     */
+    url: string;
+};
+
 export type LinkOutputBody = {
     /**
      * A URL to the JSON Schema for this object.
@@ -2635,6 +3073,14 @@ export type ListAppsOutputBody = {
      */
     readonly $schema?: string;
     apps: Array<AppDto> | null;
+};
+
+export type ListAttachmentsOutputBody = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
+    attachments: Array<AttachmentDto> | null;
 };
 
 export type ListBillingEventsOutputBody = {
@@ -2734,6 +3180,43 @@ export type ListMembersOutputBody = {
     members: Array<MemberDto> | null;
 };
 
+export type ListMetricNamesOutputBody = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
+    metrics: Array<MetricNameDto> | null;
+};
+
+export type ListMonitorCheckInsOutputBody = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
+    checkIns: Array<MonitorCheckInDto> | null;
+    /**
+     * Pass as before to load the next (older) page
+     */
+    nextBefore?: string;
+};
+
+export type ListMonitorsOutputBody = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
+    monitors: Array<MonitorDto> | null;
+};
+
+export type ListOutcomesOutputBody = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
+    outcomes: Array<IngestOutcomeDto> | null;
+    totals: Array<IngestCategoryTotalDto> | null;
+};
+
 export type ListOutputBody = {
     /**
      * A URL to the JSON Schema for this object.
@@ -2765,6 +3248,14 @@ export type ListOutputBody3 = {
     readonly $schema?: string;
     items: Array<ComplianceRecord> | null;
     nextCursor?: string;
+};
+
+export type ListReleasesOutputBody = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
+    releases: Array<ReleaseDto> | null;
 };
 
 export type ListTokensOutputBody = {
@@ -2801,7 +3292,11 @@ export type LogDto = {
 };
 
 export type Manifest = {
+    auditHead?: string;
+    auditSeq?: number;
+    compression?: string;
     content: Object;
+    format?: number;
     lockMode: string;
     lockedUntil: string;
     meta: Object;
@@ -2864,6 +3359,112 @@ export type Meta = {
     region: string;
 };
 
+export type MetricNameDto = {
+    /**
+     * Samples in the window
+     */
+    count: number;
+    lastSeen: string;
+    name: string;
+    /**
+     * counter | gauge | distribution
+     */
+    type: string;
+    unit: string;
+};
+
+export type MetricPointDto = {
+    bucket: string;
+    count: number;
+    value: number;
+};
+
+export type MetricSeriesDto = {
+    group: string;
+    points: Array<MetricPointDto> | null;
+};
+
+export type MetricSeriesResultDto = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
+    agg: string;
+    groupBy?: string;
+    interval: string;
+    name: string;
+    series: Array<MetricSeriesDto> | null;
+};
+
+export type MonitorCheckInDto = {
+    /**
+     * The SDK's check-in id (missed runs get a synthetic id)
+     */
+    checkInId: string;
+    durationMs?: number;
+    /**
+     * The environment name the SDK reported
+     */
+    environment?: string;
+    finishedAt?: string;
+    id: string;
+    release?: string;
+    startedAt: string;
+    status: 'in_progress' | 'ok' | 'error' | 'missed' | 'timeout';
+    traceId?: string;
+};
+
+export type MonitorCheckInSummaryDto = {
+    durationMs?: number;
+    startedAt: string;
+    status: 'in_progress' | 'ok' | 'error' | 'missed' | 'timeout';
+};
+
+export type MonitorDto = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
+    appId?: string;
+    channelId?: string;
+    checkinMarginMin: number;
+    consecutiveFailures: number;
+    createdAt: string;
+    environmentId?: string;
+    failureThreshold: number;
+    lastCheckInAt?: string;
+    lastStatus?: string;
+    maxRuntimeMin: number;
+    monitorId: string;
+    muted: boolean;
+    nextDueAt?: string;
+    /**
+     * Up to the 30 newest check-ins, newest first
+     */
+    recentCheckIns: Array<MonitorCheckInSummaryDto> | null;
+    recoveryThreshold: number;
+    schedule: MonitorScheduleDto;
+    slug: string;
+    status: 'active' | 'ok' | 'error' | 'missed' | 'timeout';
+    updatedAt: string;
+};
+
+export type MonitorScheduleDto = {
+    timezone?: string;
+    /**
+     * crontab, interval, or empty when the monitor has no schedule
+     */
+    type: string;
+    /**
+     * Interval unit: minute, hour, day, week, month, year
+     */
+    unit?: string;
+    /**
+     * Crontab expression, or the interval count
+     */
+    value?: string;
+};
+
 export type NdaInputBody = {
     /**
      * A URL to the JSON Schema for this object.
@@ -2878,6 +3479,21 @@ export type Object = {
     key: string;
     sha256: string;
     version: string;
+};
+
+export type Obligation = {
+    breach_observed_at?: string;
+    decide_at: string;
+    due_at: string;
+    evidence_class: string;
+    evidence_ids: Array<string> | null;
+    id: string;
+    lifecycle: string;
+    reason: string;
+    requirement: string;
+    state: string;
+    timing: string;
+    trigger_id: string;
 };
 
 export type ObligationEvidenceStruct = {
@@ -2937,6 +3553,30 @@ export type OpsInputBody = {
     version: number;
 };
 
+export type OrgAllowanceDto = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
+    /**
+     * Free organisations the user may own; -1 when unlimited
+     */
+    allowed: number;
+    /**
+     * When true, organisations beyond the allowance are created unpaid instead of refused
+     */
+    billingEnabled: boolean;
+    /**
+     * Owned organisations not on an active paid subscription
+     */
+    freeOwned: number;
+    /**
+     * Live organisations the user owns
+     */
+    owned: number;
+    unlimited: boolean;
+};
+
 export type OrgDto = {
     billingMonthlyAmountUsd?: number;
     billingNotes?: string;
@@ -2977,9 +3617,13 @@ export type OrganizationDto = {
      * A URL to the JSON Schema for this object.
      */
     readonly $schema?: string;
+    archiveLock: string;
+    archiveRetentionDays: number;
     createdAt: string;
     description?: string;
     eventsQuotaMonthly?: number;
+    features: Features;
+    hotRetentionDays: number;
     name: string;
     orgId: string;
     plan: string;
@@ -3079,24 +3723,24 @@ export type PatchInputBody = {
     version: number;
 };
 
-export type PlanFeatures = {
-    auditLog?: boolean;
-    customRetention?: boolean;
-    rbac?: boolean;
-    sso?: boolean;
-};
-
-export type PlanLimits = {
-    events: number | null;
-    features: PlanFeatures;
-    hotRetentionDays: number | null;
+export type PlanDto = {
+    archiveDays: number;
+    eventsMonthly: number | null;
+    features: Features;
+    hotDays: number;
+    id: string;
     lemonsqueezyVariants?: {
         [key: string]: string;
     };
+    maxArchiveDays: number;
+    name: string;
     priceAnnualUsd: number | null;
     priceMonthlyUsd: number | null;
-    retentionDays: number | null;
+    quotaCeilingPercent: number;
+    salesLed: boolean;
     seats: number | null;
+    topUp?: TopUp;
+    topUpAvailable: boolean;
 };
 
 export type PlanMrr = {
@@ -3110,9 +3754,8 @@ export type PlansOutputBody = {
      * A URL to the JSON Schema for this object.
      */
     readonly $schema?: string;
-    plans: {
-        [key: string]: PlanLimits;
-    };
+    billingEnabled: boolean;
+    plans: Array<PlanDto> | null;
 };
 
 export type PolicyCheckInputBody = {
@@ -3134,6 +3777,19 @@ export type PolicyOutputBody = {
     optOut: boolean;
     suspended: boolean;
     version: number;
+};
+
+export type Predicate = {
+    all?: Array<Predicate> | null;
+    any?: Array<Predicate> | null;
+    field?: string;
+    op?: string;
+    value?: unknown;
+};
+
+export type Presentation = {
+    stages?: Array<Stage> | null;
+    title: string;
 };
 
 export type ProofOutputBody = {
@@ -3201,12 +3857,91 @@ export type ReferenceOutputBody = {
     searchWindow?: string;
 };
 
+export type RegisterSourceInputBody = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
+    /**
+     * key:<key ID> or user:<user ID>
+     */
+    publisher: string;
+    source: string;
+};
+
+export type ReleaseDto = {
+    abnormalSessions: number;
+    /**
+     * Share of all sessions in the window
+     */
+    adoptionPct?: number;
+    crashFreeSessionsPct?: number;
+    crashFreeUsersPct?: number;
+    crashedSessions: number;
+    crashedUsers: number;
+    erroredSessions: number;
+    /**
+     * Error events carrying this release in the window
+     */
+    errors: number;
+    firstSeen?: string;
+    lastSeen?: string;
+    /**
+     * Issues first seen in the window on this release
+     */
+    newIssues: number;
+    release: string;
+    sessions: number;
+    users: number;
+};
+
+export type ReleaseDetailDto = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
+    abnormalSessions: number;
+    /**
+     * Share of all sessions in the window
+     */
+    adoptionPct?: number;
+    crashFreeSessionsPct?: number;
+    crashFreeUsersPct?: number;
+    crashedSessions: number;
+    crashedUsers: number;
+    erroredSessions: number;
+    /**
+     * Error events carrying this release in the window
+     */
+    errors: number;
+    firstSeen?: string;
+    lastSeen?: string;
+    /**
+     * Issues first seen in the window on this release
+     */
+    newIssues: number;
+    release: string;
+    series: Array<ReleaseHourDto> | null;
+    sessions: number;
+    users: number;
+};
+
 export type ReleaseHoldInputBody = {
     /**
      * A URL to the JSON Schema for this object.
      */
     readonly $schema?: string;
     reason: string;
+};
+
+export type ReleaseHourDto = {
+    abnormal: number;
+    crashed: number;
+    errored: number;
+    exited: number;
+    hour: string;
+    started: number;
+    unhandled: number;
 };
 
 export type ReplaceInputBody = {
@@ -3221,12 +3956,57 @@ export type ReplaceInputBody = {
     version: number;
 };
 
+export type ReplayInputBody = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
+    apply: boolean;
+    now: string;
+    version_id: string;
+};
+
+export type Requirement = {
+    cancel?: Selector;
+    evidence: Selector;
+    evidence_key?: string;
+    failure?: Selector;
+    fresh_for: string;
+    grace: string;
+    max_matches?: number;
+    source: string;
+    trigger: Selector;
+    within: string;
+};
+
+export type Result = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
+    case_id: string;
+    evaluated_at: string;
+    obligations: Array<Obligation> | null;
+    semantic_hash: string;
+};
+
 export type RevisionListOutputBody = {
     /**
      * A URL to the JSON Schema for this object.
      */
     readonly $schema?: string;
     revisions: Array<ActivityRevision> | null;
+};
+
+export type RotateSecretOutputBody = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
+    /**
+     * The new signing secret; the previous one stops working immediately
+     */
+    webhookSecret: string;
 };
 
 export type SearchEventsOutputBody = {
@@ -3278,6 +4058,14 @@ export type SegmentOutputBody = {
     segmentId: string;
     state: string;
     verifiedAt: string;
+};
+
+export type Selector = {
+    event: string;
+    match?: {
+        [key: string]: string;
+    };
+    where?: Predicate;
 };
 
 export type SessionBootstrap = {
@@ -3362,6 +4150,17 @@ export type SetBillingInputBody = {
     billingNotes?: string;
 };
 
+export type SetExtraFreeOrgsInputBody = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
+    /**
+     * Free organisations beyond the one everybody gets; 0 resets, -1 is unlimited
+     */
+    extraFreeOrgs: number;
+};
+
 export type SetFeedbackStatusInputBody = {
     /**
      * A URL to the JSON Schema for this object.
@@ -3424,6 +4223,36 @@ export type ShareOutputBody = {
     readOnly: boolean;
 };
 
+export type SimulationInputBody = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
+    input: Input;
+    source: string;
+};
+
+export type SourceBinding = {
+    id: string;
+    publisher: string;
+};
+
+export type SourceInputBody = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
+    source: string;
+};
+
+export type SourcesOutputBody = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
+    sources: Array<SourceBinding> | null;
+};
+
 export type StackFrameDto = {
     /**
      * 1-based source column when captured; omitted when unknown
@@ -3441,7 +4270,22 @@ export type StackFrameDto = {
     };
 };
 
+export type Stage = {
+    id: string;
+    label: string;
+    requirements: Array<string> | null;
+};
+
 export type StatusOutputBody = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
+    case_key?: string;
+    status: string;
+};
+
+export type StatusOutputBody1 = {
     /**
      * A URL to the JSON Schema for this object.
      */
@@ -3549,6 +4393,11 @@ export type TimeseriesPointDto = {
     traceCount: number;
 };
 
+export type TopUp = {
+    events: number;
+    priceUsd: number;
+};
+
 export type TraceGroupDto = {
     activityClass: string;
     appId: string;
@@ -3606,6 +4455,10 @@ export type TraceSummaryDto = {
     rootSpanName: string;
     serviceName: string;
     sessionId: string;
+    /**
+     * Ingest source of the root span: sdk, otlp, sentry, ...
+     */
+    source: string;
     spanCount: number;
     startedAt: string;
     totalTokens: number;
@@ -3704,7 +4557,7 @@ export type UpdateInputBody = {
     destination?: string;
     destinationType?: 'email' | 'webhook';
     enabled?: boolean;
-    metric?: 'error_count' | 'error_rate' | 'latency_ms' | 'cost_usd' | 'lifecycle_open';
+    metric?: 'error_count' | 'error_rate' | 'latency_ms' | 'cost_usd' | 'lifecycle_open' | 'monitor_failed' | 'crash_free_rate';
     name?: string;
     operator?: 'gt' | 'gte' | 'lt' | 'lte';
     threshold?: number;
@@ -3737,6 +4590,17 @@ export type UpdateMemberRoleInputBody = {
     role: 'user' | 'admin' | 'owner';
 };
 
+export type UpdateMonitorInputBody = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
+    /**
+     * Mute stops missed-run tracking and monitor_failed alerts
+     */
+    muted?: boolean;
+};
+
 export type UpdateOrganizationInputBody = {
     /**
      * A URL to the JSON Schema for this object.
@@ -3755,18 +4619,25 @@ export type UpdateProfileInputBody = {
     lastName?: string;
 };
 
-export type UsageOutputBody = {
+export type UsageDto = {
     /**
      * A URL to the JSON Schema for this object.
      */
     readonly $schema?: string;
+    billingEnabled: boolean;
+    ceiling: number | null;
+    credits: number;
     cycleStartedAt: string | null;
+    enforced: boolean;
+    governedBy: 'plan' | 'licence';
     hasBillingPortal: boolean;
     limit: number | null;
+    period: string;
     plan: string;
     retentionDays: number | null;
     seats: number | null;
     subscriptionStatus: string;
+    topUp?: TopUp;
     trialEndsAt: string | null;
     used: number;
 };
@@ -3777,10 +4648,18 @@ export type UserDto = {
     disabledAt?: string;
     email: string;
     emailVerified: boolean;
+    /**
+     * Free organisations granted beyond the one everybody gets; null means none, -1 unlimited
+     */
+    extraFreeOrgs: number | null;
     firstName?: string;
     id: string;
     lastName?: string;
     organizationId?: string;
+    /**
+     * Live organisations this user owns
+     */
+    ownedOrgs: number;
     username?: string;
 };
 
@@ -3987,6 +4866,16 @@ export type ActivateInputBodyWritable = {
     revision: string;
 };
 
+export type ActivateInputBody1Writable = {
+    version_id: string;
+};
+
+export type ActivationOutputBodyWritable = {
+    versions: {
+        [key: string]: string;
+    };
+};
+
 export type ActivityAnalyticsWritable = {
     asOf: string;
     /**
@@ -4018,6 +4907,10 @@ export type ActivityCatalogWritable = {
 
 export type ActivityConnectResultWritable = {
     apiUrl: string;
+    /**
+     * For agents: the user opens this link to reveal the key (and Sentry DSN) once; env holds placeholders
+     */
+    claim?: Link;
     /**
      * True when this call minted a new key
      */
@@ -4253,6 +5146,18 @@ export type AppDtoWritable = {
     updatedAt?: string;
 };
 
+export type ArchiveFetchOutputBodyWritable = {
+    /**
+     * Poll GET /archive-fetches/{jobId}
+     */
+    jobId: string;
+    /**
+     * Archive parts the trace spans
+     */
+    segments: number;
+    state: 'queued' | 'running' | 'ready' | 'failed' | 'gone';
+};
+
 export type BatchInputBodyWritable = {
     events: Array<EventBodyWritable> | null;
 };
@@ -4266,12 +5171,37 @@ export type BreakdownOutputBodyWritable = {
     rows: Array<BreakdownRowDto> | null;
 };
 
+export type BundleWritable = {
+    compiler_version: string;
+    contract: Contract;
+    semantic_hash: string;
+    source_hash: string;
+};
+
 export type CapabilitiesOutputBodyWritable = {
     apiKeyScopes: Array<ApiKeyScope> | null;
     controls: Controls;
     featureFlags: FeatureFlagsWritable;
     license: LicenseStatus;
     version: string;
+};
+
+export type CaseWritable = {
+    dispositions: {
+        [key: string]: DispositionWritable;
+    };
+    input: Input;
+    key: string;
+    pending: boolean;
+    result: ResultWritable;
+    revision: number;
+    version_id: string;
+    workflow: string;
+};
+
+export type CasesOutputBodyWritable = {
+    cases: Array<CaseWritable> | null;
+    next_cursor?: string;
 };
 
 export type ChangesOutputBodyWritable = {
@@ -4299,6 +5229,17 @@ export type CheckoutInputBodyWritable = {
      * pro or team
      */
     plan: string;
+};
+
+export type ClaimedKeyWritable = {
+    envName: string;
+    key: string;
+    keyId: string;
+    organizationId: string;
+    /**
+     * SENTRY_DSN minted alongside the key by workspaces.connect
+     */
+    sentryDsn?: string;
 };
 
 export type ComplianceActionBodyWritable = {
@@ -4419,6 +5360,22 @@ export type CreateHoldInputBodyWritable = {
 };
 
 export type CreateInputBodyWritable = {
+    /**
+     * Bind the key to one application
+     */
+    appId?: string;
+    /**
+     * Bind the key to one environment
+     */
+    environmentId?: string;
+    name: string;
+    /**
+     * Any of events:publish, events:read, observe:read
+     */
+    scopes: Array<string> | null;
+};
+
+export type CreateInputBody1Writable = {
     appId: string;
     /**
      * A blank spec ({"name": "My workspace"}) is enough; build the rest through the draft
@@ -4426,25 +5383,31 @@ export type CreateInputBodyWritable = {
     spec: ActivityWorkspaceSpecWritable;
 };
 
-export type CreateInputBody1Writable = {
+export type CreateInputBody2Writable = {
     appId?: string;
     destination: string;
     destinationType: 'email' | 'webhook';
     enabled?: boolean;
     environmentId?: string;
-    metric: 'error_count' | 'error_rate' | 'latency_ms' | 'cost_usd' | 'lifecycle_open';
+    metric: 'error_count' | 'error_rate' | 'latency_ms' | 'cost_usd' | 'lifecycle_open' | 'monitor_failed' | 'crash_free_rate';
     model?: string;
     /**
      * Alert rule display name
      */
     name: string;
     operator: 'gt' | 'gte' | 'lt' | 'lte';
+    /**
+     * Release scope; for crash_free_rate, the release whose sessions are measured (empty = all releases)
+     */
     release?: string;
+    /**
+     * Service name; the workflow stage for lifecycle_open; the monitor slug for monitor_failed
+     */
     service?: string;
     threshold: number;
 };
 
-export type CreateInputBody2Writable = {
+export type CreateInputBody3Writable = {
     endpointUrl: string;
     envSlug: string;
     eventTypeFilter?: Array<string> | null;
@@ -4462,7 +5425,7 @@ export type CreateInputBody2Writable = {
     signals: Array<string> | null;
 };
 
-export type CreateInputBody3Writable = {
+export type CreateInputBody4Writable = {
     category?: 'bug' | 'idea' | 'praise' | 'other';
     context?: {
         [key: string]: unknown;
@@ -4470,7 +5433,7 @@ export type CreateInputBody3Writable = {
     message: string;
 };
 
-export type CreateInputBody4Writable = {
+export type CreateInputBody5Writable = {
     company: string;
     email: string;
     name?: string;
@@ -4488,11 +5451,52 @@ export type CreateInvitationInputBodyWritable = {
     role: 'user' | 'admin' | 'owner';
 };
 
+export type CreateOrganizationInputBodyWritable = {
+    description?: string;
+    name: string;
+    /**
+     * URL name: lowercase letters, digits and single hyphens
+     */
+    slug: string;
+};
+
+export type CreateOrganizationOutputBodyWritable = {
+    hint?: string;
+    organization: CreatedOrganizationDto;
+    /**
+     * True when the organisation is beyond the free allowance and must be activated with a paid plan before it ingests
+     */
+    paymentRequired: boolean;
+};
+
 export type CreateOutputBodyWritable = {
-    id: string;
+    alertRuleId: string;
+    appId?: string;
+    createdAt: string;
+    destination: string;
+    destinationType: string;
+    enabled: boolean;
+    environmentId?: string;
+    metric: string;
+    model?: string;
+    name: string;
+    operator: string;
+    orgId: string;
+    release?: string;
+    service?: string;
+    threshold: number;
+    updatedAt: string;
+    /**
+     * Signs webhook deliveries (X-AxonPush-Timestamp, X-AxonPush-Signature-V2); only returned on create and rotate
+     */
+    webhookSecret: string;
 };
 
 export type CreateOutputBody1Writable = {
+    id: string;
+};
+
+export type CreateOutputBody2Writable = {
     ok: boolean;
     requestId: string;
 };
@@ -4527,6 +5531,34 @@ export type CreateTokenOutputBodyWritable = {
      */
     token: string;
     tokenId: string;
+};
+
+export type CreatedKeyWritable = {
+    /**
+     * For agents: the user opens this link to reveal the key once
+     */
+    claim?: Link;
+    id: string;
+    /**
+     * The raw key, shown once. Never returned to agents
+     */
+    key?: string;
+    name: string;
+    scopes: Array<string> | null;
+};
+
+export type DefinitionWritable = {
+    bundle: BundleWritable;
+    id: string;
+    source: string;
+};
+
+export type DefinitionListBodyWritable = {
+    definitions: Array<DefinitionWritable> | null;
+};
+
+export type DeleteMonitorOutputBodyWritable = {
+    deleted: boolean;
 };
 
 export type DeleteOutputBodyWritable = {
@@ -4567,8 +5599,20 @@ export type DiffInputBodyWritable = {
     selection: DiffCohortDto;
 };
 
+export type DiffInputBody1Writable = {
+    against: string;
+    source: string;
+};
+
 export type DiffOutputBodyWritable = {
     attributes: Array<DiffAttributeDto> | null;
+};
+
+export type DiffOutputBody1Writable = {
+    after: BundleWritable;
+    before: BundleWritable;
+    semantic_changed: boolean;
+    source_changed: boolean;
 };
 
 export type DimensionValuesOutputBodyWritable = {
@@ -4578,6 +5622,14 @@ export type DimensionValuesOutputBodyWritable = {
 
 export type DimensionsOutputBodyWritable = {
     dimensions: Array<DimensionDto> | null;
+};
+
+export type DispositionWritable = {
+    actor: string;
+    at: string;
+    owner?: string;
+    reason: string;
+    state: string;
 };
 
 export type EnvironmentDtoWritable = {
@@ -4595,7 +5647,19 @@ export type EnvironmentDtoWritable = {
 };
 
 export type EraseEvidenceOutputBodyWritable = {
+    /**
+     * Events scrubbed by this call (at most 500)
+     */
+    erased: number;
+    /**
+     * True when more events for the subject remain; call again until false. The subject is tombstoned on the first call, so remaining events are already hidden from reads.
+     */
+    more: boolean;
     status: string;
+};
+
+export type ErrorFeedbackOutputBodyWritable = {
+    feedback: Array<ErrorFeedbackDto> | null;
 };
 
 export type ErrorModelWritable = {
@@ -4694,6 +5758,10 @@ export type EventDtoWritable = {
     occurredAt: string;
     operationName?: string;
     orgId: string;
+    /**
+     * archive when read from the encrypted archive; omitted for hot rows
+     */
+    origin?: 'archive';
     outputTokens?: number;
     parentSpanId?: string;
     payload?: unknown;
@@ -4721,6 +5789,11 @@ export type EventOutputBodyWritable = {
     status: string;
 };
 
+export type FactsInputBodyWritable = {
+    input: Input;
+    workflow: string;
+};
+
 export type FeatureFlagsWritable = {
     analyticsV2: boolean;
     asyncIngest: boolean;
@@ -4728,6 +5801,24 @@ export type FeatureFlagsWritable = {
     environments: boolean;
     mcpServer: boolean;
     sentryIngest: boolean;
+};
+
+export type FetchStatusOutputBodyWritable = {
+    /**
+     * Why a failed fetch failed
+     */
+    error?: string;
+    jobId: string;
+    /**
+     * Suggested poll delay; 0 once finished
+     */
+    retryAfterMs: number;
+    segments: number;
+    segmentsDone: number;
+    /**
+     * gone means the history was erased or has expired
+     */
+    state: 'queued' | 'running' | 'ready' | 'failed' | 'gone';
 };
 
 export type GetOrgOutputBodyWritable = {
@@ -4741,6 +5832,10 @@ export type GetOutputBodyWritable = {
 };
 
 export type GetTraceOutputBodyWritable = {
+    /**
+     * true when the spans were read from the archive (traces.getArchived)
+     */
+    archived?: boolean;
     hasMore: boolean;
     nextCursor?: string;
     spans: Array<EventDtoWritable> | null;
@@ -4968,6 +6063,10 @@ export type ListAppsOutputBodyWritable = {
     apps: Array<AppDtoWritable> | null;
 };
 
+export type ListAttachmentsOutputBodyWritable = {
+    attachments: Array<AttachmentDto> | null;
+};
+
 export type ListBillingEventsOutputBodyWritable = {
     events: Array<BillingEventDto> | null;
 };
@@ -5017,6 +6116,27 @@ export type ListMembersOutputBodyWritable = {
     members: Array<MemberDto> | null;
 };
 
+export type ListMetricNamesOutputBodyWritable = {
+    metrics: Array<MetricNameDto> | null;
+};
+
+export type ListMonitorCheckInsOutputBodyWritable = {
+    checkIns: Array<MonitorCheckInDto> | null;
+    /**
+     * Pass as before to load the next (older) page
+     */
+    nextBefore?: string;
+};
+
+export type ListMonitorsOutputBodyWritable = {
+    monitors: Array<MonitorDtoWritable> | null;
+};
+
+export type ListOutcomesOutputBodyWritable = {
+    outcomes: Array<IngestOutcomeDto> | null;
+    totals: Array<IngestCategoryTotalDto> | null;
+};
+
 export type ListOutputBodyWritable = {
     data: Array<AlertRuleDtoWritable> | null;
 };
@@ -5032,6 +6152,10 @@ export type ListOutputBody2Writable = {
 export type ListOutputBody3Writable = {
     items: Array<ComplianceRecordWritable> | null;
     nextCursor?: string;
+};
+
+export type ListReleasesOutputBodyWritable = {
+    releases: Array<ReleaseDto> | null;
 };
 
 export type ListTokensOutputBodyWritable = {
@@ -5057,6 +6181,39 @@ export type MeDtoWritable = {
 
 export type MessageOutputBodyWritable = {
     message: string;
+};
+
+export type MetricSeriesResultDtoWritable = {
+    agg: string;
+    groupBy?: string;
+    interval: string;
+    name: string;
+    series: Array<MetricSeriesDto> | null;
+};
+
+export type MonitorDtoWritable = {
+    appId?: string;
+    channelId?: string;
+    checkinMarginMin: number;
+    consecutiveFailures: number;
+    createdAt: string;
+    environmentId?: string;
+    failureThreshold: number;
+    lastCheckInAt?: string;
+    lastStatus?: string;
+    maxRuntimeMin: number;
+    monitorId: string;
+    muted: boolean;
+    nextDueAt?: string;
+    /**
+     * Up to the 30 newest check-ins, newest first
+     */
+    recentCheckIns: Array<MonitorCheckInSummaryDto> | null;
+    recoveryThreshold: number;
+    schedule: MonitorScheduleDto;
+    slug: string;
+    status: 'active' | 'ok' | 'error' | 'missed' | 'timeout';
+    updatedAt: string;
 };
 
 export type NdaInputBodyWritable = {
@@ -5090,10 +6247,34 @@ export type OpsInputBodyWritable = {
     version: number;
 };
 
+export type OrgAllowanceDtoWritable = {
+    /**
+     * Free organisations the user may own; -1 when unlimited
+     */
+    allowed: number;
+    /**
+     * When true, organisations beyond the allowance are created unpaid instead of refused
+     */
+    billingEnabled: boolean;
+    /**
+     * Owned organisations not on an active paid subscription
+     */
+    freeOwned: number;
+    /**
+     * Live organisations the user owns
+     */
+    owned: number;
+    unlimited: boolean;
+};
+
 export type OrganizationDtoWritable = {
+    archiveLock: string;
+    archiveRetentionDays: number;
     createdAt: string;
     description?: string;
     eventsQuotaMonthly?: number;
+    features: Features;
+    hotRetentionDays: number;
     name: string;
     orgId: string;
     plan: string;
@@ -5149,9 +6330,8 @@ export type PatchInputBodyWritable = {
 };
 
 export type PlansOutputBodyWritable = {
-    plans: {
-        [key: string]: PlanLimits;
-    };
+    billingEnabled: boolean;
+    plans: Array<PlanDto> | null;
 };
 
 export type PolicyCheckInputBodyWritable = {
@@ -5199,6 +6379,41 @@ export type ReferenceOutputBodyWritable = {
     searchWindow?: string;
 };
 
+export type RegisterSourceInputBodyWritable = {
+    /**
+     * key:<key ID> or user:<user ID>
+     */
+    publisher: string;
+    source: string;
+};
+
+export type ReleaseDetailDtoWritable = {
+    abnormalSessions: number;
+    /**
+     * Share of all sessions in the window
+     */
+    adoptionPct?: number;
+    crashFreeSessionsPct?: number;
+    crashFreeUsersPct?: number;
+    crashedSessions: number;
+    crashedUsers: number;
+    erroredSessions: number;
+    /**
+     * Error events carrying this release in the window
+     */
+    errors: number;
+    firstSeen?: string;
+    lastSeen?: string;
+    /**
+     * Issues first seen in the window on this release
+     */
+    newIssues: number;
+    release: string;
+    series: Array<ReleaseHourDto> | null;
+    sessions: number;
+    users: number;
+};
+
 export type ReleaseHoldInputBodyWritable = {
     reason: string;
 };
@@ -5211,8 +6426,28 @@ export type ReplaceInputBodyWritable = {
     version: number;
 };
 
+export type ReplayInputBodyWritable = {
+    apply: boolean;
+    now: string;
+    version_id: string;
+};
+
+export type ResultWritable = {
+    case_id: string;
+    evaluated_at: string;
+    obligations: Array<Obligation> | null;
+    semantic_hash: string;
+};
+
 export type RevisionListOutputBodyWritable = {
     revisions: Array<ActivityRevisionWritable> | null;
+};
+
+export type RotateSecretOutputBodyWritable = {
+    /**
+     * The new signing secret; the previous one stops working immediately
+     */
+    webhookSecret: string;
 };
 
 export type SearchEventsOutputBodyWritable = {
@@ -5308,6 +6543,13 @@ export type SetBillingInputBodyWritable = {
     billingNotes?: string;
 };
 
+export type SetExtraFreeOrgsInputBodyWritable = {
+    /**
+     * Free organisations beyond the one everybody gets; 0 resets, -1 is unlimited
+     */
+    extraFreeOrgs: number;
+};
+
 export type SetFeedbackStatusInputBodyWritable = {
     status: string;
 };
@@ -5346,7 +6588,25 @@ export type ShareOutputBodyWritable = {
     readOnly: boolean;
 };
 
+export type SimulationInputBodyWritable = {
+    input: Input;
+    source: string;
+};
+
+export type SourceInputBodyWritable = {
+    source: string;
+};
+
+export type SourcesOutputBodyWritable = {
+    sources: Array<SourceBinding> | null;
+};
+
 export type StatusOutputBodyWritable = {
+    case_key?: string;
+    status: string;
+};
+
+export type StatusOutputBody1Writable = {
     activeHolds: number;
     anchorSequence: number;
     bytesRaw: number;
@@ -5478,7 +6738,7 @@ export type UpdateInputBodyWritable = {
     destination?: string;
     destinationType?: 'email' | 'webhook';
     enabled?: boolean;
-    metric?: 'error_count' | 'error_rate' | 'latency_ms' | 'cost_usd' | 'lifecycle_open';
+    metric?: 'error_count' | 'error_rate' | 'latency_ms' | 'cost_usd' | 'lifecycle_open' | 'monitor_failed' | 'crash_free_rate';
     name?: string;
     operator?: 'gt' | 'gte' | 'lt' | 'lte';
     threshold?: number;
@@ -5503,6 +6763,13 @@ export type UpdateMemberRoleInputBodyWritable = {
     role: 'user' | 'admin' | 'owner';
 };
 
+export type UpdateMonitorInputBodyWritable = {
+    /**
+     * Mute stops missed-run tracking and monitor_failed alerts
+     */
+    muted?: boolean;
+};
+
 export type UpdateOrganizationInputBodyWritable = {
     description?: string;
     name?: string;
@@ -5513,14 +6780,21 @@ export type UpdateProfileInputBodyWritable = {
     lastName?: string;
 };
 
-export type UsageOutputBodyWritable = {
+export type UsageDtoWritable = {
+    billingEnabled: boolean;
+    ceiling: number | null;
+    credits: number;
     cycleStartedAt: string | null;
+    enforced: boolean;
+    governedBy: 'plan' | 'licence';
     hasBillingPortal: boolean;
     limit: number | null;
+    period: string;
     plan: string;
     retentionDays: number | null;
     seats: number | null;
     subscriptionStatus: string;
+    topUp?: TopUp;
     trialEndsAt: string | null;
     used: number;
 };
@@ -5628,7 +6902,7 @@ export type WriteOutputBodyWritable = {
 };
 
 export type AccessRequestCreateData = {
-    body: CreateInputBody4Writable;
+    body: CreateInputBody5Writable;
     headers?: {
         'CF-Connecting-IP'?: string;
         'X-Forwarded-For'?: string;
@@ -5654,7 +6928,7 @@ export type AccessRequestCreateResponses = {
     /**
      * Created
      */
-    201: CreateOutputBody1;
+    201: CreateOutputBody2;
 };
 
 export type AccessRequestCreateResponse = AccessRequestCreateResponses[keyof AccessRequestCreateResponses];
@@ -6294,6 +7568,33 @@ export type AdminUsersEnableResponses = {
 };
 
 export type AdminUsersEnableResponse = AdminUsersEnableResponses[keyof AdminUsersEnableResponses];
+
+export type AdminUsersSetExtraFreeOrgsData = {
+    body: SetExtraFreeOrgsInputBodyWritable;
+    path: {
+        userId: string;
+    };
+    query?: never;
+    url: '/admin/users/{userId}/extra-free-orgs';
+};
+
+export type AdminUsersSetExtraFreeOrgsErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type AdminUsersSetExtraFreeOrgsError = AdminUsersSetExtraFreeOrgsErrors[keyof AdminUsersSetExtraFreeOrgsErrors];
+
+export type AdminUsersSetExtraFreeOrgsResponses = {
+    /**
+     * OK
+     */
+    200: OkOutputBody;
+};
+
+export type AdminUsersSetExtraFreeOrgsResponse = AdminUsersSetExtraFreeOrgsResponses[keyof AdminUsersSetExtraFreeOrgsResponses];
 
 export type AdminUsersRestoreData = {
     body?: never;
@@ -6959,6 +8260,33 @@ export type AnalyticsTimeseriesResponses = {
 
 export type AnalyticsTimeseriesResponse = AnalyticsTimeseriesResponses[keyof AnalyticsTimeseriesResponses];
 
+export type ApiKeysClaimData = {
+    body?: never;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/api-key-claims/{id}';
+};
+
+export type ApiKeysClaimErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type ApiKeysClaimError = ApiKeysClaimErrors[keyof ApiKeysClaimErrors];
+
+export type ApiKeysClaimResponses = {
+    /**
+     * OK
+     */
+    200: ClaimedKey;
+};
+
+export type ApiKeysClaimResponse = ApiKeysClaimResponses[keyof ApiKeysClaimResponses];
+
 export type AppsListData = {
     body?: never;
     path?: never;
@@ -7228,6 +8556,97 @@ export type ChannelsUpdateResponses = {
 
 export type ChannelsUpdateResponse = ChannelsUpdateResponses[keyof ChannelsUpdateResponses];
 
+export type ArchiveFetchStatusData = {
+    body?: never;
+    path: {
+        jobId: string;
+    };
+    query?: never;
+    url: '/archive-fetches/{jobId}';
+};
+
+export type ArchiveFetchStatusErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type ArchiveFetchStatusError = ArchiveFetchStatusErrors[keyof ArchiveFetchStatusErrors];
+
+export type ArchiveFetchStatusResponses = {
+    /**
+     * OK
+     */
+    200: FetchStatusOutputBody;
+};
+
+export type ArchiveFetchStatusResponse = ArchiveFetchStatusResponses[keyof ArchiveFetchStatusResponses];
+
+export type AttachmentsListData = {
+    body?: never;
+    path?: never;
+    query?: {
+        /**
+         * Sentry event id
+         */
+        eventId?: string;
+        traceId?: string;
+        spanId?: string;
+        appId?: string;
+        /**
+         * Environment slug or id
+         */
+        environmentId?: string;
+    };
+    url: '/attachments';
+};
+
+export type AttachmentsListErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type AttachmentsListError = AttachmentsListErrors[keyof AttachmentsListErrors];
+
+export type AttachmentsListResponses = {
+    /**
+     * OK
+     */
+    200: ListAttachmentsOutputBody;
+};
+
+export type AttachmentsListResponse = AttachmentsListResponses[keyof AttachmentsListResponses];
+
+export type AttachmentsContentData = {
+    body?: never;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/attachments/{id}/content';
+};
+
+export type AttachmentsContentErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type AttachmentsContentError = AttachmentsContentErrors[keyof AttachmentsContentErrors];
+
+export type AttachmentsContentResponses = {
+    /**
+     * OK
+     */
+    200: string;
+};
+
+export type AttachmentsContentResponse = AttachmentsContentResponses[keyof AttachmentsContentResponses];
+
 export type AuditListData = {
     body?: never;
     path?: never;
@@ -7239,9 +8658,13 @@ export type AuditListData = {
          */
         source?: string;
         /**
-         * RFC3339 upper bound (exclusive); defaults to now
+         * RFC3339 upper bound (exclusive); defaults to now. To page, pass the last row's createdAt here and its id as beforeId
          */
         before?: string;
+        /**
+         * Id of the last row on the previous page; with before, pages on (createdAt, id) so rows sharing the boundary timestamp are not skipped
+         */
+        beforeId?: string;
         limit?: number;
     };
     url: '/audit-logs';
@@ -9618,7 +11041,7 @@ export type AuditStatusResponses = {
     /**
      * OK
      */
-    200: StatusOutputBody;
+    200: StatusOutputBody1;
 };
 
 export type AuditStatusResponse = AuditStatusResponses[keyof AuditStatusResponses];
@@ -9957,6 +11380,31 @@ export type BillingPortalResponses = {
 
 export type BillingPortalResponse = BillingPortalResponses[keyof BillingPortalResponses];
 
+export type BillingTopUpData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/billing/top-ups';
+};
+
+export type BillingTopUpErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type BillingTopUpError = BillingTopUpErrors[keyof BillingTopUpErrors];
+
+export type BillingTopUpResponses = {
+    /**
+     * Created
+     */
+    201: LinkOutputBody;
+};
+
+export type BillingTopUpResponse = BillingTopUpResponses[keyof BillingTopUpResponses];
+
 export type BillingUsageData = {
     body?: never;
     path?: never;
@@ -9977,7 +11425,7 @@ export type BillingUsageResponses = {
     /**
      * OK
      */
-    200: UsageOutputBody;
+    200: UsageDto;
 };
 
 export type BillingUsageResponse = BillingUsageResponses[keyof BillingUsageResponses];
@@ -10348,6 +11796,43 @@ export type ErrorsEventsResponses = {
 
 export type ErrorsEventsResponse = ErrorsEventsResponses[keyof ErrorsEventsResponses];
 
+export type ErrorsFeedbackData = {
+    body?: never;
+    path: {
+        fingerprint: string;
+    };
+    query?: {
+        appId?: string;
+        /**
+         * Environment slug or id
+         */
+        environmentId?: string;
+        /**
+         * Max feedback items (default 50, max 200)
+         */
+        limit?: number;
+    };
+    url: '/errors/{fingerprint}/feedback';
+};
+
+export type ErrorsFeedbackErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type ErrorsFeedbackError = ErrorsFeedbackErrors[keyof ErrorsFeedbackErrors];
+
+export type ErrorsFeedbackResponses = {
+    /**
+     * OK
+     */
+    200: ErrorFeedbackOutputBody;
+};
+
+export type ErrorsFeedbackResponse = ErrorsFeedbackResponses[keyof ErrorsFeedbackResponses];
+
 export type CreateEventData = {
     body: EventBodyWritable;
     headers?: {
@@ -10355,6 +11840,10 @@ export type CreateEventData = {
         'x-api-key'?: string;
         'x-public-token'?: string;
         Authorization?: string;
+        /**
+         * Environment id or slug for an unbound credential; a credential bound to an environment may only name its own
+         */
+        'X-Axonpush-Environment'?: string;
     };
     path?: never;
     query?: never;
@@ -10492,6 +11981,10 @@ export type CreateEventBatchData = {
         'x-api-key'?: string;
         'x-public-token'?: string;
         Authorization?: string;
+        /**
+         * Environment id or slug for an unbound credential; a credential bound to an environment may only name its own
+         */
+        'X-Axonpush-Environment'?: string;
     };
     path?: never;
     query?: never;
@@ -10544,7 +12037,7 @@ export type ExportListResponses = {
 export type ExportListResponse = ExportListResponses[keyof ExportListResponses];
 
 export type ExportCreateData = {
-    body: CreateInputBody2Writable;
+    body: CreateInputBody3Writable;
     path?: never;
     query?: never;
     url: '/export-destinations';
@@ -10729,7 +12222,7 @@ export type FeatureFlagsMeResponses = {
 export type FeatureFlagsMeResponse = FeatureFlagsMeResponses[keyof FeatureFlagsMeResponses];
 
 export type FeedbackCreateData = {
-    body: CreateInputBody3Writable;
+    body: CreateInputBody4Writable;
     headers?: {
         'CF-Connecting-IP'?: string;
         'X-Forwarded-For'?: string;
@@ -10753,7 +12246,7 @@ export type FeedbackCreateResponses = {
     /**
      * Created
      */
-    201: CreateOutputBody;
+    201: CreateOutputBody1;
 };
 
 export type FeedbackCreateResponse = FeedbackCreateResponses[keyof FeedbackCreateResponses];
@@ -10782,6 +12275,41 @@ export type GetHealthzResponses = {
 };
 
 export type GetHealthzResponse = GetHealthzResponses[keyof GetHealthzResponses];
+
+export type IngestOutcomesData = {
+    body?: never;
+    path?: never;
+    query?: {
+        appId?: string;
+        /**
+         * Environment slug or id
+         */
+        environmentId?: string;
+        /**
+         * Look-back window, rounded to whole days (default 24h)
+         */
+        window?: '1h' | '6h' | '24h' | '7d' | '14d' | '30d';
+    };
+    url: '/ingest/outcomes';
+};
+
+export type IngestOutcomesErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type IngestOutcomesError = IngestOutcomesErrors[keyof IngestOutcomesErrors];
+
+export type IngestOutcomesResponses = {
+    /**
+     * OK
+     */
+    200: ListOutcomesOutputBody;
+};
+
+export type IngestOutcomesResponse = IngestOutcomesResponses[keyof IngestOutcomesResponses];
 
 export type OrganizationInvitationsAcceptData = {
     body: AcceptInvitationInputBodyWritable;
@@ -10858,6 +12386,252 @@ export type McpConnectionsResponses = {
 
 export type McpConnectionsResponse = McpConnectionsResponses[keyof McpConnectionsResponses];
 
+export type MetricsNamesData = {
+    body?: never;
+    path?: never;
+    query?: {
+        appId?: string;
+        /**
+         * Environment slug or id
+         */
+        environmentId?: string;
+        /**
+         * Window start (RFC3339); defaults to 24h before until
+         */
+        since?: string;
+        /**
+         * Window end (RFC3339); defaults to now
+         */
+        until?: string;
+    };
+    url: '/metrics/names';
+};
+
+export type MetricsNamesErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type MetricsNamesError = MetricsNamesErrors[keyof MetricsNamesErrors];
+
+export type MetricsNamesResponses = {
+    /**
+     * OK
+     */
+    200: ListMetricNamesOutputBody;
+};
+
+export type MetricsNamesResponse = MetricsNamesResponses[keyof MetricsNamesResponses];
+
+export type MetricsSeriesData = {
+    body?: never;
+    path?: never;
+    query: {
+        name: string;
+        /**
+         * Aggregation (default sum)
+         */
+        agg?: 'sum' | 'avg' | 'min' | 'max' | 'p50' | 'p95' | 'count';
+        /**
+         * Bucket size (default 1h)
+         */
+        interval?: '1m' | '5m' | '1h' | '1d';
+        /**
+         * Attribute key to split by; top 10 groups
+         */
+        groupBy?: string;
+        appId?: string;
+        /**
+         * Environment slug or id
+         */
+        environmentId?: string;
+        /**
+         * Window start (RFC3339); defaults to 24h before until
+         */
+        since?: string;
+        /**
+         * Window end (RFC3339); defaults to now
+         */
+        until?: string;
+    };
+    url: '/metrics/series';
+};
+
+export type MetricsSeriesErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type MetricsSeriesError = MetricsSeriesErrors[keyof MetricsSeriesErrors];
+
+export type MetricsSeriesResponses = {
+    /**
+     * OK
+     */
+    200: MetricSeriesResultDto;
+};
+
+export type MetricsSeriesResponse = MetricsSeriesResponses[keyof MetricsSeriesResponses];
+
+export type MonitorsListData = {
+    body?: never;
+    path?: never;
+    query?: {
+        /**
+         * Filter by app
+         */
+        appId?: string;
+        /**
+         * Filter by environment (id or slug)
+         */
+        environmentId?: string;
+        /**
+         * Max monitors (default 50, max 500)
+         */
+        limit?: number;
+    };
+    url: '/monitors';
+};
+
+export type MonitorsListErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type MonitorsListError = MonitorsListErrors[keyof MonitorsListErrors];
+
+export type MonitorsListResponses = {
+    /**
+     * OK
+     */
+    200: ListMonitorsOutputBody;
+};
+
+export type MonitorsListResponse = MonitorsListResponses[keyof MonitorsListResponses];
+
+export type MonitorsDeleteData = {
+    body?: never;
+    path: {
+        monitorId: string;
+    };
+    query?: never;
+    url: '/monitors/{monitorId}';
+};
+
+export type MonitorsDeleteErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type MonitorsDeleteError = MonitorsDeleteErrors[keyof MonitorsDeleteErrors];
+
+export type MonitorsDeleteResponses = {
+    /**
+     * OK
+     */
+    200: DeleteMonitorOutputBody;
+};
+
+export type MonitorsDeleteResponse = MonitorsDeleteResponses[keyof MonitorsDeleteResponses];
+
+export type MonitorsGetData = {
+    body?: never;
+    path: {
+        monitorId: string;
+    };
+    query?: never;
+    url: '/monitors/{monitorId}';
+};
+
+export type MonitorsGetErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type MonitorsGetError = MonitorsGetErrors[keyof MonitorsGetErrors];
+
+export type MonitorsGetResponses = {
+    /**
+     * OK
+     */
+    200: MonitorDto;
+};
+
+export type MonitorsGetResponse = MonitorsGetResponses[keyof MonitorsGetResponses];
+
+export type MonitorsUpdateData = {
+    body: UpdateMonitorInputBodyWritable;
+    path: {
+        monitorId: string;
+    };
+    query?: never;
+    url: '/monitors/{monitorId}';
+};
+
+export type MonitorsUpdateErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type MonitorsUpdateError = MonitorsUpdateErrors[keyof MonitorsUpdateErrors];
+
+export type MonitorsUpdateResponses = {
+    /**
+     * OK
+     */
+    200: MonitorDto;
+};
+
+export type MonitorsUpdateResponse = MonitorsUpdateResponses[keyof MonitorsUpdateResponses];
+
+export type MonitorsCheckinsData = {
+    body?: never;
+    path: {
+        monitorId: string;
+    };
+    query?: {
+        /**
+         * Keyset upper bound (RFC3339, exclusive) on startedAt for older check-ins
+         */
+        before?: string;
+        /**
+         * Max check-ins (default 50, max 500)
+         */
+        limit?: number;
+    };
+    url: '/monitors/{monitorId}/checkins';
+};
+
+export type MonitorsCheckinsErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type MonitorsCheckinsError = MonitorsCheckinsErrors[keyof MonitorsCheckinsErrors];
+
+export type MonitorsCheckinsResponses = {
+    /**
+     * OK
+     */
+    200: ListMonitorCheckInsOutputBody;
+};
+
+export type MonitorsCheckinsResponse = MonitorsCheckinsResponses[keyof MonitorsCheckinsResponses];
+
 export type OrganizationGetData = {
     body?: never;
     path?: never;
@@ -10907,6 +12681,56 @@ export type OrganizationUpdateResponses = {
 };
 
 export type OrganizationUpdateResponse = OrganizationUpdateResponses[keyof OrganizationUpdateResponses];
+
+export type ApiKeysCreateData = {
+    body: CreateInputBodyWritable;
+    path?: never;
+    query?: never;
+    url: '/organization/api-keys';
+};
+
+export type ApiKeysCreateErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type ApiKeysCreateError = ApiKeysCreateErrors[keyof ApiKeysCreateErrors];
+
+export type ApiKeysCreateResponses = {
+    /**
+     * OK
+     */
+    200: CreatedKey;
+};
+
+export type ApiKeysCreateResponse = ApiKeysCreateResponses[keyof ApiKeysCreateResponses];
+
+export type OrganizationsCreateData = {
+    body: CreateOrganizationInputBodyWritable;
+    path?: never;
+    query?: never;
+    url: '/organizations';
+};
+
+export type OrganizationsCreateErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type OrganizationsCreateError = OrganizationsCreateErrors[keyof OrganizationsCreateErrors];
+
+export type OrganizationsCreateResponses = {
+    /**
+     * OK
+     */
+    200: CreateOrganizationOutputBody;
+};
+
+export type OrganizationsCreateResponse = OrganizationsCreateResponses[keyof OrganizationsCreateResponses];
 
 export type OrganizationDeleteData = {
     body?: never;
@@ -11287,6 +13111,76 @@ export type TokensRevokeResponses = {
 };
 
 export type TokensRevokeResponse = TokensRevokeResponses[keyof TokensRevokeResponses];
+
+export type ReleasesListData = {
+    body?: never;
+    path?: never;
+    query?: {
+        /**
+         * Environment slug or id
+         */
+        environmentId?: string;
+        /**
+         * Look-back window (default 7d)
+         */
+        window?: '1h' | '6h' | '24h' | '7d' | '14d' | '30d';
+    };
+    url: '/releases';
+};
+
+export type ReleasesListErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type ReleasesListError = ReleasesListErrors[keyof ReleasesListErrors];
+
+export type ReleasesListResponses = {
+    /**
+     * OK
+     */
+    200: ListReleasesOutputBody;
+};
+
+export type ReleasesListResponse = ReleasesListResponses[keyof ReleasesListResponses];
+
+export type ReleasesGetData = {
+    body?: never;
+    path: {
+        release: string;
+    };
+    query?: {
+        /**
+         * Environment slug or id
+         */
+        environmentId?: string;
+        /**
+         * Look-back window (default 7d)
+         */
+        window?: '1h' | '6h' | '24h' | '7d' | '14d' | '30d';
+    };
+    url: '/releases/{release}';
+};
+
+export type ReleasesGetErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type ReleasesGetError = ReleasesGetErrors[keyof ReleasesGetErrors];
+
+export type ReleasesGetResponses = {
+    /**
+     * OK
+     */
+    200: ReleaseDetailDto;
+};
+
+export type ReleasesGetResponse = ReleasesGetResponses[keyof ReleasesGetResponses];
 
 export type SessionBootstrapData = {
     body?: never;
@@ -11872,6 +13766,69 @@ export type TracesGetResponses = {
 
 export type TracesGetResponse = TracesGetResponses[keyof TracesGetResponses];
 
+export type TracesArchiveFetchData = {
+    body?: never;
+    path: {
+        traceId: string;
+    };
+    query?: never;
+    url: '/traces/{traceId}/archive-fetch';
+};
+
+export type TracesArchiveFetchErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type TracesArchiveFetchError = TracesArchiveFetchErrors[keyof TracesArchiveFetchErrors];
+
+export type TracesArchiveFetchResponses = {
+    /**
+     * Accepted
+     */
+    202: ArchiveFetchOutputBody;
+};
+
+export type TracesArchiveFetchResponse = TracesArchiveFetchResponses[keyof TracesArchiveFetchResponses];
+
+export type TracesGetArchivedData = {
+    body?: never;
+    path: {
+        traceId: string;
+    };
+    query?: {
+        /**
+         * Span page size (default 500)
+         */
+        limit?: number;
+        /**
+         * Continuation cursor from the previous page
+         */
+        cursor?: string;
+    };
+    url: '/traces/{traceId}/archived';
+};
+
+export type TracesGetArchivedErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type TracesGetArchivedError = TracesGetArchivedErrors[keyof TracesGetArchivedErrors];
+
+export type TracesGetArchivedResponses = {
+    /**
+     * OK
+     */
+    200: GetTraceOutputBody;
+};
+
+export type TracesGetArchivedResponse = TracesGetArchivedResponses[keyof TracesGetArchivedResponses];
+
 export type AuditProductPublicTrustData = {
     body?: never;
     path: {
@@ -12001,6 +13958,31 @@ export type UserMeSetActiveOrgResponses = {
 
 export type UserMeSetActiveOrgResponse = UserMeSetActiveOrgResponses[keyof UserMeSetActiveOrgResponses];
 
+export type UserMeOrgAllowanceData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/users/me/org-allowance';
+};
+
+export type UserMeOrgAllowanceErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type UserMeOrgAllowanceError = UserMeOrgAllowanceErrors[keyof UserMeOrgAllowanceErrors];
+
+export type UserMeOrgAllowanceResponses = {
+    /**
+     * OK
+     */
+    200: OrgAllowanceDto;
+};
+
+export type UserMeOrgAllowanceResponse = UserMeOrgAllowanceResponses[keyof UserMeOrgAllowanceResponses];
+
 export type UserMeOrganizationsData = {
     body?: never;
     path?: never;
@@ -12052,7 +14034,7 @@ export type AlertsListResponses = {
 export type AlertsListResponse = AlertsListResponses[keyof AlertsListResponses];
 
 export type AlertsCreateData = {
-    body: CreateInputBody1Writable;
+    body: CreateInputBody2Writable;
     path?: never;
     query?: never;
     url: '/v2/alerts';
@@ -12071,7 +14053,7 @@ export type AlertsCreateResponses = {
     /**
      * Created
      */
-    201: AlertRuleDto;
+    201: CreateOutputBody;
 };
 
 export type AlertsCreateResponse = AlertsCreateResponses[keyof AlertsCreateResponses];
@@ -12161,6 +14143,33 @@ export type AlertsOccurrencesResponses = {
 };
 
 export type AlertsOccurrencesResponse = AlertsOccurrencesResponses[keyof AlertsOccurrencesResponses];
+
+export type AlertsRotateSecretData = {
+    body?: never;
+    path: {
+        alertRuleId: string;
+    };
+    query?: never;
+    url: '/v2/alerts/{alertRuleId}/rotate-secret';
+};
+
+export type AlertsRotateSecretErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type AlertsRotateSecretError = AlertsRotateSecretErrors[keyof AlertsRotateSecretErrors];
+
+export type AlertsRotateSecretResponses = {
+    /**
+     * OK
+     */
+    200: RotateSecretOutputBody;
+};
+
+export type AlertsRotateSecretResponse = AlertsRotateSecretResponses[keyof AlertsRotateSecretResponses];
 
 export type WebhooksListDeliveriesData = {
     body?: never;
@@ -12294,7 +14303,7 @@ export type WorkspacesListResponses = {
 export type WorkspacesListResponse = WorkspacesListResponses[keyof WorkspacesListResponses];
 
 export type WorkspacesCreateData = {
-    body: CreateInputBodyWritable;
+    body: CreateInputBody1Writable;
     path?: never;
     query?: never;
     url: '/workspaces';
@@ -13512,3 +15521,445 @@ export type ActivityViewsResponses = {
 };
 
 export type ActivityViewsResponse = ActivityViewsResponses[keyof ActivityViewsResponses];
+
+export type WorkflowsActivationData = {
+    body?: never;
+    path: {
+        workspaceId: string;
+    };
+    query?: {
+        environment?: string;
+    };
+    url: '/workspaces/{workspaceId}/workflows/activation';
+};
+
+export type WorkflowsActivationErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type WorkflowsActivationError = WorkflowsActivationErrors[keyof WorkflowsActivationErrors];
+
+export type WorkflowsActivationResponses = {
+    /**
+     * OK
+     */
+    200: ActivationOutputBody;
+};
+
+export type WorkflowsActivationResponse = WorkflowsActivationResponses[keyof WorkflowsActivationResponses];
+
+export type WorkflowsActivateData = {
+    body: ActivateInputBody1Writable;
+    path: {
+        workspaceId: string;
+    };
+    query?: {
+        environment?: string;
+    };
+    url: '/workspaces/{workspaceId}/workflows/activation';
+};
+
+export type WorkflowsActivateErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type WorkflowsActivateError = WorkflowsActivateErrors[keyof WorkflowsActivateErrors];
+
+export type WorkflowsActivateResponses = {
+    /**
+     * OK
+     */
+    200: StatusOutputBody;
+};
+
+export type WorkflowsActivateResponse = WorkflowsActivateResponses[keyof WorkflowsActivateResponses];
+
+export type WorkflowsCasesData = {
+    body?: never;
+    path: {
+        workspaceId: string;
+    };
+    query?: {
+        environment?: string;
+        workflow?: string;
+        cursor?: string;
+    };
+    url: '/workspaces/{workspaceId}/workflows/cases';
+};
+
+export type WorkflowsCasesErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type WorkflowsCasesError = WorkflowsCasesErrors[keyof WorkflowsCasesErrors];
+
+export type WorkflowsCasesResponses = {
+    /**
+     * OK
+     */
+    200: CasesOutputBody;
+};
+
+export type WorkflowsCasesResponse = WorkflowsCasesResponses[keyof WorkflowsCasesResponses];
+
+export type WorkflowsCaseData = {
+    body?: never;
+    path: {
+        workspaceId: string;
+        caseKey: string;
+    };
+    query?: {
+        environment?: string;
+    };
+    url: '/workspaces/{workspaceId}/workflows/cases/{caseKey}';
+};
+
+export type WorkflowsCaseErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type WorkflowsCaseError = WorkflowsCaseErrors[keyof WorkflowsCaseErrors];
+
+export type WorkflowsCaseResponses = {
+    /**
+     * OK
+     */
+    200: Case;
+};
+
+export type WorkflowsCaseResponse = WorkflowsCaseResponses[keyof WorkflowsCaseResponses];
+
+export type WorkflowsCloseData = {
+    body?: never;
+    path: {
+        workspaceId: string;
+        caseKey: string;
+    };
+    query?: {
+        environment?: string;
+    };
+    url: '/workspaces/{workspaceId}/workflows/cases/{caseKey}/close';
+};
+
+export type WorkflowsCloseErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type WorkflowsCloseError = WorkflowsCloseErrors[keyof WorkflowsCloseErrors];
+
+export type WorkflowsCloseResponses = {
+    /**
+     * OK
+     */
+    200: StatusOutputBody;
+};
+
+export type WorkflowsCloseResponse = WorkflowsCloseResponses[keyof WorkflowsCloseResponses];
+
+export type WorkflowsDispositionData = {
+    body: DispositionWritable;
+    path: {
+        workspaceId: string;
+        caseKey: string;
+        obligationId: string;
+    };
+    query?: {
+        environment?: string;
+    };
+    url: '/workspaces/{workspaceId}/workflows/cases/{caseKey}/obligations/{obligationId}/disposition';
+};
+
+export type WorkflowsDispositionErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type WorkflowsDispositionError = WorkflowsDispositionErrors[keyof WorkflowsDispositionErrors];
+
+export type WorkflowsDispositionResponses = {
+    /**
+     * OK
+     */
+    200: StatusOutputBody;
+};
+
+export type WorkflowsDispositionResponse = WorkflowsDispositionResponses[keyof WorkflowsDispositionResponses];
+
+export type WorkflowsReplayData = {
+    body: ReplayInputBodyWritable;
+    path: {
+        workspaceId: string;
+        caseKey: string;
+    };
+    query?: {
+        environment?: string;
+    };
+    url: '/workspaces/{workspaceId}/workflows/cases/{caseKey}/replay';
+};
+
+export type WorkflowsReplayErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type WorkflowsReplayError = WorkflowsReplayErrors[keyof WorkflowsReplayErrors];
+
+export type WorkflowsReplayResponses = {
+    /**
+     * OK
+     */
+    200: Result;
+};
+
+export type WorkflowsReplayResponse = WorkflowsReplayResponses[keyof WorkflowsReplayResponses];
+
+export type WorkflowsCompileData = {
+    body: SourceInputBodyWritable;
+    path: {
+        workspaceId: string;
+    };
+    query?: {
+        environment?: string;
+    };
+    url: '/workspaces/{workspaceId}/workflows/compile';
+};
+
+export type WorkflowsCompileErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type WorkflowsCompileError = WorkflowsCompileErrors[keyof WorkflowsCompileErrors];
+
+export type WorkflowsCompileResponses = {
+    /**
+     * OK
+     */
+    200: Bundle;
+};
+
+export type WorkflowsCompileResponse = WorkflowsCompileResponses[keyof WorkflowsCompileResponses];
+
+export type WorkflowsDefinitionsData = {
+    body?: never;
+    path: {
+        workspaceId: string;
+    };
+    query?: {
+        environment?: string;
+    };
+    url: '/workspaces/{workspaceId}/workflows/definitions';
+};
+
+export type WorkflowsDefinitionsErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type WorkflowsDefinitionsError = WorkflowsDefinitionsErrors[keyof WorkflowsDefinitionsErrors];
+
+export type WorkflowsDefinitionsResponses = {
+    /**
+     * OK
+     */
+    200: DefinitionListBody;
+};
+
+export type WorkflowsDefinitionsResponse = WorkflowsDefinitionsResponses[keyof WorkflowsDefinitionsResponses];
+
+export type WorkflowsPublishData = {
+    body: SourceInputBodyWritable;
+    path: {
+        workspaceId: string;
+    };
+    query?: {
+        environment?: string;
+    };
+    url: '/workspaces/{workspaceId}/workflows/definitions';
+};
+
+export type WorkflowsPublishErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type WorkflowsPublishError = WorkflowsPublishErrors[keyof WorkflowsPublishErrors];
+
+export type WorkflowsPublishResponses = {
+    /**
+     * OK
+     */
+    200: Definition;
+};
+
+export type WorkflowsPublishResponse = WorkflowsPublishResponses[keyof WorkflowsPublishResponses];
+
+export type WorkflowsDiffData = {
+    body: DiffInputBody1Writable;
+    path: {
+        workspaceId: string;
+    };
+    query?: {
+        environment?: string;
+    };
+    url: '/workspaces/{workspaceId}/workflows/diff';
+};
+
+export type WorkflowsDiffErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type WorkflowsDiffError = WorkflowsDiffErrors[keyof WorkflowsDiffErrors];
+
+export type WorkflowsDiffResponses = {
+    /**
+     * OK
+     */
+    200: DiffOutputBody1;
+};
+
+export type WorkflowsDiffResponse = WorkflowsDiffResponses[keyof WorkflowsDiffResponses];
+
+export type WorkflowsFactsData = {
+    body: FactsInputBodyWritable;
+    path: {
+        workspaceId: string;
+    };
+    query?: {
+        environment?: string;
+    };
+    url: '/workspaces/{workspaceId}/workflows/facts';
+};
+
+export type WorkflowsFactsErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type WorkflowsFactsError = WorkflowsFactsErrors[keyof WorkflowsFactsErrors];
+
+export type WorkflowsFactsResponses = {
+    /**
+     * OK
+     */
+    200: StatusOutputBody;
+};
+
+export type WorkflowsFactsResponse = WorkflowsFactsResponses[keyof WorkflowsFactsResponses];
+
+export type WorkflowsSimulateData = {
+    body: SimulationInputBodyWritable;
+    path: {
+        workspaceId: string;
+    };
+    query?: {
+        environment?: string;
+    };
+    url: '/workspaces/{workspaceId}/workflows/simulate';
+};
+
+export type WorkflowsSimulateErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type WorkflowsSimulateError = WorkflowsSimulateErrors[keyof WorkflowsSimulateErrors];
+
+export type WorkflowsSimulateResponses = {
+    /**
+     * OK
+     */
+    200: Result;
+};
+
+export type WorkflowsSimulateResponse = WorkflowsSimulateResponses[keyof WorkflowsSimulateResponses];
+
+export type WorkflowsSourcesData = {
+    body?: never;
+    path: {
+        workspaceId: string;
+    };
+    query?: {
+        environment?: string;
+    };
+    url: '/workspaces/{workspaceId}/workflows/sources';
+};
+
+export type WorkflowsSourcesErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type WorkflowsSourcesError = WorkflowsSourcesErrors[keyof WorkflowsSourcesErrors];
+
+export type WorkflowsSourcesResponses = {
+    /**
+     * OK
+     */
+    200: SourcesOutputBody;
+};
+
+export type WorkflowsSourcesResponse = WorkflowsSourcesResponses[keyof WorkflowsSourcesResponses];
+
+export type WorkflowsRegisterSourceData = {
+    body: RegisterSourceInputBodyWritable;
+    path: {
+        workspaceId: string;
+    };
+    query?: {
+        environment?: string;
+    };
+    url: '/workspaces/{workspaceId}/workflows/sources';
+};
+
+export type WorkflowsRegisterSourceErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type WorkflowsRegisterSourceError = WorkflowsRegisterSourceErrors[keyof WorkflowsRegisterSourceErrors];
+
+export type WorkflowsRegisterSourceResponses = {
+    /**
+     * OK
+     */
+    200: StatusOutputBody;
+};
+
+export type WorkflowsRegisterSourceResponse = WorkflowsRegisterSourceResponses[keyof WorkflowsRegisterSourceResponses];

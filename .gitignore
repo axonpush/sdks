@@ -10,6 +10,8 @@ __pycache__/
 .mypy_cache/
 .pytest_cache/
 .ruff_cache/
+# Intermediate openapi-python-client output, copied into src by regeneration.
+packages/python/_internal_api/
 
 # dotnet
 bin/

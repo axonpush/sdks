@@ -13,11 +13,12 @@ from axonpush._internal.api.api.alerts import (
 from axonpush._internal.api.models import (
     AlertOccurrenceDTO,
     AlertRuleDTO,
-    CreateInputBody1 as CreateAlertRuleInput,
+    CreateInputBody2 as CreateAlertRuleInput,
     DeleteOutputBody,
     ListOutputBody,
     OccurrencesOutputBody,
-    UpdateInputBody,
+    UpdateInputBody as UpdateInputBody,
+    CreateOutputBody,
 )
 
 if TYPE_CHECKING:
@@ -46,7 +47,7 @@ class Alerts:
         """List them all (envelope unwrapped). ``GET /v2/alerts``"""
         return self._client._invoke(_list_op, _coerce=_unwrap)
 
-    def create(self, body: CreateAlertRuleInput) -> AlertRuleDTO | None:
+    def create(self, body: CreateAlertRuleInput) -> CreateOutputBody | None:
         """Create one. ``POST /v2/alerts``"""
         return self._client._invoke(_create_op, body=body)
 
@@ -88,7 +89,7 @@ class AsyncAlerts:
         """List them all (envelope unwrapped). ``GET /v2/alerts``"""
         return await self._client._invoke(_list_op, _coerce=_unwrap)
 
-    async def create(self, body: CreateAlertRuleInput) -> AlertRuleDTO | None:
+    async def create(self, body: CreateAlertRuleInput) -> CreateOutputBody | None:
         """Create one. ``POST /v2/alerts``"""
         return await self._client._invoke(_create_op, body=body)
 

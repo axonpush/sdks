@@ -15,6 +15,7 @@ from axonpush._internal.api.models import (
     ListChannelsOutputBody,
     OkOutputBody,
     UpdateChannelInputBody,
+    ChannelDTO,
 )
 from axonpush.models import Channel
 
@@ -38,17 +39,17 @@ class Channels:
         """List the channels inside an app (envelope unwrapped)."""
         return self._client._invoke(_list_op, app_id=app_id, _coerce=_unwrap)
 
-    def get(self, app_id: str, channel_id: str) -> Channel | None:
+    def get(self, app_id: str, channel_id: str) -> ChannelDTO | None:
         """Fetch a single channel by id within an app."""
         return self._client._invoke(_get_op, app_id=app_id, channel_id=channel_id)
 
-    def create(self, app_id: str, name: str) -> Channel | None:
+    def create(self, app_id: str, name: str) -> ChannelDTO | None:
         """Create a channel inside an app."""
         return self._client._invoke(
             _create_op, app_id=app_id, body=CreateChannelInputBody(name=name)
         )
 
-    def update(self, app_id: str, channel_id: str, *, name: str) -> Channel | None:
+    def update(self, app_id: str, channel_id: str, *, name: str) -> ChannelDTO | None:
         """Rename a channel."""
         return self._client._invoke(
             _update_op, app_id=app_id, channel_id=channel_id, body=UpdateChannelInputBody(name=name)
@@ -69,17 +70,17 @@ class AsyncChannels:
         """List the channels inside an app (envelope unwrapped)."""
         return await self._client._invoke(_list_op, app_id=app_id, _coerce=_unwrap)
 
-    async def get(self, app_id: str, channel_id: str) -> Channel | None:
+    async def get(self, app_id: str, channel_id: str) -> ChannelDTO | None:
         """Fetch a single channel by id within an app."""
         return await self._client._invoke(_get_op, app_id=app_id, channel_id=channel_id)
 
-    async def create(self, app_id: str, name: str) -> Channel | None:
+    async def create(self, app_id: str, name: str) -> ChannelDTO | None:
         """Create a channel inside an app."""
         return await self._client._invoke(
             _create_op, app_id=app_id, body=CreateChannelInputBody(name=name)
         )
 
-    async def update(self, app_id: str, channel_id: str, *, name: str) -> Channel | None:
+    async def update(self, app_id: str, channel_id: str, *, name: str) -> ChannelDTO | None:
         """Rename a channel."""
         return await self._client._invoke(
             _update_op, app_id=app_id, channel_id=channel_id, body=UpdateChannelInputBody(name=name)

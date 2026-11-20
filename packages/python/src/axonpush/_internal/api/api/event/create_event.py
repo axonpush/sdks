@@ -19,6 +19,7 @@ def _get_kwargs(
     x_api_key: str | Unset = UNSET,
     x_public_token: str | Unset = UNSET,
     authorization: str | Unset = UNSET,
+    x_axonpush_environment: str | Unset = UNSET,
 ) -> dict[str, Any]:
     headers: dict[str, Any] = {}
     if not isinstance(x_axonpush_api_key, Unset):
@@ -32,6 +33,9 @@ def _get_kwargs(
 
     if not isinstance(authorization, Unset):
         headers["Authorization"] = authorization
+
+    if not isinstance(x_axonpush_environment, Unset):
+        headers["X-Axonpush-Environment"] = x_axonpush_environment
 
     _kwargs: dict[str, Any] = {
         "method": "post",
@@ -78,6 +82,7 @@ def sync_detailed(
     x_api_key: str | Unset = UNSET,
     x_public_token: str | Unset = UNSET,
     authorization: str | Unset = UNSET,
+    x_axonpush_environment: str | Unset = UNSET,
 ) -> Response[ErrorModel | EventOutputBody]:
     """Ingest a single event
 
@@ -86,6 +91,8 @@ def sync_detailed(
         x_api_key (str | Unset):
         x_public_token (str | Unset):
         authorization (str | Unset):
+        x_axonpush_environment (str | Unset): Environment id or slug for an unbound credential; a
+            credential bound to an environment may only name its own
         body (EventBody):
 
     Raises:
@@ -102,6 +109,7 @@ def sync_detailed(
         x_api_key=x_api_key,
         x_public_token=x_public_token,
         authorization=authorization,
+        x_axonpush_environment=x_axonpush_environment,
     )
 
     response = client.get_httpx_client().request(
@@ -119,6 +127,7 @@ def sync(
     x_api_key: str | Unset = UNSET,
     x_public_token: str | Unset = UNSET,
     authorization: str | Unset = UNSET,
+    x_axonpush_environment: str | Unset = UNSET,
 ) -> ErrorModel | EventOutputBody | None:
     """Ingest a single event
 
@@ -127,6 +136,8 @@ def sync(
         x_api_key (str | Unset):
         x_public_token (str | Unset):
         authorization (str | Unset):
+        x_axonpush_environment (str | Unset): Environment id or slug for an unbound credential; a
+            credential bound to an environment may only name its own
         body (EventBody):
 
     Raises:
@@ -144,6 +155,7 @@ def sync(
         x_api_key=x_api_key,
         x_public_token=x_public_token,
         authorization=authorization,
+        x_axonpush_environment=x_axonpush_environment,
     ).parsed
 
 
@@ -155,6 +167,7 @@ async def asyncio_detailed(
     x_api_key: str | Unset = UNSET,
     x_public_token: str | Unset = UNSET,
     authorization: str | Unset = UNSET,
+    x_axonpush_environment: str | Unset = UNSET,
 ) -> Response[ErrorModel | EventOutputBody]:
     """Ingest a single event
 
@@ -163,6 +176,8 @@ async def asyncio_detailed(
         x_api_key (str | Unset):
         x_public_token (str | Unset):
         authorization (str | Unset):
+        x_axonpush_environment (str | Unset): Environment id or slug for an unbound credential; a
+            credential bound to an environment may only name its own
         body (EventBody):
 
     Raises:
@@ -179,6 +194,7 @@ async def asyncio_detailed(
         x_api_key=x_api_key,
         x_public_token=x_public_token,
         authorization=authorization,
+        x_axonpush_environment=x_axonpush_environment,
     )
 
     response = await client.get_async_httpx_client().request(**kwargs)
@@ -194,6 +210,7 @@ async def asyncio(
     x_api_key: str | Unset = UNSET,
     x_public_token: str | Unset = UNSET,
     authorization: str | Unset = UNSET,
+    x_axonpush_environment: str | Unset = UNSET,
 ) -> ErrorModel | EventOutputBody | None:
     """Ingest a single event
 
@@ -202,6 +219,8 @@ async def asyncio(
         x_api_key (str | Unset):
         x_public_token (str | Unset):
         authorization (str | Unset):
+        x_axonpush_environment (str | Unset): Environment id or slug for an unbound credential; a
+            credential bound to an environment may only name its own
         body (EventBody):
 
     Raises:
@@ -220,5 +239,6 @@ async def asyncio(
             x_api_key=x_api_key,
             x_public_token=x_public_token,
             authorization=authorization,
+            x_axonpush_environment=x_axonpush_environment,
         )
     ).parsed

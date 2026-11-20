@@ -17,7 +17,7 @@ from axonpush._internal.api.api.organization import (
 )
 from axonpush._internal.api.api.user import user_me_organizations as _list_op
 from axonpush._internal.api.models import (
-    AcceptInvitationInputBody,
+    AcceptInvitationInputBody as AcceptInvitationInputBody,
     AcceptInvitationOutputBody,
     CreateInvitationInputBody,
     CreateInvitationInputBodyRole,
@@ -26,8 +26,9 @@ from axonpush._internal.api.models import (
     TransferOwnershipInputBody,
     UpdateOrganizationInputBody,
     UserOrgsOutputBody,
+    OrganizationDTO,
 )
-from axonpush.models import Organization, UserOrg
+from axonpush.models import UserOrg
 
 if TYPE_CHECKING:
     from axonpush.resources._base import AsyncClientProtocol, SyncClientProtocol
@@ -70,13 +71,13 @@ class Organizations:
         """
         return self._client._invoke(_list_op, _coerce=_unwrap)
 
-    def get(self) -> Organization | None:
+    def get(self) -> OrganizationDTO | None:
         """Fetch the caller's active organization. ``GET /organization``."""
         return self._client._invoke(_get_op)
 
     def update(
         self, *, name: str | None = None, description: str | None = None
-    ) -> Organization | None:
+    ) -> OrganizationDTO | None:
         """Edit the active organization's name / description. ``PATCH /organization``."""
         return self._client._invoke(
             _update_op, body=_build_update_dto(name=name, description=description)
@@ -136,13 +137,13 @@ class AsyncOrganizations:
         """
         return await self._client._invoke(_list_op, _coerce=_unwrap)
 
-    async def get(self) -> Organization | None:
+    async def get(self) -> OrganizationDTO | None:
         """Fetch the caller's active organization. ``GET /organization``."""
         return await self._client._invoke(_get_op)
 
     async def update(
         self, *, name: str | None = None, description: str | None = None
-    ) -> Organization | None:
+    ) -> OrganizationDTO | None:
         """Edit the active organization's name / description. ``PATCH /organization``."""
         return await self._client._invoke(
             _update_op, body=_build_update_dto(name=name, description=description)

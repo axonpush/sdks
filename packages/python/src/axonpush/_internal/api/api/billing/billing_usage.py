@@ -7,7 +7,7 @@ import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
 from ...models.error_model import ErrorModel
-from ...models.usage_output_body import UsageOutputBody
+from ...models.usage_dto import UsageDTO
 from ...types import UNSET, Response
 
 
@@ -23,9 +23,9 @@ def _get_kwargs() -> dict[str, Any]:
 
 def _parse_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> ErrorModel | UsageOutputBody:
+) -> ErrorModel | UsageDTO:
     if response.status_code == 200:
-        response_200 = UsageOutputBody.from_dict(response.json())
+        response_200 = UsageDTO.from_dict(response.json())
 
         return response_200
 
@@ -36,7 +36,7 @@ def _parse_response(
 
 def _build_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> Response[ErrorModel | UsageOutputBody]:
+) -> Response[ErrorModel | UsageDTO]:
     return Response(
         status_code=HTTPStatus(response.status_code),
         content=response.content,
@@ -48,7 +48,7 @@ def _build_response(
 def sync_detailed(
     *,
     client: AuthenticatedClient | Client,
-) -> Response[ErrorModel | UsageOutputBody]:
+) -> Response[ErrorModel | UsageDTO]:
     """Get billing usage
 
     Raises:
@@ -56,7 +56,7 @@ def sync_detailed(
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[ErrorModel | UsageOutputBody]
+        Response[ErrorModel | UsageDTO]
     """
 
     kwargs = _get_kwargs()
@@ -71,7 +71,7 @@ def sync_detailed(
 def sync(
     *,
     client: AuthenticatedClient | Client,
-) -> ErrorModel | UsageOutputBody | None:
+) -> ErrorModel | UsageDTO | None:
     """Get billing usage
 
     Raises:
@@ -79,7 +79,7 @@ def sync(
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        ErrorModel | UsageOutputBody
+        ErrorModel | UsageDTO
     """
 
     return sync_detailed(
@@ -90,7 +90,7 @@ def sync(
 async def asyncio_detailed(
     *,
     client: AuthenticatedClient | Client,
-) -> Response[ErrorModel | UsageOutputBody]:
+) -> Response[ErrorModel | UsageDTO]:
     """Get billing usage
 
     Raises:
@@ -98,7 +98,7 @@ async def asyncio_detailed(
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[ErrorModel | UsageOutputBody]
+        Response[ErrorModel | UsageDTO]
     """
 
     kwargs = _get_kwargs()
@@ -111,7 +111,7 @@ async def asyncio_detailed(
 async def asyncio(
     *,
     client: AuthenticatedClient | Client,
-) -> ErrorModel | UsageOutputBody | None:
+) -> ErrorModel | UsageDTO | None:
     """Get billing usage
 
     Raises:
@@ -119,7 +119,7 @@ async def asyncio(
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        ErrorModel | UsageOutputBody
+        ErrorModel | UsageDTO
     """
 
     return (

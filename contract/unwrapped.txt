@@ -73,6 +73,7 @@ tokens.revoke
 admin.orgs.delete
 admin.users.delete
 admin.users.restore
+admin.users.setExtraFreeOrgs
 
 # Dashboard session bootstrap; not an API-key SDK operation.
 session.bootstrap
@@ -83,3 +84,28 @@ billing.plans
 billing.portal
 billing.usage
 billing.webhook
+
+# Additional existing server surfaces synchronized with the workflow contract.
+# Low-level generated APIs are available; high-level conveniences remain deferred.
+alerts.rotateSecret
+apiKeys.claim
+apiKeys.create
+archive.fetchStatus
+attachments.content
+attachments.list
+billing.topUp
+errors.feedback
+ingest.outcomes
+metrics.names
+metrics.series
+monitors.checkins
+monitors.delete
+monitors.get
+monitors.list
+monitors.update
+organizations.create
+releases.get
+releases.list
+traces.archiveFetch
+traces.getArchived
+user.me.orgAllowance

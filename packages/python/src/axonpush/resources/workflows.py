@@ -1,0 +1,405 @@
+"""Generated typed operations facade; regenerate with tools/generate-operations.py."""
+
+from __future__ import annotations
+from collections.abc import Mapping
+from typing import Any, TYPE_CHECKING
+from axonpush._internal.api.models import (
+    ActivateInputBody1,
+    ActivationOutputBody,
+    Bundle,
+    Case,
+    CasesOutputBody,
+    Definition,
+    DefinitionListBody,
+    DiffInputBody1,
+    DiffOutputBody1,
+    Disposition,
+    FactsInputBody,
+    RegisterSourceInputBody,
+    ReplayInputBody,
+    Result,
+    SimulationInputBody,
+    SourceInputBody,
+    SourcesOutputBody,
+    StatusOutputBody,
+)
+
+if TYPE_CHECKING:
+    from axonpush.resources._base import AsyncClientProtocol, SyncClientProtocol
+from axonpush._internal.api.api.workflows import workflows_activation as _activation_op
+from axonpush._internal.api.api.workflows import workflows_activate as _activate_op
+from axonpush._internal.api.api.workflows import workflows_cases as _cases_op
+from axonpush._internal.api.api.workflows import workflows_case as _case_op
+from axonpush._internal.api.api.workflows import workflows_close as _close_op
+from axonpush._internal.api.api.workflows import workflows_disposition as _disposition_op
+from axonpush._internal.api.api.workflows import workflows_replay as _replay_op
+from axonpush._internal.api.api.workflows import workflows_compile as _compile_op
+from axonpush._internal.api.api.workflows import workflows_definitions as _definitions_op
+from axonpush._internal.api.api.workflows import workflows_publish as _publish_op
+from axonpush._internal.api.api.workflows import workflows_diff as _diff_op
+from axonpush._internal.api.api.workflows import workflows_facts as _facts_op
+from axonpush._internal.api.api.workflows import workflows_simulate as _simulate_op
+from axonpush._internal.api.api.workflows import workflows_sources as _sources_op
+from axonpush._internal.api.api.workflows import workflows_register_source as _register_source_op
+
+
+class Workflows:
+    def __init__(self, client: SyncClientProtocol) -> None:
+        self._client = client
+
+    def activation(
+        self, workspace_id: str, params: Mapping[str, Any] | None = None
+    ) -> ActivationOutputBody | None:
+        """Read active workflow versions for this environment."""
+        return self._client._invoke(
+            _activation_op,
+            workspace_id=workspace_id,
+            **{k: v for k, v in (params or {}).items() if v is not None},
+        )
+
+    def activate(
+        self, workspace_id: str, body: ActivateInputBody1, params: Mapping[str, Any] | None = None
+    ) -> StatusOutputBody | None:
+        """Activate a published version for new cases in this environment."""
+        return self._client._invoke(
+            _activate_op,
+            workspace_id=workspace_id,
+            body=body,
+            **{k: v for k, v in (params or {}).items() if v is not None},
+        )
+
+    def cases(
+        self, workspace_id: str, params: Mapping[str, Any] | None = None
+    ) -> CasesOutputBody | None:
+        """List business cases; cursor pagination is scoped to workspace and environment."""
+        return self._client._invoke(
+            _cases_op,
+            workspace_id=workspace_id,
+            **{k: v for k, v in (params or {}).items() if v is not None},
+        )
+
+    def case(
+        self, workspace_id: str, case_key: str, params: Mapping[str, Any] | None = None
+    ) -> Case | None:
+        """Inspect a case, pinned contract, evidence and verification."""
+        return self._client._invoke(
+            _case_op,
+            workspace_id=workspace_id,
+            case_key=case_key,
+            **{k: v for k, v in (params or {}).items() if v is not None},
+        )
+
+    def close(
+        self, workspace_id: str, case_key: str, params: Mapping[str, Any] | None = None
+    ) -> StatusOutputBody | None:
+        """Close case ingestion and retain its history for 90 days; this does not verify completion."""
+        return self._client._invoke(
+            _close_op,
+            workspace_id=workspace_id,
+            case_key=case_key,
+            **{k: v for k, v in (params or {}).items() if v is not None},
+        )
+
+    def disposition(
+        self,
+        workspace_id: str,
+        case_key: str,
+        obligation_id: str,
+        body: Disposition,
+        params: Mapping[str, Any] | None = None,
+    ) -> StatusOutputBody | None:
+        """Record an audited human disposition; acknowledgement does not verify completion."""
+        return self._client._invoke(
+            _disposition_op,
+            workspace_id=workspace_id,
+            case_key=case_key,
+            obligation_id=obligation_id,
+            body=body,
+            **{k: v for k, v in (params or {}).items() if v is not None},
+        )
+
+    def replay(
+        self,
+        workspace_id: str,
+        case_key: str,
+        body: ReplayInputBody,
+        params: Mapping[str, Any] | None = None,
+    ) -> Result | None:
+        """Preview a version against one case; apply only queues a replay of its pinned version."""
+        return self._client._invoke(
+            _replay_op,
+            workspace_id=workspace_id,
+            case_key=case_key,
+            body=body,
+            **{k: v for k, v in (params or {}).items() if v is not None},
+        )
+
+    def compile(
+        self, workspace_id: str, body: SourceInputBody, params: Mapping[str, Any] | None = None
+    ) -> Bundle | None:
+        """Compile an explicit workflow contract without saving."""
+        return self._client._invoke(
+            _compile_op,
+            workspace_id=workspace_id,
+            body=body,
+            **{k: v for k, v in (params or {}).items() if v is not None},
+        )
+
+    def definitions(
+        self, workspace_id: str, params: Mapping[str, Any] | None = None
+    ) -> DefinitionListBody | None:
+        """List up to 100 immutable workflow definitions."""
+        return self._client._invoke(
+            _definitions_op,
+            workspace_id=workspace_id,
+            **{k: v for k, v in (params or {}).items() if v is not None},
+        )
+
+    def publish(
+        self, workspace_id: str, body: SourceInputBody, params: Mapping[str, Any] | None = None
+    ) -> Definition | None:
+        """Publish an immutable workflow definition; activation is separate."""
+        return self._client._invoke(
+            _publish_op,
+            workspace_id=workspace_id,
+            body=body,
+            **{k: v for k, v in (params or {}).items() if v is not None},
+        )
+
+    def diff(
+        self, workspace_id: str, body: DiffInputBody1, params: Mapping[str, Any] | None = None
+    ) -> DiffOutputBody1 | None:
+        """Compare semantic and source identities without changing deployed definitions."""
+        return self._client._invoke(
+            _diff_op,
+            workspace_id=workspace_id,
+            body=body,
+            **{k: v for k, v in (params or {}).items() if v is not None},
+        )
+
+    def facts(
+        self, workspace_id: str, body: FactsInputBody, params: Mapping[str, Any] | None = None
+    ) -> StatusOutputBody | None:
+        """Persist case facts and queue verification; receipt means stored, not verified."""
+        return self._client._invoke(
+            _facts_op,
+            workspace_id=workspace_id,
+            body=body,
+            **{k: v for k, v in (params or {}).items() if v is not None},
+        )
+
+    def simulate(
+        self, workspace_id: str, body: SimulationInputBody, params: Mapping[str, Any] | None = None
+    ) -> Result | None:
+        """Evaluate supplied evidence with an explicit clock; no state is saved."""
+        return self._client._invoke(
+            _simulate_op,
+            workspace_id=workspace_id,
+            body=body,
+            **{k: v for k, v in (params or {}).items() if v is not None},
+        )
+
+    def sources(
+        self, workspace_id: str, params: Mapping[str, Any] | None = None
+    ) -> SourcesOutputBody | None:
+        """Read configured source bindings; configuration alone does not establish coverage."""
+        return self._client._invoke(
+            _sources_op,
+            workspace_id=workspace_id,
+            **{k: v for k, v in (params or {}).items() if v is not None},
+        )
+
+    def register_source(
+        self,
+        workspace_id: str,
+        body: RegisterSourceInputBody,
+        params: Mapping[str, Any] | None = None,
+    ) -> StatusOutputBody | None:
+        """Bind an evidence source to an explicit publisher identity."""
+        return self._client._invoke(
+            _register_source_op,
+            workspace_id=workspace_id,
+            body=body,
+            **{k: v for k, v in (params or {}).items() if v is not None},
+        )
+
+
+class AsyncWorkflows:
+    def __init__(self, client: AsyncClientProtocol) -> None:
+        self._client = client
+
+    async def activation(
+        self, workspace_id: str, params: Mapping[str, Any] | None = None
+    ) -> ActivationOutputBody | None:
+        """Read active workflow versions for this environment."""
+        return await self._client._invoke(
+            _activation_op,
+            workspace_id=workspace_id,
+            **{k: v for k, v in (params or {}).items() if v is not None},
+        )
+
+    async def activate(
+        self, workspace_id: str, body: ActivateInputBody1, params: Mapping[str, Any] | None = None
+    ) -> StatusOutputBody | None:
+        """Activate a published version for new cases in this environment."""
+        return await self._client._invoke(
+            _activate_op,
+            workspace_id=workspace_id,
+            body=body,
+            **{k: v for k, v in (params or {}).items() if v is not None},
+        )
+
+    async def cases(
+        self, workspace_id: str, params: Mapping[str, Any] | None = None
+    ) -> CasesOutputBody | None:
+        """List business cases; cursor pagination is scoped to workspace and environment."""
+        return await self._client._invoke(
+            _cases_op,
+            workspace_id=workspace_id,
+            **{k: v for k, v in (params or {}).items() if v is not None},
+        )
+
+    async def case(
+        self, workspace_id: str, case_key: str, params: Mapping[str, Any] | None = None
+    ) -> Case | None:
+        """Inspect a case, pinned contract, evidence and verification."""
+        return await self._client._invoke(
+            _case_op,
+            workspace_id=workspace_id,
+            case_key=case_key,
+            **{k: v for k, v in (params or {}).items() if v is not None},
+        )
+
+    async def close(
+        self, workspace_id: str, case_key: str, params: Mapping[str, Any] | None = None
+    ) -> StatusOutputBody | None:
+        """Close case ingestion and retain its history for 90 days; this does not verify completion."""
+        return await self._client._invoke(
+            _close_op,
+            workspace_id=workspace_id,
+            case_key=case_key,
+            **{k: v for k, v in (params or {}).items() if v is not None},
+        )
+
+    async def disposition(
+        self,
+        workspace_id: str,
+        case_key: str,
+        obligation_id: str,
+        body: Disposition,
+        params: Mapping[str, Any] | None = None,
+    ) -> StatusOutputBody | None:
+        """Record an audited human disposition; acknowledgement does not verify completion."""
+        return await self._client._invoke(
+            _disposition_op,
+            workspace_id=workspace_id,
+            case_key=case_key,
+            obligation_id=obligation_id,
+            body=body,
+            **{k: v for k, v in (params or {}).items() if v is not None},
+        )
+
+    async def replay(
+        self,
+        workspace_id: str,
+        case_key: str,
+        body: ReplayInputBody,
+        params: Mapping[str, Any] | None = None,
+    ) -> Result | None:
+        """Preview a version against one case; apply only queues a replay of its pinned version."""
+        return await self._client._invoke(
+            _replay_op,
+            workspace_id=workspace_id,
+            case_key=case_key,
+            body=body,
+            **{k: v for k, v in (params or {}).items() if v is not None},
+        )
+
+    async def compile(
+        self, workspace_id: str, body: SourceInputBody, params: Mapping[str, Any] | None = None
+    ) -> Bundle | None:
+        """Compile an explicit workflow contract without saving."""
+        return await self._client._invoke(
+            _compile_op,
+            workspace_id=workspace_id,
+            body=body,
+            **{k: v for k, v in (params or {}).items() if v is not None},
+        )
+
+    async def definitions(
+        self, workspace_id: str, params: Mapping[str, Any] | None = None
+    ) -> DefinitionListBody | None:
+        """List up to 100 immutable workflow definitions."""
+        return await self._client._invoke(
+            _definitions_op,
+            workspace_id=workspace_id,
+            **{k: v for k, v in (params or {}).items() if v is not None},
+        )
+
+    async def publish(
+        self, workspace_id: str, body: SourceInputBody, params: Mapping[str, Any] | None = None
+    ) -> Definition | None:
+        """Publish an immutable workflow definition; activation is separate."""
+        return await self._client._invoke(
+            _publish_op,
+            workspace_id=workspace_id,
+            body=body,
+            **{k: v for k, v in (params or {}).items() if v is not None},
+        )
+
+    async def diff(
+        self, workspace_id: str, body: DiffInputBody1, params: Mapping[str, Any] | None = None
+    ) -> DiffOutputBody1 | None:
+        """Compare semantic and source identities without changing deployed definitions."""
+        return await self._client._invoke(
+            _diff_op,
+            workspace_id=workspace_id,
+            body=body,
+            **{k: v for k, v in (params or {}).items() if v is not None},
+        )
+
+    async def facts(
+        self, workspace_id: str, body: FactsInputBody, params: Mapping[str, Any] | None = None
+    ) -> StatusOutputBody | None:
+        """Persist case facts and queue verification; receipt means stored, not verified."""
+        return await self._client._invoke(
+            _facts_op,
+            workspace_id=workspace_id,
+            body=body,
+            **{k: v for k, v in (params or {}).items() if v is not None},
+        )
+
+    async def simulate(
+        self, workspace_id: str, body: SimulationInputBody, params: Mapping[str, Any] | None = None
+    ) -> Result | None:
+        """Evaluate supplied evidence with an explicit clock; no state is saved."""
+        return await self._client._invoke(
+            _simulate_op,
+            workspace_id=workspace_id,
+            body=body,
+            **{k: v for k, v in (params or {}).items() if v is not None},
+        )
+
+    async def sources(
+        self, workspace_id: str, params: Mapping[str, Any] | None = None
+    ) -> SourcesOutputBody | None:
+        """Read configured source bindings; configuration alone does not establish coverage."""
+        return await self._client._invoke(
+            _sources_op,
+            workspace_id=workspace_id,
+            **{k: v for k, v in (params or {}).items() if v is not None},
+        )
+
+    async def register_source(
+        self,
+        workspace_id: str,
+        body: RegisterSourceInputBody,
+        params: Mapping[str, Any] | None = None,
+    ) -> StatusOutputBody | None:
+        """Bind an evidence source to an explicit publisher identity."""
+        return await self._client._invoke(
+            _register_source_op,
+            workspace_id=workspace_id,
+            body=body,
+            **{k: v for k, v in (params or {}).items() if v is not None},
+        )

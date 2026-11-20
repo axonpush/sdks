@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from collections.abc import Mapping
-from typing import TYPE_CHECKING, Any, BinaryIO, Generator, TextIO, TypeVar
+from typing import TYPE_CHECKING, Any, BinaryIO, Generator, TextIO, TypeVar, cast
 
 from attrs import define as _attrs_define
 from attrs import field as _attrs_field
@@ -18,7 +18,10 @@ class UserDTO:
         created_at (str):
         email (str):
         email_verified (bool):
+        extra_free_orgs (int | None): Free organisations granted beyond the one everybody gets; null means none, -1
+            unlimited
         id (str):
+        owned_orgs (int): Live organisations this user owns
         deleted_at (str | Unset):
         disabled_at (str | Unset):
         first_name (str | Unset):
@@ -30,7 +33,9 @@ class UserDTO:
     created_at: str
     email: str
     email_verified: bool
+    extra_free_orgs: int | None
     id: str
+    owned_orgs: int
     deleted_at: str | Unset = UNSET
     disabled_at: str | Unset = UNSET
     first_name: str | Unset = UNSET
@@ -45,7 +50,12 @@ class UserDTO:
 
         email_verified = self.email_verified
 
+        extra_free_orgs: int | None
+        extra_free_orgs = self.extra_free_orgs
+
         id = self.id
+
+        owned_orgs = self.owned_orgs
 
         deleted_at = self.deleted_at
 
@@ -66,7 +76,9 @@ class UserDTO:
                 "createdAt": created_at,
                 "email": email,
                 "emailVerified": email_verified,
+                "extraFreeOrgs": extra_free_orgs,
                 "id": id,
+                "ownedOrgs": owned_orgs,
             }
         )
         if deleted_at is not UNSET:
@@ -93,7 +105,16 @@ class UserDTO:
 
         email_verified = d.pop("emailVerified")
 
+        def _parse_extra_free_orgs(data: object) -> int | None:
+            if data is None:
+                return data
+            return cast(int | None, data)
+
+        extra_free_orgs = _parse_extra_free_orgs(d.pop("extraFreeOrgs"))
+
         id = d.pop("id")
+
+        owned_orgs = d.pop("ownedOrgs")
 
         deleted_at = d.pop("deletedAt", UNSET)
 
@@ -111,7 +132,9 @@ class UserDTO:
             created_at=created_at,
             email=email,
             email_verified=email_verified,
+            extra_free_orgs=extra_free_orgs,
             id=id,
+            owned_orgs=owned_orgs,
             deleted_at=deleted_at,
             disabled_at=disabled_at,
             first_name=first_name,

@@ -13,6 +13,7 @@ if TYPE_CHECKING:
     from ..models.activity_connect_otlp import ActivityConnectOTLP
     from ..models.activity_connect_result_env import ActivityConnectResultEnv
     from ..models.activity_connect_sdk import ActivityConnectSDK
+    from ..models.link import Link
 
 
 T = TypeVar("T", bound="ActivityConnectResult")
@@ -33,6 +34,7 @@ class ActivityConnectResult:
         sdk (ActivityConnectSDK):
         workspace_id (str):
         schema (str | Unset): A URL to the JSON Schema for this object.
+        claim (Link | Unset):
         hint (str | Unset):
         revoked_key_ids (list[str] | None | Unset): Keys revoked by rotate
         sentry_dsn (str | Unset): Sentry SDK DSN; present only when this call minted it
@@ -50,6 +52,7 @@ class ActivityConnectResult:
     sdk: ActivityConnectSDK
     workspace_id: str
     schema: str | Unset = UNSET
+    claim: Link | Unset = UNSET
     hint: str | Unset = UNSET
     revoked_key_ids: list[str] | None | Unset = UNSET
     sentry_dsn: str | Unset = UNSET
@@ -61,6 +64,7 @@ class ActivityConnectResult:
         from ..models.activity_connect_otlp import ActivityConnectOTLP
         from ..models.activity_connect_result_env import ActivityConnectResultEnv
         from ..models.activity_connect_sdk import ActivityConnectSDK
+        from ..models.link import Link
 
         api_url = self.api_url
 
@@ -81,6 +85,10 @@ class ActivityConnectResult:
         workspace_id = self.workspace_id
 
         schema = self.schema
+
+        claim: dict[str, Any] | Unset = UNSET
+        if not isinstance(self.claim, Unset):
+            claim = self.claim.to_dict()
 
         hint = self.hint
 
@@ -123,6 +131,8 @@ class ActivityConnectResult:
         )
         if schema is not UNSET:
             field_dict["$schema"] = schema
+        if claim is not UNSET:
+            field_dict["claim"] = claim
         if hint is not UNSET:
             field_dict["hint"] = hint
         if revoked_key_ids is not UNSET:
@@ -142,6 +152,7 @@ class ActivityConnectResult:
         from ..models.activity_connect_otlp import ActivityConnectOTLP
         from ..models.activity_connect_result_env import ActivityConnectResultEnv
         from ..models.activity_connect_sdk import ActivityConnectSDK
+        from ..models.link import Link
 
         d = dict(src_dict)
         api_url = d.pop("apiUrl")
@@ -163,6 +174,13 @@ class ActivityConnectResult:
         workspace_id = d.pop("workspaceId")
 
         schema = d.pop("$schema", UNSET)
+
+        _claim = d.pop("claim", UNSET)
+        claim: Link | Unset
+        if isinstance(_claim, Unset):
+            claim = UNSET
+        else:
+            claim = Link.from_dict(_claim)
 
         hint = d.pop("hint", UNSET)
 
@@ -215,6 +233,7 @@ class ActivityConnectResult:
             sdk=sdk,
             workspace_id=workspace_id,
             schema=schema,
+            claim=claim,
             hint=hint,
             revoked_key_ids=revoked_key_ids,
             sentry_dsn=sentry_dsn,

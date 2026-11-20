@@ -15,6 +15,7 @@ from axonpush._internal.api.models import (
     ListAppsOutputBody,
     OkOutputBody,
     UpdateAppInputBody,
+    AppDTO,
 )
 from axonpush.models import App
 
@@ -38,15 +39,15 @@ class Apps:
         """List all apps the caller's key can see (envelope unwrapped)."""
         return self._client._invoke(_list_op, _coerce=_unwrap)
 
-    def get(self, app_id: str) -> App | None:
+    def get(self, app_id: str) -> AppDTO | None:
         """Fetch an app by id."""
         return self._client._invoke(_get_op, app_id=app_id)
 
-    def create(self, name: str) -> App | None:
+    def create(self, name: str) -> AppDTO | None:
         """Create an app under the calling org."""
         return self._client._invoke(_create_op, body=CreateAppInputBody(name=name))
 
-    def update(self, app_id: str, *, name: str) -> App | None:
+    def update(self, app_id: str, *, name: str) -> AppDTO | None:
         """Edit an app's name."""
         return self._client._invoke(_update_op, app_id=app_id, body=UpdateAppInputBody(name=name))
 
@@ -65,15 +66,15 @@ class AsyncApps:
         """List all apps the caller's key can see (envelope unwrapped)."""
         return await self._client._invoke(_list_op, _coerce=_unwrap)
 
-    async def get(self, app_id: str) -> App | None:
+    async def get(self, app_id: str) -> AppDTO | None:
         """Fetch an app by id."""
         return await self._client._invoke(_get_op, app_id=app_id)
 
-    async def create(self, name: str) -> App | None:
+    async def create(self, name: str) -> AppDTO | None:
         """Create an app under the calling org."""
         return await self._client._invoke(_create_op, body=CreateAppInputBody(name=name))
 
-    async def update(self, app_id: str, *, name: str) -> App | None:
+    async def update(self, app_id: str, *, name: str) -> AppDTO | None:
         """Edit an app's name."""
         return await self._client._invoke(
             _update_op, app_id=app_id, body=UpdateAppInputBody(name=name)

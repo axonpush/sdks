@@ -15,19 +15,15 @@ T = TypeVar("T", bound="CreateOutputBody1")
 class CreateOutputBody1:
     """
     Attributes:
-        ok (bool):
-        request_id (str):
+        id (str):
         schema (str | Unset): A URL to the JSON Schema for this object.
     """
 
-    ok: bool
-    request_id: str
+    id: str
     schema: str | Unset = UNSET
 
     def to_dict(self) -> dict[str, Any]:
-        ok = self.ok
-
-        request_id = self.request_id
+        id = self.id
 
         schema = self.schema
 
@@ -35,8 +31,7 @@ class CreateOutputBody1:
 
         field_dict.update(
             {
-                "ok": ok,
-                "requestId": request_id,
+                "id": id,
             }
         )
         if schema is not UNSET:
@@ -47,15 +42,12 @@ class CreateOutputBody1:
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         d = dict(src_dict)
-        ok = d.pop("ok")
-
-        request_id = d.pop("requestId")
+        id = d.pop("id")
 
         schema = d.pop("$schema", UNSET)
 
         create_output_body_1 = cls(
-            ok=ok,
-            request_id=request_id,
+            id=id,
             schema=schema,
         )
 

@@ -74,6 +74,11 @@ def sync_detailed(
     once with the API URL, OTLP settings, a Sentry DSN when available, a ready-to-write env map and SDK
     snippets.
 
+    When an agent calls it, the key and DSN are never returned: the result carries claim, a one-time
+    link (valid 30 minutes) the signed-in user opens in the dashboard to reveal them, and the secret env
+    values are placeholders. Ask the user to open the link and put the key into the app's git-ignored
+    env file as AXONPUSH_API_KEY (and SENTRY_DSN if shown).
+
     Write the returned env into the app's local secret file (for example .env.local, or the project's
     existing secret convention), make sure that file is git-ignored, and never commit, print or paste
     the key. Then add the SDK observe and identify calls and send a test event. Also wire the
@@ -127,6 +132,11 @@ def sync(
     once with the API URL, OTLP settings, a Sentry DSN when available, a ready-to-write env map and SDK
     snippets.
 
+    When an agent calls it, the key and DSN are never returned: the result carries claim, a one-time
+    link (valid 30 minutes) the signed-in user opens in the dashboard to reveal them, and the secret env
+    values are placeholders. Ask the user to open the link and put the key into the app's git-ignored
+    env file as AXONPUSH_API_KEY (and SENTRY_DSN if shown).
+
     Write the returned env into the app's local secret file (for example .env.local, or the project's
     existing secret convention), make sure that file is git-ignored, and never commit, print or paste
     the key. Then add the SDK observe and identify calls and send a test event. Also wire the
@@ -174,6 +184,11 @@ async def asyncio_detailed(
     publish (events:publish), bound to this workspace's application and one environment, and returns it
     once with the API URL, OTLP settings, a Sentry DSN when available, a ready-to-write env map and SDK
     snippets.
+
+    When an agent calls it, the key and DSN are never returned: the result carries claim, a one-time
+    link (valid 30 minutes) the signed-in user opens in the dashboard to reveal them, and the secret env
+    values are placeholders. Ask the user to open the link and put the key into the app's git-ignored
+    env file as AXONPUSH_API_KEY (and SENTRY_DSN if shown).
 
     Write the returned env into the app's local secret file (for example .env.local, or the project's
     existing secret convention), make sure that file is git-ignored, and never commit, print or paste
@@ -225,6 +240,11 @@ async def asyncio(
     publish (events:publish), bound to this workspace's application and one environment, and returns it
     once with the API URL, OTLP settings, a Sentry DSN when available, a ready-to-write env map and SDK
     snippets.
+
+    When an agent calls it, the key and DSN are never returned: the result carries claim, a one-time
+    link (valid 30 minutes) the signed-in user opens in the dashboard to reveal them, and the secret env
+    values are placeholders. Ask the user to open the link and put the key into the app's git-ignored
+    env file as AXONPUSH_API_KEY (and SENTRY_DSN if shown).
 
     Write the returned env into the app's local secret file (for example .env.local, or the project's
     existing secret convention), make sure that file is git-ignored, and never commit, print or paste
