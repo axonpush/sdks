@@ -57,7 +57,9 @@ def sync_detailed(
     """Start here: explains this workspace in plain language plus the spec format, roles and draft ops an
     agent uses to change it
 
-     Call this first when you are setting up or changing what axonpush stores for an application.
+     Use this for optional business observability: entities, profiles, activity views and existing Nova
+    integrations. For workflow requirements and outcome verification, start with workflows_describe in
+    an explicit environment; that definition activation is separate from this workspace draft.
 
     axonpush adapts per installation. A workspace spec declares, as data, what this application stores:
     - attributes: the data dictionary. Every attribute key the app may send, with a type, an optional
@@ -72,14 +74,16 @@ def sync_detailed(
     ask the user to review before workspaces.activateDraft. Use workspaces.catalog to see which events
     and attributes the app really sends.
 
-    SETTING UP AN APPLICATION (the user does not copy anything from the dashboard):
+    SETTING UP OPTIONAL BUSINESS OBSERVABILITY (workflow verification has a separate guide):
     1. Call workspaces_describe (this tool) and read the codebase to find what is worth tracking.
     2. Draft the data dictionary, entities and events with workspaces_draft and
     workspaces_applyDraftOps; explain any personal attributes to the user first.
     3. Ask the user to review and activate the draft in the dashboard, or call workspaces_activateDraft
     if they approve in the chat.
-    4. Call workspaces_connect and write the returned env into the app's git-ignored env file
-    (.env.local or the project's secret convention). Never commit, print or paste the key.
+    4. Call workspaces_connect with an explicit environment. A delegated agent receives a claim link,
+    not raw secrets: the signed-in user opens it and saves secrets in the application's git-ignored env
+    file. Never expose credentials, overwrite working values with placeholders or rotate a key without
+    instruction.
     5. Add the SDK observe calls where the events happen and identify calls for profile attributes,
     reading the env written in the previous step.
     6. Wire the application's existing logging, OpenTelemetry or Sentry error integration (or its
@@ -124,7 +128,9 @@ def sync(
     """Start here: explains this workspace in plain language plus the spec format, roles and draft ops an
     agent uses to change it
 
-     Call this first when you are setting up or changing what axonpush stores for an application.
+     Use this for optional business observability: entities, profiles, activity views and existing Nova
+    integrations. For workflow requirements and outcome verification, start with workflows_describe in
+    an explicit environment; that definition activation is separate from this workspace draft.
 
     axonpush adapts per installation. A workspace spec declares, as data, what this application stores:
     - attributes: the data dictionary. Every attribute key the app may send, with a type, an optional
@@ -139,14 +145,16 @@ def sync(
     ask the user to review before workspaces.activateDraft. Use workspaces.catalog to see which events
     and attributes the app really sends.
 
-    SETTING UP AN APPLICATION (the user does not copy anything from the dashboard):
+    SETTING UP OPTIONAL BUSINESS OBSERVABILITY (workflow verification has a separate guide):
     1. Call workspaces_describe (this tool) and read the codebase to find what is worth tracking.
     2. Draft the data dictionary, entities and events with workspaces_draft and
     workspaces_applyDraftOps; explain any personal attributes to the user first.
     3. Ask the user to review and activate the draft in the dashboard, or call workspaces_activateDraft
     if they approve in the chat.
-    4. Call workspaces_connect and write the returned env into the app's git-ignored env file
-    (.env.local or the project's secret convention). Never commit, print or paste the key.
+    4. Call workspaces_connect with an explicit environment. A delegated agent receives a claim link,
+    not raw secrets: the signed-in user opens it and saves secrets in the application's git-ignored env
+    file. Never expose credentials, overwrite working values with placeholders or rotate a key without
+    instruction.
     5. Add the SDK observe calls where the events happen and identify calls for profile attributes,
     reading the env written in the previous step.
     6. Wire the application's existing logging, OpenTelemetry or Sentry error integration (or its
@@ -186,7 +194,9 @@ async def asyncio_detailed(
     """Start here: explains this workspace in plain language plus the spec format, roles and draft ops an
     agent uses to change it
 
-     Call this first when you are setting up or changing what axonpush stores for an application.
+     Use this for optional business observability: entities, profiles, activity views and existing Nova
+    integrations. For workflow requirements and outcome verification, start with workflows_describe in
+    an explicit environment; that definition activation is separate from this workspace draft.
 
     axonpush adapts per installation. A workspace spec declares, as data, what this application stores:
     - attributes: the data dictionary. Every attribute key the app may send, with a type, an optional
@@ -201,14 +211,16 @@ async def asyncio_detailed(
     ask the user to review before workspaces.activateDraft. Use workspaces.catalog to see which events
     and attributes the app really sends.
 
-    SETTING UP AN APPLICATION (the user does not copy anything from the dashboard):
+    SETTING UP OPTIONAL BUSINESS OBSERVABILITY (workflow verification has a separate guide):
     1. Call workspaces_describe (this tool) and read the codebase to find what is worth tracking.
     2. Draft the data dictionary, entities and events with workspaces_draft and
     workspaces_applyDraftOps; explain any personal attributes to the user first.
     3. Ask the user to review and activate the draft in the dashboard, or call workspaces_activateDraft
     if they approve in the chat.
-    4. Call workspaces_connect and write the returned env into the app's git-ignored env file
-    (.env.local or the project's secret convention). Never commit, print or paste the key.
+    4. Call workspaces_connect with an explicit environment. A delegated agent receives a claim link,
+    not raw secrets: the signed-in user opens it and saves secrets in the application's git-ignored env
+    file. Never expose credentials, overwrite working values with placeholders or rotate a key without
+    instruction.
     5. Add the SDK observe calls where the events happen and identify calls for profile attributes,
     reading the env written in the previous step.
     6. Wire the application's existing logging, OpenTelemetry or Sentry error integration (or its
@@ -251,7 +263,9 @@ async def asyncio(
     """Start here: explains this workspace in plain language plus the spec format, roles and draft ops an
     agent uses to change it
 
-     Call this first when you are setting up or changing what axonpush stores for an application.
+     Use this for optional business observability: entities, profiles, activity views and existing Nova
+    integrations. For workflow requirements and outcome verification, start with workflows_describe in
+    an explicit environment; that definition activation is separate from this workspace draft.
 
     axonpush adapts per installation. A workspace spec declares, as data, what this application stores:
     - attributes: the data dictionary. Every attribute key the app may send, with a type, an optional
@@ -266,14 +280,16 @@ async def asyncio(
     ask the user to review before workspaces.activateDraft. Use workspaces.catalog to see which events
     and attributes the app really sends.
 
-    SETTING UP AN APPLICATION (the user does not copy anything from the dashboard):
+    SETTING UP OPTIONAL BUSINESS OBSERVABILITY (workflow verification has a separate guide):
     1. Call workspaces_describe (this tool) and read the codebase to find what is worth tracking.
     2. Draft the data dictionary, entities and events with workspaces_draft and
     workspaces_applyDraftOps; explain any personal attributes to the user first.
     3. Ask the user to review and activate the draft in the dashboard, or call workspaces_activateDraft
     if they approve in the chat.
-    4. Call workspaces_connect and write the returned env into the app's git-ignored env file
-    (.env.local or the project's secret convention). Never commit, print or paste the key.
+    4. Call workspaces_connect with an explicit environment. A delegated agent receives a claim link,
+    not raw secrets: the signed-in user opens it and saves secrets in the application's git-ignored env
+    file. Never expose credentials, overwrite working values with placeholders or rotate a key without
+    instruction.
     5. Add the SDK observe calls where the events happen and identify calls for profile attributes,
     reading the env written in the previous step.
     6. Wire the application's existing logging, OpenTelemetry or Sentry error integration (or its

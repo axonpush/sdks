@@ -255,6 +255,7 @@ workflows.cases
 workflows.close
 workflows.compile
 workflows.definitions
+workflows.describe
 workflows.diff
 workflows.disposition
 workflows.facts

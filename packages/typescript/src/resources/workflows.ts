@@ -7,6 +7,7 @@ import {
   workflowsClose,
   workflowsCompile,
   workflowsDefinitions,
+  workflowsDescribe,
   workflowsDiff,
   workflowsDisposition,
   workflowsFacts,
@@ -35,6 +36,7 @@ import type {
   SourceInputBody,
   SourcesOutputBody,
   StatusOutputBody,
+  WorkflowSetupGuide,
   WorkflowsActivateData,
   WorkflowsActivationData,
   WorkflowsCaseData,
@@ -42,6 +44,7 @@ import type {
   WorkflowsCloseData,
   WorkflowsCompileData,
   WorkflowsDefinitionsData,
+  WorkflowsDescribeData,
   WorkflowsDiffData,
   WorkflowsDispositionData,
   WorkflowsFactsData,
@@ -148,6 +151,14 @@ export class WorkflowsResource {
     query: WorkflowsPublishData["query"] = {},
   ): Promise<Definition | null> {
     return this.client.invoke(workflowsPublish, { path: { workspaceId }, body, query });
+  }
+
+  /** Start here: guided workflow setup questions, exact tool sequence and a deterministic booking example; read-only. `GET /workspaces/{workspaceId}/workflows/describe` */
+  async describe(
+    workspaceId: string,
+    query: WorkflowsDescribeData["query"] = {},
+  ): Promise<WorkflowSetupGuide | null> {
+    return this.client.invoke(workflowsDescribe, { path: { workspaceId }, query });
   }
 
   /** Compare semantic and source identities without changing deployed definitions. `POST /workspaces/{workspaceId}/workflows/diff` */

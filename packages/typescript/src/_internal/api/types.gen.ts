@@ -4209,6 +4209,20 @@ export type SetTrialInputBody = {
     days: number;
 };
 
+export type SetupQuestion = {
+    hint: string;
+    id: string;
+    options?: Array<string> | null;
+    question: string;
+};
+
+export type SetupStep = {
+    complete_when: string;
+    id: string;
+    instruction: string;
+    tools: Array<string> | null;
+};
+
 export type ShareOutputBody = {
     /**
      * A URL to the JSON Schema for this object.
@@ -4724,6 +4738,25 @@ export type WebhookOutputBody = {
     deduped?: boolean;
     ok: boolean;
     skipped?: string;
+};
+
+export type WorkflowSetupGuide = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
+    boundaries: Array<string> | null;
+    compiler_version: string;
+    example: WorkflowSetupGuideExampleStruct;
+    purpose: string;
+    questions: Array<SetupQuestion> | null;
+    steps: Array<SetupStep> | null;
+};
+
+export type WorkflowSetupGuideExampleStruct = {
+    fixture: string;
+    label: string;
+    source: string;
 };
 
 export type WorkspaceEntitiesOutputBody = {
@@ -6836,6 +6869,15 @@ export type WebhookOutputBodyWritable = {
     deduped?: boolean;
     ok: boolean;
     skipped?: string;
+};
+
+export type WorkflowSetupGuideWritable = {
+    boundaries: Array<string> | null;
+    compiler_version: string;
+    example: WorkflowSetupGuideExampleStruct;
+    purpose: string;
+    questions: Array<SetupQuestion> | null;
+    steps: Array<SetupStep> | null;
 };
 
 export type WorkspaceEntitiesOutputBodyWritable = {
@@ -15818,6 +15860,35 @@ export type WorkflowsPublishResponses = {
 };
 
 export type WorkflowsPublishResponse = WorkflowsPublishResponses[keyof WorkflowsPublishResponses];
+
+export type WorkflowsDescribeData = {
+    body?: never;
+    path: {
+        workspaceId: string;
+    };
+    query?: {
+        environment?: string;
+    };
+    url: '/workspaces/{workspaceId}/workflows/describe';
+};
+
+export type WorkflowsDescribeErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type WorkflowsDescribeError = WorkflowsDescribeErrors[keyof WorkflowsDescribeErrors];
+
+export type WorkflowsDescribeResponses = {
+    /**
+     * OK
+     */
+    200: WorkflowSetupGuide;
+};
+
+export type WorkflowsDescribeResponse = WorkflowsDescribeResponses[keyof WorkflowsDescribeResponses];
 
 export type WorkflowsDiffData = {
     body: DiffInputBody1Writable;

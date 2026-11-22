@@ -69,28 +69,33 @@ def sync_detailed(
      Get everything the application needs to send data to this workspace, so nobody copies keys from the
     dashboard.
 
-    Call it after the workspace spec is active (or at least drafted). It mints a key that can only
-    publish (events:publish), bound to this workspace's application and one environment, and returns it
-    once with the API URL, OTLP settings, a Sentry DSN when available, a ready-to-write env map and SDK
-    snippets.
+    Choose the intended workspace, explicit environment and purpose first. An activity draft is not
+    required for workflow verification. It mints a key that can only publish (events:publish), bound to
+    this workspace's application and one environment, with the API URL, OTLP settings, a Sentry DSN when
+    available, an env map and SDK snippets.
 
     When an agent calls it, the key and DSN are never returned: the result carries claim, a one-time
     link (valid 30 minutes) the signed-in user opens in the dashboard to reveal them, and the secret env
     values are placeholders. Ask the user to open the link and put the key into the app's git-ignored
     env file as AXONPUSH_API_KEY (and SENTRY_DSN if shown).
 
-    Write the returned env into the app's local secret file (for example .env.local, or the project's
-    existing secret convention), make sure that file is git-ignored, and never commit, print or paste
-    the key. Then add the SDK observe and identify calls and send a test event. Also wire the
-    application's existing logging, OpenTelemetry or Sentry error integration so exceptions retain their
-    original traceback and source locations; business observations alone do not install exception
-    capture. Reuse the existing provider and capture policy, correlate trace/span ids where available,
-    and verify a controlled exception locally or in a test environment. Do not create synthetic
-    production errors.
+    For delegated calls, let the signed-in user open the claim link and save secrets in the app's git-
+    ignored local environment file. Do not overwrite a working configuration with placeholder secret
+    values, bypass the claim step, or expose credentials in chat or commits. Nonsecret settings can be
+    merged using the project's existing convention.
+
+    For workflow verification, follow workflows_describe, bind the evidence source to publisher
+    key:<publishKey.id> from this connection, implement reliable post-commit fact publication and
+    inspect an evaluated case. This connection is not proof of evidence coverage or verified completion.
+
+    For optional business observability, add SDK observe/identify calls and reuse existing logging,
+    OpenTelemetry or Sentry integrations so exceptions retain their original traceback and source
+    locations. Reuse the existing provider/capture policy, correlate trace/span ids where available, and
+    verify a controlled exception locally. Do not create synthetic production errors.
 
     Calling it again for the same environment and purpose does not mint another key: it returns the
-    existing key's metadata without the secret. If the secret was lost, call again with rotate: true,
-    which revokes the old key and mints a new one.
+    existing key's metadata without the secret. If the secret was lost, explain that rotate: true
+    revokes the old key, and rotate only when the user intends that replacement.
 
     Args:
         workspace_id (str):
@@ -127,28 +132,33 @@ def sync(
      Get everything the application needs to send data to this workspace, so nobody copies keys from the
     dashboard.
 
-    Call it after the workspace spec is active (or at least drafted). It mints a key that can only
-    publish (events:publish), bound to this workspace's application and one environment, and returns it
-    once with the API URL, OTLP settings, a Sentry DSN when available, a ready-to-write env map and SDK
-    snippets.
+    Choose the intended workspace, explicit environment and purpose first. An activity draft is not
+    required for workflow verification. It mints a key that can only publish (events:publish), bound to
+    this workspace's application and one environment, with the API URL, OTLP settings, a Sentry DSN when
+    available, an env map and SDK snippets.
 
     When an agent calls it, the key and DSN are never returned: the result carries claim, a one-time
     link (valid 30 minutes) the signed-in user opens in the dashboard to reveal them, and the secret env
     values are placeholders. Ask the user to open the link and put the key into the app's git-ignored
     env file as AXONPUSH_API_KEY (and SENTRY_DSN if shown).
 
-    Write the returned env into the app's local secret file (for example .env.local, or the project's
-    existing secret convention), make sure that file is git-ignored, and never commit, print or paste
-    the key. Then add the SDK observe and identify calls and send a test event. Also wire the
-    application's existing logging, OpenTelemetry or Sentry error integration so exceptions retain their
-    original traceback and source locations; business observations alone do not install exception
-    capture. Reuse the existing provider and capture policy, correlate trace/span ids where available,
-    and verify a controlled exception locally or in a test environment. Do not create synthetic
-    production errors.
+    For delegated calls, let the signed-in user open the claim link and save secrets in the app's git-
+    ignored local environment file. Do not overwrite a working configuration with placeholder secret
+    values, bypass the claim step, or expose credentials in chat or commits. Nonsecret settings can be
+    merged using the project's existing convention.
+
+    For workflow verification, follow workflows_describe, bind the evidence source to publisher
+    key:<publishKey.id> from this connection, implement reliable post-commit fact publication and
+    inspect an evaluated case. This connection is not proof of evidence coverage or verified completion.
+
+    For optional business observability, add SDK observe/identify calls and reuse existing logging,
+    OpenTelemetry or Sentry integrations so exceptions retain their original traceback and source
+    locations. Reuse the existing provider/capture policy, correlate trace/span ids where available, and
+    verify a controlled exception locally. Do not create synthetic production errors.
 
     Calling it again for the same environment and purpose does not mint another key: it returns the
-    existing key's metadata without the secret. If the secret was lost, call again with rotate: true,
-    which revokes the old key and mints a new one.
+    existing key's metadata without the secret. If the secret was lost, explain that rotate: true
+    revokes the old key, and rotate only when the user intends that replacement.
 
     Args:
         workspace_id (str):
@@ -180,28 +190,33 @@ async def asyncio_detailed(
      Get everything the application needs to send data to this workspace, so nobody copies keys from the
     dashboard.
 
-    Call it after the workspace spec is active (or at least drafted). It mints a key that can only
-    publish (events:publish), bound to this workspace's application and one environment, and returns it
-    once with the API URL, OTLP settings, a Sentry DSN when available, a ready-to-write env map and SDK
-    snippets.
+    Choose the intended workspace, explicit environment and purpose first. An activity draft is not
+    required for workflow verification. It mints a key that can only publish (events:publish), bound to
+    this workspace's application and one environment, with the API URL, OTLP settings, a Sentry DSN when
+    available, an env map and SDK snippets.
 
     When an agent calls it, the key and DSN are never returned: the result carries claim, a one-time
     link (valid 30 minutes) the signed-in user opens in the dashboard to reveal them, and the secret env
     values are placeholders. Ask the user to open the link and put the key into the app's git-ignored
     env file as AXONPUSH_API_KEY (and SENTRY_DSN if shown).
 
-    Write the returned env into the app's local secret file (for example .env.local, or the project's
-    existing secret convention), make sure that file is git-ignored, and never commit, print or paste
-    the key. Then add the SDK observe and identify calls and send a test event. Also wire the
-    application's existing logging, OpenTelemetry or Sentry error integration so exceptions retain their
-    original traceback and source locations; business observations alone do not install exception
-    capture. Reuse the existing provider and capture policy, correlate trace/span ids where available,
-    and verify a controlled exception locally or in a test environment. Do not create synthetic
-    production errors.
+    For delegated calls, let the signed-in user open the claim link and save secrets in the app's git-
+    ignored local environment file. Do not overwrite a working configuration with placeholder secret
+    values, bypass the claim step, or expose credentials in chat or commits. Nonsecret settings can be
+    merged using the project's existing convention.
+
+    For workflow verification, follow workflows_describe, bind the evidence source to publisher
+    key:<publishKey.id> from this connection, implement reliable post-commit fact publication and
+    inspect an evaluated case. This connection is not proof of evidence coverage or verified completion.
+
+    For optional business observability, add SDK observe/identify calls and reuse existing logging,
+    OpenTelemetry or Sentry integrations so exceptions retain their original traceback and source
+    locations. Reuse the existing provider/capture policy, correlate trace/span ids where available, and
+    verify a controlled exception locally. Do not create synthetic production errors.
 
     Calling it again for the same environment and purpose does not mint another key: it returns the
-    existing key's metadata without the secret. If the secret was lost, call again with rotate: true,
-    which revokes the old key and mints a new one.
+    existing key's metadata without the secret. If the secret was lost, explain that rotate: true
+    revokes the old key, and rotate only when the user intends that replacement.
 
     Args:
         workspace_id (str):
@@ -236,28 +251,33 @@ async def asyncio(
      Get everything the application needs to send data to this workspace, so nobody copies keys from the
     dashboard.
 
-    Call it after the workspace spec is active (or at least drafted). It mints a key that can only
-    publish (events:publish), bound to this workspace's application and one environment, and returns it
-    once with the API URL, OTLP settings, a Sentry DSN when available, a ready-to-write env map and SDK
-    snippets.
+    Choose the intended workspace, explicit environment and purpose first. An activity draft is not
+    required for workflow verification. It mints a key that can only publish (events:publish), bound to
+    this workspace's application and one environment, with the API URL, OTLP settings, a Sentry DSN when
+    available, an env map and SDK snippets.
 
     When an agent calls it, the key and DSN are never returned: the result carries claim, a one-time
     link (valid 30 minutes) the signed-in user opens in the dashboard to reveal them, and the secret env
     values are placeholders. Ask the user to open the link and put the key into the app's git-ignored
     env file as AXONPUSH_API_KEY (and SENTRY_DSN if shown).
 
-    Write the returned env into the app's local secret file (for example .env.local, or the project's
-    existing secret convention), make sure that file is git-ignored, and never commit, print or paste
-    the key. Then add the SDK observe and identify calls and send a test event. Also wire the
-    application's existing logging, OpenTelemetry or Sentry error integration so exceptions retain their
-    original traceback and source locations; business observations alone do not install exception
-    capture. Reuse the existing provider and capture policy, correlate trace/span ids where available,
-    and verify a controlled exception locally or in a test environment. Do not create synthetic
-    production errors.
+    For delegated calls, let the signed-in user open the claim link and save secrets in the app's git-
+    ignored local environment file. Do not overwrite a working configuration with placeholder secret
+    values, bypass the claim step, or expose credentials in chat or commits. Nonsecret settings can be
+    merged using the project's existing convention.
+
+    For workflow verification, follow workflows_describe, bind the evidence source to publisher
+    key:<publishKey.id> from this connection, implement reliable post-commit fact publication and
+    inspect an evaluated case. This connection is not proof of evidence coverage or verified completion.
+
+    For optional business observability, add SDK observe/identify calls and reuse existing logging,
+    OpenTelemetry or Sentry integrations so exceptions retain their original traceback and source
+    locations. Reuse the existing provider/capture policy, correlate trace/span ids where available, and
+    verify a controlled exception locally. Do not create synthetic production errors.
 
     Calling it again for the same environment and purpose does not mint another key: it returns the
-    existing key's metadata without the secret. If the secret was lost, call again with rotate: true,
-    which revokes the old key and mints a new one.
+    existing key's metadata without the secret. If the secret was lost, explain that rotate: true
+    revokes the old key, and rotate only when the user intends that replacement.
 
     Args:
         workspace_id (str):

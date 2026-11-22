@@ -22,6 +22,7 @@ from axonpush._internal.api.models import (
     SourceInputBody,
     SourcesOutputBody,
     StatusOutputBody,
+    WorkflowSetupGuide,
 )
 
 if TYPE_CHECKING:
@@ -36,6 +37,7 @@ from axonpush._internal.api.api.workflows import workflows_replay as _replay_op
 from axonpush._internal.api.api.workflows import workflows_compile as _compile_op
 from axonpush._internal.api.api.workflows import workflows_definitions as _definitions_op
 from axonpush._internal.api.api.workflows import workflows_publish as _publish_op
+from axonpush._internal.api.api.workflows import workflows_describe as _describe_op
 from axonpush._internal.api.api.workflows import workflows_diff as _diff_op
 from axonpush._internal.api.api.workflows import workflows_facts as _facts_op
 from axonpush._internal.api.api.workflows import workflows_simulate as _simulate_op
@@ -163,6 +165,16 @@ class Workflows:
             _publish_op,
             workspace_id=workspace_id,
             body=body,
+            **{k: v for k, v in (params or {}).items() if v is not None},
+        )
+
+    def describe(
+        self, workspace_id: str, params: Mapping[str, Any] | None = None
+    ) -> WorkflowSetupGuide | None:
+        """Start here: guided workflow setup questions, exact tool sequence and a deterministic booking example; read-only."""
+        return self._client._invoke(
+            _describe_op,
+            workspace_id=workspace_id,
             **{k: v for k, v in (params or {}).items() if v is not None},
         )
 
@@ -344,6 +356,16 @@ class AsyncWorkflows:
             _publish_op,
             workspace_id=workspace_id,
             body=body,
+            **{k: v for k, v in (params or {}).items() if v is not None},
+        )
+
+    async def describe(
+        self, workspace_id: str, params: Mapping[str, Any] | None = None
+    ) -> WorkflowSetupGuide | None:
+        """Start here: guided workflow setup questions, exact tool sequence and a deterministic booking example; read-only."""
+        return await self._client._invoke(
+            _describe_op,
+            workspace_id=workspace_id,
             **{k: v for k, v in (params or {}).items() if v is not None},
         )
 

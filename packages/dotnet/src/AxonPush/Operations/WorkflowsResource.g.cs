@@ -93,6 +93,14 @@ public sealed class WorkflowsResource
         return _transport.SendAsync<Definition>(HttpMethod.Post, path, body, cancellationToken);
     }
 
+    /// <summary>Start here: guided workflow setup questions, exact tool sequence and a deterministic booking example; read-only.</summary>
+    public Task<WorkflowSetupGuide?> DescribeAsync(string workspaceId, string? environment = null, CancellationToken cancellationToken = default)
+    {
+        var path = $"workspaces/{Uri.EscapeDataString(workspaceId)}/workflows/describe";
+        path = AddQuery(path, "environment", environment);
+        return _transport.SendAsync<WorkflowSetupGuide>(HttpMethod.Get, path, null, cancellationToken);
+    }
+
     /// <summary>Compare semantic and source identities without changing deployed definitions.</summary>
     public Task<DiffOutputBody1?> DiffAsync(string workspaceId, DiffInputBody1 body, string? environment = null, CancellationToken cancellationToken = default)
     {

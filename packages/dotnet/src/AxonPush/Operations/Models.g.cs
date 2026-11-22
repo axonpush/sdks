@@ -2442,6 +2442,30 @@ public sealed record SessionEvidenceBody
     public long NextOffset { get; init; }
 }
 
+public sealed record SetupQuestion
+{
+    [JsonPropertyName("hint")]
+    public string Hint { get; init; } = default!;
+    [JsonPropertyName("id")]
+    public string Id { get; init; } = default!;
+    [JsonPropertyName("options")]
+    public IReadOnlyList<string>? Options { get; init; }
+    [JsonPropertyName("question")]
+    public string Question { get; init; } = default!;
+}
+
+public sealed record SetupStep
+{
+    [JsonPropertyName("complete_when")]
+    public string CompleteWhen { get; init; } = default!;
+    [JsonPropertyName("id")]
+    public string Id { get; init; } = default!;
+    [JsonPropertyName("instruction")]
+    public string Instruction { get; init; } = default!;
+    [JsonPropertyName("tools")]
+    public IReadOnlyList<string>? Tools { get; init; } = default!;
+}
+
 public sealed record ShareOutputBody
 {
     [JsonPropertyName("grant")]
@@ -2642,6 +2666,32 @@ public sealed record ViewsOutputBody
 {
     [JsonPropertyName("views")]
     public IReadOnlyList<ActivityViewResult>? Views { get; init; } = default!;
+}
+
+public sealed record WorkflowSetupGuide
+{
+    [JsonPropertyName("boundaries")]
+    public IReadOnlyList<string>? Boundaries { get; init; } = default!;
+    [JsonPropertyName("compiler_version")]
+    public string CompilerVersion { get; init; } = default!;
+    [JsonPropertyName("example")]
+    public WorkflowSetupGuideExampleStruct Example { get; init; } = default!;
+    [JsonPropertyName("purpose")]
+    public string Purpose { get; init; } = default!;
+    [JsonPropertyName("questions")]
+    public IReadOnlyList<SetupQuestion>? Questions { get; init; } = default!;
+    [JsonPropertyName("steps")]
+    public IReadOnlyList<SetupStep>? Steps { get; init; } = default!;
+}
+
+public sealed record WorkflowSetupGuideExampleStruct
+{
+    [JsonPropertyName("fixture")]
+    public string Fixture { get; init; } = default!;
+    [JsonPropertyName("label")]
+    public string Label { get; init; } = default!;
+    [JsonPropertyName("source")]
+    public string Source { get; init; } = default!;
 }
 
 public sealed record WorkspaceEntitiesOutputBody

@@ -422,6 +422,8 @@ from .set_limits_input_body import SetLimitsInputBody
 from .set_plan_input_body import SetPlanInputBody
 from .set_status_input_body import SetStatusInputBody
 from .set_trial_input_body import SetTrialInputBody
+from .setup_question import SetupQuestion
+from .setup_step import SetupStep
 from .share_output_body import ShareOutputBody
 from .share_output_body_grant import ShareOutputBodyGrant
 from .share_output_body_packs_type_0_item import ShareOutputBodyPacksType0Item
@@ -487,6 +489,8 @@ from .verify_output_body import VerifyOutputBody
 from .verify_result import VerifyResult
 from .views_output_body import ViewsOutputBody
 from .webhook_output_body import WebhookOutputBody
+from .workflow_setup_guide import WorkflowSetupGuide
+from .workflow_setup_guide_example_struct import WorkflowSetupGuideExampleStruct
 from .workspace_entities_output_body import WorkspaceEntitiesOutputBody
 from .workspace_incidents_output_body import WorkspaceIncidentsOutputBody
 from .workspace_ingest_input_body import WorkspaceIngestInputBody
@@ -925,6 +929,8 @@ __all__ = (
     "SetPlanInputBody",
     "SetStatusInputBody",
     "SetTrialInputBody",
+    "SetupQuestion",
+    "SetupStep",
     "ShareOutputBody",
     "ShareOutputBodyGrant",
     "ShareOutputBodyPacksType0Item",
@@ -990,6 +996,8 @@ __all__ = (
     "VerifyResult",
     "ViewsOutputBody",
     "WebhookOutputBody",
+    "WorkflowSetupGuide",
+    "WorkflowSetupGuideExampleStruct",
     "WorkspaceEntitiesOutputBody",
     "WorkspaceIncidentsOutputBody",
     "WorkspaceIngestInputBody",
