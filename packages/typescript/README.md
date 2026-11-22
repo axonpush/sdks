@@ -10,6 +10,31 @@ infrastructure for AI agent systems. ESM-only, runs on Node 20+ and Bun.
   Vercel AI SDK, Mastra, Google ADK, OpenTelemetry, Sentry, pino,
   winston, console capture, BullMQ, and the Anthropic SDK.
 
+## Workflow verification with Zod (development)
+
+The `@axonpush/sdk/workflow/zod` entrypoint provides `defineZodWorkflow`,
+`compileZodWorkflow` and `verifyZodWorkflow`. Define fact schemas as strict Zod 4
+objects; the provider emits stable contract source and delegates compilation and
+verification to the same Go executable used by the server. There is no separate
+TypeScript evaluator. Set `AXONPUSH_WORKFLOW_BINARY` to compiler `0.1.0`.
+
+Supported fields: plain `z.string()`, `z.number()`, `z.boolean()` and
+`z.iso.datetime({ offset: true })`. Unsupported checks, transforms, refinements,
+coercion, defaults, optional fields and nested structures fail explicitly.
+See [the complete runnable example](examples/workflow-zod.ts) and
+[the provider guide](https://docs.axonpush.xyz/workflows-zod) (published when the
+matching docs revision is deployed). Existing npm releases may not include this export.
+
+Build the SDK first, then run `bun run examples/workflow-zod.ts`. It writes
+`booking.contract.json`; commit that generated artifact alongside your TypeScript
+source in your own application. The exported source is accepted by existing
+CLI generation and HTTP publication operations; activation remains explicit.
+
+For native parity tests, set the binary environment variable and run
+`bunx vitest run src/__tests__/workflow-zod.test.ts` from `packages/typescript`.
+The parity test is skipped when the executable is not configured; schema rejection
+and source determinism tests always run.
+
 ## Agent operations
 
 Each workspace declares its own data dictionary and entities (usually drafted by

@@ -6,6 +6,10 @@
   "types": "./dist/index.d.ts",
   "module": "./dist/index.js",
   "exports": {
+    "./workflow/zod": {
+      "types": "./dist/workflow-zod.d.ts",
+      "import": "./dist/workflow-zod.js"
+    },
     "./workflow": {
       "types": "./dist/workflow.d.ts",
       "import": "./dist/workflow.js"
