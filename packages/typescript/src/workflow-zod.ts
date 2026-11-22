@@ -1,10 +1,18 @@
 /** Zod authoring adapter. All contract validation and verdicts remain in Go. */
-import { mkdtemp, rm, writeFile } from "node:fs/promises";
-import { tmpdir } from "node:os";
-import { join } from "node:path";
 import type { z } from "zod";
-import type { Bundle, Contract, Input, Result } from "./_internal/api/types.gen.js";
-import { runWorkflow } from "./workflow.js";
+import type { Contract } from "./_internal/api/types.gen.js";
+import { serializeWorkflow } from "./_internal/workflow-provider.js";
+
+export type {
+  WorkflowBinaryOptions,
+  WorkflowDefinition as ZodWorkflowDefinition,
+} from "./_internal/workflow-provider.js";
+export {
+  compileWorkflow as compileZodWorkflow,
+  verifyWorkflow as verifyZodWorkflow,
+} from "./_internal/workflow-provider.js";
+
+import type { WorkflowDefinition as ZodWorkflowDefinition } from "./_internal/workflow-provider.js";
 
 export type ZodWorkflowOptions = Omit<Contract, "facts"> & {
   facts: Record<
@@ -20,8 +28,6 @@ export type ZodWorkflowOptions = Omit<Contract, "facts"> & {
     }
   >;
 };
-export type ZodWorkflowDefinition = Readonly<{ source: string }>;
-export type WorkflowBinaryOptions = { binary?: string; timeout?: number };
 
 function unsupported(path: string): never {
   throw new Error(
@@ -86,20 +92,6 @@ function fields(schema: z.ZodType, path: string): Record<string, string> {
   );
 }
 
-function canonical(value: unknown): unknown {
-  if (value === null || typeof value === "string" || typeof value === "boolean") return value;
-  if (typeof value === "number" && Number.isFinite(value)) return value;
-  if (Array.isArray(value)) return value.map(canonical);
-  if (typeof value === "object" && Object.getPrototypeOf(value) === Object.prototype) {
-    return Object.fromEntries(
-      Object.entries(value as Record<string, unknown>)
-        .sort(([a], [b]) => (a < b ? -1 : a > b ? 1 : 0))
-        .map(([key, entry]) => [key, canonical(entry)]),
-    );
-  }
-  throw new Error("Workflow configuration must contain only finite JSON values");
-}
-
 /** Pure, deterministic source generation; compile before publishing. JSON is YAML-compatible. */
 export function defineZodWorkflow(options: ZodWorkflowOptions): ZodWorkflowDefinition {
   const facts = Object.fromEntries(
@@ -115,45 +107,5 @@ export function defineZodWorkflow(options: ZodWorkflowOptions): ZodWorkflowDefin
       ];
     }),
   );
-  return Object.freeze({
-    source: `${JSON.stringify(canonical({ ...options, facts }), null, 2)}\n`,
-  });
-}
-
-async function withSource<T>(
-  workflow: ZodWorkflowDefinition,
-  execute: (file: string, directory: string) => Promise<T>,
-): Promise<T> {
-  const directory = await mkdtemp(join(tmpdir(), "axonpush-zod-"));
-  try {
-    const file = join(directory, "workflow.json");
-    await writeFile(file, workflow.source, { mode: 0o600 });
-    return await execute(file, directory);
-  } finally {
-    await rm(directory, { recursive: true, force: true });
-  }
-}
-
-/** Invoke the version-pinned Go compiler, including its type checks and hashes. */
-export async function compileZodWorkflow(
-  workflow: ZodWorkflowDefinition,
-  options: WorkflowBinaryOptions = {},
-): Promise<Bundle> {
-  return withSource(
-    workflow,
-    async (file) => (await runWorkflow(["validate", "--file", file], options)) as Bundle,
-  );
-}
-
-/** Invoke the same Go evaluator used by the server, with an explicit fixture clock. */
-export async function verifyZodWorkflow(
-  workflow: ZodWorkflowDefinition,
-  input: Input,
-  options: WorkflowBinaryOptions = {},
-): Promise<Result> {
-  return withSource(workflow, async (file, directory) => {
-    const fixture = join(directory, "case.json");
-    await writeFile(fixture, JSON.stringify(input), { mode: 0o600 });
-    return (await runWorkflow(["test", "--file", file, "--fixture", fixture], options)) as Result;
-  });
+  return serializeWorkflow({ ...options, facts });
 }

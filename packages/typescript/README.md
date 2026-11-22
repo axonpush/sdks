@@ -35,6 +35,22 @@ For native parity tests, set the binary environment variable and run
 The parity test is skipped when the executable is not configured; schema rejection
 and source determinism tests always run.
 
+## Effect Schema provider (development)
+
+`@axonpush/sdk/workflow/effect` exports `defineEffectWorkflow`,
+`compileEffectWorkflow`, `verifyEffectWorkflow` and `WorkflowTimestamp`. Install
+the optional peer `effect@^4.1.5` to use it. Effect 3 is not supported. Define facts
+with `Schema.Struct`, plain scalar fields and the exported timestamp helper.
+Custom filters, transformations and unsupported constraints fail explicitly.
+Compilation and verification share the same native Go bridge as the Zod provider.
+
+See [the runnable example](examples/workflow-effect.ts) and
+[the provider guide](https://docs.axonpush.xyz/workflows-effect), available when the
+matching docs revision is deployed. Build the SDK before running the example and
+set `AXONPUSH_WORKFLOW_BINARY` to compiler `0.1.0`. For native parity tests, run
+`bunx vitest run src/__tests__/workflow-effect.test.ts` with that variable set.
+Native tests skip when no executable is configured; schema tests always run.
+
 ## Agent operations
 
 Each workspace declares its own data dictionary and entities (usually drafted by
