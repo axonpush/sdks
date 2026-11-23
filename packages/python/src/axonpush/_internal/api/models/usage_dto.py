@@ -11,6 +11,7 @@ from ..types import UNSET, Unset
 
 if TYPE_CHECKING:
     from ..models.top_up import TopUp
+    from ..models.workflow_case_usage import WorkflowCaseUsage
 
 
 T = TypeVar("T", bound="UsageDTO")
@@ -37,6 +38,7 @@ class UsageDTO:
         used (int):
         schema (str | Unset): A URL to the JSON Schema for this object.
         top_up (TopUp | Unset):
+        workflow_cases (WorkflowCaseUsage | Unset):
     """
 
     billing_enabled: bool
@@ -56,9 +58,11 @@ class UsageDTO:
     used: int
     schema: str | Unset = UNSET
     top_up: TopUp | Unset = UNSET
+    workflow_cases: WorkflowCaseUsage | Unset = UNSET
 
     def to_dict(self) -> dict[str, Any]:
         from ..models.top_up import TopUp
+        from ..models.workflow_case_usage import WorkflowCaseUsage
 
         billing_enabled = self.billing_enabled
 
@@ -102,6 +106,10 @@ class UsageDTO:
         if not isinstance(self.top_up, Unset):
             top_up = self.top_up.to_dict()
 
+        workflow_cases: dict[str, Any] | Unset = UNSET
+        if not isinstance(self.workflow_cases, Unset):
+            workflow_cases = self.workflow_cases.to_dict()
+
         field_dict: dict[str, Any] = {}
 
         field_dict.update(
@@ -127,12 +135,15 @@ class UsageDTO:
             field_dict["$schema"] = schema
         if top_up is not UNSET:
             field_dict["topUp"] = top_up
+        if workflow_cases is not UNSET:
+            field_dict["workflowCases"] = workflow_cases
 
         return field_dict
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         from ..models.top_up import TopUp
+        from ..models.workflow_case_usage import WorkflowCaseUsage
 
         d = dict(src_dict)
         billing_enabled = d.pop("billingEnabled")
@@ -204,6 +215,13 @@ class UsageDTO:
         else:
             top_up = TopUp.from_dict(_top_up)
 
+        _workflow_cases = d.pop("workflowCases", UNSET)
+        workflow_cases: WorkflowCaseUsage | Unset
+        if isinstance(_workflow_cases, Unset):
+            workflow_cases = UNSET
+        else:
+            workflow_cases = WorkflowCaseUsage.from_dict(_workflow_cases)
+
         usage_dto = cls(
             billing_enabled=billing_enabled,
             ceiling=ceiling,
@@ -222,6 +240,7 @@ class UsageDTO:
             used=used,
             schema=schema,
             top_up=top_up,
+            workflow_cases=workflow_cases,
         )
 
         return usage_dto

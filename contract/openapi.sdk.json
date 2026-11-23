@@ -11130,6 +11130,17 @@
           },
           "topUpAvailable": {
             "type": "boolean"
+          },
+          "workflowCasesMonthly": {
+            "format": "int64",
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "workflowHistoryDays": {
+            "format": "int64",
+            "type": "integer"
           }
         },
         "required": [
@@ -11140,6 +11151,8 @@
           "priceAnnualUsd",
           "salesLed",
           "eventsMonthly",
+          "workflowCasesMonthly",
+          "workflowHistoryDays",
           "hotDays",
           "archiveDays",
           "maxArchiveDays",
@@ -13925,6 +13938,9 @@
           "used": {
             "format": "int64",
             "type": "integer"
+          },
+          "workflowCases": {
+            "$ref": "#/components/schemas/WorkflowCaseUsage"
           }
         },
         "required": [
@@ -14203,6 +14219,47 @@
         },
         "required": [
           "ok"
+        ],
+        "type": "object"
+      },
+      "WorkflowCaseUsage": {
+        "additionalProperties": false,
+        "properties": {
+          "enforced": {
+            "type": "boolean"
+          },
+          "limit": {
+            "format": "int64",
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "period": {
+            "type": "string"
+          },
+          "remaining": {
+            "format": "int64",
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "resetsAt": {
+            "type": "string"
+          },
+          "used": {
+            "format": "int64",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "period",
+          "used",
+          "limit",
+          "remaining",
+          "enforced",
+          "resetsAt"
         ],
         "type": "object"
       },

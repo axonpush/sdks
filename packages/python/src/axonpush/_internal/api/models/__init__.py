@@ -489,6 +489,7 @@ from .verify_output_body import VerifyOutputBody
 from .verify_result import VerifyResult
 from .views_output_body import ViewsOutputBody
 from .webhook_output_body import WebhookOutputBody
+from .workflow_case_usage import WorkflowCaseUsage
 from .workflow_setup_guide import WorkflowSetupGuide
 from .workflow_setup_guide_example_struct import WorkflowSetupGuideExampleStruct
 from .workspace_entities_output_body import WorkspaceEntitiesOutputBody
@@ -996,6 +997,7 @@ __all__ = (
     "VerifyResult",
     "ViewsOutputBody",
     "WebhookOutputBody",
+    "WorkflowCaseUsage",
     "WorkflowSetupGuide",
     "WorkflowSetupGuideExampleStruct",
     "WorkspaceEntitiesOutputBody",

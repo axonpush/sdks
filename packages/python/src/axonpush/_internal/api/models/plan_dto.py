@@ -34,6 +34,8 @@ class PlanDTO:
         sales_led (bool):
         seats (int | None):
         top_up_available (bool):
+        workflow_cases_monthly (int | None):
+        workflow_history_days (int):
         lemonsqueezy_variants (PlanDTOLemonsqueezyVariants | Unset):
         top_up (TopUp | Unset):
     """
@@ -51,6 +53,8 @@ class PlanDTO:
     sales_led: bool
     seats: int | None
     top_up_available: bool
+    workflow_cases_monthly: int | None
+    workflow_history_days: int
     lemonsqueezy_variants: PlanDTOLemonsqueezyVariants | Unset = UNSET
     top_up: TopUp | Unset = UNSET
 
@@ -89,6 +93,11 @@ class PlanDTO:
 
         top_up_available = self.top_up_available
 
+        workflow_cases_monthly: int | None
+        workflow_cases_monthly = self.workflow_cases_monthly
+
+        workflow_history_days = self.workflow_history_days
+
         lemonsqueezy_variants: dict[str, Any] | Unset = UNSET
         if not isinstance(self.lemonsqueezy_variants, Unset):
             lemonsqueezy_variants = self.lemonsqueezy_variants.to_dict()
@@ -114,6 +123,8 @@ class PlanDTO:
                 "salesLed": sales_led,
                 "seats": seats,
                 "topUpAvailable": top_up_available,
+                "workflowCasesMonthly": workflow_cases_monthly,
+                "workflowHistoryDays": workflow_history_days,
             }
         )
         if lemonsqueezy_variants is not UNSET:
@@ -176,6 +187,15 @@ class PlanDTO:
 
         top_up_available = d.pop("topUpAvailable")
 
+        def _parse_workflow_cases_monthly(data: object) -> int | None:
+            if data is None:
+                return data
+            return cast(int | None, data)
+
+        workflow_cases_monthly = _parse_workflow_cases_monthly(d.pop("workflowCasesMonthly"))
+
+        workflow_history_days = d.pop("workflowHistoryDays")
+
         _lemonsqueezy_variants = d.pop("lemonsqueezyVariants", UNSET)
         lemonsqueezy_variants: PlanDTOLemonsqueezyVariants | Unset
         if isinstance(_lemonsqueezy_variants, Unset):
@@ -204,6 +224,8 @@ class PlanDTO:
             sales_led=sales_led,
             seats=seats,
             top_up_available=top_up_available,
+            workflow_cases_monthly=workflow_cases_monthly,
+            workflow_history_days=workflow_history_days,
             lemonsqueezy_variants=lemonsqueezy_variants,
             top_up=top_up,
         )

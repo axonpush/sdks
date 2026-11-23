@@ -3741,6 +3741,8 @@ export type PlanDto = {
     seats: number | null;
     topUp?: TopUp;
     topUpAvailable: boolean;
+    workflowCasesMonthly: number | null;
+    workflowHistoryDays: number;
 };
 
 export type PlanMrr = {
@@ -4654,6 +4656,7 @@ export type UsageDto = {
     topUp?: TopUp;
     trialEndsAt: string | null;
     used: number;
+    workflowCases?: WorkflowCaseUsage;
 };
 
 export type UserDto = {
@@ -4738,6 +4741,15 @@ export type WebhookOutputBody = {
     deduped?: boolean;
     ok: boolean;
     skipped?: string;
+};
+
+export type WorkflowCaseUsage = {
+    enforced: boolean;
+    limit: number | null;
+    period: string;
+    remaining: number | null;
+    resetsAt: string;
+    used: number;
 };
 
 export type WorkflowSetupGuide = {
@@ -6830,6 +6842,7 @@ export type UsageDtoWritable = {
     topUp?: TopUp;
     trialEndsAt: string | null;
     used: number;
+    workflowCases?: WorkflowCaseUsage;
 };
 
 export type UserOrgDtoWritable = {
