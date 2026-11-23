@@ -8,31 +8,31 @@ from attrs import field as _attrs_field
 
 from ..types import UNSET, Unset
 
-T = TypeVar("T", bound="TopUp")
+T = TypeVar("T", bound="Overage")
 
 
 @_attrs_define
-class TopUp:
+class Overage:
     """
     Attributes:
-        events (int):
-        price_usd (int):
+        events_per_unit (int):
+        unit_price_cents (int):
     """
 
-    events: int
-    price_usd: int
+    events_per_unit: int
+    unit_price_cents: int
 
     def to_dict(self) -> dict[str, Any]:
-        events = self.events
+        events_per_unit = self.events_per_unit
 
-        price_usd = self.price_usd
+        unit_price_cents = self.unit_price_cents
 
         field_dict: dict[str, Any] = {}
 
         field_dict.update(
             {
-                "events": events,
-                "priceUsd": price_usd,
+                "eventsPerUnit": events_per_unit,
+                "unitPriceCents": unit_price_cents,
             }
         )
 
@@ -41,13 +41,13 @@ class TopUp:
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         d = dict(src_dict)
-        events = d.pop("events")
+        events_per_unit = d.pop("eventsPerUnit")
 
-        price_usd = d.pop("priceUsd")
+        unit_price_cents = d.pop("unitPriceCents")
 
-        top_up = cls(
-            events=events,
-            price_usd=price_usd,
+        overage = cls(
+            events_per_unit=events_per_unit,
+            unit_price_cents=unit_price_cents,
         )
 
-        return top_up
+        return overage

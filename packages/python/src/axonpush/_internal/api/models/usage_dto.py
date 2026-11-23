@@ -10,7 +10,6 @@ from ..models.usage_dto_governed_by import UsageDTOGovernedBy
 from ..types import UNSET, Unset
 
 if TYPE_CHECKING:
-    from ..models.top_up import TopUp
     from ..models.workflow_case_usage import WorkflowCaseUsage
 
 
@@ -22,13 +21,16 @@ class UsageDTO:
     """
     Attributes:
         billing_enabled (bool):
+        bills_overage (bool):
         ceiling (int | None):
-        credits_ (int):
         cycle_started_at (None | str):
         enforced (bool):
         governed_by (UsageDTOGovernedBy):
         has_billing_portal (bool):
         limit (int | None):
+        overage_cap_usd (int | None):
+        overage_cents (int):
+        overage_events (int):
         period (str):
         plan (str):
         retention_days (int | None):
@@ -37,18 +39,20 @@ class UsageDTO:
         trial_ends_at (None | str):
         used (int):
         schema (str | Unset): A URL to the JSON Schema for this object.
-        top_up (TopUp | Unset):
         workflow_cases (WorkflowCaseUsage | Unset):
     """
 
     billing_enabled: bool
+    bills_overage: bool
     ceiling: int | None
-    credits_: int
     cycle_started_at: None | str
     enforced: bool
     governed_by: UsageDTOGovernedBy
     has_billing_portal: bool
     limit: int | None
+    overage_cap_usd: int | None
+    overage_cents: int
+    overage_events: int
     period: str
     plan: str
     retention_days: int | None
@@ -57,19 +61,17 @@ class UsageDTO:
     trial_ends_at: None | str
     used: int
     schema: str | Unset = UNSET
-    top_up: TopUp | Unset = UNSET
     workflow_cases: WorkflowCaseUsage | Unset = UNSET
 
     def to_dict(self) -> dict[str, Any]:
-        from ..models.top_up import TopUp
         from ..models.workflow_case_usage import WorkflowCaseUsage
 
         billing_enabled = self.billing_enabled
 
+        bills_overage = self.bills_overage
+
         ceiling: int | None
         ceiling = self.ceiling
-
-        credits_ = self.credits_
 
         cycle_started_at: None | str
         cycle_started_at = self.cycle_started_at
@@ -82,6 +84,13 @@ class UsageDTO:
 
         limit: int | None
         limit = self.limit
+
+        overage_cap_usd: int | None
+        overage_cap_usd = self.overage_cap_usd
+
+        overage_cents = self.overage_cents
+
+        overage_events = self.overage_events
 
         period = self.period
 
@@ -102,10 +111,6 @@ class UsageDTO:
 
         schema = self.schema
 
-        top_up: dict[str, Any] | Unset = UNSET
-        if not isinstance(self.top_up, Unset):
-            top_up = self.top_up.to_dict()
-
         workflow_cases: dict[str, Any] | Unset = UNSET
         if not isinstance(self.workflow_cases, Unset):
             workflow_cases = self.workflow_cases.to_dict()
@@ -115,13 +120,16 @@ class UsageDTO:
         field_dict.update(
             {
                 "billingEnabled": billing_enabled,
+                "billsOverage": bills_overage,
                 "ceiling": ceiling,
-                "credits": credits_,
                 "cycleStartedAt": cycle_started_at,
                 "enforced": enforced,
                 "governedBy": governed_by,
                 "hasBillingPortal": has_billing_portal,
                 "limit": limit,
+                "overageCapUsd": overage_cap_usd,
+                "overageCents": overage_cents,
+                "overageEvents": overage_events,
                 "period": period,
                 "plan": plan,
                 "retentionDays": retention_days,
@@ -133,8 +141,6 @@ class UsageDTO:
         )
         if schema is not UNSET:
             field_dict["$schema"] = schema
-        if top_up is not UNSET:
-            field_dict["topUp"] = top_up
         if workflow_cases is not UNSET:
             field_dict["workflowCases"] = workflow_cases
 
@@ -142,11 +148,12 @@ class UsageDTO:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        from ..models.top_up import TopUp
         from ..models.workflow_case_usage import WorkflowCaseUsage
 
         d = dict(src_dict)
         billing_enabled = d.pop("billingEnabled")
+
+        bills_overage = d.pop("billsOverage")
 
         def _parse_ceiling(data: object) -> int | None:
             if data is None:
@@ -154,8 +161,6 @@ class UsageDTO:
             return cast(int | None, data)
 
         ceiling = _parse_ceiling(d.pop("ceiling"))
-
-        credits_ = d.pop("credits")
 
         def _parse_cycle_started_at(data: object) -> None | str:
             if data is None:
@@ -176,6 +181,17 @@ class UsageDTO:
             return cast(int | None, data)
 
         limit = _parse_limit(d.pop("limit"))
+
+        def _parse_overage_cap_usd(data: object) -> int | None:
+            if data is None:
+                return data
+            return cast(int | None, data)
+
+        overage_cap_usd = _parse_overage_cap_usd(d.pop("overageCapUsd"))
+
+        overage_cents = d.pop("overageCents")
+
+        overage_events = d.pop("overageEvents")
 
         period = d.pop("period")
 
@@ -208,13 +224,6 @@ class UsageDTO:
 
         schema = d.pop("$schema", UNSET)
 
-        _top_up = d.pop("topUp", UNSET)
-        top_up: TopUp | Unset
-        if isinstance(_top_up, Unset):
-            top_up = UNSET
-        else:
-            top_up = TopUp.from_dict(_top_up)
-
         _workflow_cases = d.pop("workflowCases", UNSET)
         workflow_cases: WorkflowCaseUsage | Unset
         if isinstance(_workflow_cases, Unset):
@@ -224,13 +233,16 @@ class UsageDTO:
 
         usage_dto = cls(
             billing_enabled=billing_enabled,
+            bills_overage=bills_overage,
             ceiling=ceiling,
-            credits_=credits_,
             cycle_started_at=cycle_started_at,
             enforced=enforced,
             governed_by=governed_by,
             has_billing_portal=has_billing_portal,
             limit=limit,
+            overage_cap_usd=overage_cap_usd,
+            overage_cents=overage_cents,
+            overage_events=overage_events,
             period=period,
             plan=plan,
             retention_days=retention_days,
@@ -239,7 +251,6 @@ class UsageDTO:
             trial_ends_at=trial_ends_at,
             used=used,
             schema=schema,
-            top_up=top_up,
             workflow_cases=workflow_cases,
         )
 

@@ -11164,6 +11164,77 @@
         ],
         "type": "object"
       },
+      "Overage": {
+        "additionalProperties": false,
+        "properties": {
+          "eventsPerUnit": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "unitPriceCents": {
+            "format": "int64",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "eventsPerUnit",
+          "unitPriceCents"
+        ],
+        "type": "object"
+      },
+      "OverageCapInputBody": {
+        "additionalProperties": false,
+        "properties": {
+          "$schema": {
+            "description": "A URL to the JSON Schema for this object.",
+            "examples": [
+              "https://example.com/schemas/OverageCapInputBody.json"
+            ],
+            "format": "uri",
+            "readOnly": true,
+            "type": "string"
+          },
+          "capUsd": {
+            "description": "Monthly overage limit in USD. Null removes it; 0 stops ingestion at the quota.",
+            "format": "int32",
+            "maximum": 100000,
+            "minimum": 0,
+            "type": [
+              "integer",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "capUsd"
+        ],
+        "type": "object"
+      },
+      "OverageCapOutputBody": {
+        "additionalProperties": false,
+        "properties": {
+          "$schema": {
+            "description": "A URL to the JSON Schema for this object.",
+            "examples": [
+              "https://example.com/schemas/OverageCapOutputBody.json"
+            ],
+            "format": "uri",
+            "readOnly": true,
+            "type": "string"
+          },
+          "capUsd": {
+            "format": "int32",
+            "type": [
+              "integer",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "capUsd"
+        ],
+        "type": "object"
+      },
       "OverviewBody": {
         "additionalProperties": false,
         "properties": {
@@ -11442,6 +11513,15 @@
             "format": "int64",
             "type": "integer"
           },
+          "cadences": {
+            "items": {
+              "type": "string"
+            },
+            "type": [
+              "array",
+              "null"
+            ]
+          },
           "eventsMonthly": {
             "format": "int64",
             "type": [
@@ -11459,18 +11539,15 @@
           "id": {
             "type": "string"
           },
-          "lemonsqueezyVariants": {
-            "additionalProperties": {
-              "type": "string"
-            },
-            "type": "object"
-          },
           "maxArchiveDays": {
             "format": "int64",
             "type": "integer"
           },
           "name": {
             "type": "string"
+          },
+          "overage": {
+            "$ref": "#/components/schemas/Overage"
           },
           "priceAnnualUsd": {
             "format": "int64",
@@ -11500,12 +11577,6 @@
               "null"
             ]
           },
-          "topUp": {
-            "$ref": "#/components/schemas/TopUp"
-          },
-          "topUpAvailable": {
-            "type": "boolean"
-          },
           "workflowCasesMonthly": {
             "format": "int64",
             "type": [
@@ -11519,7 +11590,6 @@
           }
         },
         "required": [
-          "topUpAvailable",
           "id",
           "name",
           "priceMonthlyUsd",
@@ -13595,24 +13665,6 @@
         ],
         "type": "object"
       },
-      "TopUp": {
-        "additionalProperties": false,
-        "properties": {
-          "events": {
-            "format": "int64",
-            "type": "integer"
-          },
-          "priceUsd": {
-            "format": "int64",
-            "type": "integer"
-          }
-        },
-        "required": [
-          "events",
-          "priceUsd"
-        ],
-        "type": "object"
-      },
       "TraceGroupDTO": {
         "additionalProperties": false,
         "properties": {
@@ -14297,16 +14349,15 @@
           "billingEnabled": {
             "type": "boolean"
           },
+          "billsOverage": {
+            "type": "boolean"
+          },
           "ceiling": {
             "format": "int64",
             "type": [
               "integer",
               "null"
             ]
-          },
-          "credits": {
-            "format": "int64",
-            "type": "integer"
           },
           "cycleStartedAt": {
             "type": [
@@ -14334,6 +14385,21 @@
               "null"
             ]
           },
+          "overageCapUsd": {
+            "format": "int32",
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "overageCents": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "overageEvents": {
+            "format": "int64",
+            "type": "integer"
+          },
           "period": {
             "type": "string"
           },
@@ -14357,9 +14423,6 @@
           "subscriptionStatus": {
             "type": "string"
           },
-          "topUp": {
-            "$ref": "#/components/schemas/TopUp"
-          },
           "trialEndsAt": {
             "type": [
               "string",
@@ -14379,8 +14442,11 @@
           "period",
           "used",
           "limit",
-          "credits",
           "ceiling",
+          "billsOverage",
+          "overageEvents",
+          "overageCents",
+          "overageCapUsd",
           "enforced",
           "retentionDays",
           "seats",
@@ -25315,6 +25381,7 @@
     },
     "/billing/checkout": {
       "post": {
+        "description": "Returns the hosted checkout for an organisation without a subscription. An organisation that already pays has its subscription moved to the plan instead (upgrades are prorated now, downgrades apply next period) and gets the billing page back.",
         "operationId": "billing.checkout",
         "requestBody": {
           "content": {
@@ -25348,7 +25415,56 @@
             "description": "Error"
           }
         },
-        "summary": "Create a checkout link",
+        "summary": "Start a checkout or change plan",
+        "tags": [
+          "billing"
+        ],
+        "x-axonpush-effect": "write",
+        "x-axonpush-mcp": false,
+        "x-axonpush-policy": {
+          "category": "session-admin",
+          "grants": "none"
+        },
+        "x-axonpush-sdk": true
+      }
+    },
+    "/billing/overage-cap": {
+      "put": {
+        "description": "Pro and Team bill events above the monthly quota at the plan's overage price. The limit caps that overage in USD per month: ingestion stops once it is reached. Null removes the limit; 0 stops ingestion at the quota.",
+        "operationId": "billing.setOverageCap",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OverageCapInputBody"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OverageCapOutputBody"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "summary": "Set the monthly overage limit",
         "tags": [
           "billing"
         ],
@@ -25437,45 +25553,6 @@
         "x-axonpush-sdk": true
       }
     },
-    "/billing/top-ups": {
-      "post": {
-        "description": "Buys the organisation plan's one-time top-up pack (Pro +500,000 events for $30, Team +2,000,000 for $100). The events are credited to the current UTC month once LemonSqueezy confirms the order.",
-        "operationId": "billing.topUp",
-        "responses": {
-          "201": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/LinkOutputBody"
-                }
-              }
-            },
-            "description": "Created"
-          },
-          "default": {
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorModel"
-                }
-              }
-            },
-            "description": "Error"
-          }
-        },
-        "summary": "Create a checkout link for this month's top-up pack",
-        "tags": [
-          "billing"
-        ],
-        "x-axonpush-effect": "write",
-        "x-axonpush-mcp": false,
-        "x-axonpush-policy": {
-          "category": "session-admin",
-          "grants": "none"
-        },
-        "x-axonpush-sdk": true
-      }
-    },
     "/billing/usage": {
       "get": {
         "operationId": "billing.usage",
@@ -25516,11 +25593,26 @@
     },
     "/billing/webhook": {
       "post": {
+        "description": "Receives Polar subscription and order events, signed with Standard Webhooks.",
         "operationId": "billing.webhook",
         "parameters": [
           {
             "in": "header",
-            "name": "X-Signature",
+            "name": "webhook-id",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "webhook-timestamp",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "webhook-signature",
             "schema": {
               "type": "string"
             }
@@ -25560,7 +25652,7 @@
             "description": "Error"
           }
         },
-        "summary": "LemonSqueezy webhook",
+        "summary": "Polar webhook",
         "tags": [
           "billing"
         ],

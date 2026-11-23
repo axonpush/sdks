@@ -93,7 +93,7 @@ apiKeys.create
 archive.fetchStatus
 attachments.content
 attachments.list
-billing.topUp
+billing.setOverageCap
 errors.feedback
 ingest.outcomes
 metrics.names

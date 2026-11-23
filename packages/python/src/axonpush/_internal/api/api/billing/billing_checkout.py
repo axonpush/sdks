@@ -60,7 +60,11 @@ def sync_detailed(
     client: AuthenticatedClient | Client,
     body: CheckoutInputBody,
 ) -> Response[ErrorModel | LinkOutputBody]:
-    """Create a checkout link
+    """Start a checkout or change plan
+
+     Returns the hosted checkout for an organisation without a subscription. An organisation that already
+    pays has its subscription moved to the plan instead (upgrades are prorated now, downgrades apply
+    next period) and gets the billing page back.
 
     Args:
         body (CheckoutInputBody):
@@ -89,7 +93,11 @@ def sync(
     client: AuthenticatedClient | Client,
     body: CheckoutInputBody,
 ) -> ErrorModel | LinkOutputBody | None:
-    """Create a checkout link
+    """Start a checkout or change plan
+
+     Returns the hosted checkout for an organisation without a subscription. An organisation that already
+    pays has its subscription moved to the plan instead (upgrades are prorated now, downgrades apply
+    next period) and gets the billing page back.
 
     Args:
         body (CheckoutInputBody):
@@ -113,7 +121,11 @@ async def asyncio_detailed(
     client: AuthenticatedClient | Client,
     body: CheckoutInputBody,
 ) -> Response[ErrorModel | LinkOutputBody]:
-    """Create a checkout link
+    """Start a checkout or change plan
+
+     Returns the hosted checkout for an organisation without a subscription. An organisation that already
+    pays has its subscription moved to the plan instead (upgrades are prorated now, downgrades apply
+    next period) and gets the billing page back.
 
     Args:
         body (CheckoutInputBody):
@@ -140,7 +152,11 @@ async def asyncio(
     client: AuthenticatedClient | Client,
     body: CheckoutInputBody,
 ) -> ErrorModel | LinkOutputBody | None:
-    """Create a checkout link
+    """Start a checkout or change plan
+
+     Returns the hosted checkout for an organisation without a subscription. An organisation that already
+    pays has its subscription moved to the plan instead (upgrades are prorated now, downgrades apply
+    next period) and gets the billing page back.
 
     Args:
         body (CheckoutInputBody):

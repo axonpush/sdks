@@ -162,7 +162,7 @@ audittrail.get
 billing.checkout
 billing.plans
 billing.portal
-billing.topUp
+billing.setOverageCap
 billing.usage
 billing.webhook
 capabilities.get

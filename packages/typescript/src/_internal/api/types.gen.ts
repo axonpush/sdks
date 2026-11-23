@@ -3759,6 +3759,30 @@ export type OrganizationDto = {
     updatedAt?: string;
 };
 
+export type Overage = {
+    eventsPerUnit: number;
+    unitPriceCents: number;
+};
+
+export type OverageCapInputBody = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
+    /**
+     * Monthly overage limit in USD. Null removes it; 0 stops ingestion at the quota.
+     */
+    capUsd: number | null;
+};
+
+export type OverageCapOutputBody = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
+    capUsd: number | null;
+};
+
 export type OverviewBody = {
     /**
      * A URL to the JSON Schema for this object.
@@ -3850,22 +3874,19 @@ export type PatchInputBody = {
 
 export type PlanDto = {
     archiveDays: number;
+    cadences?: Array<string> | null;
     eventsMonthly: number | null;
     features: Features;
     hotDays: number;
     id: string;
-    lemonsqueezyVariants?: {
-        [key: string]: string;
-    };
     maxArchiveDays: number;
     name: string;
+    overage?: Overage;
     priceAnnualUsd: number | null;
     priceMonthlyUsd: number | null;
     quotaCeilingPercent: number;
     salesLed: boolean;
     seats: number | null;
-    topUp?: TopUp;
-    topUpAvailable: boolean;
     workflowCasesMonthly: number | null;
     workflowHistoryDays: number;
 };
@@ -4553,11 +4574,6 @@ export type TimeseriesPointDto = {
     traceCount: number;
 };
 
-export type TopUp = {
-    events: number;
-    priceUsd: number;
-};
-
 export type TraceGroupDto = {
     activityClass: string;
     appId: string;
@@ -4785,19 +4801,21 @@ export type UsageDto = {
      */
     readonly $schema?: string;
     billingEnabled: boolean;
+    billsOverage: boolean;
     ceiling: number | null;
-    credits: number;
     cycleStartedAt: string | null;
     enforced: boolean;
     governedBy: 'plan' | 'licence';
     hasBillingPortal: boolean;
     limit: number | null;
+    overageCapUsd: number | null;
+    overageCents: number;
+    overageEvents: number;
     period: string;
     plan: string;
     retentionDays: number | null;
     seats: number | null;
     subscriptionStatus: string;
-    topUp?: TopUp;
     trialEndsAt: string | null;
     used: number;
     workflowCases?: WorkflowCaseUsage;
@@ -6542,6 +6560,17 @@ export type OrganizationDtoWritable = {
     updatedAt?: string;
 };
 
+export type OverageCapInputBodyWritable = {
+    /**
+     * Monthly overage limit in USD. Null removes it; 0 stops ingestion at the quota.
+     */
+    capUsd: number | null;
+};
+
+export type OverageCapOutputBodyWritable = {
+    capUsd: number | null;
+};
+
 export type OverviewBodyWritable = {
     events: OverviewBodyEventsStruct;
     managedLlm: OverviewBodyManagedLlmStruct;
@@ -7047,19 +7076,21 @@ export type UpdateProfileInputBodyWritable = {
 
 export type UsageDtoWritable = {
     billingEnabled: boolean;
+    billsOverage: boolean;
     ceiling: number | null;
-    credits: number;
     cycleStartedAt: string | null;
     enforced: boolean;
     governedBy: 'plan' | 'licence';
     hasBillingPortal: boolean;
     limit: number | null;
+    overageCapUsd: number | null;
+    overageCents: number;
+    overageEvents: number;
     period: string;
     plan: string;
     retentionDays: number | null;
     seats: number | null;
     subscriptionStatus: string;
-    topUp?: TopUp;
     trialEndsAt: string | null;
     used: number;
     workflowCases?: WorkflowCaseUsage;
@@ -11605,6 +11636,31 @@ export type BillingCheckoutResponses = {
 
 export type BillingCheckoutResponse = BillingCheckoutResponses[keyof BillingCheckoutResponses];
 
+export type BillingSetOverageCapData = {
+    body: OverageCapInputBodyWritable;
+    path?: never;
+    query?: never;
+    url: '/billing/overage-cap';
+};
+
+export type BillingSetOverageCapErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type BillingSetOverageCapError = BillingSetOverageCapErrors[keyof BillingSetOverageCapErrors];
+
+export type BillingSetOverageCapResponses = {
+    /**
+     * OK
+     */
+    200: OverageCapOutputBody;
+};
+
+export type BillingSetOverageCapResponse = BillingSetOverageCapResponses[keyof BillingSetOverageCapResponses];
+
 export type BillingPlansData = {
     body?: never;
     path?: never;
@@ -11655,31 +11711,6 @@ export type BillingPortalResponses = {
 
 export type BillingPortalResponse = BillingPortalResponses[keyof BillingPortalResponses];
 
-export type BillingTopUpData = {
-    body?: never;
-    path?: never;
-    query?: never;
-    url: '/billing/top-ups';
-};
-
-export type BillingTopUpErrors = {
-    /**
-     * Error
-     */
-    default: ErrorModel;
-};
-
-export type BillingTopUpError = BillingTopUpErrors[keyof BillingTopUpErrors];
-
-export type BillingTopUpResponses = {
-    /**
-     * Created
-     */
-    201: LinkOutputBody;
-};
-
-export type BillingTopUpResponse = BillingTopUpResponses[keyof BillingTopUpResponses];
-
 export type BillingUsageData = {
     body?: never;
     path?: never;
@@ -11708,7 +11739,9 @@ export type BillingUsageResponse = BillingUsageResponses[keyof BillingUsageRespo
 export type BillingWebhookData = {
     body: Blob | File;
     headers?: {
-        'X-Signature'?: string;
+        'webhook-id'?: string;
+        'webhook-timestamp'?: string;
+        'webhook-signature'?: string;
     };
     path?: never;
     query?: never;

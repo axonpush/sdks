@@ -10,8 +10,7 @@ from ..types import UNSET, Unset
 
 if TYPE_CHECKING:
     from ..models.features import Features
-    from ..models.plan_dto_lemonsqueezy_variants import PlanDTOLemonsqueezyVariants
-    from ..models.top_up import TopUp
+    from ..models.overage import Overage
 
 
 T = TypeVar("T", bound="PlanDTO")
@@ -33,11 +32,10 @@ class PlanDTO:
         quota_ceiling_percent (int):
         sales_led (bool):
         seats (int | None):
-        top_up_available (bool):
         workflow_cases_monthly (int | None):
         workflow_history_days (int):
-        lemonsqueezy_variants (PlanDTOLemonsqueezyVariants | Unset):
-        top_up (TopUp | Unset):
+        cadences (list[str] | None | Unset):
+        overage (Overage | Unset):
     """
 
     archive_days: int
@@ -52,16 +50,14 @@ class PlanDTO:
     quota_ceiling_percent: int
     sales_led: bool
     seats: int | None
-    top_up_available: bool
     workflow_cases_monthly: int | None
     workflow_history_days: int
-    lemonsqueezy_variants: PlanDTOLemonsqueezyVariants | Unset = UNSET
-    top_up: TopUp | Unset = UNSET
+    cadences: list[str] | None | Unset = UNSET
+    overage: Overage | Unset = UNSET
 
     def to_dict(self) -> dict[str, Any]:
         from ..models.features import Features
-        from ..models.plan_dto_lemonsqueezy_variants import PlanDTOLemonsqueezyVariants
-        from ..models.top_up import TopUp
+        from ..models.overage import Overage
 
         archive_days = self.archive_days
 
@@ -91,20 +87,23 @@ class PlanDTO:
         seats: int | None
         seats = self.seats
 
-        top_up_available = self.top_up_available
-
         workflow_cases_monthly: int | None
         workflow_cases_monthly = self.workflow_cases_monthly
 
         workflow_history_days = self.workflow_history_days
 
-        lemonsqueezy_variants: dict[str, Any] | Unset = UNSET
-        if not isinstance(self.lemonsqueezy_variants, Unset):
-            lemonsqueezy_variants = self.lemonsqueezy_variants.to_dict()
+        cadences: list[str] | None | Unset
+        if isinstance(self.cadences, Unset):
+            cadences = UNSET
+        elif isinstance(self.cadences, list):
+            cadences = self.cadences
 
-        top_up: dict[str, Any] | Unset = UNSET
-        if not isinstance(self.top_up, Unset):
-            top_up = self.top_up.to_dict()
+        else:
+            cadences = self.cadences
+
+        overage: dict[str, Any] | Unset = UNSET
+        if not isinstance(self.overage, Unset):
+            overage = self.overage.to_dict()
 
         field_dict: dict[str, Any] = {}
 
@@ -122,23 +121,21 @@ class PlanDTO:
                 "quotaCeilingPercent": quota_ceiling_percent,
                 "salesLed": sales_led,
                 "seats": seats,
-                "topUpAvailable": top_up_available,
                 "workflowCasesMonthly": workflow_cases_monthly,
                 "workflowHistoryDays": workflow_history_days,
             }
         )
-        if lemonsqueezy_variants is not UNSET:
-            field_dict["lemonsqueezyVariants"] = lemonsqueezy_variants
-        if top_up is not UNSET:
-            field_dict["topUp"] = top_up
+        if cadences is not UNSET:
+            field_dict["cadences"] = cadences
+        if overage is not UNSET:
+            field_dict["overage"] = overage
 
         return field_dict
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         from ..models.features import Features
-        from ..models.plan_dto_lemonsqueezy_variants import PlanDTOLemonsqueezyVariants
-        from ..models.top_up import TopUp
+        from ..models.overage import Overage
 
         d = dict(src_dict)
         archive_days = d.pop("archiveDays")
@@ -185,34 +182,38 @@ class PlanDTO:
 
         seats = _parse_seats(d.pop("seats"))
 
-        top_up_available = d.pop("topUpAvailable")
-
         def _parse_workflow_cases_monthly(data: object) -> int | None:
             if data is None:
                 return data
             return cast(int | None, data)
 
-        workflow_cases_monthly = _parse_workflow_cases_monthly(
-            d.pop("workflowCasesMonthly")
-        )
+        workflow_cases_monthly = _parse_workflow_cases_monthly(d.pop("workflowCasesMonthly"))
 
         workflow_history_days = d.pop("workflowHistoryDays")
 
-        _lemonsqueezy_variants = d.pop("lemonsqueezyVariants", UNSET)
-        lemonsqueezy_variants: PlanDTOLemonsqueezyVariants | Unset
-        if isinstance(_lemonsqueezy_variants, Unset):
-            lemonsqueezy_variants = UNSET
-        else:
-            lemonsqueezy_variants = PlanDTOLemonsqueezyVariants.from_dict(
-                _lemonsqueezy_variants
-            )
+        def _parse_cadences(data: object) -> list[str] | None | Unset:
+            if data is None:
+                return data
+            if isinstance(data, Unset):
+                return data
+            try:
+                if not isinstance(data, list):
+                    raise TypeError()
+                cadences_type_0 = cast(list[str], data)
 
-        _top_up = d.pop("topUp", UNSET)
-        top_up: TopUp | Unset
-        if isinstance(_top_up, Unset):
-            top_up = UNSET
+                return cadences_type_0
+            except (TypeError, ValueError, AttributeError, KeyError):
+                pass
+            return cast(list[str] | None | Unset, data)
+
+        cadences = _parse_cadences(d.pop("cadences", UNSET))
+
+        _overage = d.pop("overage", UNSET)
+        overage: Overage | Unset
+        if isinstance(_overage, Unset):
+            overage = UNSET
         else:
-            top_up = TopUp.from_dict(_top_up)
+            overage = Overage.from_dict(_overage)
 
         plan_dto = cls(
             archive_days=archive_days,
@@ -227,11 +228,10 @@ class PlanDTO:
             quota_ceiling_percent=quota_ceiling_percent,
             sales_led=sales_led,
             seats=seats,
-            top_up_available=top_up_available,
             workflow_cases_monthly=workflow_cases_monthly,
             workflow_history_days=workflow_history_days,
-            lemonsqueezy_variants=lemonsqueezy_variants,
-            top_up=top_up,
+            cadences=cadences,
+            overage=overage,
         )
 
         return plan_dto
