@@ -68,7 +68,9 @@ class WorkspaceTemplateListOutputBody:
                 templates_type_0 = []
                 _templates_type_0 = data
                 for templates_type_0_item_data in _templates_type_0:
-                    templates_type_0_item = ActivityTemplate.from_dict(templates_type_0_item_data)
+                    templates_type_0_item = ActivityTemplate.from_dict(
+                        templates_type_0_item_data
+                    )
 
                     templates_type_0.append(templates_type_0_item)
 

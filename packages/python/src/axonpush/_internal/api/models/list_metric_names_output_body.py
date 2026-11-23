@@ -68,7 +68,9 @@ class ListMetricNamesOutputBody:
                 metrics_type_0 = []
                 _metrics_type_0 = data
                 for metrics_type_0_item_data in _metrics_type_0:
-                    metrics_type_0_item = MetricNameDTO.from_dict(metrics_type_0_item_data)
+                    metrics_type_0_item = MetricNameDTO.from_dict(
+                        metrics_type_0_item_data
+                    )
 
                     metrics_type_0.append(metrics_type_0_item)
 

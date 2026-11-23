@@ -43,7 +43,9 @@ class OverviewBody:
     def to_dict(self) -> dict[str, Any]:
         from ..models.key_count import KeyCount
         from ..models.overview_body_events_struct import OverviewBodyEventsStruct
-        from ..models.overview_body_managed_llm_struct import OverviewBodyManagedLlmStruct
+        from ..models.overview_body_managed_llm_struct import (
+            OverviewBodyManagedLlmStruct,
+        )
         from ..models.overview_body_mrr_struct import OverviewBodyMrrStruct
         from ..models.overview_body_totals_struct import OverviewBodyTotalsStruct
 
@@ -57,7 +59,9 @@ class OverviewBody:
         if isinstance(self.plan_distribution, list):
             plan_distribution = []
             for plan_distribution_type_0_item_data in self.plan_distribution:
-                plan_distribution_type_0_item = plan_distribution_type_0_item_data.to_dict()
+                plan_distribution_type_0_item = (
+                    plan_distribution_type_0_item_data.to_dict()
+                )
                 plan_distribution.append(plan_distribution_type_0_item)
 
         else:
@@ -104,7 +108,9 @@ class OverviewBody:
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         from ..models.key_count import KeyCount
         from ..models.overview_body_events_struct import OverviewBodyEventsStruct
-        from ..models.overview_body_managed_llm_struct import OverviewBodyManagedLlmStruct
+        from ..models.overview_body_managed_llm_struct import (
+            OverviewBodyManagedLlmStruct,
+        )
         from ..models.overview_body_mrr_struct import OverviewBodyMrrStruct
         from ..models.overview_body_totals_struct import OverviewBodyTotalsStruct
 
@@ -137,7 +143,9 @@ class OverviewBody:
 
         plan_distribution = _parse_plan_distribution(d.pop("planDistribution"))
 
-        def _parse_subscription_status_distribution(data: object) -> list[KeyCount] | None:
+        def _parse_subscription_status_distribution(
+            data: object,
+        ) -> list[KeyCount] | None:
             if data is None:
                 return data
             try:

@@ -87,7 +87,9 @@ class ActivityIngestReport:
                 receipts_type_0 = []
                 _receipts_type_0 = data
                 for receipts_type_0_item_data in _receipts_type_0:
-                    receipts_type_0_item = ActivityReceipt.from_dict(receipts_type_0_item_data)
+                    receipts_type_0_item = ActivityReceipt.from_dict(
+                        receipts_type_0_item_data
+                    )
 
                     receipts_type_0.append(receipts_type_0_item)
 

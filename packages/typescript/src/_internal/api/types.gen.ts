@@ -63,6 +63,111 @@ export type AccessRequestDto = {
     useCase: string;
 };
 
+export type ActionChange = {
+    actor: string;
+    at: string;
+    input?: {
+        [key: string]: unknown;
+    };
+    revision: number;
+    status: string;
+};
+
+export type ActionDecision = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
+    decision: 'approve' | 'reject' | 'correct' | 'recheck';
+    input?: {
+        [key: string]: unknown;
+    };
+    revision: number;
+};
+
+export type ActionReceipt = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
+    observed?: {
+        [key: string]: unknown;
+    };
+    output?: {
+        [key: string]: unknown;
+    };
+    result: 'executed' | 'ambiguous' | 'found' | 'absent' | 'unavailable';
+    revision: number;
+};
+
+export type ActionRecord = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
+    actor: string;
+    approved_at: string;
+    case_id: string;
+    case_key: string;
+    handler: string;
+    history: Array<ActionChange> | null;
+    id: string;
+    input: {
+        [key: string]: unknown;
+    };
+    lease_until: string;
+    mode?: string;
+    name: string;
+    observed?: {
+        [key: string]: unknown;
+    };
+    operation: number;
+    original: {
+        [key: string]: unknown;
+    };
+    output?: {
+        [key: string]: unknown;
+    };
+    reason?: string;
+    request_hash: string;
+    reviewer?: string;
+    revision: number;
+    status: string;
+    verification?: Obligation;
+    version_id: string;
+};
+
+export type ActionSpec = {
+    actors: Array<string> | null;
+    always_review?: boolean;
+    expected: {
+        [key: string]: string;
+    };
+    from: string;
+    handler: string;
+    inputs: {
+        [key: string]: string;
+    };
+    outputs: {
+        [key: string]: string;
+    };
+    requirement: string;
+    review_unless?: Array<ReviewUnless> | null;
+    to: string;
+};
+
+export type ActionsPage = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
+    actions: Array<ActionRecord> | null;
+    available: {
+        [key: string]: ActionSpec;
+    };
+    next_cursor?: string;
+};
+
 export type ActivateDraftInputBody = {
     /**
      * A URL to the JSON Schema for this object.
@@ -1479,6 +1584,22 @@ export type CheckoutInputBody = {
     plan: string;
 };
 
+export type ClaimRequestBody = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
+    handler: string;
+};
+
+export type ClaimResponseBody = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
+    action?: ActionRecord;
+};
+
 export type ClaimedKey = {
     /**
      * A URL to the JSON Schema for this object.
@@ -1666,10 +1787,14 @@ export type ConnectionsOutputBody = {
 };
 
 export type Contract = {
+    actions?: {
+        [key: string]: ActionSpec;
+    };
     case: CaseSchema;
     facts: {
         [key: string]: FactSchema;
     };
+    initial_state?: string;
     presentation: Presentation;
     requirements: {
         [key: string]: Requirement;
@@ -3805,6 +3930,18 @@ export type ProofOutputBody = {
     segmentId: string;
 };
 
+export type Proposal = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
+    input: {
+        [key: string]: unknown;
+    };
+    name: string;
+    request_id: string;
+};
+
 export type PublicIngestTokenDto = {
     active: boolean;
     appId?: string;
@@ -3990,6 +4127,13 @@ export type Result = {
     evaluated_at: string;
     obligations: Array<Obligation> | null;
     semantic_hash: string;
+};
+
+export type ReviewUnless = {
+    case: string;
+    input: string;
+    op: string;
+    timezone?: string;
 };
 
 export type RevisionListOutputBody = {
@@ -4894,6 +5038,66 @@ export type AccessLogOutputBodyWritable = {
     nextCursor?: string;
 };
 
+export type ActionDecisionWritable = {
+    decision: 'approve' | 'reject' | 'correct' | 'recheck';
+    input?: {
+        [key: string]: unknown;
+    };
+    revision: number;
+};
+
+export type ActionReceiptWritable = {
+    observed?: {
+        [key: string]: unknown;
+    };
+    output?: {
+        [key: string]: unknown;
+    };
+    result: 'executed' | 'ambiguous' | 'found' | 'absent' | 'unavailable';
+    revision: number;
+};
+
+export type ActionRecordWritable = {
+    actor: string;
+    approved_at: string;
+    case_id: string;
+    case_key: string;
+    handler: string;
+    history: Array<ActionChange> | null;
+    id: string;
+    input: {
+        [key: string]: unknown;
+    };
+    lease_until: string;
+    mode?: string;
+    name: string;
+    observed?: {
+        [key: string]: unknown;
+    };
+    operation: number;
+    original: {
+        [key: string]: unknown;
+    };
+    output?: {
+        [key: string]: unknown;
+    };
+    reason?: string;
+    request_hash: string;
+    reviewer?: string;
+    revision: number;
+    status: string;
+    verification?: Obligation;
+    version_id: string;
+};
+
+export type ActionsPageWritable = {
+    actions: Array<ActionRecordWritable> | null;
+    available: {
+        [key: string]: ActionSpec;
+    };
+    next_cursor?: string;
+};
+
 export type ActivateDraftInputBodyWritable = {
     /**
      * When set, activate only if the draft is still at this version
@@ -5274,6 +5478,14 @@ export type CheckoutInputBodyWritable = {
      * pro or team
      */
     plan: string;
+};
+
+export type ClaimRequestBodyWritable = {
+    handler: string;
+};
+
+export type ClaimResponseBodyWritable = {
+    action?: ActionRecordWritable;
 };
 
 export type ClaimedKeyWritable = {
@@ -6397,6 +6609,14 @@ export type ProofOutputBodyWritable = {
     manifest: Manifest;
     proof: Inclusion;
     segmentId: string;
+};
+
+export type ProposalWritable = {
+    input: {
+        [key: string]: unknown;
+    };
+    name: string;
+    request_id: string;
 };
 
 export type PublicInputBodyWritable = {
@@ -15577,6 +15797,38 @@ export type ActivityViewsResponses = {
 
 export type ActivityViewsResponse = ActivityViewsResponses[keyof ActivityViewsResponses];
 
+export type WorkflowsActionsData = {
+    body?: never;
+    path: {
+        workspaceId: string;
+    };
+    query?: {
+        environment?: string;
+        case_key?: string;
+        attention?: boolean;
+        cursor?: string;
+    };
+    url: '/workspaces/{workspaceId}/workflows/actions';
+};
+
+export type WorkflowsActionsErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type WorkflowsActionsError = WorkflowsActionsErrors[keyof WorkflowsActionsErrors];
+
+export type WorkflowsActionsResponses = {
+    /**
+     * OK
+     */
+    200: ActionsPage;
+};
+
+export type WorkflowsActionsResponse = WorkflowsActionsResponses[keyof WorkflowsActionsResponses];
+
 export type WorkflowsActivationData = {
     body?: never;
     path: {
@@ -15695,6 +15947,98 @@ export type WorkflowsCaseResponses = {
 };
 
 export type WorkflowsCaseResponse = WorkflowsCaseResponses[keyof WorkflowsCaseResponses];
+
+export type WorkflowsProposeActionData = {
+    body: ProposalWritable;
+    path: {
+        workspaceId: string;
+        caseKey: string;
+    };
+    query?: {
+        environment?: string;
+    };
+    url: '/workspaces/{workspaceId}/workflows/cases/{caseKey}/actions';
+};
+
+export type WorkflowsProposeActionErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type WorkflowsProposeActionError = WorkflowsProposeActionErrors[keyof WorkflowsProposeActionErrors];
+
+export type WorkflowsProposeActionResponses = {
+    /**
+     * OK
+     */
+    200: ActionRecord;
+};
+
+export type WorkflowsProposeActionResponse = WorkflowsProposeActionResponses[keyof WorkflowsProposeActionResponses];
+
+export type WorkflowsDecideActionData = {
+    body: ActionDecisionWritable;
+    path: {
+        workspaceId: string;
+        caseKey: string;
+        actionId: string;
+    };
+    query?: {
+        environment?: string;
+    };
+    url: '/workspaces/{workspaceId}/workflows/cases/{caseKey}/actions/{actionId}/decision';
+};
+
+export type WorkflowsDecideActionErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type WorkflowsDecideActionError = WorkflowsDecideActionErrors[keyof WorkflowsDecideActionErrors];
+
+export type WorkflowsDecideActionResponses = {
+    /**
+     * OK
+     */
+    200: ActionRecord;
+};
+
+export type WorkflowsDecideActionResponse = WorkflowsDecideActionResponses[keyof WorkflowsDecideActionResponses];
+
+export type WorkflowsActionReceiptData = {
+    body: ActionReceiptWritable;
+    path: {
+        workspaceId: string;
+        caseKey: string;
+        actionId: string;
+    };
+    query?: {
+        environment?: string;
+    };
+    url: '/workspaces/{workspaceId}/workflows/cases/{caseKey}/actions/{actionId}/receipt';
+};
+
+export type WorkflowsActionReceiptErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type WorkflowsActionReceiptError = WorkflowsActionReceiptErrors[keyof WorkflowsActionReceiptErrors];
+
+export type WorkflowsActionReceiptResponses = {
+    /**
+     * OK
+     */
+    200: ActionRecord;
+};
+
+export type WorkflowsActionReceiptResponse = WorkflowsActionReceiptResponses[keyof WorkflowsActionReceiptResponses];
 
 export type WorkflowsCloseData = {
     body?: never;
@@ -16047,3 +16391,32 @@ export type WorkflowsRegisterSourceResponses = {
 };
 
 export type WorkflowsRegisterSourceResponse = WorkflowsRegisterSourceResponses[keyof WorkflowsRegisterSourceResponses];
+
+export type WorkflowsClaimActionData = {
+    body: ClaimRequestBodyWritable;
+    path: {
+        workspaceId: string;
+    };
+    query?: {
+        environment?: string;
+    };
+    url: '/workspaces/{workspaceId}/workflows/worker/claim';
+};
+
+export type WorkflowsClaimActionErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type WorkflowsClaimActionError = WorkflowsClaimActionErrors[keyof WorkflowsClaimActionErrors];
+
+export type WorkflowsClaimActionResponses = {
+    /**
+     * OK
+     */
+    200: ClaimResponseBody;
+};
+
+export type WorkflowsClaimActionResponse = WorkflowsClaimActionResponses[keyof WorkflowsClaimActionResponses];

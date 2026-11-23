@@ -68,7 +68,9 @@ class DefinitionListBody:
                 definitions_type_0 = []
                 _definitions_type_0 = data
                 for definitions_type_0_item_data in _definitions_type_0:
-                    definitions_type_0_item = Definition.from_dict(definitions_type_0_item_data)
+                    definitions_type_0_item = Definition.from_dict(
+                        definitions_type_0_item_data
+                    )
 
                     definitions_type_0.append(definitions_type_0_item)
 

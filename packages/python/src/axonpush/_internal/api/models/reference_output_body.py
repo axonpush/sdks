@@ -89,7 +89,9 @@ class ReferenceOutputBody:
                 items_type_0 = []
                 _items_type_0 = data
                 for items_type_0_item_data in _items_type_0:
-                    items_type_0_item = ComplianceReference.from_dict(items_type_0_item_data)
+                    items_type_0_item = ComplianceReference.from_dict(
+                        items_type_0_item_data
+                    )
 
                     items_type_0.append(items_type_0_item)
 

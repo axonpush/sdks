@@ -68,7 +68,9 @@ class ListChannelsOutputBody:
                 channels_type_0 = []
                 _channels_type_0 = data
                 for channels_type_0_item_data in _channels_type_0:
-                    channels_type_0_item = ChannelDTO.from_dict(channels_type_0_item_data)
+                    channels_type_0_item = ChannelDTO.from_dict(
+                        channels_type_0_item_data
+                    )
 
                     channels_type_0.append(channels_type_0_item)
 

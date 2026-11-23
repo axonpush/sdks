@@ -68,7 +68,9 @@ class ListAttachmentsOutputBody:
                 attachments_type_0 = []
                 _attachments_type_0 = data
                 for attachments_type_0_item_data in _attachments_type_0:
-                    attachments_type_0_item = AttachmentDTO.from_dict(attachments_type_0_item_data)
+                    attachments_type_0_item = AttachmentDTO.from_dict(
+                        attachments_type_0_item_data
+                    )
 
                     attachments_type_0.append(attachments_type_0_item)
 

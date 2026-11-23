@@ -81,7 +81,9 @@ class ActivitySummary:
                 counts_type_0 = []
                 _counts_type_0 = data
                 for counts_type_0_item_data in _counts_type_0:
-                    counts_type_0_item = ActivityStateCount.from_dict(counts_type_0_item_data)
+                    counts_type_0_item = ActivityStateCount.from_dict(
+                        counts_type_0_item_data
+                    )
 
                     counts_type_0.append(counts_type_0_item)
 

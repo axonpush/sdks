@@ -19,7 +19,9 @@ T = TypeVar("T", bound="ActivityEntityVersions")
 class ActivityEntityVersions:
     """ """
 
-    additional_properties: dict[str, ActivityFieldVersion] = _attrs_field(init=False, factory=dict)
+    additional_properties: dict[str, ActivityFieldVersion] = _attrs_field(
+        init=False, factory=dict
+    )
 
     def to_dict(self) -> dict[str, Any]:
         from ..models.activity_field_version import ActivityFieldVersion

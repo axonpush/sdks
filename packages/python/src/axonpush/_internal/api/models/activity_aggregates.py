@@ -30,7 +30,9 @@ class ActivityAggregates:
     waiting_on: str | Unset = UNSET
 
     def to_dict(self) -> dict[str, Any]:
-        from ..models.activity_aggregates_open_by_type import ActivityAggregatesOpenByType
+        from ..models.activity_aggregates_open_by_type import (
+            ActivityAggregatesOpenByType,
+        )
 
         open_by_type = self.open_by_type.to_dict()
 
@@ -54,7 +56,9 @@ class ActivityAggregates:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        from ..models.activity_aggregates_open_by_type import ActivityAggregatesOpenByType
+        from ..models.activity_aggregates_open_by_type import (
+            ActivityAggregatesOpenByType,
+        )
 
         d = dict(src_dict)
         open_by_type = ActivityAggregatesOpenByType.from_dict(d.pop("openByType"))

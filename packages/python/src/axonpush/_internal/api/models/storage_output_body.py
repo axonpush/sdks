@@ -165,7 +165,9 @@ class StorageOutputBody:
                 tiers_type_0 = []
                 _tiers_type_0 = data
                 for tiers_type_0_item_data in _tiers_type_0:
-                    tiers_type_0_item = LedgerStorageTier.from_dict(tiers_type_0_item_data)
+                    tiers_type_0_item = LedgerStorageTier.from_dict(
+                        tiers_type_0_item_data
+                    )
 
                     tiers_type_0.append(tiers_type_0_item)
 

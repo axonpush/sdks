@@ -68,7 +68,9 @@ class ErrorFeedbackOutputBody:
                 feedback_type_0 = []
                 _feedback_type_0 = data
                 for feedback_type_0_item_data in _feedback_type_0:
-                    feedback_type_0_item = ErrorFeedbackDTO.from_dict(feedback_type_0_item_data)
+                    feedback_type_0_item = ErrorFeedbackDTO.from_dict(
+                        feedback_type_0_item_data
+                    )
 
                     feedback_type_0.append(feedback_type_0_item)
 

@@ -19,7 +19,9 @@ T = TypeVar("T", bound="ContractRequirements")
 class ContractRequirements:
     """ """
 
-    additional_properties: dict[str, Requirement] = _attrs_field(init=False, factory=dict)
+    additional_properties: dict[str, Requirement] = _attrs_field(
+        init=False, factory=dict
+    )
 
     def to_dict(self) -> dict[str, Any]:
         from ..models.requirement import Requirement

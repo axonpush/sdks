@@ -68,7 +68,9 @@ class ListMonitorsOutputBody:
                 monitors_type_0 = []
                 _monitors_type_0 = data
                 for monitors_type_0_item_data in _monitors_type_0:
-                    monitors_type_0_item = MonitorDTO.from_dict(monitors_type_0_item_data)
+                    monitors_type_0_item = MonitorDTO.from_dict(
+                        monitors_type_0_item_data
+                    )
 
                     monitors_type_0.append(monitors_type_0_item)
 

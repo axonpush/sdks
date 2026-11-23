@@ -68,7 +68,9 @@ class RevisionListOutputBody:
                 revisions_type_0 = []
                 _revisions_type_0 = data
                 for revisions_type_0_item_data in _revisions_type_0:
-                    revisions_type_0_item = ActivityRevision.from_dict(revisions_type_0_item_data)
+                    revisions_type_0_item = ActivityRevision.from_dict(
+                        revisions_type_0_item_data
+                    )
 
                     revisions_type_0.append(revisions_type_0_item)
 

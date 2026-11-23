@@ -68,7 +68,9 @@ class ListTracesOutputBody:
                 traces_type_0 = []
                 _traces_type_0 = data
                 for traces_type_0_item_data in _traces_type_0:
-                    traces_type_0_item = TraceSummaryDTO.from_dict(traces_type_0_item_data)
+                    traces_type_0_item = TraceSummaryDTO.from_dict(
+                        traces_type_0_item_data
+                    )
 
                     traces_type_0.append(traces_type_0_item)
 

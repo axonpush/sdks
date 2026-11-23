@@ -74,7 +74,9 @@ class ListMonitorCheckInsOutputBody:
                 check_ins_type_0 = []
                 _check_ins_type_0 = data
                 for check_ins_type_0_item_data in _check_ins_type_0:
-                    check_ins_type_0_item = MonitorCheckInDTO.from_dict(check_ins_type_0_item_data)
+                    check_ins_type_0_item = MonitorCheckInDTO.from_dict(
+                        check_ins_type_0_item_data
+                    )
 
                     check_ins_type_0.append(check_ins_type_0_item)
 

@@ -192,7 +192,9 @@ class PlanDTO:
                 return data
             return cast(int | None, data)
 
-        workflow_cases_monthly = _parse_workflow_cases_monthly(d.pop("workflowCasesMonthly"))
+        workflow_cases_monthly = _parse_workflow_cases_monthly(
+            d.pop("workflowCasesMonthly")
+        )
 
         workflow_history_days = d.pop("workflowHistoryDays")
 
@@ -201,7 +203,9 @@ class PlanDTO:
         if isinstance(_lemonsqueezy_variants, Unset):
             lemonsqueezy_variants = UNSET
         else:
-            lemonsqueezy_variants = PlanDTOLemonsqueezyVariants.from_dict(_lemonsqueezy_variants)
+            lemonsqueezy_variants = PlanDTOLemonsqueezyVariants.from_dict(
+                _lemonsqueezy_variants
+            )
 
         _top_up = d.pop("topUp", UNSET)
         top_up: TopUp | Unset

@@ -68,7 +68,9 @@ class TagDistributionDTO:
                 values_type_0 = []
                 _values_type_0 = data
                 for values_type_0_item_data in _values_type_0:
-                    values_type_0_item = TagValueCountDTO.from_dict(values_type_0_item_data)
+                    values_type_0_item = TagValueCountDTO.from_dict(
+                        values_type_0_item_data
+                    )
 
                     values_type_0.append(values_type_0_item)
 

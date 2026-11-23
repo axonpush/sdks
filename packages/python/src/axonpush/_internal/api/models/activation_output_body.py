@@ -27,7 +27,9 @@ class ActivationOutputBody:
     schema: str | Unset = UNSET
 
     def to_dict(self) -> dict[str, Any]:
-        from ..models.activation_output_body_versions import ActivationOutputBodyVersions
+        from ..models.activation_output_body_versions import (
+            ActivationOutputBodyVersions,
+        )
 
         versions = self.versions.to_dict()
 
@@ -47,7 +49,9 @@ class ActivationOutputBody:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        from ..models.activation_output_body_versions import ActivationOutputBodyVersions
+        from ..models.activation_output_body_versions import (
+            ActivationOutputBodyVersions,
+        )
 
         d = dict(src_dict)
         versions = ActivationOutputBodyVersions.from_dict(d.pop("versions"))

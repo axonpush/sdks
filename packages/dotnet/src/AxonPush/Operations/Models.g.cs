@@ -14,6 +14,124 @@ public sealed record AccessLogOutputBody
     public string? NextCursor { get; init; }
 }
 
+public sealed record ActionChange
+{
+    [JsonPropertyName("actor")]
+    public string Actor { get; init; } = default!;
+    [JsonPropertyName("at")]
+    public DateTimeOffset At { get; init; }
+    [JsonPropertyName("input")]
+    public IReadOnlyDictionary<string, JsonElement>? Input { get; init; }
+    [JsonPropertyName("revision")]
+    public long Revision { get; init; }
+    [JsonPropertyName("status")]
+    public string Status { get; init; } = default!;
+}
+
+public sealed record ActionDecision
+{
+    [JsonPropertyName("decision")]
+    public string Decision { get; init; } = default!;
+    [JsonPropertyName("input")]
+    public IReadOnlyDictionary<string, JsonElement>? Input { get; init; }
+    [JsonPropertyName("revision")]
+    public long Revision { get; init; }
+}
+
+public sealed record ActionReceipt
+{
+    [JsonPropertyName("observed")]
+    public IReadOnlyDictionary<string, JsonElement>? Observed { get; init; }
+    [JsonPropertyName("output")]
+    public IReadOnlyDictionary<string, JsonElement>? Output { get; init; }
+    [JsonPropertyName("result")]
+    public string Result { get; init; } = default!;
+    [JsonPropertyName("revision")]
+    public long Revision { get; init; }
+}
+
+public sealed record ActionRecord
+{
+    [JsonPropertyName("actor")]
+    public string Actor { get; init; } = default!;
+    [JsonPropertyName("approved_at")]
+    public DateTimeOffset ApprovedAt { get; init; }
+    [JsonPropertyName("case_id")]
+    public string CaseId { get; init; } = default!;
+    [JsonPropertyName("case_key")]
+    public string CaseKey { get; init; } = default!;
+    [JsonPropertyName("handler")]
+    public string Handler { get; init; } = default!;
+    [JsonPropertyName("history")]
+    public IReadOnlyList<ActionChange>? History { get; init; } = default!;
+    [JsonPropertyName("id")]
+    public string Id { get; init; } = default!;
+    [JsonPropertyName("input")]
+    public IReadOnlyDictionary<string, JsonElement> Input { get; init; } = default!;
+    [JsonPropertyName("lease_until")]
+    public DateTimeOffset LeaseUntil { get; init; }
+    [JsonPropertyName("mode")]
+    public string? Mode { get; init; }
+    [JsonPropertyName("name")]
+    public string Name { get; init; } = default!;
+    [JsonPropertyName("observed")]
+    public IReadOnlyDictionary<string, JsonElement>? Observed { get; init; }
+    [JsonPropertyName("operation")]
+    public long Operation { get; init; }
+    [JsonPropertyName("original")]
+    public IReadOnlyDictionary<string, JsonElement> Original { get; init; } = default!;
+    [JsonPropertyName("output")]
+    public IReadOnlyDictionary<string, JsonElement>? Output { get; init; }
+    [JsonPropertyName("reason")]
+    public string? Reason { get; init; }
+    [JsonPropertyName("request_hash")]
+    public string RequestHash { get; init; } = default!;
+    [JsonPropertyName("reviewer")]
+    public string? Reviewer { get; init; }
+    [JsonPropertyName("revision")]
+    public long Revision { get; init; }
+    [JsonPropertyName("status")]
+    public string Status { get; init; } = default!;
+    [JsonPropertyName("verification")]
+    public Obligation? Verification { get; init; }
+    [JsonPropertyName("version_id")]
+    public string VersionId { get; init; } = default!;
+}
+
+public sealed record ActionSpec
+{
+    [JsonPropertyName("actors")]
+    public IReadOnlyList<string>? Actors { get; init; } = default!;
+    [JsonPropertyName("always_review")]
+    public bool? AlwaysReview { get; init; }
+    [JsonPropertyName("expected")]
+    public IReadOnlyDictionary<string, string> Expected { get; init; } = default!;
+    [JsonPropertyName("from")]
+    public string From { get; init; } = default!;
+    [JsonPropertyName("handler")]
+    public string Handler { get; init; } = default!;
+    [JsonPropertyName("inputs")]
+    public IReadOnlyDictionary<string, string> Inputs { get; init; } = default!;
+    [JsonPropertyName("outputs")]
+    public IReadOnlyDictionary<string, string> Outputs { get; init; } = default!;
+    [JsonPropertyName("requirement")]
+    public string Requirement { get; init; } = default!;
+    [JsonPropertyName("review_unless")]
+    public IReadOnlyList<ReviewUnless>? ReviewUnless { get; init; }
+    [JsonPropertyName("to")]
+    public string To { get; init; } = default!;
+}
+
+public sealed record ActionsPage
+{
+    [JsonPropertyName("actions")]
+    public IReadOnlyList<ActionRecord>? Actions { get; init; } = default!;
+    [JsonPropertyName("available")]
+    public IReadOnlyDictionary<string, ActionSpec> Available { get; init; } = default!;
+    [JsonPropertyName("next_cursor")]
+    public string? NextCursor { get; init; }
+}
+
 public sealed record ActivateDraftInputBody
 {
     [JsonPropertyName("version")]
@@ -1252,6 +1370,18 @@ public sealed record ChangesOutputBody
     public long Version { get; init; }
 }
 
+public sealed record ClaimRequestBody
+{
+    [JsonPropertyName("handler")]
+    public string Handler { get; init; } = default!;
+}
+
+public sealed record ClaimResponseBody
+{
+    [JsonPropertyName("action")]
+    public ActionRecord? Action { get; init; }
+}
+
 public sealed record ComplianceActionBody
 {
     [JsonPropertyName("identityVerified")]
@@ -1470,10 +1600,14 @@ public sealed record ConnectInputBody
 
 public sealed record Contract
 {
+    [JsonPropertyName("actions")]
+    public IReadOnlyDictionary<string, ActionSpec>? Actions { get; init; }
     [JsonPropertyName("case")]
     public CaseSchema Case { get; init; } = default!;
     [JsonPropertyName("facts")]
     public IReadOnlyDictionary<string, FactSchema> Facts { get; init; } = default!;
+    [JsonPropertyName("initial_state")]
+    public string? InitialState { get; init; }
     [JsonPropertyName("presentation")]
     public Presentation Presentation { get; init; } = default!;
     [JsonPropertyName("requirements")]
@@ -2270,6 +2404,16 @@ public sealed record ProofOutputBody
     public string SegmentId { get; init; } = default!;
 }
 
+public sealed record Proposal
+{
+    [JsonPropertyName("input")]
+    public IReadOnlyDictionary<string, JsonElement> Input { get; init; } = default!;
+    [JsonPropertyName("name")]
+    public string Name { get; init; } = default!;
+    [JsonPropertyName("request_id")]
+    public string RequestId { get; init; } = default!;
+}
+
 public sealed record PublicInputBody
 {
     [JsonPropertyName("agentId")]
@@ -2378,6 +2522,18 @@ public sealed record Result
     public IReadOnlyList<Obligation>? Obligations { get; init; } = default!;
     [JsonPropertyName("semantic_hash")]
     public string SemanticHash { get; init; } = default!;
+}
+
+public sealed record ReviewUnless
+{
+    [JsonPropertyName("case")]
+    public string Case { get; init; } = default!;
+    [JsonPropertyName("input")]
+    public string Input { get; init; } = default!;
+    [JsonPropertyName("op")]
+    public string Op { get; init; } = default!;
+    [JsonPropertyName("timezone")]
+    public string? Timezone { get; init; }
 }
 
 public sealed record RevisionListOutputBody

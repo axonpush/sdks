@@ -172,6 +172,332 @@
         ],
         "type": "object"
       },
+      "ActionChange": {
+        "additionalProperties": false,
+        "properties": {
+          "actor": {
+            "type": "string"
+          },
+          "at": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "input": {
+            "additionalProperties": {},
+            "type": "object"
+          },
+          "revision": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "status": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "at",
+          "status",
+          "actor",
+          "revision"
+        ],
+        "type": "object"
+      },
+      "ActionDecision": {
+        "additionalProperties": false,
+        "properties": {
+          "$schema": {
+            "description": "A URL to the JSON Schema for this object.",
+            "examples": [
+              "https://example.com/schemas/ActionDecision.json"
+            ],
+            "format": "uri",
+            "readOnly": true,
+            "type": "string"
+          },
+          "decision": {
+            "enum": [
+              "approve",
+              "reject",
+              "correct",
+              "recheck"
+            ],
+            "type": "string"
+          },
+          "input": {
+            "additionalProperties": {},
+            "type": "object"
+          },
+          "revision": {
+            "format": "int64",
+            "minimum": 1,
+            "type": "integer"
+          }
+        },
+        "required": [
+          "revision",
+          "decision"
+        ],
+        "type": "object"
+      },
+      "ActionReceipt": {
+        "additionalProperties": false,
+        "properties": {
+          "$schema": {
+            "description": "A URL to the JSON Schema for this object.",
+            "examples": [
+              "https://example.com/schemas/ActionReceipt.json"
+            ],
+            "format": "uri",
+            "readOnly": true,
+            "type": "string"
+          },
+          "observed": {
+            "additionalProperties": {},
+            "type": "object"
+          },
+          "output": {
+            "additionalProperties": {},
+            "type": "object"
+          },
+          "result": {
+            "enum": [
+              "executed",
+              "ambiguous",
+              "found",
+              "absent",
+              "unavailable"
+            ],
+            "type": "string"
+          },
+          "revision": {
+            "format": "int64",
+            "minimum": 1,
+            "type": "integer"
+          }
+        },
+        "required": [
+          "revision",
+          "result"
+        ],
+        "type": "object"
+      },
+      "ActionRecord": {
+        "additionalProperties": false,
+        "properties": {
+          "$schema": {
+            "description": "A URL to the JSON Schema for this object.",
+            "examples": [
+              "https://example.com/schemas/ActionRecord.json"
+            ],
+            "format": "uri",
+            "readOnly": true,
+            "type": "string"
+          },
+          "actor": {
+            "type": "string"
+          },
+          "approved_at": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "case_id": {
+            "type": "string"
+          },
+          "case_key": {
+            "type": "string"
+          },
+          "handler": {
+            "type": "string"
+          },
+          "history": {
+            "items": {
+              "$ref": "#/components/schemas/ActionChange"
+            },
+            "type": [
+              "array",
+              "null"
+            ]
+          },
+          "id": {
+            "type": "string"
+          },
+          "input": {
+            "additionalProperties": {},
+            "type": "object"
+          },
+          "lease_until": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "mode": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "observed": {
+            "additionalProperties": {},
+            "type": "object"
+          },
+          "operation": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "original": {
+            "additionalProperties": {},
+            "type": "object"
+          },
+          "output": {
+            "additionalProperties": {},
+            "type": "object"
+          },
+          "reason": {
+            "type": "string"
+          },
+          "request_hash": {
+            "type": "string"
+          },
+          "reviewer": {
+            "type": "string"
+          },
+          "revision": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "status": {
+            "type": "string"
+          },
+          "verification": {
+            "$ref": "#/components/schemas/Obligation"
+          },
+          "version_id": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "case_key",
+          "case_id",
+          "version_id",
+          "name",
+          "handler",
+          "status",
+          "revision",
+          "operation",
+          "actor",
+          "original",
+          "input",
+          "history",
+          "approved_at",
+          "lease_until",
+          "request_hash"
+        ],
+        "type": "object"
+      },
+      "ActionSpec": {
+        "additionalProperties": false,
+        "properties": {
+          "actors": {
+            "items": {
+              "type": "string"
+            },
+            "type": [
+              "array",
+              "null"
+            ]
+          },
+          "always_review": {
+            "type": "boolean"
+          },
+          "expected": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "type": "object"
+          },
+          "from": {
+            "type": "string"
+          },
+          "handler": {
+            "type": "string"
+          },
+          "inputs": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "type": "object"
+          },
+          "outputs": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "type": "object"
+          },
+          "requirement": {
+            "type": "string"
+          },
+          "review_unless": {
+            "items": {
+              "$ref": "#/components/schemas/ReviewUnless"
+            },
+            "type": [
+              "array",
+              "null"
+            ]
+          },
+          "to": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "inputs",
+          "outputs",
+          "from",
+          "to",
+          "actors",
+          "handler",
+          "requirement",
+          "expected"
+        ],
+        "type": "object"
+      },
+      "ActionsPage": {
+        "additionalProperties": false,
+        "properties": {
+          "$schema": {
+            "description": "A URL to the JSON Schema for this object.",
+            "examples": [
+              "https://example.com/schemas/ActionsPage.json"
+            ],
+            "format": "uri",
+            "readOnly": true,
+            "type": "string"
+          },
+          "actions": {
+            "items": {
+              "$ref": "#/components/schemas/ActionRecord"
+            },
+            "type": [
+              "array",
+              "null"
+            ]
+          },
+          "available": {
+            "additionalProperties": {
+              "$ref": "#/components/schemas/ActionSpec"
+            },
+            "type": "object"
+          },
+          "next_cursor": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "actions",
+          "available"
+        ],
+        "type": "object"
+      },
       "ActivateDraftInputBody": {
         "additionalProperties": false,
         "properties": {
@@ -4176,6 +4502,46 @@
         ],
         "type": "object"
       },
+      "ClaimRequestBody": {
+        "additionalProperties": false,
+        "properties": {
+          "$schema": {
+            "description": "A URL to the JSON Schema for this object.",
+            "examples": [
+              "https://example.com/schemas/ClaimRequestBody.json"
+            ],
+            "format": "uri",
+            "readOnly": true,
+            "type": "string"
+          },
+          "handler": {
+            "maxLength": 80,
+            "type": "string"
+          }
+        },
+        "required": [
+          "handler"
+        ],
+        "type": "object"
+      },
+      "ClaimResponseBody": {
+        "additionalProperties": false,
+        "properties": {
+          "$schema": {
+            "description": "A URL to the JSON Schema for this object.",
+            "examples": [
+              "https://example.com/schemas/ClaimResponseBody.json"
+            ],
+            "format": "uri",
+            "readOnly": true,
+            "type": "string"
+          },
+          "action": {
+            "$ref": "#/components/schemas/ActionRecord"
+          }
+        },
+        "type": "object"
+      },
       "ClaimedKey": {
         "additionalProperties": false,
         "properties": {
@@ -4816,6 +5182,12 @@
       "Contract": {
         "additionalProperties": false,
         "properties": {
+          "actions": {
+            "additionalProperties": {
+              "$ref": "#/components/schemas/ActionSpec"
+            },
+            "type": "object"
+          },
           "case": {
             "$ref": "#/components/schemas/CaseSchema"
           },
@@ -4824,6 +5196,9 @@
               "$ref": "#/components/schemas/FactSchema"
             },
             "type": "object"
+          },
+          "initial_state": {
+            "type": "string"
           },
           "presentation": {
             "$ref": "#/components/schemas/Presentation"
@@ -11370,6 +11745,39 @@
         ],
         "type": "object"
       },
+      "Proposal": {
+        "additionalProperties": false,
+        "properties": {
+          "$schema": {
+            "description": "A URL to the JSON Schema for this object.",
+            "examples": [
+              "https://example.com/schemas/Proposal.json"
+            ],
+            "format": "uri",
+            "readOnly": true,
+            "type": "string"
+          },
+          "input": {
+            "additionalProperties": {},
+            "type": "object"
+          },
+          "name": {
+            "maxLength": 80,
+            "type": "string"
+          },
+          "request_id": {
+            "maxLength": 160,
+            "minLength": 1,
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "request_id",
+          "input"
+        ],
+        "type": "object"
+      },
       "PublicIngestTokenDTO": {
         "additionalProperties": false,
         "properties": {
@@ -11941,6 +12349,29 @@
           "semantic_hash",
           "evaluated_at",
           "obligations"
+        ],
+        "type": "object"
+      },
+      "ReviewUnless": {
+        "additionalProperties": false,
+        "properties": {
+          "case": {
+            "type": "string"
+          },
+          "input": {
+            "type": "string"
+          },
+          "op": {
+            "type": "string"
+          },
+          "timezone": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "input",
+          "case",
+          "op"
         ],
         "type": "object"
       },
@@ -34567,6 +34998,95 @@
         "x-axonpush-sdk": true
       }
     },
+    "/workspaces/{workspaceId}/workflows/actions": {
+      "get": {
+        "operationId": "workflows.actions",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "workspaceId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "explode": false,
+            "in": "query",
+            "name": "environment",
+            "schema": {
+              "maxLength": 160,
+              "type": "string"
+            }
+          },
+          {
+            "explode": false,
+            "in": "query",
+            "name": "case_key",
+            "schema": {
+              "maxLength": 64,
+              "type": "string"
+            }
+          },
+          {
+            "explode": false,
+            "in": "query",
+            "name": "attention",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "explode": false,
+            "in": "query",
+            "name": "cursor",
+            "schema": {
+              "maxLength": 64,
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ActionsPage"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "summary": "Discover typed actions available on a case or list review and recovery tasks",
+        "tags": [
+          "workflows"
+        ],
+        "x-axonpush-effect": "read",
+        "x-axonpush-mcp": true,
+        "x-axonpush-policy": {
+          "category": "org-read",
+          "grants": "reject-scoped",
+          "scopes": [
+            "observe:read"
+          ]
+        },
+        "x-axonpush-scopes": [
+          "observe:read"
+        ],
+        "x-axonpush-sdk": true
+      }
+    },
     "/workspaces/{workspaceId}/workflows/activation": {
       "get": {
         "operationId": "workflows.activation",
@@ -34850,6 +35370,270 @@
         },
         "x-axonpush-scopes": [
           "observe:read"
+        ],
+        "x-axonpush-sdk": true
+      }
+    },
+    "/workspaces/{workspaceId}/workflows/cases/{caseKey}/actions": {
+      "post": {
+        "operationId": "workflows.proposeAction",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "workspaceId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "explode": false,
+            "in": "query",
+            "name": "environment",
+            "schema": {
+              "maxLength": 160,
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "caseKey",
+            "required": true,
+            "schema": {
+              "maxLength": 64,
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Proposal"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ActionRecord"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "summary": "Propose a typed action against the current case state",
+        "tags": [
+          "workflows"
+        ],
+        "x-axonpush-effect": "write",
+        "x-axonpush-mcp": true,
+        "x-axonpush-policy": {
+          "category": "publish",
+          "grants": "reject-scoped",
+          "scopes": [
+            "workflows:propose"
+          ]
+        },
+        "x-axonpush-scopes": [
+          "workflows:propose"
+        ],
+        "x-axonpush-sdk": true
+      }
+    },
+    "/workspaces/{workspaceId}/workflows/cases/{caseKey}/actions/{actionId}/decision": {
+      "post": {
+        "operationId": "workflows.decideAction",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "workspaceId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "explode": false,
+            "in": "query",
+            "name": "environment",
+            "schema": {
+              "maxLength": 160,
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "caseKey",
+            "required": true,
+            "schema": {
+              "maxLength": 64,
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "actionId",
+            "required": true,
+            "schema": {
+              "maxLength": 64,
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ActionDecision"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ActionRecord"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "summary": "Review a specific proposal revision or request recovery",
+        "tags": [
+          "workflows"
+        ],
+        "x-axonpush-effect": "write",
+        "x-axonpush-mcp": false,
+        "x-axonpush-policy": {
+          "category": "org-config",
+          "grants": "reject-scoped",
+          "scopes": [
+            "workspaces:manage"
+          ]
+        },
+        "x-axonpush-scopes": [
+          "workspaces:manage"
+        ],
+        "x-axonpush-sdk": true
+      }
+    },
+    "/workspaces/{workspaceId}/workflows/cases/{caseKey}/actions/{actionId}/receipt": {
+      "post": {
+        "operationId": "workflows.actionReceipt",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "workspaceId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "explode": false,
+            "in": "query",
+            "name": "environment",
+            "schema": {
+              "maxLength": 160,
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "caseKey",
+            "required": true,
+            "schema": {
+              "maxLength": 64,
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "actionId",
+            "required": true,
+            "schema": {
+              "maxLength": 64,
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ActionReceipt"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ActionRecord"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "summary": "Record an execution receipt or authoritative lookup for a lease",
+        "tags": [
+          "workflows"
+        ],
+        "x-axonpush-effect": "write",
+        "x-axonpush-mcp": false,
+        "x-axonpush-policy": {
+          "category": "publish",
+          "grants": "reject-scoped",
+          "scopes": [
+            "workflows:execute"
+          ]
+        },
+        "x-axonpush-scopes": [
+          "workflows:execute"
         ],
         "x-axonpush-sdk": true
       }
@@ -35718,6 +36502,79 @@
         },
         "x-axonpush-scopes": [
           "workspaces:manage"
+        ],
+        "x-axonpush-sdk": true
+      }
+    },
+    "/workspaces/{workspaceId}/workflows/worker/claim": {
+      "post": {
+        "operationId": "workflows.claimAction",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "workspaceId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "explode": false,
+            "in": "query",
+            "name": "environment",
+            "schema": {
+              "maxLength": 160,
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ClaimRequestBody"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClaimResponseBody"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "summary": "Lease one command for this outbound worker",
+        "tags": [
+          "workflows"
+        ],
+        "x-axonpush-effect": "write",
+        "x-axonpush-mcp": false,
+        "x-axonpush-policy": {
+          "category": "publish",
+          "grants": "reject-scoped",
+          "scopes": [
+            "workflows:execute"
+          ]
+        },
+        "x-axonpush-scopes": [
+          "workflows:execute"
         ],
         "x-axonpush-sdk": true
       }

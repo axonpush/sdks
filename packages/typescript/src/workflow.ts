@@ -13,8 +13,8 @@ export async function runWorkflow(
   args: string[],
   options: { binary?: string; timeout?: number } = {},
 ): Promise<unknown> {
-  if (!args[0] || !["validate", "generate", "test", "diff"].includes(args[0])) {
-    throw new Error("Expected validate, generate, test or diff");
+  if (!args[0] || !["validate", "generate", "test", "action-test", "diff"].includes(args[0])) {
+    throw new Error("Expected validate, generate, test, action-test or diff");
   }
   const binary = options.binary ?? process.env.AXONPUSH_WORKFLOW_BINARY;
   if (!binary) throw new Error("Set AXONPUSH_WORKFLOW_BINARY to the pinned compiler executable");
@@ -26,3 +26,4 @@ export async function runWorkflow(
   const result = await execute(binary, ["workflow", ...args], execution);
   return result.stdout.trim() ? JSON.parse(result.stdout) : null;
 }
+export { runWorkflowWorkerOnce, type WorkerHandlers } from "./workflow-worker.js";

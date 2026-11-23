@@ -84,7 +84,9 @@ class ListOutcomesOutputBody:
                 outcomes_type_0 = []
                 _outcomes_type_0 = data
                 for outcomes_type_0_item_data in _outcomes_type_0:
-                    outcomes_type_0_item = IngestOutcomeDTO.from_dict(outcomes_type_0_item_data)
+                    outcomes_type_0_item = IngestOutcomeDTO.from_dict(
+                        outcomes_type_0_item_data
+                    )
 
                     outcomes_type_0.append(outcomes_type_0_item)
 
@@ -104,7 +106,9 @@ class ListOutcomesOutputBody:
                 totals_type_0 = []
                 _totals_type_0 = data
                 for totals_type_0_item_data in _totals_type_0:
-                    totals_type_0_item = IngestCategoryTotalDTO.from_dict(totals_type_0_item_data)
+                    totals_type_0_item = IngestCategoryTotalDTO.from_dict(
+                        totals_type_0_item_data
+                    )
 
                     totals_type_0.append(totals_type_0_item)
 

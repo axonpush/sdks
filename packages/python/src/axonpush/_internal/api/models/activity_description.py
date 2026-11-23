@@ -156,7 +156,9 @@ class ActivityDescription:
                 roles_type_0 = []
                 _roles_type_0 = data
                 for roles_type_0_item_data in _roles_type_0:
-                    roles_type_0_item = ActivityRoleDoc.from_dict(roles_type_0_item_data)
+                    roles_type_0_item = ActivityRoleDoc.from_dict(
+                        roles_type_0_item_data
+                    )
 
                     roles_type_0.append(roles_type_0_item)
 

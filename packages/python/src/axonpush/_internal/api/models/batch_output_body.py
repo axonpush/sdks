@@ -68,7 +68,9 @@ class BatchOutputBody:
                 results_type_0 = []
                 _results_type_0 = data
                 for results_type_0_item_data in _results_type_0:
-                    results_type_0_item = BatchResult.from_dict(results_type_0_item_data)
+                    results_type_0_item = BatchResult.from_dict(
+                        results_type_0_item_data
+                    )
 
                     results_type_0.append(results_type_0_item)
 

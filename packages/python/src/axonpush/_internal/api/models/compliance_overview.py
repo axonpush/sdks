@@ -94,7 +94,9 @@ class ComplianceOverview:
 
         d = dict(src_dict)
 
-        def _parse_attention(data: object) -> list[ComplianceOverviewAttentionType0Item] | None:
+        def _parse_attention(
+            data: object,
+        ) -> list[ComplianceOverviewAttentionType0Item] | None:
             if data is None:
                 return data
             try:
@@ -103,8 +105,10 @@ class ComplianceOverview:
                 attention_type_0 = []
                 _attention_type_0 = data
                 for attention_type_0_item_data in _attention_type_0:
-                    attention_type_0_item = ComplianceOverviewAttentionType0Item.from_dict(
-                        attention_type_0_item_data
+                    attention_type_0_item = (
+                        ComplianceOverviewAttentionType0Item.from_dict(
+                            attention_type_0_item_data
+                        )
                     )
 
                     attention_type_0.append(attention_type_0_item)

@@ -68,7 +68,9 @@ class DimensionsOutputBody:
                 dimensions_type_0 = []
                 _dimensions_type_0 = data
                 for dimensions_type_0_item_data in _dimensions_type_0:
-                    dimensions_type_0_item = DimensionDTO.from_dict(dimensions_type_0_item_data)
+                    dimensions_type_0_item = DimensionDTO.from_dict(
+                        dimensions_type_0_item_data
+                    )
 
                     dimensions_type_0.append(dimensions_type_0_item)
 

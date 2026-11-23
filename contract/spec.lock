@@ -1,9 +1,7 @@
 {
   "source": "axonpush/server",
-  "sha": null,
-  "base_sha": "5e03518dc789423e10dfb5cf515e0797076e78ba",
+  "sha": "444c6244987b414cb6ab1e0f261946b7246bbee5",
   "ref": "dev",
-  "working_tree": true,
-  "sha256": "70014ae92d5fabc961b0267c70538377f102bd70dfc853bec763a8c4f3cfde87",
-  "workflow": "workflow-case-pricing"
+  "sha256": "af254ac04f4628904f1ea686d98a1675509899bf0879336c035922ae8858f930",
+  "workflow": "workflow-actions"
 }

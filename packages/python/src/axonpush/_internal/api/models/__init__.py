@@ -6,6 +6,26 @@ from .accept_invitation_output_body import AcceptInvitationOutputBody
 from .access_log_output_body import AccessLogOutputBody
 from .access_log_output_body_items_type_0_item import AccessLogOutputBodyItemsType0Item
 from .access_request_dto import AccessRequestDTO
+from .action_change import ActionChange
+from .action_change_input import ActionChangeInput
+from .action_decision import ActionDecision
+from .action_decision_decision import ActionDecisionDecision
+from .action_decision_input import ActionDecisionInput
+from .action_receipt import ActionReceipt
+from .action_receipt_observed import ActionReceiptObserved
+from .action_receipt_output import ActionReceiptOutput
+from .action_receipt_result import ActionReceiptResult
+from .action_record import ActionRecord
+from .action_record_input import ActionRecordInput
+from .action_record_observed import ActionRecordObserved
+from .action_record_original import ActionRecordOriginal
+from .action_record_output import ActionRecordOutput
+from .action_spec import ActionSpec
+from .action_spec_expected import ActionSpecExpected
+from .action_spec_inputs import ActionSpecInputs
+from .action_spec_outputs import ActionSpecOutputs
+from .actions_page import ActionsPage
+from .actions_page_available import ActionsPageAvailable
 from .activate_draft_input_body import ActivateDraftInputBody
 from .activate_draft_output_body import ActivateDraftOutputBody
 from .activate_input_body import ActivateInputBody
@@ -157,6 +177,8 @@ from .cases_output_body import CasesOutputBody
 from .changes_output_body import ChangesOutputBody
 from .channel_dto import ChannelDTO
 from .checkout_input_body import CheckoutInputBody
+from .claim_request_body import ClaimRequestBody
+from .claim_response_body import ClaimResponseBody
 from .claimed_key import ClaimedKey
 from .compliance_action_body import ComplianceActionBody
 from .compliance_applicability import ComplianceApplicability
@@ -165,7 +187,9 @@ from .compliance_grant import ComplianceGrant
 from .compliance_metrics import ComplianceMetrics
 from .compliance_obligation import ComplianceObligation
 from .compliance_overview import ComplianceOverview
-from .compliance_overview_attention_type_0_item import ComplianceOverviewAttentionType0Item
+from .compliance_overview_attention_type_0_item import (
+    ComplianceOverviewAttentionType0Item,
+)
 from .compliance_overview_counts import ComplianceOverviewCounts
 from .compliance_overview_integrity import ComplianceOverviewIntegrity
 from .compliance_record import ComplianceRecord
@@ -177,6 +201,7 @@ from .connect_input_body import ConnectInputBody
 from .connection import Connection
 from .connections_output_body import ConnectionsOutputBody
 from .contract import Contract
+from .contract_actions import ContractActions
 from .contract_facts import ContractFacts
 from .contract_requirements import ContractRequirements
 from .controls import Controls
@@ -385,6 +410,8 @@ from .policy_output_body import PolicyOutputBody
 from .predicate import Predicate
 from .presentation import Presentation
 from .proof_output_body import ProofOutputBody
+from .proposal import Proposal
+from .proposal_input import ProposalInput
 from .public_ingest_token_dto import PublicIngestTokenDTO
 from .public_input_body import PublicInputBody
 from .public_write_output_body import PublicWriteOutputBody
@@ -401,6 +428,7 @@ from .replace_input_body import ReplaceInputBody
 from .replay_input_body import ReplayInputBody
 from .requirement import Requirement
 from .result import Result
+from .review_unless import ReviewUnless
 from .revision_list_output_body import RevisionListOutputBody
 from .rotate_secret_output_body import RotateSecretOutputBody
 from .search_events_output_body import SearchEventsOutputBody
@@ -458,12 +486,16 @@ from .traces_list_activity_class import TracesListActivityClass
 from .traces_list_sort import TracesListSort
 from .transfer_ownership_input_body import TransferOwnershipInputBody
 from .trust_output_body import TrustOutputBody
-from .trust_output_body_gated_documents_type_0_item import TrustOutputBodyGatedDocumentsType0Item
+from .trust_output_body_gated_documents_type_0_item import (
+    TrustOutputBodyGatedDocumentsType0Item,
+)
 from .trust_output_body_sections import TrustOutputBodySections
 from .trust_write_input_body import TrustWriteInputBody
 from .trust_write_input_body_data import TrustWriteInputBodyData
 from .unregistered_output_body import UnregisteredOutputBody
-from .unregistered_output_body_items_type_0_item import UnregisteredOutputBodyItemsType0Item
+from .unregistered_output_body_items_type_0_item import (
+    UnregisteredOutputBodyItemsType0Item,
+)
 from .update_app_input_body import UpdateAppInputBody
 from .update_channel_input_body import UpdateChannelInputBody
 from .update_environment_input_body import UpdateEnvironmentInputBody
@@ -514,6 +546,26 @@ __all__ = (
     "AccessLogOutputBody",
     "AccessLogOutputBodyItemsType0Item",
     "AccessRequestDTO",
+    "ActionChange",
+    "ActionChangeInput",
+    "ActionDecision",
+    "ActionDecisionDecision",
+    "ActionDecisionInput",
+    "ActionReceipt",
+    "ActionReceiptObserved",
+    "ActionReceiptOutput",
+    "ActionReceiptResult",
+    "ActionRecord",
+    "ActionRecordInput",
+    "ActionRecordObserved",
+    "ActionRecordOriginal",
+    "ActionRecordOutput",
+    "ActionsPage",
+    "ActionsPageAvailable",
+    "ActionSpec",
+    "ActionSpecExpected",
+    "ActionSpecInputs",
+    "ActionSpecOutputs",
     "ActivateDraftInputBody",
     "ActivateDraftOutputBody",
     "ActivateInputBody",
@@ -666,6 +718,8 @@ __all__ = (
     "ChannelDTO",
     "CheckoutInputBody",
     "ClaimedKey",
+    "ClaimRequestBody",
+    "ClaimResponseBody",
     "ComplianceActionBody",
     "ComplianceApplicability",
     "ComplianceControl",
@@ -685,6 +739,7 @@ __all__ = (
     "Connection",
     "ConnectionsOutputBody",
     "Contract",
+    "ContractActions",
     "ContractFacts",
     "ContractRequirements",
     "Controls",
@@ -893,6 +948,8 @@ __all__ = (
     "Predicate",
     "Presentation",
     "ProofOutputBody",
+    "Proposal",
+    "ProposalInput",
     "PublicIngestTokenDTO",
     "PublicInputBody",
     "PublicWriteOutputBody",
@@ -909,6 +966,7 @@ __all__ = (
     "ReplayInputBody",
     "Requirement",
     "Result",
+    "ReviewUnless",
     "RevisionListOutputBody",
     "RotateSecretOutputBody",
     "SearchEventsOutputBody",

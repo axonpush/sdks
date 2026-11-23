@@ -88,7 +88,9 @@ class Result:
                 obligations_type_0 = []
                 _obligations_type_0 = data
                 for obligations_type_0_item_data in _obligations_type_0:
-                    obligations_type_0_item = Obligation.from_dict(obligations_type_0_item_data)
+                    obligations_type_0_item = Obligation.from_dict(
+                        obligations_type_0_item_data
+                    )
 
                     obligations_type_0.append(obligations_type_0_item)
 

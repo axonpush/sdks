@@ -204,7 +204,9 @@ class IssueDetailDTO:
                 breadcrumbs_type_0 = []
                 _breadcrumbs_type_0 = data
                 for breadcrumbs_type_0_item_data in _breadcrumbs_type_0:
-                    breadcrumbs_type_0_item = BreadcrumbDTO.from_dict(breadcrumbs_type_0_item_data)
+                    breadcrumbs_type_0_item = BreadcrumbDTO.from_dict(
+                        breadcrumbs_type_0_item_data
+                    )
 
                     breadcrumbs_type_0.append(breadcrumbs_type_0_item)
 
@@ -226,7 +228,9 @@ class IssueDetailDTO:
                 occurrences_type_0 = []
                 _occurrences_type_0 = data
                 for occurrences_type_0_item_data in _occurrences_type_0:
-                    occurrences_type_0_item = IssueBucketDTO.from_dict(occurrences_type_0_item_data)
+                    occurrences_type_0_item = IssueBucketDTO.from_dict(
+                        occurrences_type_0_item_data
+                    )
 
                     occurrences_type_0.append(occurrences_type_0_item)
 
@@ -266,7 +270,9 @@ class IssueDetailDTO:
                 tags_type_0 = []
                 _tags_type_0 = data
                 for tags_type_0_item_data in _tags_type_0:
-                    tags_type_0_item = TagDistributionDTO.from_dict(tags_type_0_item_data)
+                    tags_type_0_item = TagDistributionDTO.from_dict(
+                        tags_type_0_item_data
+                    )
 
                     tags_type_0.append(tags_type_0_item)
 

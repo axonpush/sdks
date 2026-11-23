@@ -9,7 +9,9 @@ from attrs import field as _attrs_field
 from ..types import UNSET, Unset
 
 if TYPE_CHECKING:
-    from ..models.access_log_output_body_items_type_0_item import AccessLogOutputBodyItemsType0Item
+    from ..models.access_log_output_body_items_type_0_item import (
+        AccessLogOutputBodyItemsType0Item,
+    )
 
 
 T = TypeVar("T", bound="AccessLogOutputBody")
@@ -69,7 +71,9 @@ class AccessLogOutputBody:
 
         d = dict(src_dict)
 
-        def _parse_items(data: object) -> list[AccessLogOutputBodyItemsType0Item] | None:
+        def _parse_items(
+            data: object,
+        ) -> list[AccessLogOutputBodyItemsType0Item] | None:
             if data is None:
                 return data
             try:

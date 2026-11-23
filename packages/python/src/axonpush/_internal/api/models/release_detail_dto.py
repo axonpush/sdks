@@ -156,7 +156,9 @@ class ReleaseDetailDTO:
                 series_type_0 = []
                 _series_type_0 = data
                 for series_type_0_item_data in _series_type_0:
-                    series_type_0_item = ReleaseHourDTO.from_dict(series_type_0_item_data)
+                    series_type_0_item = ReleaseHourDTO.from_dict(
+                        series_type_0_item_data
+                    )
 
                     series_type_0.append(series_type_0_item)
 

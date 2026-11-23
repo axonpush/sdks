@@ -68,7 +68,9 @@ class DiffOutputBody:
                 attributes_type_0 = []
                 _attributes_type_0 = data
                 for attributes_type_0_item_data in _attributes_type_0:
-                    attributes_type_0_item = DiffAttributeDTO.from_dict(attributes_type_0_item_data)
+                    attributes_type_0_item = DiffAttributeDTO.from_dict(
+                        attributes_type_0_item_data
+                    )
 
                     attributes_type_0.append(attributes_type_0_item)
 

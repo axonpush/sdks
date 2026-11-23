@@ -68,7 +68,9 @@ class ListErrorsOutputBody:
                 issues_type_0 = []
                 _issues_type_0 = data
                 for issues_type_0_item_data in _issues_type_0:
-                    issues_type_0_item = ErrorIssueDTO.from_dict(issues_type_0_item_data)
+                    issues_type_0_item = ErrorIssueDTO.from_dict(
+                        issues_type_0_item_data
+                    )
 
                     issues_type_0.append(issues_type_0_item)
 

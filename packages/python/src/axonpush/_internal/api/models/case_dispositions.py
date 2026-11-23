@@ -19,7 +19,9 @@ T = TypeVar("T", bound="CaseDispositions")
 class CaseDispositions:
     """ """
 
-    additional_properties: dict[str, Disposition] = _attrs_field(init=False, factory=dict)
+    additional_properties: dict[str, Disposition] = _attrs_field(
+        init=False, factory=dict
+    )
 
     def to_dict(self) -> dict[str, Any]:
         from ..models.disposition import Disposition

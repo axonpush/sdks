@@ -124,7 +124,9 @@ class ActivityAnalytics:
                 clients_type_0 = []
                 _clients_type_0 = data
                 for clients_type_0_item_data in _clients_type_0:
-                    clients_type_0_item = ActivityBreakdown.from_dict(clients_type_0_item_data)
+                    clients_type_0_item = ActivityBreakdown.from_dict(
+                        clients_type_0_item_data
+                    )
 
                     clients_type_0.append(clients_type_0_item)
 
@@ -144,7 +146,9 @@ class ActivityAnalytics:
                 funnels_type_0 = []
                 _funnels_type_0 = data
                 for funnels_type_0_item_data in _funnels_type_0:
-                    funnels_type_0_item = ActivityFunnelResult.from_dict(funnels_type_0_item_data)
+                    funnels_type_0_item = ActivityFunnelResult.from_dict(
+                        funnels_type_0_item_data
+                    )
 
                     funnels_type_0.append(funnels_type_0_item)
 
@@ -164,7 +168,9 @@ class ActivityAnalytics:
                 splits_type_0 = []
                 _splits_type_0 = data
                 for splits_type_0_item_data in _splits_type_0:
-                    splits_type_0_item = ActivityFunnelSplit.from_dict(splits_type_0_item_data)
+                    splits_type_0_item = ActivityFunnelSplit.from_dict(
+                        splits_type_0_item_data
+                    )
 
                     splits_type_0.append(splits_type_0_item)
 

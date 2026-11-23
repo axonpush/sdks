@@ -68,7 +68,9 @@ class WorkspaceIncidentsOutputBody:
                 incidents_type_0 = []
                 _incidents_type_0 = data
                 for incidents_type_0_item_data in _incidents_type_0:
-                    incidents_type_0_item = ActivityIncident.from_dict(incidents_type_0_item_data)
+                    incidents_type_0_item = ActivityIncident.from_dict(
+                        incidents_type_0_item_data
+                    )
 
                     incidents_type_0.append(incidents_type_0_item)
 

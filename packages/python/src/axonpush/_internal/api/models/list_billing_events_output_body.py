@@ -68,7 +68,9 @@ class ListBillingEventsOutputBody:
                 events_type_0 = []
                 _events_type_0 = data
                 for events_type_0_item_data in _events_type_0:
-                    events_type_0_item = BillingEventDTO.from_dict(events_type_0_item_data)
+                    events_type_0_item = BillingEventDTO.from_dict(
+                        events_type_0_item_data
+                    )
 
                     events_type_0.append(events_type_0_item)
 

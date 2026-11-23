@@ -65,7 +65,9 @@ class UnregisteredOutputBody:
 
         d = dict(src_dict)
 
-        def _parse_items(data: object) -> list[UnregisteredOutputBodyItemsType0Item] | None:
+        def _parse_items(
+            data: object,
+        ) -> list[UnregisteredOutputBodyItemsType0Item] | None:
             if data is None:
                 return data
             try:

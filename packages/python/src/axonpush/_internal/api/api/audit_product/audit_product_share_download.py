@@ -6,7 +6,9 @@ import httpx
 
 from ... import errors
 from ...client import AuthenticatedClient, Client
-from ...models.audit_product_share_download_format import AuditProductShareDownloadFormat
+from ...models.audit_product_share_download_format import (
+    AuditProductShareDownloadFormat,
+)
 from ...models.error_model import ErrorModel
 from ...types import UNSET, Response, Unset
 
@@ -15,7 +17,8 @@ def _get_kwargs(
     token: str,
     pack_id: str,
     *,
-    format_: AuditProductShareDownloadFormat | Unset = AuditProductShareDownloadFormat.JSON,
+    format_: AuditProductShareDownloadFormat
+    | Unset = AuditProductShareDownloadFormat.JSON,
 ) -> dict[str, Any]:
 
     params: dict[str, Any] = {}
@@ -68,7 +71,8 @@ def sync_detailed(
     pack_id: str,
     *,
     client: AuthenticatedClient | Client,
-    format_: AuditProductShareDownloadFormat | Unset = AuditProductShareDownloadFormat.JSON,
+    format_: AuditProductShareDownloadFormat
+    | Unset = AuditProductShareDownloadFormat.JSON,
 ) -> Response[ErrorModel | str]:
     """Download a pack within live auditor scope
 
@@ -104,7 +108,8 @@ def sync(
     pack_id: str,
     *,
     client: AuthenticatedClient | Client,
-    format_: AuditProductShareDownloadFormat | Unset = AuditProductShareDownloadFormat.JSON,
+    format_: AuditProductShareDownloadFormat
+    | Unset = AuditProductShareDownloadFormat.JSON,
 ) -> ErrorModel | str | None:
     """Download a pack within live auditor scope
 
@@ -135,7 +140,8 @@ async def asyncio_detailed(
     pack_id: str,
     *,
     client: AuthenticatedClient | Client,
-    format_: AuditProductShareDownloadFormat | Unset = AuditProductShareDownloadFormat.JSON,
+    format_: AuditProductShareDownloadFormat
+    | Unset = AuditProductShareDownloadFormat.JSON,
 ) -> Response[ErrorModel | str]:
     """Download a pack within live auditor scope
 
@@ -169,7 +175,8 @@ async def asyncio(
     pack_id: str,
     *,
     client: AuthenticatedClient | Client,
-    format_: AuditProductShareDownloadFormat | Unset = AuditProductShareDownloadFormat.JSON,
+    format_: AuditProductShareDownloadFormat
+    | Unset = AuditProductShareDownloadFormat.JSON,
 ) -> ErrorModel | str | None:
     """Download a pack within live auditor scope
 

@@ -68,7 +68,9 @@ class ActivityViewSeries:
                 points_type_0 = []
                 _points_type_0 = data
                 for points_type_0_item_data in _points_type_0:
-                    points_type_0_item = ActivityViewPoint.from_dict(points_type_0_item_data)
+                    points_type_0_item = ActivityViewPoint.from_dict(
+                        points_type_0_item_data
+                    )
 
                     points_type_0.append(points_type_0_item)
 

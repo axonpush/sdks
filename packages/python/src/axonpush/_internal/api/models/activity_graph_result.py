@@ -83,7 +83,9 @@ class ActivityGraphResult:
                 edges_type_0 = []
                 _edges_type_0 = data
                 for edges_type_0_item_data in _edges_type_0:
-                    edges_type_0_item = ActivityGraphEdge.from_dict(edges_type_0_item_data)
+                    edges_type_0_item = ActivityGraphEdge.from_dict(
+                        edges_type_0_item_data
+                    )
 
                     edges_type_0.append(edges_type_0_item)
 
@@ -103,7 +105,9 @@ class ActivityGraphResult:
                 nodes_type_0 = []
                 _nodes_type_0 = data
                 for nodes_type_0_item_data in _nodes_type_0:
-                    nodes_type_0_item = ActivityGraphNode.from_dict(nodes_type_0_item_data)
+                    nodes_type_0_item = ActivityGraphNode.from_dict(
+                        nodes_type_0_item_data
+                    )
 
                     nodes_type_0.append(nodes_type_0_item)
 

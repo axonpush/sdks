@@ -1,6 +1,8 @@
 {
   "description": "Generated API-key scope vocabulary; operation policies define enforcement.",
   "scopes": [
+    "workflows:propose",
+    "workflows:execute",
     "content:read",
     "replay:read",
     "content:erase",

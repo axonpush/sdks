@@ -68,7 +68,9 @@ class SourcesOutputBody:
                 sources_type_0 = []
                 _sources_type_0 = data
                 for sources_type_0_item_data in _sources_type_0:
-                    sources_type_0_item = SourceBinding.from_dict(sources_type_0_item_data)
+                    sources_type_0_item = SourceBinding.from_dict(
+                        sources_type_0_item_data
+                    )
 
                     sources_type_0.append(sources_type_0_item)
 

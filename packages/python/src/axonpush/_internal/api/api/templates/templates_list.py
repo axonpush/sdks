@@ -7,7 +7,9 @@ import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
 from ...models.error_model import ErrorModel
-from ...models.workspace_template_list_output_body import WorkspaceTemplateListOutputBody
+from ...models.workspace_template_list_output_body import (
+    WorkspaceTemplateListOutputBody,
+)
 from ...types import UNSET, Response
 
 

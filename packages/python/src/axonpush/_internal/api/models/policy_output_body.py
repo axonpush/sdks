@@ -94,7 +94,9 @@ class PolicyOutputBody:
                 grants_type_0 = []
                 _grants_type_0 = data
                 for grants_type_0_item_data in _grants_type_0:
-                    grants_type_0_item = ComplianceGrant.from_dict(grants_type_0_item_data)
+                    grants_type_0_item = ComplianceGrant.from_dict(
+                        grants_type_0_item_data
+                    )
 
                     grants_type_0.append(grants_type_0_item)
 

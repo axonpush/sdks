@@ -191,7 +191,9 @@ class Input:
                 previous_type_0 = []
                 _previous_type_0 = data
                 for previous_type_0_item_data in _previous_type_0:
-                    previous_type_0_item = Obligation.from_dict(previous_type_0_item_data)
+                    previous_type_0_item = Obligation.from_dict(
+                        previous_type_0_item_data
+                    )
 
                     previous_type_0.append(previous_type_0_item)
 

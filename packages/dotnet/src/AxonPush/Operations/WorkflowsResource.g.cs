@@ -11,6 +11,17 @@ public sealed class WorkflowsResource
     private readonly AxonPushTransport _transport;
     internal WorkflowsResource(AxonPushTransport transport) => _transport = transport;
 
+    /// <summary>Discover typed actions available on a case or list review and recovery tasks.</summary>
+    public Task<ActionsPage?> ActionsAsync(string workspaceId, string? environment = null, string? case_key = null, bool? attention = null, string? cursor = null, CancellationToken cancellationToken = default)
+    {
+        var path = $"workspaces/{Uri.EscapeDataString(workspaceId)}/workflows/actions";
+        path = AddQuery(path, "environment", environment);
+        path = AddQuery(path, "case_key", case_key);
+        path = AddQuery(path, "attention", attention);
+        path = AddQuery(path, "cursor", cursor);
+        return _transport.SendAsync<ActionsPage>(HttpMethod.Get, path, null, cancellationToken);
+    }
+
     /// <summary>Read active workflow versions for this environment.</summary>
     public Task<ActivationOutputBody?> ActivationAsync(string workspaceId, string? environment = null, CancellationToken cancellationToken = default)
     {
@@ -43,6 +54,30 @@ public sealed class WorkflowsResource
         var path = $"workspaces/{Uri.EscapeDataString(workspaceId)}/workflows/cases/{Uri.EscapeDataString(caseKey)}";
         path = AddQuery(path, "environment", environment);
         return _transport.SendAsync<Case>(HttpMethod.Get, path, null, cancellationToken);
+    }
+
+    /// <summary>Propose a typed action against the current case state.</summary>
+    public Task<ActionRecord?> ProposeActionAsync(string workspaceId, string caseKey, Proposal body, string? environment = null, CancellationToken cancellationToken = default)
+    {
+        var path = $"workspaces/{Uri.EscapeDataString(workspaceId)}/workflows/cases/{Uri.EscapeDataString(caseKey)}/actions";
+        path = AddQuery(path, "environment", environment);
+        return _transport.SendAsync<ActionRecord>(HttpMethod.Post, path, body, cancellationToken);
+    }
+
+    /// <summary>Review a specific proposal revision or request recovery.</summary>
+    public Task<ActionRecord?> DecideActionAsync(string workspaceId, string caseKey, string actionId, ActionDecision body, string? environment = null, CancellationToken cancellationToken = default)
+    {
+        var path = $"workspaces/{Uri.EscapeDataString(workspaceId)}/workflows/cases/{Uri.EscapeDataString(caseKey)}/actions/{Uri.EscapeDataString(actionId)}/decision";
+        path = AddQuery(path, "environment", environment);
+        return _transport.SendAsync<ActionRecord>(HttpMethod.Post, path, body, cancellationToken);
+    }
+
+    /// <summary>Record an execution receipt or authoritative lookup for a lease.</summary>
+    public Task<ActionRecord?> ActionReceiptAsync(string workspaceId, string caseKey, string actionId, ActionReceipt body, string? environment = null, CancellationToken cancellationToken = default)
+    {
+        var path = $"workspaces/{Uri.EscapeDataString(workspaceId)}/workflows/cases/{Uri.EscapeDataString(caseKey)}/actions/{Uri.EscapeDataString(actionId)}/receipt";
+        path = AddQuery(path, "environment", environment);
+        return _transport.SendAsync<ActionRecord>(HttpMethod.Post, path, body, cancellationToken);
     }
 
     /// <summary>Close case ingestion and retain its history for 90 days; this does not verify completion.</summary>
@@ -139,6 +174,14 @@ public sealed class WorkflowsResource
         var path = $"workspaces/{Uri.EscapeDataString(workspaceId)}/workflows/sources";
         path = AddQuery(path, "environment", environment);
         return _transport.SendAsync<StatusOutputBody>(HttpMethod.Post, path, body, cancellationToken);
+    }
+
+    /// <summary>Lease one command for this outbound worker.</summary>
+    public Task<ClaimResponseBody?> ClaimActionAsync(string workspaceId, ClaimRequestBody body, string? environment = null, CancellationToken cancellationToken = default)
+    {
+        var path = $"workspaces/{Uri.EscapeDataString(workspaceId)}/workflows/worker/claim";
+        path = AddQuery(path, "environment", environment);
+        return _transport.SendAsync<ClaimResponseBody>(HttpMethod.Post, path, body, cancellationToken);
     }
 
     private static string AddQuery(string path, string key, object? value)

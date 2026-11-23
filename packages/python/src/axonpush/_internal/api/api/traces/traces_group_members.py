@@ -8,7 +8,9 @@ from ... import errors
 from ...client import AuthenticatedClient, Client
 from ...models.error_model import ErrorModel
 from ...models.trace_group_members_output_body import TraceGroupMembersOutputBody
-from ...models.traces_group_members_activity_class import TracesGroupMembersActivityClass
+from ...models.traces_group_members_activity_class import (
+    TracesGroupMembersActivityClass,
+)
 from ...models.traces_group_members_sort import TracesGroupMembersSort
 from ...types import UNSET, Response, Unset
 

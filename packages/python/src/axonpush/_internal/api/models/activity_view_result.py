@@ -203,7 +203,9 @@ class ActivityViewResult:
                 points_type_0 = []
                 _points_type_0 = data
                 for points_type_0_item_data in _points_type_0:
-                    points_type_0_item = ActivityViewPoint.from_dict(points_type_0_item_data)
+                    points_type_0_item = ActivityViewPoint.from_dict(
+                        points_type_0_item_data
+                    )
 
                     points_type_0.append(points_type_0_item)
 
@@ -263,7 +265,9 @@ class ActivityViewResult:
                 series_type_0 = []
                 _series_type_0 = data
                 for series_type_0_item_data in _series_type_0:
-                    series_type_0_item = ActivityViewSeries.from_dict(series_type_0_item_data)
+                    series_type_0_item = ActivityViewSeries.from_dict(
+                        series_type_0_item_data
+                    )
 
                     series_type_0.append(series_type_0_item)
 
@@ -302,7 +306,9 @@ class ActivityViewResult:
                 splits_type_0 = []
                 _splits_type_0 = data
                 for splits_type_0_item_data in _splits_type_0:
-                    splits_type_0_item = ActivityViewSplit.from_dict(splits_type_0_item_data)
+                    splits_type_0_item = ActivityViewSplit.from_dict(
+                        splits_type_0_item_data
+                    )
 
                     splits_type_0.append(splits_type_0_item)
 

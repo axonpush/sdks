@@ -68,7 +68,9 @@ class UserOrgsOutputBody:
                 organizations_type_0 = []
                 _organizations_type_0 = data
                 for organizations_type_0_item_data in _organizations_type_0:
-                    organizations_type_0_item = UserOrgDTO.from_dict(organizations_type_0_item_data)
+                    organizations_type_0_item = UserOrgDTO.from_dict(
+                        organizations_type_0_item_data
+                    )
 
                     organizations_type_0.append(organizations_type_0_item)
 

@@ -47,9 +47,34 @@ const options = (): EffectWorkflowOptions => ({
 describe("Effect workflow authoring", () => {
   it("produces the same source as Zod, independent of key ordering", () => {
     const input = options();
-    const effect = defineEffectWorkflow(input);
+    const policy = {
+      from: "booked",
+      to: "rescheduled",
+      actors: ["agent"],
+      handler: "adapter",
+      requirement: "record",
+      expected: { request_id: "case_id", starts_at: "input.starts_at" },
+    };
+    input.initial_state = "booked";
+    const effect = defineEffectWorkflow({
+      ...input,
+      actions: {
+        move: {
+          ...policy,
+          inputs: Schema.Struct({ starts_at: WorkflowTimestamp }),
+          outputs: Schema.Struct({ revision: Schema.Number }),
+        },
+      },
+    });
     const zod = defineZodWorkflow({
       ...input,
+      actions: {
+        move: {
+          ...policy,
+          inputs: z.strictObject({ starts_at: z.iso.datetime({ offset: true }) }),
+          outputs: z.strictObject({ revision: z.number() }),
+        },
+      },
       facts: {
         "booking.observed": {
           schema: z.strictObject({

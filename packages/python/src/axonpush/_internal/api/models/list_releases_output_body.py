@@ -68,7 +68,9 @@ class ListReleasesOutputBody:
                 releases_type_0 = []
                 _releases_type_0 = data
                 for releases_type_0_item_data in _releases_type_0:
-                    releases_type_0_item = ReleaseDTO.from_dict(releases_type_0_item_data)
+                    releases_type_0_item = ReleaseDTO.from_dict(
+                        releases_type_0_item_data
+                    )
 
                     releases_type_0.append(releases_type_0_item)
 

@@ -1,6 +1,6 @@
 /** Zod authoring adapter. All contract validation and verdicts remain in Go. */
 import type { z } from "zod";
-import type { Contract } from "./_internal/api/types.gen.js";
+import type { Contract, ActionSpec } from "./_internal/api/types.gen.js";
 import { serializeWorkflow } from "./_internal/workflow-provider.js";
 
 export type {
@@ -14,7 +14,11 @@ export {
 
 import type { WorkflowDefinition as ZodWorkflowDefinition } from "./_internal/workflow-provider.js";
 
-export type ZodWorkflowOptions = Omit<Contract, "facts"> & {
+export type ZodWorkflowOptions = Omit<Contract, "facts" | "actions"> & {
+  actions?: Record<
+    string,
+    Omit<ActionSpec, "inputs" | "outputs"> & { inputs: z.ZodType; outputs: z.ZodType }
+  >;
   facts: Record<
     string,
     {
@@ -107,5 +111,17 @@ export function defineZodWorkflow(options: ZodWorkflowOptions): ZodWorkflowDefin
       ];
     }),
   );
-  return serializeWorkflow({ ...options, facts });
+  const actions =
+    options.actions &&
+    Object.fromEntries(
+      Object.entries(options.actions).map(([name, action]) => [
+        name,
+        {
+          ...action,
+          inputs: fields(action.inputs, `actions.${name}.inputs`),
+          outputs: fields(action.outputs, `actions.${name}.outputs`),
+        },
+      ]),
+    );
+  return serializeWorkflow({ ...options, facts, ...(actions ? { actions } : {}) });
 }

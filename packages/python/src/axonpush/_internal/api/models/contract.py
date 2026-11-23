@@ -10,6 +10,7 @@ from ..types import UNSET, Unset
 
 if TYPE_CHECKING:
     from ..models.case_schema import CaseSchema
+    from ..models.contract_actions import ContractActions
     from ..models.contract_facts import ContractFacts
     from ..models.contract_requirements import ContractRequirements
     from ..models.presentation import Presentation
@@ -28,6 +29,8 @@ class Contract:
         requirements (ContractRequirements):
         schema_version (int):
         workflow (str):
+        actions (ContractActions | Unset):
+        initial_state (str | Unset):
     """
 
     case: CaseSchema
@@ -36,9 +39,12 @@ class Contract:
     requirements: ContractRequirements
     schema_version: int
     workflow: str
+    actions: ContractActions | Unset = UNSET
+    initial_state: str | Unset = UNSET
 
     def to_dict(self) -> dict[str, Any]:
         from ..models.case_schema import CaseSchema
+        from ..models.contract_actions import ContractActions
         from ..models.contract_facts import ContractFacts
         from ..models.contract_requirements import ContractRequirements
         from ..models.presentation import Presentation
@@ -55,6 +61,12 @@ class Contract:
 
         workflow = self.workflow
 
+        actions: dict[str, Any] | Unset = UNSET
+        if not isinstance(self.actions, Unset):
+            actions = self.actions.to_dict()
+
+        initial_state = self.initial_state
+
         field_dict: dict[str, Any] = {}
 
         field_dict.update(
@@ -67,12 +79,17 @@ class Contract:
                 "workflow": workflow,
             }
         )
+        if actions is not UNSET:
+            field_dict["actions"] = actions
+        if initial_state is not UNSET:
+            field_dict["initial_state"] = initial_state
 
         return field_dict
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         from ..models.case_schema import CaseSchema
+        from ..models.contract_actions import ContractActions
         from ..models.contract_facts import ContractFacts
         from ..models.contract_requirements import ContractRequirements
         from ..models.presentation import Presentation
@@ -90,6 +107,15 @@ class Contract:
 
         workflow = d.pop("workflow")
 
+        _actions = d.pop("actions", UNSET)
+        actions: ContractActions | Unset
+        if isinstance(_actions, Unset):
+            actions = UNSET
+        else:
+            actions = ContractActions.from_dict(_actions)
+
+        initial_state = d.pop("initial_state", UNSET)
+
         contract = cls(
             case=case,
             facts=facts,
@@ -97,6 +123,8 @@ class Contract:
             requirements=requirements,
             schema_version=schema_version,
             workflow=workflow,
+            actions=actions,
+            initial_state=initial_state,
         )
 
         return contract

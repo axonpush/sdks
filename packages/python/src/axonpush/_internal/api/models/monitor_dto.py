@@ -86,7 +86,9 @@ class MonitorDTO:
         if isinstance(self.recent_check_ins, list):
             recent_check_ins = []
             for recent_check_ins_type_0_item_data in self.recent_check_ins:
-                recent_check_ins_type_0_item = recent_check_ins_type_0_item_data.to_dict()
+                recent_check_ins_type_0_item = (
+                    recent_check_ins_type_0_item_data.to_dict()
+                )
                 recent_check_ins.append(recent_check_ins_type_0_item)
 
         else:
@@ -172,7 +174,9 @@ class MonitorDTO:
 
         muted = d.pop("muted")
 
-        def _parse_recent_check_ins(data: object) -> list[MonitorCheckInSummaryDTO] | None:
+        def _parse_recent_check_ins(
+            data: object,
+        ) -> list[MonitorCheckInSummaryDTO] | None:
             if data is None:
                 return data
             try:
