@@ -128,7 +128,39 @@ public sealed class WorkflowsResource
         return _transport.SendAsync<Definition>(HttpMethod.Post, path, body, cancellationToken);
     }
 
-    /// <summary>Start here: guided workflow setup questions, exact tool sequence and a deterministic booking example; read-only.</summary>
+    /// <summary>List workflow deployments and integration readiness.</summary>
+    public Task<DeploymentListOutputBody?> DeploymentsAsync(string workspaceId, string? environment = null, CancellationToken cancellationToken = default)
+    {
+        var path = $"workspaces/{Uri.EscapeDataString(workspaceId)}/workflows/deployments";
+        path = AddQuery(path, "environment", environment);
+        return _transport.SendAsync<DeploymentListOutputBody>(HttpMethod.Get, path, null, cancellationToken);
+    }
+
+    /// <summary>Compile and preview a workflow deployment without writing.</summary>
+    public Task<DeploymentPreview?> PreviewDeploymentAsync(string workspaceId, DeploymentPreviewInputBody body, string? environment = null, CancellationToken cancellationToken = default)
+    {
+        var path = $"workspaces/{Uri.EscapeDataString(workspaceId)}/workflows/deployments/preview";
+        path = AddQuery(path, "environment", environment);
+        return _transport.SendAsync<DeploymentPreview>(HttpMethod.Post, path, body, cancellationToken);
+    }
+
+    /// <summary>Read one workflow deployment and integration readiness.</summary>
+    public Task<WorkflowDeployment?> DeploymentAsync(string workspaceId, string workflow, string? environment = null, CancellationToken cancellationToken = default)
+    {
+        var path = $"workspaces/{Uri.EscapeDataString(workspaceId)}/workflows/deployments/{Uri.EscapeDataString(workflow)}";
+        path = AddQuery(path, "environment", environment);
+        return _transport.SendAsync<WorkflowDeployment>(HttpMethod.Get, path, null, cancellationToken);
+    }
+
+    /// <summary>Atomically publish, activate and bind a reviewed workflow deployment.</summary>
+    public Task<WorkflowDeployment?> ApplyDeploymentAsync(string workspaceId, string workflow, DeploymentApplyInputBody body, string? environment = null, CancellationToken cancellationToken = default)
+    {
+        var path = $"workspaces/{Uri.EscapeDataString(workspaceId)}/workflows/deployments/{Uri.EscapeDataString(workflow)}";
+        path = AddQuery(path, "environment", environment);
+        return _transport.SendAsync<WorkflowDeployment>(HttpMethod.Put, path, body, cancellationToken);
+    }
+
+    /// <summary>Start here: workflow setup questions, the tool sequence from runtime connection to evaluated case, and a booking example; read-only.</summary>
     public Task<WorkflowSetupGuide?> DescribeAsync(string workspaceId, string? environment = null, CancellationToken cancellationToken = default)
     {
         var path = $"workspaces/{Uri.EscapeDataString(workspaceId)}/workflows/describe";

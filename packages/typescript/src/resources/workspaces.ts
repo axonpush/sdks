@@ -135,7 +135,7 @@ export class WorkspacesResource {
     return this.client.invoke(workspacesCatalog, { path: { workspaceId }, query });
   }
 
-  /** Mint the application's publish key and return its env, OTLP, Sentry and SDK setup. `POST /workspaces/{workspaceId}/connect` */
+  /** Connect a workflow runtime or application: mint its key and return env, OTLP, Sentry and SDK setup. `POST /workspaces/{workspaceId}/connect` */
   async connect(
     workspaceId: string,
     body: ConnectInputBody,

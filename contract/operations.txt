@@ -252,6 +252,7 @@ workflows.actionReceipt
 workflows.actions
 workflows.activate
 workflows.activation
+workflows.applyDeployment
 workflows.case
 workflows.cases
 workflows.claimAction
@@ -259,10 +260,13 @@ workflows.close
 workflows.compile
 workflows.decideAction
 workflows.definitions
+workflows.deployment
+workflows.deployments
 workflows.describe
 workflows.diff
 workflows.disposition
 workflows.facts
+workflows.previewDeployment
 workflows.proposeAction
 workflows.publish
 workflows.registerSource

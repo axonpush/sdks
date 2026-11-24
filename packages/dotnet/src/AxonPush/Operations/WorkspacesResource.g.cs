@@ -97,7 +97,7 @@ public sealed class WorkspacesResource
         return _transport.SendAsync<ActivityCatalog>(HttpMethod.Get, path, null, cancellationToken);
     }
 
-    /// <summary>Mint the application's publish key and return its env, OTLP, Sentry and SDK setup.</summary>
+    /// <summary>Connect a workflow runtime or application: mint its key and return env, OTLP, Sentry and SDK setup.</summary>
     public Task<ActivityConnectResult?> ConnectAsync(string workspaceId, ConnectInputBody body, CancellationToken cancellationToken = default)
     {
         var path = $"workspaces/{Uri.EscapeDataString(workspaceId)}/connect";

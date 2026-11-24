@@ -54,6 +54,7 @@ from .activity_connect_otlp import ActivityConnectOTLP
 from .activity_connect_result import ActivityConnectResult
 from .activity_connect_result_env import ActivityConnectResultEnv
 from .activity_connect_sdk import ActivityConnectSDK
+from .activity_connect_workflow_runtime import ActivityConnectWorkflowRuntime
 from .activity_description import ActivityDescription
 from .activity_draft import ActivityDraft
 from .activity_draft_op import ActivityDraftOp
@@ -187,7 +188,9 @@ from .compliance_grant import ComplianceGrant
 from .compliance_metrics import ComplianceMetrics
 from .compliance_obligation import ComplianceObligation
 from .compliance_overview import ComplianceOverview
-from .compliance_overview_attention_type_0_item import ComplianceOverviewAttentionType0Item
+from .compliance_overview_attention_type_0_item import (
+    ComplianceOverviewAttentionType0Item,
+)
 from .compliance_overview_counts import ComplianceOverviewCounts
 from .compliance_overview_integrity import ComplianceOverviewIntegrity
 from .compliance_record import ComplianceRecord
@@ -240,6 +243,13 @@ from .definition_list_body import DefinitionListBody
 from .delete_monitor_output_body import DeleteMonitorOutputBody
 from .delete_output_body import DeleteOutputBody
 from .delivery_dto import DeliveryDTO
+from .deployment_apply_input_body import DeploymentApplyInputBody
+from .deployment_counts import DeploymentCounts
+from .deployment_list_output_body import DeploymentListOutputBody
+from .deployment_preview import DeploymentPreview
+from .deployment_preview_input_body import DeploymentPreviewInputBody
+from .deployment_runtime import DeploymentRuntime
+from .deployment_source import DeploymentSource
 from .destination_dto import DestinationDTO
 from .diff_attribute_dto import DiffAttributeDTO
 from .diff_cohort_dto import DiffCohortDTO
@@ -485,12 +495,16 @@ from .traces_list_activity_class import TracesListActivityClass
 from .traces_list_sort import TracesListSort
 from .transfer_ownership_input_body import TransferOwnershipInputBody
 from .trust_output_body import TrustOutputBody
-from .trust_output_body_gated_documents_type_0_item import TrustOutputBodyGatedDocumentsType0Item
+from .trust_output_body_gated_documents_type_0_item import (
+    TrustOutputBodyGatedDocumentsType0Item,
+)
 from .trust_output_body_sections import TrustOutputBodySections
 from .trust_write_input_body import TrustWriteInputBody
 from .trust_write_input_body_data import TrustWriteInputBodyData
 from .unregistered_output_body import UnregisteredOutputBody
-from .unregistered_output_body_items_type_0_item import UnregisteredOutputBodyItemsType0Item
+from .unregistered_output_body_items_type_0_item import (
+    UnregisteredOutputBodyItemsType0Item,
+)
 from .update_app_input_body import UpdateAppInputBody
 from .update_channel_input_body import UpdateChannelInputBody
 from .update_environment_input_body import UpdateEnvironmentInputBody
@@ -517,6 +531,8 @@ from .verify_result import VerifyResult
 from .views_output_body import ViewsOutputBody
 from .webhook_output_body import WebhookOutputBody
 from .workflow_case_usage import WorkflowCaseUsage
+from .workflow_deployment import WorkflowDeployment
+from .workflow_deployment_status import WorkflowDeploymentStatus
 from .workflow_setup_guide import WorkflowSetupGuide
 from .workflow_setup_guide_example_struct import WorkflowSetupGuideExampleStruct
 from .workspace_entities_output_body import WorkspaceEntitiesOutputBody
@@ -589,6 +605,7 @@ __all__ = (
     "ActivityConnectResult",
     "ActivityConnectResultEnv",
     "ActivityConnectSDK",
+    "ActivityConnectWorkflowRuntime",
     "ActivityDescription",
     "ActivityDraft",
     "ActivityDraftOp",
@@ -775,6 +792,13 @@ __all__ = (
     "DeleteMonitorOutputBody",
     "DeleteOutputBody",
     "DeliveryDTO",
+    "DeploymentApplyInputBody",
+    "DeploymentCounts",
+    "DeploymentListOutputBody",
+    "DeploymentPreview",
+    "DeploymentPreviewInputBody",
+    "DeploymentRuntime",
+    "DeploymentSource",
     "DestinationDTO",
     "DiffAttributeDTO",
     "DiffCohortDTO",
@@ -1052,6 +1076,8 @@ __all__ = (
     "ViewsOutputBody",
     "WebhookOutputBody",
     "WorkflowCaseUsage",
+    "WorkflowDeployment",
+    "WorkflowDeploymentStatus",
     "WorkflowSetupGuide",
     "WorkflowSetupGuideExampleStruct",
     "WorkspaceEntitiesOutputBody",

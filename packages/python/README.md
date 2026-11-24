@@ -2,13 +2,69 @@
 
 [![PyPI](https://img.shields.io/pypi/v/axonpush.svg)](https://pypi.org/project/axonpush/)
 
-Python SDK for [axonpush](https://axonpush.xyz), observability and event infrastructure for AI agent systems.
-
-Publish, trace, and deliver agent events. Drop-in integrations for LangChain, LangGraph Deep Agents, OpenAI Agents SDK, Anthropic, CrewAI, and the Python observability stack (stdlib `logging`, Loguru, structlog, OpenTelemetry, Sentry).
+Python SDK for [axonpush](https://axonpush.xyz), workflow-first verification for automation providers. Run workflow side effects with stable identities, recover uncertain outcomes, and check results against evaluated cases. Telemetry, tracing, and observability integrations remain available as supporting diagnostics.
 
 > Migrating an older client? The Go/Huma API migration is documented under `0.0.18` in [CHANGELOG.md](CHANGELOG.md). Models are exposed through `axonpush.models`; use app-scoped channel methods and `events.search()` for event reads. The removed realtime connection APIs are not part of this SDK.
 
-## Agent operations
+## Workflow runtime
+
+`WorkflowWorker` polls AxonPush for workflow commands, runs your code, and posts a receipt for each one. It makes outbound requests only and requires HTTPS (or loopback HTTP for local development).
+
+```python
+import threading
+
+from axonpush.workflow_worker import WorkflowWorker
+
+worker = WorkflowWorker(
+    base_url="https://api.axonpush.xyz",
+    workspace="my-workspace",
+    environment="production",
+    api_key="ak_…",
+    handler="send-refund",
+)
+
+
+def execute(action: dict) -> dict:
+    # Perform the side effect, keyed by a stable identity such as
+    # action["id"] or action["case_key"], and return its output.
+    return {"refund_id": "re_123"}
+
+
+def lookup(action: dict) -> dict:
+    # Report whether the side effect already happened. Return a receipt
+    # whose "result" is "found", "absent" or "unavailable".
+    return {"result": "absent"}
+
+
+stop = threading.Event()
+worker.run(execute, lookup, stop=stop)  # blocks until stop.set()
+```
+
+`WorkflowWorker.from_env(handler)` reads `AXONPUSH_API_URL`, `AXONPUSH_WORKSPACE`, `AXONPUSH_ENVIRONMENT` and `AXONPUSH_API_KEY`. `run` retries transport errors and server errors, and closes the HTTP client when it returns.
+
+How it behaves:
+
+- **Idempotent side effects.** Give every side effect a stable identity so a repeated command cannot apply it twice.
+- **Ambiguous execute failures.** If `execute` raises, the worker reports `ambiguous`. The side effect is not rerun blindly, because it may have partly or fully happened.
+- **Lookup recovery.** AxonPush then sends a lookup command, and the worker calls `lookup`, which reports `found`, `absent`, or `unavailable` (also reported if `lookup` raises).
+- **Commit first.** Publish workflow facts and checkpoints only after the source transaction has committed.
+- **Ready is not proven.** A ready deployment means it is configured. Evaluated cases are what prove outcomes.
+
+### Local validation
+
+`axonpush.workflow.run` runs `validate`, `generate`, `test`, `action-test` and `diff` locally through the platform binary bundled with the package (resolved by OS and architecture; set `AXONPUSH_WORKFLOW_BINARY` to override). Extra arguments are passed to the binary's `workflow` command. It makes no server calls and does not publish. It returns the parsed JSON output.
+
+```python
+from axonpush import workflow
+
+result = workflow.run("validate")  # add arguments as the workflow command requires
+```
+
+## Supporting diagnostics
+
+The rest of this README covers telemetry, event publishing, and framework integrations. These help you inspect and debug agent systems alongside workflows: drop-in integrations for LangChain, LangGraph Deep Agents, OpenAI Agents SDK, Anthropic, CrewAI, and the Python observability stack (stdlib `logging`, Loguru, structlog, OpenTelemetry, Sentry).
+
+### Agent operations
 
 Each workspace declares its own data dictionary and entities (usually drafted by
 your coding agent over MCP). Your app then sends observations and profile traits.

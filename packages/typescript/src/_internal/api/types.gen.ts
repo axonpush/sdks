@@ -499,12 +499,20 @@ export type ActivityConnectResult = {
      */
     sentryDsnUnavailable?: string;
     warnings?: Array<string> | null;
+    workflowRuntime?: ActivityConnectWorkflowRuntime;
     workspaceId: string;
 };
 
 export type ActivityConnectSdk = {
     python: string;
     typescript: string;
+};
+
+export type ActivityConnectWorkflowRuntime = {
+    handlers: Array<string> | null;
+    id: string;
+    sources: Array<string> | null;
+    workflow: string;
 };
 
 export type ActivityDescription = {
@@ -1759,6 +1767,10 @@ export type ConnectInputBody = {
      */
     environment?: string;
     /**
+     * Action handler IDs owned by this runtime
+     */
+    handlers?: Array<string> | null;
+    /**
      * Separates keys for different processes of one app, e.g. web or worker. Defaults to default
      */
     purpose?: string;
@@ -1766,6 +1778,14 @@ export type ConnectInputBody = {
      * Revoke this environment and purpose's existing connect key and mint a new one
      */
     rotate?: boolean;
+    /**
+     * Evidence source IDs owned by this runtime
+     */
+    sources?: Array<string> | null;
+    /**
+     * Workflow ID when purpose is workflow_runtime
+     */
+    workflow?: string;
 };
 
 export type Connection = {
@@ -2230,6 +2250,73 @@ export type DeliveryDto = {
     nextRetryAt?: string;
     status?: string;
     statusCode?: number;
+};
+
+export type DeploymentApplyInputBody = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
+    expected_active_version_id?: string;
+    runtime_id: string;
+    source: string;
+};
+
+export type DeploymentCounts = {
+    confirmed: number;
+    could_not_confirm: number;
+    no_result: number;
+    not_completed: number;
+    pending: number;
+};
+
+export type DeploymentListOutputBody = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
+    deployments: Array<WorkflowDeployment> | null;
+};
+
+export type DeploymentPreview = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
+    compatible_runtime_ids: Array<string> | null;
+    current_semantic_hash?: string;
+    current_version_id?: string;
+    required_handlers: Array<string> | null;
+    required_sources: Array<string> | null;
+    semantic_changed: boolean;
+    semantic_hash: string;
+    source_changed: boolean;
+    source_hash: string;
+    title: string;
+    warnings: Array<string> | null;
+    workflow: string;
+};
+
+export type DeploymentPreviewInputBody = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
+    source: string;
+};
+
+export type DeploymentRuntime = {
+    handlers: Array<string> | null;
+    id: string;
+    last_seen_at?: string;
+    publisher: string;
+    sources: Array<string> | null;
+};
+
+export type DeploymentSource = {
+    bound: boolean;
+    id: string;
+    publisher?: string;
 };
 
 export type DestinationDto = {
@@ -4914,6 +5001,24 @@ export type WorkflowCaseUsage = {
     used: number;
 };
 
+export type WorkflowDeployment = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
+    environment: string;
+    problems: Array<string> | null;
+    recent_results: DeploymentCounts;
+    required_sources: Array<DeploymentSource> | null;
+    runtime?: DeploymentRuntime;
+    semantic_hash: string;
+    status: 'ready' | 'degraded' | 'not_ready';
+    title: string;
+    updated_at: string;
+    version_id: string;
+    workflow: string;
+};
+
 export type WorkflowSetupGuide = {
     /**
      * A URL to the JSON Schema for this object.
@@ -5210,6 +5315,7 @@ export type ActivityConnectResultWritable = {
      */
     sentryDsnUnavailable?: string;
     warnings?: Array<string> | null;
+    workflowRuntime?: ActivityConnectWorkflowRuntime;
     workspaceId: string;
 };
 
@@ -5558,6 +5664,10 @@ export type ConnectInputBodyWritable = {
      */
     environment?: string;
     /**
+     * Action handler IDs owned by this runtime
+     */
+    handlers?: Array<string> | null;
+    /**
      * Separates keys for different processes of one app, e.g. web or worker. Defaults to default
      */
     purpose?: string;
@@ -5565,6 +5675,14 @@ export type ConnectInputBodyWritable = {
      * Revoke this environment and purpose's existing connect key and mint a new one
      */
     rotate?: boolean;
+    /**
+     * Evidence source IDs owned by this runtime
+     */
+    sources?: Array<string> | null;
+    /**
+     * Workflow ID when purpose is workflow_runtime
+     */
+    workflow?: string;
 };
 
 export type ConnectionsOutputBodyWritable = {
@@ -5838,6 +5956,35 @@ export type DeleteMonitorOutputBodyWritable = {
 
 export type DeleteOutputBodyWritable = {
     deleted: boolean;
+};
+
+export type DeploymentApplyInputBodyWritable = {
+    expected_active_version_id?: string;
+    runtime_id: string;
+    source: string;
+};
+
+export type DeploymentListOutputBodyWritable = {
+    deployments: Array<WorkflowDeploymentWritable> | null;
+};
+
+export type DeploymentPreviewWritable = {
+    compatible_runtime_ids: Array<string> | null;
+    current_semantic_hash?: string;
+    current_version_id?: string;
+    required_handlers: Array<string> | null;
+    required_sources: Array<string> | null;
+    semantic_changed: boolean;
+    semantic_hash: string;
+    source_changed: boolean;
+    source_hash: string;
+    title: string;
+    warnings: Array<string> | null;
+    workflow: string;
+};
+
+export type DeploymentPreviewInputBodyWritable = {
+    source: string;
 };
 
 export type DestinationDtoWritable = {
@@ -7133,6 +7280,20 @@ export type WebhookOutputBodyWritable = {
     deduped?: boolean;
     ok: boolean;
     skipped?: string;
+};
+
+export type WorkflowDeploymentWritable = {
+    environment: string;
+    problems: Array<string> | null;
+    recent_results: DeploymentCounts;
+    required_sources: Array<DeploymentSource> | null;
+    runtime?: DeploymentRuntime;
+    semantic_hash: string;
+    status: 'ready' | 'degraded' | 'not_ready';
+    title: string;
+    updated_at: string;
+    version_id: string;
+    workflow: string;
 };
 
 export type WorkflowSetupGuideWritable = {
@@ -16250,6 +16411,124 @@ export type WorkflowsPublishResponses = {
 };
 
 export type WorkflowsPublishResponse = WorkflowsPublishResponses[keyof WorkflowsPublishResponses];
+
+export type WorkflowsDeploymentsData = {
+    body?: never;
+    path: {
+        workspaceId: string;
+    };
+    query?: {
+        environment?: string;
+    };
+    url: '/workspaces/{workspaceId}/workflows/deployments';
+};
+
+export type WorkflowsDeploymentsErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type WorkflowsDeploymentsError = WorkflowsDeploymentsErrors[keyof WorkflowsDeploymentsErrors];
+
+export type WorkflowsDeploymentsResponses = {
+    /**
+     * OK
+     */
+    200: DeploymentListOutputBody;
+};
+
+export type WorkflowsDeploymentsResponse = WorkflowsDeploymentsResponses[keyof WorkflowsDeploymentsResponses];
+
+export type WorkflowsPreviewDeploymentData = {
+    body: DeploymentPreviewInputBodyWritable;
+    path: {
+        workspaceId: string;
+    };
+    query?: {
+        environment?: string;
+    };
+    url: '/workspaces/{workspaceId}/workflows/deployments/preview';
+};
+
+export type WorkflowsPreviewDeploymentErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type WorkflowsPreviewDeploymentError = WorkflowsPreviewDeploymentErrors[keyof WorkflowsPreviewDeploymentErrors];
+
+export type WorkflowsPreviewDeploymentResponses = {
+    /**
+     * OK
+     */
+    200: DeploymentPreview;
+};
+
+export type WorkflowsPreviewDeploymentResponse = WorkflowsPreviewDeploymentResponses[keyof WorkflowsPreviewDeploymentResponses];
+
+export type WorkflowsDeploymentData = {
+    body?: never;
+    path: {
+        workspaceId: string;
+        workflow: string;
+    };
+    query?: {
+        environment?: string;
+    };
+    url: '/workspaces/{workspaceId}/workflows/deployments/{workflow}';
+};
+
+export type WorkflowsDeploymentErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type WorkflowsDeploymentError = WorkflowsDeploymentErrors[keyof WorkflowsDeploymentErrors];
+
+export type WorkflowsDeploymentResponses = {
+    /**
+     * OK
+     */
+    200: WorkflowDeployment;
+};
+
+export type WorkflowsDeploymentResponse = WorkflowsDeploymentResponses[keyof WorkflowsDeploymentResponses];
+
+export type WorkflowsApplyDeploymentData = {
+    body: DeploymentApplyInputBodyWritable;
+    path: {
+        workspaceId: string;
+        workflow: string;
+    };
+    query?: {
+        environment?: string;
+    };
+    url: '/workspaces/{workspaceId}/workflows/deployments/{workflow}';
+};
+
+export type WorkflowsApplyDeploymentErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type WorkflowsApplyDeploymentError = WorkflowsApplyDeploymentErrors[keyof WorkflowsApplyDeploymentErrors];
+
+export type WorkflowsApplyDeploymentResponses = {
+    /**
+     * OK
+     */
+    200: WorkflowDeployment;
+};
+
+export type WorkflowsApplyDeploymentResponse = WorkflowsApplyDeploymentResponses[keyof WorkflowsApplyDeploymentResponses];
 
 export type WorkflowsDescribeData = {
     body?: never;

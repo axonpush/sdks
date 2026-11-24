@@ -1,6 +1,6 @@
 /** Zod authoring adapter. All contract validation and verdicts remain in Go. */
 import type { z } from "zod";
-import type { Contract, ActionSpec } from "./_internal/api/types.gen.js";
+import type { ActionSpec, Contract } from "./_internal/api/types.gen.js";
 import { serializeWorkflow } from "./_internal/workflow-provider.js";
 
 export type {

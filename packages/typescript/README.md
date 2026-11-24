@@ -1,16 +1,146 @@
 # @axonpush/sdk
 
-TypeScript SDK for [axonpush](https://axonpush.xyz), observability and event
-infrastructure for AI agent systems. ESM-only, runs on Node 20+ and Bun.
+[AxonPush](https://axonpush.xyz) verifies that automation providers delivered what
+they promised. Deploy a workflow contract per customer process, run the handlers
+that perform side effects, send the facts your systems observe, and inspect each
+case to see whether the promised outcome was confirmed. This is the TypeScript SDK.
+ESM-only, Node 20+ and Bun.
 
-- **Publish** events over a typed REST client generated from the axonpush
-  OpenAPI spec.
-- **Trace** multi-agent workflows via `traceId` / `parentEventId`.
-- **Integrate** with LangChain, LangGraph, LlamaIndex, OpenAI Agents,
-  Vercel AI SDK, Mastra, Google ADK, OpenTelemetry, Sentry, pino,
-  winston, console capture, BullMQ, and the Anthropic SDK.
+Zod and Effect Schema are optional ways to author contracts. Telemetry, agent
+operations, OpenTelemetry traces and framework integrations remain supported as
+diagnostics; see [Diagnostics](#diagnostics).
 
-## Workflow verification with Zod (development)
+## Install
+
+```bash
+npm install @axonpush/sdk
+# or
+bun add @axonpush/sdk
+```
+
+## Workflow runtime
+
+When a workflow declares actions, run a handler beside the system that performs
+them. `WorkflowRuntime` leases one command at a time, calls your `execute` or
+`lookup`, and reports a receipt.
+
+```ts
+import { WorkflowRuntime } from "@axonpush/sdk/workflow";
+
+const runtime = new WorkflowRuntime(
+  {
+    baseUrl: "https://api.axonpush.xyz",
+    workspace: workspaceId,
+    environment: "production",
+    apiKey: process.env.AXONPUSH_API_KEY!,
+    handler: "create_booking",
+  },
+  {
+    execute: async (action) => ({ booking_ref: await createBooking(action) }),
+    lookup: async (action) => {
+      const ref = await findBooking(action);
+      return ref ? { result: "found", observed: { booking_ref: ref } } : { result: "absent" };
+    },
+  },
+);
+
+const stop = new AbortController();
+process.on("SIGTERM", () => stop.abort());
+await runtime.run({ signal: stop.signal });
+```
+
+- Give each side effect a stable, idempotent identity so `lookup` can find it later.
+- If `execute` throws, the side effect may still have happened. The runtime
+  reports `ambiguous` and does not rerun it blindly; the next lease is a `lookup`.
+- `lookup` recovers the outcome as `found` (with what it observed), `absent` or
+  `unavailable`. A `lookup` that throws is reported as `unavailable`.
+- Publish facts and checkpoints only after the source transaction commits.
+- A `ready` deployment means the contract is configured. Evaluated cases are what
+  show whether outcomes happened.
+
+The runtime requires HTTPS (loopback HTTP is allowed for local development).
+Keep provider credentials in your app; the runtime does not send them to AxonPush.
+
+For local `validate`, `test` and `diff` without network calls, use `runWorkflow`
+from the same entrypoint. It runs a pinned platform binary: the
+`@axonpush/workflow-<platform>-<arch>` package when installed, or the executable
+named by `AXONPUSH_WORKFLOW_BINARY`. See
+[Offline compiler commands](#offline-compiler-commands).
+
+## Workflow quickstart
+
+The path from contract to evaluated case. `workspaceId` is your workspace UUID,
+`new AxonPush()` reads credentials from `AXONPUSH_*` env vars (see
+[Configuration](#configuration)), and the source is the contract text, such as the
+`workflow.source` produced by the Zod provider below.
+
+```ts
+import { readFile } from "node:fs/promises";
+import { AxonPush } from "@axonpush/sdk";
+
+const client = new AxonPush({ environment: "production" });
+const source = await readFile("booking.contract.json", "utf8");
+
+// 0. Optional: setup questions and the recommended tool sequence (read-only).
+const guide = await client.workflows.describe(workspaceId);
+
+// 1. Preview: compiles and diffs against what is live. Nothing is written.
+const preview = await client.workflows.previewDeployment(workspaceId, { source });
+console.log(preview?.required_sources, preview?.required_handlers, preview?.warnings);
+
+// 2. Apply: publish, activate and bind to a connected runtime in one atomic step.
+const deployment = await client.workflows.applyDeployment(workspaceId, preview!.workflow, {
+  source,
+  runtime_id: preview!.compatible_runtime_ids![0],
+  expected_active_version_id: preview!.current_version_id, // optimistic concurrency guard
+});
+console.log(deployment?.status, deployment?.problems); // "ready" | "degraded" | "not_ready"
+
+// 3. Send facts from a registered source. The receipt means stored, not verified.
+await client.workflows.facts(workspaceId, {
+  workflow: "appointment_booking",
+  input: {
+    case_id: "request-1",
+    facts: [{
+      id: "request-1:accepted",
+      event: "booking.accepted",
+      case_id: "request-1",
+      source: "booking_adapter",
+      occurred_at: new Date().toISOString(),
+      fields: { booking_request_id: "request-1", person_ref: "p_1",
+                starts_at: "2026-11-21T10:00:00Z", service_ref: "s_1" },
+    }],
+    coverage: null,
+  },
+});
+
+// 4. Inspect cases and outcomes.
+const { cases } = (await client.workflows.cases(workspaceId, { workflow: "appointment_booking" })) ?? {};
+for (const c of cases ?? []) {
+  for (const o of c.result.obligations ?? []) console.log(c.key, o.requirement, o.state, o.reason);
+}
+const live = await client.workflows.deployment(workspaceId, "appointment_booking");
+console.log(live?.recent_results); // { confirmed, not_completed, could_not_confirm, no_result, pending }
+```
+
+Useful next calls:
+
+| Need | Method |
+|---|---|
+| Inspect one case: pinned contract, evidence, verification | `workflows.case(workspaceId, caseKey)` |
+| Try evidence against a contract with an explicit clock, no state saved | `workflows.simulate` |
+| Preview a newer version against an existing case | `workflows.replay` |
+| Bind an evidence source to a publisher identity | `workflows.registerSource` / `workflows.sources` |
+| Record a human disposition on an obligation | `workflows.disposition` |
+| Review, propose or decide typed actions | `workflows.actions` / `proposeAction` / `decideAction` |
+| Close ingestion for a case (does not verify it) | `workflows.close` |
+
+## Authoring workflows
+
+Zod and Effect Schema are optional authoring providers. Both compile through the
+same pinned compiler as the server.
+
+### Zod provider (development)
 
 The `@axonpush/sdk/workflow/zod` entrypoint provides `defineZodWorkflow`,
 `compileZodWorkflow` and `verifyZodWorkflow`. Define fact schemas as strict Zod 4
@@ -35,7 +165,7 @@ For native parity tests, set the binary environment variable and run
 The parity test is skipped when the executable is not configured; schema rejection
 and source determinism tests always run.
 
-## Effect Schema provider (development)
+### Effect Schema provider (development)
 
 `@axonpush/sdk/workflow/effect` exports `defineEffectWorkflow`,
 `compileEffectWorkflow`, `verifyEffectWorkflow` and `WorkflowTimestamp`. Install
@@ -51,7 +181,79 @@ set `AXONPUSH_WORKFLOW_BINARY` to compiler `0.1.0`. For native parity tests, run
 `bunx vitest run src/__tests__/workflow-effect.test.ts` with that variable set.
 Native tests skip when no executable is configured; schema tests always run.
 
-## Agent operations
+### Offline compiler commands
+
+`@axonpush/sdk/workflow` exports `runWorkflow(args)`, a shell-free wrapper over the
+pinned compiler's `validate`, `generate`, `test`, `action-test` and `diff` commands,
+plus `resolveWorkflowBinary()`. It makes no network calls and refuses a compiler
+whose version is not `workflowCompilerVersion`.
+
+## Configuration
+
+| Field | Env var | Default | Notes |
+|---|---|---|---|
+| `apiKey` | `AXONPUSH_API_KEY` | - | Required. An `ak_` API key or a `pt_` public ingest token. |
+| `tenantId` | `AXONPUSH_TENANT_ID` | - | Org UUID; falls back to `AXONPUSH_ORG_ID`. |
+| `orgId` | `AXONPUSH_ORG_ID` | mirrors `tenantId` | |
+| `appId` | `AXONPUSH_APP_ID` | - | Default app for resources that need one. |
+| `baseUrl` | `AXONPUSH_BASE_URL` | `https://api.axonpush.xyz` | REST API root. |
+| `environment` | `AXONPUSH_ENVIRONMENT` | - | Logical env slug (`production`, `staging`). |
+| `timeout` | `AXONPUSH_TIMEOUT` | `30000` ms / `30` s | Total invocation budget, including retries and response reading. The option is milliseconds; the environment variable is seconds. |
+| `maxRetries` | `AXONPUSH_MAX_RETRIES` | `3` | Additional attempts for eligible reads and deduplicated event/observation writes. Other mutations run once. |
+| `failOpen` | `AXONPUSH_FAIL_OPEN` | `true` | Swallow `APIConnectionError` and resolve `null`, so telemetry cannot take your app down. |
+
+Caller-supplied options always win when defined. Because `failOpen` defaults to
+`true`, workflow reads can resolve `null` on a connection failure; check for it, or
+set `failOpen: false` on clients that deploy workflows or record decisions.
+
+### Authentication
+
+Two ingest credentials are supported, both passed via `apiKey` (or
+`AXONPUSH_API_KEY`):
+
+| Credential | Header | Prefix | Use |
+|---|---|---|---|
+| API key | `X-API-Key` | `ak_` | Server-side ingestion and management according to the key’s scopes. |
+| Public ingest token | `X-Public-Token` | `pt_` | Browser and untrusted clients. Publish-only, safe to ship in a frontend. |
+
+The SDK routes `ak_` values to `X-API-Key` and `pt_` values to
+`X-Public-Token` by prefix. Workflow deployment, facts and workers need an `ak_` key.
+
+## Errors
+
+```ts
+import {
+  AxonPushError,
+  AuthenticationError,
+  NotFoundError,
+  RateLimitError,
+  RetryableError,
+  ValidationError,
+} from "@axonpush/sdk";
+
+try {
+  await client.apps.get(id);
+} catch (err) {
+  if (err instanceof RateLimitError) {
+    await new Promise((r) => setTimeout(r, (err.retryAfter ?? 1) * 1000));
+  } else if (err instanceof AuthenticationError) {
+    rotateApiKey();
+  } else if (err instanceof RetryableError) {
+    // The transport budget was exhausted. Retry only an idempotent operation.
+  } else if (err instanceof NotFoundError || err instanceof ValidationError) {
+    throw err; // not retryable
+  }
+}
+```
+
+The p-retry transport uses jittered backoff with a 250ms base and 4s cap, respecting `Retry-After` within the invocation deadline. `RetryableError` classifies a transient failure; it does not make arbitrary mutations safe to repeat. Avoid nesting a second retry loop around the built-in policy. When retrying a publish in a later SDK call, preserve its original deduplication key or observation identity. Caller cancellation is never swallowed by `failOpen`. See [transport and queue behavior](../../docs/infrastructure-libraries.md).
+
+## Diagnostics
+
+Use these to debug the automation behind a workflow, or on their own. None of them
+is required to deploy or verify workflows.
+
+### Agent operations
 
 Each workspace declares its own data dictionary and entities (usually drafted by
 your coding agent over MCP). Your app then sends observations and profile traits.
@@ -87,30 +289,7 @@ The lower-level `workspaces`, `templates`, `observations` and `activity`
 resources cover drafts, revisions and activity queries. See the
 [shared operations contract](../../AGENT_OPERATIONS.md).
 
-
-## Install
-
-```bash
-npm install @axonpush/sdk
-# or
-bun add @axonpush/sdk
-```
-
-The framework integrations live behind optional peer deps. The package
-will load fine without any of them; install the host library you want to
-wire up:
-
-```bash
-npm install @langchain/core         # for AxonPushCallbackHandler
-npm install winston winston-transport
-npm install pino
-npm install @opentelemetry/api @opentelemetry/sdk-trace-base
-npm install @sentry/node
-npm install bullmq
-npm install @anthropic-ai/sdk
-```
-
-## Quickstart
+### Publishing events
 
 Run the fuller example in `examples/01-quickstart.ts`.
 
@@ -128,39 +307,21 @@ console.log("published event:", event);
 client.close();
 ```
 
-`new AxonPush()` resolves credentials from `AXONPUSH_*` env vars (see
-[Configuration](#configuration)). Pass an options bag to override.
+### Integrations
 
-## Configuration
+The framework integrations live behind optional peer deps. The package
+will load fine without any of them; install the host library you want to
+wire up:
 
-| Field | Env var | Default | Notes |
-|---|---|---|---|
-| `apiKey` | `AXONPUSH_API_KEY` | - | Required. An `ak_` API key or a `pt_` public ingest token. |
-| `tenantId` | `AXONPUSH_TENANT_ID` | - | Org UUID; falls back to `AXONPUSH_ORG_ID`. |
-| `orgId` | `AXONPUSH_ORG_ID` | mirrors `tenantId` | |
-| `appId` | `AXONPUSH_APP_ID` | - | Default app for resources that need one. |
-| `baseUrl` | `AXONPUSH_BASE_URL` | `https://api.axonpush.xyz` | REST API root. |
-| `environment` | `AXONPUSH_ENVIRONMENT` | - | Logical env slug (`production`, `staging`). |
-| `timeout` | `AXONPUSH_TIMEOUT` | `30000` ms / `30` s | Total invocation budget, including retries and response reading. The option is milliseconds; the environment variable is seconds. |
-| `maxRetries` | `AXONPUSH_MAX_RETRIES` | `3` | Additional attempts for eligible reads and deduplicated event/observation writes. Other mutations run once. |
-| `failOpen` | `AXONPUSH_FAIL_OPEN` | `true` | Swallow `APIConnectionError` and resolve `null`, so telemetry cannot take your app down. |
-
-Caller-supplied options always win when defined.
-
-### Authentication
-
-Two ingest credentials are supported, both passed via `apiKey` (or
-`AXONPUSH_API_KEY`):
-
-| Credential | Header | Prefix | Use |
-|---|---|---|---|
-| API key | `X-API-Key` | `ak_` | Server-side ingestion and management according to the key’s scopes. |
-| Public ingest token | `X-Public-Token` | `pt_` | Browser and untrusted clients. Publish-only, safe to ship in a frontend. |
-
-The SDK routes `ak_` values to `X-API-Key` and `pt_` values to
-`X-Public-Token` by prefix.
-
-## Integrations
+```bash
+npm install @langchain/core         # for AxonPushCallbackHandler
+npm install winston winston-transport
+npm install pino
+npm install @opentelemetry/api @opentelemetry/sdk-trace-base
+npm install @sentry/node
+npm install bullmq
+npm install @anthropic-ai/sdk
+```
 
 Every integration is reachable from the package root **and** as a
 sub-path import for tree-shaking:
@@ -197,36 +358,9 @@ Each integration accepts the same `IntegrationConfig`:
 
 `mode` is `"background"` (default), `"sync"`, or `"bullmq"`.
 
-## Errors
+See [declared framework task lifecycles](../../docs/framework-task-lifecycle.md) for opt-in root goals, failure boundaries and callback correlation.
 
-```ts
-import {
-  AxonPushError,
-  AuthenticationError,
-  NotFoundError,
-  RateLimitError,
-  RetryableError,
-  ValidationError,
-} from "@axonpush/sdk";
-
-try {
-  await client.apps.get(id);
-} catch (err) {
-  if (err instanceof RateLimitError) {
-    await new Promise((r) => setTimeout(r, (err.retryAfter ?? 1) * 1000));
-  } else if (err instanceof AuthenticationError) {
-    rotateApiKey();
-  } else if (err instanceof RetryableError) {
-    // The transport budget was exhausted. Retry only an idempotent operation.
-  } else if (err instanceof NotFoundError || err instanceof ValidationError) {
-    throw err; // not retryable
-  }
-}
-```
-
-The p-retry transport uses jittered backoff with a 250ms base and 4s cap, respecting `Retry-After` within the invocation deadline. `RetryableError` classifies a transient failure; it does not make arbitrary mutations safe to repeat. Avoid nesting a second retry loop around the built-in policy. When retrying a publish in a later SDK call, preserve its original deduplication key or observation identity. Caller cancellation is never swallowed by `failOpen`. See [transport and queue behavior](../../docs/infrastructure-libraries.md).
-
-## Tracing
+### Tracing
 
 ```ts
 import { getOrCreateTrace } from "@axonpush/sdk";
@@ -245,7 +379,7 @@ await client.events.publish({
 event, so the UI can stitch agent runs across services. Pass
 `parentEventId` to model hand-offs between agents.
 
-## OpenTelemetry-native telemetry
+### OpenTelemetry-native telemetry
 
 `@axonpush/sdk/telemetry` ships GenAI spans as real OTLP over HTTP to
 `${base}/v1/traces`, routed by the `X-Axonpush-Channel` header and authed
@@ -333,7 +467,7 @@ export const handler = flushAfterInvocation(handle, async (event) => {
 });
 ```
 
-### Which should I use
+#### Which should I use
 
 The OTel-native path above is the recommended way to send traces. The
 legacy per-framework event-model exporter
@@ -374,10 +508,11 @@ the rewrite.
 
 ## Examples
 
-Runnable examples covering quickstart, tracing, multi-agent fan-out,
-webhooks, error handling, and every framework integration live in
-[`examples/`](./examples). Each one is a single file you can run with
-`bun run examples/<name>.ts`.
+Runnable examples live in [`examples/`](./examples). Each one is a single file you
+can run with `bun run examples/<name>.ts`. Start with the workflow providers
+(`workflow-zod.ts`, `workflow-effect.ts`); the numbered files cover diagnostics:
+quickstart, tracing, multi-agent fan-out, webhooks, error handling, and the framework
+integrations.
 
 ## Advanced topics
 
@@ -394,5 +529,3 @@ MIT.
 Issues and PRs welcome at [github.com/axonpush/sdks](https://github.com/axonpush/sdks).
 Please run `bun run lint && bun run typecheck && bun run test` before
 sending a PR.
-
-See [declared framework task lifecycles](../../docs/framework-task-lifecycle.md) for opt-in root goals, failure boundaries and callback correlation.

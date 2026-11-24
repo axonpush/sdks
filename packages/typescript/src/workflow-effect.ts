@@ -1,7 +1,7 @@
 /** Effect Schema authoring only; the shared Go verifier decides outcomes. */
 import * as Schema from "effect/Schema";
 import type * as AST from "effect/SchemaAST";
-import type { Contract, ActionSpec } from "./_internal/api/types.gen.js";
+import type { ActionSpec, Contract } from "./_internal/api/types.gen.js";
 import { serializeWorkflow } from "./_internal/workflow-provider.js";
 
 export type {

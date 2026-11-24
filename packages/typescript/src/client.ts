@@ -27,8 +27,8 @@ import { TelemetryResource } from "./resources/telemetry.js";
 import { TemplatesResource } from "./resources/templates.js";
 import { TracesResource } from "./resources/traces.js";
 import { WebhooksResource } from "./resources/webhooks.js";
-import { WorkspacesResource } from "./resources/workspaces.js";
 import { WorkflowsResource } from "./resources/workflows.js";
+import { WorkspacesResource } from "./resources/workspaces.js";
 import { getOrCreateTrace, type TraceContext } from "./tracing.js";
 
 /**

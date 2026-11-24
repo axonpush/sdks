@@ -17,6 +17,10 @@ from axonpush._internal.api.models import (
     ClaimResponseBody,
     Definition,
     DefinitionListBody,
+    DeploymentApplyInputBody,
+    DeploymentListOutputBody,
+    DeploymentPreview,
+    DeploymentPreviewInputBody,
     DiffInputBody1,
     DiffOutputBody1,
     Disposition,
@@ -29,6 +33,7 @@ from axonpush._internal.api.models import (
     SourceInputBody,
     SourcesOutputBody,
     StatusOutputBody,
+    WorkflowDeployment,
     WorkflowSetupGuide,
 )
 
@@ -48,6 +53,12 @@ from axonpush._internal.api.api.workflows import workflows_replay as _replay_op
 from axonpush._internal.api.api.workflows import workflows_compile as _compile_op
 from axonpush._internal.api.api.workflows import workflows_definitions as _definitions_op
 from axonpush._internal.api.api.workflows import workflows_publish as _publish_op
+from axonpush._internal.api.api.workflows import workflows_deployments as _deployments_op
+from axonpush._internal.api.api.workflows import (
+    workflows_preview_deployment as _preview_deployment_op,
+)
+from axonpush._internal.api.api.workflows import workflows_deployment as _deployment_op
+from axonpush._internal.api.api.workflows import workflows_apply_deployment as _apply_deployment_op
 from axonpush._internal.api.api.workflows import workflows_describe as _describe_op
 from axonpush._internal.api.api.workflows import workflows_diff as _diff_op
 from axonpush._internal.api.api.workflows import workflows_facts as _facts_op
@@ -242,10 +253,61 @@ class Workflows:
             **{k: v for k, v in (params or {}).items() if v is not None},
         )
 
+    def deployments(
+        self, workspace_id: str, params: Mapping[str, Any] | None = None
+    ) -> DeploymentListOutputBody | None:
+        """List workflow deployments and integration readiness."""
+        return self._client._invoke(
+            _deployments_op,
+            workspace_id=workspace_id,
+            **{k: v for k, v in (params or {}).items() if v is not None},
+        )
+
+    def preview_deployment(
+        self,
+        workspace_id: str,
+        body: DeploymentPreviewInputBody,
+        params: Mapping[str, Any] | None = None,
+    ) -> DeploymentPreview | None:
+        """Compile and preview a workflow deployment without writing."""
+        return self._client._invoke(
+            _preview_deployment_op,
+            workspace_id=workspace_id,
+            body=body,
+            **{k: v for k, v in (params or {}).items() if v is not None},
+        )
+
+    def deployment(
+        self, workspace_id: str, workflow: str, params: Mapping[str, Any] | None = None
+    ) -> WorkflowDeployment | None:
+        """Read one workflow deployment and integration readiness."""
+        return self._client._invoke(
+            _deployment_op,
+            workspace_id=workspace_id,
+            workflow=workflow,
+            **{k: v for k, v in (params or {}).items() if v is not None},
+        )
+
+    def apply_deployment(
+        self,
+        workspace_id: str,
+        workflow: str,
+        body: DeploymentApplyInputBody,
+        params: Mapping[str, Any] | None = None,
+    ) -> WorkflowDeployment | None:
+        """Atomically publish, activate and bind a reviewed workflow deployment."""
+        return self._client._invoke(
+            _apply_deployment_op,
+            workspace_id=workspace_id,
+            workflow=workflow,
+            body=body,
+            **{k: v for k, v in (params or {}).items() if v is not None},
+        )
+
     def describe(
         self, workspace_id: str, params: Mapping[str, Any] | None = None
     ) -> WorkflowSetupGuide | None:
-        """Start here: guided workflow setup questions, exact tool sequence and a deterministic booking example; read-only."""
+        """Start here: workflow setup questions, the tool sequence from runtime connection to evaluated case, and a booking example; read-only."""
         return self._client._invoke(
             _describe_op,
             workspace_id=workspace_id,
@@ -506,10 +568,61 @@ class AsyncWorkflows:
             **{k: v for k, v in (params or {}).items() if v is not None},
         )
 
+    async def deployments(
+        self, workspace_id: str, params: Mapping[str, Any] | None = None
+    ) -> DeploymentListOutputBody | None:
+        """List workflow deployments and integration readiness."""
+        return await self._client._invoke(
+            _deployments_op,
+            workspace_id=workspace_id,
+            **{k: v for k, v in (params or {}).items() if v is not None},
+        )
+
+    async def preview_deployment(
+        self,
+        workspace_id: str,
+        body: DeploymentPreviewInputBody,
+        params: Mapping[str, Any] | None = None,
+    ) -> DeploymentPreview | None:
+        """Compile and preview a workflow deployment without writing."""
+        return await self._client._invoke(
+            _preview_deployment_op,
+            workspace_id=workspace_id,
+            body=body,
+            **{k: v for k, v in (params or {}).items() if v is not None},
+        )
+
+    async def deployment(
+        self, workspace_id: str, workflow: str, params: Mapping[str, Any] | None = None
+    ) -> WorkflowDeployment | None:
+        """Read one workflow deployment and integration readiness."""
+        return await self._client._invoke(
+            _deployment_op,
+            workspace_id=workspace_id,
+            workflow=workflow,
+            **{k: v for k, v in (params or {}).items() if v is not None},
+        )
+
+    async def apply_deployment(
+        self,
+        workspace_id: str,
+        workflow: str,
+        body: DeploymentApplyInputBody,
+        params: Mapping[str, Any] | None = None,
+    ) -> WorkflowDeployment | None:
+        """Atomically publish, activate and bind a reviewed workflow deployment."""
+        return await self._client._invoke(
+            _apply_deployment_op,
+            workspace_id=workspace_id,
+            workflow=workflow,
+            body=body,
+            **{k: v for k, v in (params or {}).items() if v is not None},
+        )
+
     async def describe(
         self, workspace_id: str, params: Mapping[str, Any] | None = None
     ) -> WorkflowSetupGuide | None:
-        """Start here: guided workflow setup questions, exact tool sequence and a deterministic booking example; read-only."""
+        """Start here: workflow setup questions, the tool sequence from runtime connection to evaluated case, and a booking example; read-only."""
         return await self._client._invoke(
             _describe_op,
             workspace_id=workspace_id,

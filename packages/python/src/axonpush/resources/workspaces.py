@@ -135,7 +135,7 @@ class Workspaces:
         )
 
     def connect(self, workspace_id: str, body: ConnectInputBody) -> ActivityConnectResult | None:
-        """Mint the application's publish key and return its env, OTLP, Sentry and SDK setup."""
+        """Connect a workflow runtime or application: mint its key and return env, OTLP, Sentry and SDK setup."""
         return self._client._invoke(_connect_op, workspace_id=workspace_id, body=body)
 
     def describe(self, workspace_id: str) -> ActivityDescription | None:
@@ -254,7 +254,7 @@ class AsyncWorkspaces:
     async def connect(
         self, workspace_id: str, body: ConnectInputBody
     ) -> ActivityConnectResult | None:
-        """Mint the application's publish key and return its env, OTLP, Sentry and SDK setup."""
+        """Connect a workflow runtime or application: mint its key and return env, OTLP, Sentry and SDK setup."""
         return await self._client._invoke(_connect_op, workspace_id=workspace_id, body=body)
 
     async def describe(self, workspace_id: str) -> ActivityDescription | None:

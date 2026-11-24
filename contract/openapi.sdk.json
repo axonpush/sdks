@@ -1312,6 +1312,9 @@
               "null"
             ]
           },
+          "workflowRuntime": {
+            "$ref": "#/components/schemas/ActivityConnectWorkflowRuntime"
+          },
           "workspaceId": {
             "type": "string"
           }
@@ -1342,6 +1345,42 @@
         "required": [
           "python",
           "typescript"
+        ],
+        "type": "object"
+      },
+      "ActivityConnectWorkflowRuntime": {
+        "additionalProperties": false,
+        "properties": {
+          "handlers": {
+            "items": {
+              "type": "string"
+            },
+            "type": [
+              "array",
+              "null"
+            ]
+          },
+          "id": {
+            "type": "string"
+          },
+          "sources": {
+            "items": {
+              "type": "string"
+            },
+            "type": [
+              "array",
+              "null"
+            ]
+          },
+          "workflow": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "workflow",
+          "sources",
+          "handlers"
         ],
         "type": "object"
       },
@@ -5103,6 +5142,17 @@
             "maxLength": 160,
             "type": "string"
           },
+          "handlers": {
+            "description": "Action handler IDs owned by this runtime",
+            "items": {
+              "type": "string"
+            },
+            "maxItems": 100,
+            "type": [
+              "array",
+              "null"
+            ]
+          },
           "purpose": {
             "description": "Separates keys for different processes of one app, e.g. web or worker. Defaults to default",
             "maxLength": 40,
@@ -5111,6 +5161,22 @@
           "rotate": {
             "description": "Revoke this environment and purpose's existing connect key and mint a new one",
             "type": "boolean"
+          },
+          "sources": {
+            "description": "Evidence source IDs owned by this runtime",
+            "items": {
+              "type": "string"
+            },
+            "maxItems": 100,
+            "type": [
+              "array",
+              "null"
+            ]
+          },
+          "workflow": {
+            "description": "Workflow ID when purpose is workflow_runtime",
+            "pattern": "^[a-z][a-z0-9_]{0,79}$",
+            "type": "string"
           }
         },
         "type": "object"
@@ -6417,6 +6483,266 @@
           "endpointId",
           "eventId",
           "createdAt"
+        ],
+        "type": "object"
+      },
+      "DeploymentApplyInputBody": {
+        "additionalProperties": false,
+        "properties": {
+          "$schema": {
+            "description": "A URL to the JSON Schema for this object.",
+            "examples": [
+              "https://example.com/schemas/DeploymentApplyInputBody.json"
+            ],
+            "format": "uri",
+            "readOnly": true,
+            "type": "string"
+          },
+          "expected_active_version_id": {
+            "maxLength": 64,
+            "type": "string"
+          },
+          "runtime_id": {
+            "maxLength": 80,
+            "minLength": 1,
+            "type": "string"
+          },
+          "source": {
+            "maxLength": 262144,
+            "type": "string"
+          }
+        },
+        "required": [
+          "source",
+          "runtime_id"
+        ],
+        "type": "object"
+      },
+      "DeploymentCounts": {
+        "additionalProperties": false,
+        "properties": {
+          "confirmed": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "could_not_confirm": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "no_result": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "not_completed": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "pending": {
+            "format": "int64",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "confirmed",
+          "not_completed",
+          "could_not_confirm",
+          "pending",
+          "no_result"
+        ],
+        "type": "object"
+      },
+      "DeploymentListOutputBody": {
+        "additionalProperties": false,
+        "properties": {
+          "$schema": {
+            "description": "A URL to the JSON Schema for this object.",
+            "examples": [
+              "https://example.com/schemas/DeploymentListOutputBody.json"
+            ],
+            "format": "uri",
+            "readOnly": true,
+            "type": "string"
+          },
+          "deployments": {
+            "items": {
+              "$ref": "#/components/schemas/WorkflowDeployment"
+            },
+            "type": [
+              "array",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "deployments"
+        ],
+        "type": "object"
+      },
+      "DeploymentPreview": {
+        "additionalProperties": false,
+        "properties": {
+          "$schema": {
+            "description": "A URL to the JSON Schema for this object.",
+            "examples": [
+              "https://example.com/schemas/DeploymentPreview.json"
+            ],
+            "format": "uri",
+            "readOnly": true,
+            "type": "string"
+          },
+          "compatible_runtime_ids": {
+            "items": {
+              "type": "string"
+            },
+            "type": [
+              "array",
+              "null"
+            ]
+          },
+          "current_semantic_hash": {
+            "type": "string"
+          },
+          "current_version_id": {
+            "type": "string"
+          },
+          "required_handlers": {
+            "items": {
+              "type": "string"
+            },
+            "type": [
+              "array",
+              "null"
+            ]
+          },
+          "required_sources": {
+            "items": {
+              "type": "string"
+            },
+            "type": [
+              "array",
+              "null"
+            ]
+          },
+          "semantic_changed": {
+            "type": "boolean"
+          },
+          "semantic_hash": {
+            "type": "string"
+          },
+          "source_changed": {
+            "type": "boolean"
+          },
+          "source_hash": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "warnings": {
+            "items": {
+              "type": "string"
+            },
+            "type": [
+              "array",
+              "null"
+            ]
+          },
+          "workflow": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "workflow",
+          "title",
+          "source_hash",
+          "semantic_hash",
+          "semantic_changed",
+          "source_changed",
+          "required_sources",
+          "required_handlers",
+          "compatible_runtime_ids",
+          "warnings"
+        ],
+        "type": "object"
+      },
+      "DeploymentPreviewInputBody": {
+        "additionalProperties": false,
+        "properties": {
+          "$schema": {
+            "description": "A URL to the JSON Schema for this object.",
+            "examples": [
+              "https://example.com/schemas/DeploymentPreviewInputBody.json"
+            ],
+            "format": "uri",
+            "readOnly": true,
+            "type": "string"
+          },
+          "source": {
+            "maxLength": 262144,
+            "type": "string"
+          }
+        },
+        "required": [
+          "source"
+        ],
+        "type": "object"
+      },
+      "DeploymentRuntime": {
+        "additionalProperties": false,
+        "properties": {
+          "handlers": {
+            "items": {
+              "type": "string"
+            },
+            "type": [
+              "array",
+              "null"
+            ]
+          },
+          "id": {
+            "type": "string"
+          },
+          "last_seen_at": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "publisher": {
+            "type": "string"
+          },
+          "sources": {
+            "items": {
+              "type": "string"
+            },
+            "type": [
+              "array",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "publisher",
+          "sources",
+          "handlers"
+        ],
+        "type": "object"
+      },
+      "DeploymentSource": {
+        "additionalProperties": false,
+        "properties": {
+          "bound": {
+            "type": "boolean"
+          },
+          "id": {
+            "type": "string"
+          },
+          "publisher": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "bound"
         ],
         "type": "object"
       },
@@ -14757,6 +15083,84 @@
           "remaining",
           "enforced",
           "resetsAt"
+        ],
+        "type": "object"
+      },
+      "WorkflowDeployment": {
+        "additionalProperties": false,
+        "properties": {
+          "$schema": {
+            "description": "A URL to the JSON Schema for this object.",
+            "examples": [
+              "https://example.com/schemas/WorkflowDeployment.json"
+            ],
+            "format": "uri",
+            "readOnly": true,
+            "type": "string"
+          },
+          "environment": {
+            "type": "string"
+          },
+          "problems": {
+            "items": {
+              "type": "string"
+            },
+            "type": [
+              "array",
+              "null"
+            ]
+          },
+          "recent_results": {
+            "$ref": "#/components/schemas/DeploymentCounts"
+          },
+          "required_sources": {
+            "items": {
+              "$ref": "#/components/schemas/DeploymentSource"
+            },
+            "type": [
+              "array",
+              "null"
+            ]
+          },
+          "runtime": {
+            "$ref": "#/components/schemas/DeploymentRuntime"
+          },
+          "semantic_hash": {
+            "type": "string"
+          },
+          "status": {
+            "enum": [
+              "ready",
+              "degraded",
+              "not_ready"
+            ],
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "updated_at": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "version_id": {
+            "type": "string"
+          },
+          "workflow": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "workflow",
+          "environment",
+          "version_id",
+          "semantic_hash",
+          "title",
+          "required_sources",
+          "status",
+          "problems",
+          "recent_results",
+          "updated_at"
         ],
         "type": "object"
       },
@@ -32935,7 +33339,7 @@
     },
     "/workspaces/{workspaceId}/connect": {
       "post": {
-        "description": "Get everything the application needs to send data to this workspace, so nobody copies keys from the dashboard.\n\nChoose the intended workspace, explicit environment and purpose first. An activity draft is not required for workflow verification. It mints a key that can only publish (events:publish), bound to this workspace's application and one environment, with the API URL, OTLP settings, a Sentry DSN when available, an env map and SDK snippets.\n\nWhen an agent calls it, the key and DSN are never returned: the result carries claim, a one-time link (valid 30 minutes) the signed-in user opens in the dashboard to reveal them, and the secret env values are placeholders. Ask the user to open the link and put the key into the app's git-ignored env file as AXONPUSH_API_KEY (and SENTRY_DSN if shown).\n\nFor delegated calls, let the signed-in user open the claim link and save secrets in the app's git-ignored local environment file. Do not overwrite a working configuration with placeholder secret values, bypass the claim step, or expose credentials in chat or commits. Nonsecret settings can be merged using the project's existing convention.\n\nFor workflow verification, follow workflows_describe, bind the evidence source to publisher key:\u003cpublishKey.id\u003e from this connection, implement reliable post-commit fact publication and inspect an evaluated case. This connection is not proof of evidence coverage or verified completion.\n\nFor optional business observability, add SDK observe/identify calls and reuse existing logging, OpenTelemetry or Sentry integrations so exceptions retain their original traceback and source locations. Reuse the existing provider/capture policy, correlate trace/span ids where available, and verify a controlled exception locally. Do not create synthetic production errors.\n\nCalling it again for the same environment and purpose does not mint another key: it returns the existing key's metadata without the secret. If the secret was lost, explain that rotate: true revokes the old key, and rotate only when the user intends that replacement.",
+        "description": "Give an application the key and settings it needs for this workspace, so nobody copies keys from the dashboard.\n\nChoose the workspace, an explicit environment and a purpose first. The call mints one key bound to this workspace's application and that environment, and returns the API URL, an env map, OTLP settings, a Sentry DSN when available and SDK snippets.\n\nWorkflow runtime (recommended for workflows): set purpose to workflow_runtime with workflow, every evidence source the runtime publishes and every action handler it runs. The key gets events:publish, plus workflows:execute when there are handlers, and the result includes workflowRuntime.id (also AXONPUSH_WORKFLOW_RUNTIME_ID in env). Next, run workflows_previewDeployment and, once the user approves, workflows_applyDeployment with that runtime ID; this binds the sources to this key. Follow workflows_describe for the full path. A connected runtime and a ready deployment are configuration only. Outcomes come from evaluated cases, which need facts published after the source write commits, explicit reconciliation coverage and, for actions, a record lookup after every execution. If sources or handlers change, reconnect with rotate: true.\n\nSecrets: when an agent calls this tool, the key and DSN are never returned. The result has claim, a one-time link (valid 30 minutes) the signed-in user opens in the dashboard, and secret env values are placeholders. Ask the user to open it and save the key in the app's git-ignored env file as AXONPUSH_API_KEY (and SENTRY_DSN if shown). Do not overwrite a working configuration with placeholders, skip the claim step, or put credentials in chat or commits. Non-secret settings can be merged using the project's existing convention.\n\nOther purposes (default, web, worker and so on) mint a publish-only key (events:publish) for diagnostics. They do not need a workflow. To add business observability, use SDK observe/identify calls and reuse existing logging, OpenTelemetry or Sentry setup so exceptions keep their original traceback and source locations. Keep the existing capture policy, correlate trace/span IDs where available, and test with a controlled local exception. Do not create synthetic production errors.\n\nCalling again with the same environment and purpose returns the existing key's metadata without the secret; it does not mint another key. If the secret was lost, explain that rotate: true revokes the old key, and rotate only when the user wants that.",
         "operationId": "workspaces.connect",
         "parameters": [
           {
@@ -32979,7 +33383,7 @@
             "description": "Error"
           }
         },
-        "summary": "Mint the application's publish key and return its env, OTLP, Sentry and SDK setup",
+        "summary": "Connect a workflow runtime or application: mint its key and return env, OTLP, Sentry and SDK setup",
         "tags": [
           "workspaces"
         ],
@@ -33000,7 +33404,7 @@
     },
     "/workspaces/{workspaceId}/describe": {
       "get": {
-        "description": "Use this for optional business observability: entities, profiles, activity views and existing Nova integrations. For workflow requirements and outcome verification, start with workflows_describe in an explicit environment; that definition activation is separate from this workspace draft.\n\naxonpush adapts per installation. A workspace spec declares, as data, what this application stores:\n- attributes: the data dictionary. Every attribute key the app may send, with a type, an optional role and a personal flag. Undeclared keys are dropped at ingest and counted.\n- entities: the things being tracked (for example agent, ticket, order). Each lists the attribute keys it stores (fields), the keys identify() may set (profile), terminal states, and the events that update it.\n- funnels, views and alerts: what the dashboard shows and what pages people.\n\nTo change the spec, never rewrite it blindly: read the shared draft (workspaces.draft), send typed edits with workspaces.applyDraftOps using the draft's version, check workspaces.draftChanges, and ask the user to review before workspaces.activateDraft. Use workspaces.catalog to see which events and attributes the app really sends.\n\nSETTING UP OPTIONAL BUSINESS OBSERVABILITY (workflow verification has a separate guide):\n1. Call workspaces_describe (this tool) and read the codebase to find what is worth tracking.\n2. Draft the data dictionary, entities and events with workspaces_draft and workspaces_applyDraftOps; explain any personal attributes to the user first.\n3. Ask the user to review and activate the draft in the dashboard, or call workspaces_activateDraft if they approve in the chat.\n4. Call workspaces_connect with an explicit environment. A delegated agent receives a claim link, not raw secrets: the signed-in user opens it and saves secrets in the application's git-ignored env file. Never expose credentials, overwrite working values with placeholders or rotate a key without instruction.\n5. Add the SDK observe calls where the events happen and identify calls for profile attributes, reading the env written in the previous step.\n6. Wire the application's existing logging, OpenTelemetry or Sentry error integration (or its supported SDK adapter) so exceptions retain their original traceback and source locations. Correlate technical events and business observations with trace/span ids where available; do not put raw exceptions in business attributes.\n7. Send one test event from the app and confirm it appears in workspaces_catalog.\n8. Verify exception capture with a controlled failure locally or in a test environment, and confirm the traceback and file/line locations reach the error detail. Explain missing capture instead of claiming success. Do not create synthetic production errors.\n\nThe response contains a plain-language summary of this workspace, the setup steps, the full format reference, the role list and the op catalogue with examples.",
+        "description": "Use this for optional business observability: entities, profiles and activity views. For workflow requirements and outcome verification, start with workflows_describe in an explicit environment; that definition activation is separate from this workspace draft.\n\naxonpush adapts per installation. A workspace spec declares, as data, what this application stores:\n- attributes: the data dictionary. Every attribute key the app may send, with a type, an optional role and a personal flag. Undeclared keys are dropped at ingest and counted.\n- entities: the things being tracked (for example agent, ticket, order). Each lists the attribute keys it stores (fields), the keys identify() may set (profile), terminal states, and the events that update it.\n- funnels, views and alerts: what the dashboard shows and what pages people.\n\nTo change the spec, never rewrite it blindly: read the shared draft (workspaces.draft), send typed edits with workspaces.applyDraftOps using the draft's version, check workspaces.draftChanges, and ask the user to review before workspaces.activateDraft. Use workspaces.catalog to see which events and attributes the app really sends.\n\nSETTING UP OPTIONAL BUSINESS OBSERVABILITY (workflow verification has a separate guide):\n1. Call workspaces_describe (this tool) and read the codebase to find what is worth tracking.\n2. Draft the data dictionary, entities and events with workspaces_draft and workspaces_applyDraftOps; explain any personal attributes to the user first.\n3. Ask the user to review and activate the draft in the dashboard, or call workspaces_activateDraft if they approve in the chat.\n4. Call workspaces_connect with an explicit environment. A delegated agent receives a claim link, not raw secrets: the signed-in user opens it and saves secrets in the application's git-ignored env file. Never expose credentials, overwrite working values with placeholders or rotate a key without instruction.\n5. Add the SDK observe calls where the events happen and identify calls for profile attributes, reading the env written in the previous step.\n6. Wire the application's existing logging, OpenTelemetry or Sentry error integration (or its supported SDK adapter) so exceptions retain their original traceback and source locations. Correlate technical events and business observations with trace/span ids where available; do not put raw exceptions in business attributes.\n7. Send one test event from the app and confirm it appears in workspaces_catalog.\n8. Verify exception capture with a controlled failure locally or in a test environment, and confirm the traceback and file/line locations reach the error detail. Explain missing capture instead of claiming success. Do not create synthetic production errors.\n\nThe response contains a plain-language summary of this workspace, the setup steps, the full format reference, the role list and the op catalogue with examples.",
         "operationId": "workspaces.describe",
         "parameters": [
           {
@@ -36181,9 +36585,297 @@
         "x-axonpush-sdk": true
       }
     },
+    "/workspaces/{workspaceId}/workflows/deployments": {
+      "get": {
+        "operationId": "workflows.deployments",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "workspaceId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "explode": false,
+            "in": "query",
+            "name": "environment",
+            "schema": {
+              "maxLength": 160,
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeploymentListOutputBody"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "summary": "List workflow deployments and integration readiness",
+        "tags": [
+          "workflows"
+        ],
+        "x-axonpush-effect": "read",
+        "x-axonpush-mcp": true,
+        "x-axonpush-policy": {
+          "category": "org-read",
+          "grants": "reject-scoped",
+          "scopes": [
+            "observe:read"
+          ]
+        },
+        "x-axonpush-scopes": [
+          "observe:read"
+        ],
+        "x-axonpush-sdk": true
+      }
+    },
+    "/workspaces/{workspaceId}/workflows/deployments/preview": {
+      "post": {
+        "operationId": "workflows.previewDeployment",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "workspaceId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "explode": false,
+            "in": "query",
+            "name": "environment",
+            "schema": {
+              "maxLength": 160,
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DeploymentPreviewInputBody"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeploymentPreview"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "summary": "Compile and preview a workflow deployment without writing",
+        "tags": [
+          "workflows"
+        ],
+        "x-axonpush-effect": "read",
+        "x-axonpush-mcp": true,
+        "x-axonpush-policy": {
+          "category": "org-config",
+          "grants": "reject-scoped",
+          "scopes": [
+            "workspaces:manage"
+          ]
+        },
+        "x-axonpush-scopes": [
+          "workspaces:manage"
+        ],
+        "x-axonpush-sdk": true
+      }
+    },
+    "/workspaces/{workspaceId}/workflows/deployments/{workflow}": {
+      "get": {
+        "operationId": "workflows.deployment",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "workspaceId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "explode": false,
+            "in": "query",
+            "name": "environment",
+            "schema": {
+              "maxLength": 160,
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "workflow",
+            "required": true,
+            "schema": {
+              "pattern": "^[a-z][a-z0-9_]{0,79}$",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WorkflowDeployment"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "summary": "Read one workflow deployment and integration readiness",
+        "tags": [
+          "workflows"
+        ],
+        "x-axonpush-effect": "read",
+        "x-axonpush-mcp": true,
+        "x-axonpush-policy": {
+          "category": "org-read",
+          "grants": "reject-scoped",
+          "scopes": [
+            "observe:read"
+          ]
+        },
+        "x-axonpush-scopes": [
+          "observe:read"
+        ],
+        "x-axonpush-sdk": true
+      },
+      "put": {
+        "operationId": "workflows.applyDeployment",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "workspaceId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "explode": false,
+            "in": "query",
+            "name": "environment",
+            "schema": {
+              "maxLength": 160,
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "workflow",
+            "required": true,
+            "schema": {
+              "pattern": "^[a-z][a-z0-9_]{0,79}$",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DeploymentApplyInputBody"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WorkflowDeployment"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "summary": "Atomically publish, activate and bind a reviewed workflow deployment",
+        "tags": [
+          "workflows"
+        ],
+        "x-axonpush-effect": "write",
+        "x-axonpush-mcp": true,
+        "x-axonpush-policy": {
+          "category": "org-config",
+          "grants": "reject-scoped",
+          "scopes": [
+            "workspaces:manage"
+          ]
+        },
+        "x-axonpush-scopes": [
+          "workspaces:manage"
+        ],
+        "x-axonpush-sdk": true
+      }
+    },
     "/workspaces/{workspaceId}/workflows/describe": {
       "get": {
-        "description": "Choose the workspace and an explicit environment first. Read this guide before generating hooks or configuring a workflow. Ask the user only what the repository cannot answer. Follow its setup steps without changing existing business observability.",
+        "description": "Choose the workspace and an explicit environment first. Read this guide before generating hooks, connecting a runtime or deploying a workflow. Ask the user only what the repository cannot answer. Following it does not change existing observability.",
         "operationId": "workflows.describe",
         "parameters": [
           {
@@ -36226,7 +36918,7 @@
             "description": "Error"
           }
         },
-        "summary": "Start here: guided workflow setup questions, exact tool sequence and a deterministic booking example; read-only",
+        "summary": "Start here: workflow setup questions, the tool sequence from runtime connection to evaluated case, and a booking example; read-only",
         "tags": [
           "workflows"
         ],

@@ -4,6 +4,7 @@ import {
   workflowsActions,
   workflowsActivate,
   workflowsActivation,
+  workflowsApplyDeployment,
   workflowsCase,
   workflowsCases,
   workflowsClaimAction,
@@ -11,10 +12,13 @@ import {
   workflowsCompile,
   workflowsDecideAction,
   workflowsDefinitions,
+  workflowsDeployment,
+  workflowsDeployments,
   workflowsDescribe,
   workflowsDiff,
   workflowsDisposition,
   workflowsFacts,
+  workflowsPreviewDeployment,
   workflowsProposeAction,
   workflowsPublish,
   workflowsRegisterSource,
@@ -36,6 +40,10 @@ import type {
   ClaimResponseBody,
   Definition,
   DefinitionListBody,
+  DeploymentApplyInputBody,
+  DeploymentListOutputBody,
+  DeploymentPreview,
+  DeploymentPreviewInputBody,
   DiffInputBody1,
   DiffOutputBody1,
   Disposition,
@@ -48,11 +56,13 @@ import type {
   SourceInputBody,
   SourcesOutputBody,
   StatusOutputBody,
+  WorkflowDeployment,
   WorkflowSetupGuide,
   WorkflowsActionReceiptData,
   WorkflowsActionsData,
   WorkflowsActivateData,
   WorkflowsActivationData,
+  WorkflowsApplyDeploymentData,
   WorkflowsCaseData,
   WorkflowsCasesData,
   WorkflowsClaimActionData,
@@ -60,10 +70,13 @@ import type {
   WorkflowsCompileData,
   WorkflowsDecideActionData,
   WorkflowsDefinitionsData,
+  WorkflowsDeploymentData,
+  WorkflowsDeploymentsData,
   WorkflowsDescribeData,
   WorkflowsDiffData,
   WorkflowsDispositionData,
   WorkflowsFactsData,
+  WorkflowsPreviewDeploymentData,
   WorkflowsProposeActionData,
   WorkflowsPublishData,
   WorkflowsRegisterSourceData,
@@ -222,7 +235,47 @@ export class WorkflowsResource {
     return this.client.invoke(workflowsPublish, { path: { workspaceId }, body, query });
   }
 
-  /** Start here: guided workflow setup questions, exact tool sequence and a deterministic booking example; read-only. `GET /workspaces/{workspaceId}/workflows/describe` */
+  /** List workflow deployments and integration readiness. `GET /workspaces/{workspaceId}/workflows/deployments` */
+  async deployments(
+    workspaceId: string,
+    query: WorkflowsDeploymentsData["query"] = {},
+  ): Promise<DeploymentListOutputBody | null> {
+    return this.client.invoke(workflowsDeployments, { path: { workspaceId }, query });
+  }
+
+  /** Compile and preview a workflow deployment without writing. `POST /workspaces/{workspaceId}/workflows/deployments/preview` */
+  async previewDeployment(
+    workspaceId: string,
+    body: DeploymentPreviewInputBody,
+    query: WorkflowsPreviewDeploymentData["query"] = {},
+  ): Promise<DeploymentPreview | null> {
+    return this.client.invoke(workflowsPreviewDeployment, { path: { workspaceId }, body, query });
+  }
+
+  /** Read one workflow deployment and integration readiness. `GET /workspaces/{workspaceId}/workflows/deployments/{workflow}` */
+  async deployment(
+    workspaceId: string,
+    workflow: string,
+    query: WorkflowsDeploymentData["query"] = {},
+  ): Promise<WorkflowDeployment | null> {
+    return this.client.invoke(workflowsDeployment, { path: { workspaceId, workflow }, query });
+  }
+
+  /** Atomically publish, activate and bind a reviewed workflow deployment. `PUT /workspaces/{workspaceId}/workflows/deployments/{workflow}` */
+  async applyDeployment(
+    workspaceId: string,
+    workflow: string,
+    body: DeploymentApplyInputBody,
+    query: WorkflowsApplyDeploymentData["query"] = {},
+  ): Promise<WorkflowDeployment | null> {
+    return this.client.invoke(workflowsApplyDeployment, {
+      path: { workspaceId, workflow },
+      body,
+      query,
+    });
+  }
+
+  /** Start here: workflow setup questions, the tool sequence from runtime connection to evaluated case, and a booking example; read-only. `GET /workspaces/{workspaceId}/workflows/describe` */
   async describe(
     workspaceId: string,
     query: WorkflowsDescribeData["query"] = {},

@@ -400,6 +400,8 @@ public sealed record ActivityConnectResult
     public string? SentryDsnUnavailable { get; init; }
     [JsonPropertyName("warnings")]
     public IReadOnlyList<string>? Warnings { get; init; }
+    [JsonPropertyName("workflowRuntime")]
+    public ActivityConnectWorkflowRuntime? WorkflowRuntime { get; init; }
     [JsonPropertyName("workspaceId")]
     public string WorkspaceId { get; init; } = default!;
 }
@@ -410,6 +412,18 @@ public sealed record ActivityConnectSDK
     public string Python { get; init; } = default!;
     [JsonPropertyName("typescript")]
     public string Typescript { get; init; } = default!;
+}
+
+public sealed record ActivityConnectWorkflowRuntime
+{
+    [JsonPropertyName("handlers")]
+    public IReadOnlyList<string>? Handlers { get; init; } = default!;
+    [JsonPropertyName("id")]
+    public string Id { get; init; } = default!;
+    [JsonPropertyName("sources")]
+    public IReadOnlyList<string>? Sources { get; init; } = default!;
+    [JsonPropertyName("workflow")]
+    public string Workflow { get; init; } = default!;
 }
 
 public sealed record ActivityDescription
@@ -1592,10 +1606,16 @@ public sealed record ConnectInputBody
 {
     [JsonPropertyName("environment")]
     public string? Environment { get; init; }
+    [JsonPropertyName("handlers")]
+    public IReadOnlyList<string>? Handlers { get; init; }
     [JsonPropertyName("purpose")]
     public string? Purpose { get; init; }
     [JsonPropertyName("rotate")]
     public bool? Rotate { get; init; }
+    [JsonPropertyName("sources")]
+    public IReadOnlyList<string>? Sources { get; init; }
+    [JsonPropertyName("workflow")]
+    public string? Workflow { get; init; }
 }
 
 public sealed record Contract
@@ -1690,6 +1710,94 @@ public sealed record DefinitionListBody
 {
     [JsonPropertyName("definitions")]
     public IReadOnlyList<Definition>? Definitions { get; init; } = default!;
+}
+
+public sealed record DeploymentApplyInputBody
+{
+    [JsonPropertyName("expected_active_version_id")]
+    public string? ExpectedActiveVersionId { get; init; }
+    [JsonPropertyName("runtime_id")]
+    public string RuntimeId { get; init; } = default!;
+    [JsonPropertyName("source")]
+    public string Source { get; init; } = default!;
+}
+
+public sealed record DeploymentCounts
+{
+    [JsonPropertyName("confirmed")]
+    public long Confirmed { get; init; }
+    [JsonPropertyName("could_not_confirm")]
+    public long CouldNotConfirm { get; init; }
+    [JsonPropertyName("no_result")]
+    public long NoResult { get; init; }
+    [JsonPropertyName("not_completed")]
+    public long NotCompleted { get; init; }
+    [JsonPropertyName("pending")]
+    public long Pending { get; init; }
+}
+
+public sealed record DeploymentListOutputBody
+{
+    [JsonPropertyName("deployments")]
+    public IReadOnlyList<WorkflowDeployment>? Deployments { get; init; } = default!;
+}
+
+public sealed record DeploymentPreview
+{
+    [JsonPropertyName("compatible_runtime_ids")]
+    public IReadOnlyList<string>? CompatibleRuntimeIds { get; init; } = default!;
+    [JsonPropertyName("current_semantic_hash")]
+    public string? CurrentSemanticHash { get; init; }
+    [JsonPropertyName("current_version_id")]
+    public string? CurrentVersionId { get; init; }
+    [JsonPropertyName("required_handlers")]
+    public IReadOnlyList<string>? RequiredHandlers { get; init; } = default!;
+    [JsonPropertyName("required_sources")]
+    public IReadOnlyList<string>? RequiredSources { get; init; } = default!;
+    [JsonPropertyName("semantic_changed")]
+    public bool SemanticChanged { get; init; }
+    [JsonPropertyName("semantic_hash")]
+    public string SemanticHash { get; init; } = default!;
+    [JsonPropertyName("source_changed")]
+    public bool SourceChanged { get; init; }
+    [JsonPropertyName("source_hash")]
+    public string SourceHash { get; init; } = default!;
+    [JsonPropertyName("title")]
+    public string Title { get; init; } = default!;
+    [JsonPropertyName("warnings")]
+    public IReadOnlyList<string>? Warnings { get; init; } = default!;
+    [JsonPropertyName("workflow")]
+    public string Workflow { get; init; } = default!;
+}
+
+public sealed record DeploymentPreviewInputBody
+{
+    [JsonPropertyName("source")]
+    public string Source { get; init; } = default!;
+}
+
+public sealed record DeploymentRuntime
+{
+    [JsonPropertyName("handlers")]
+    public IReadOnlyList<string>? Handlers { get; init; } = default!;
+    [JsonPropertyName("id")]
+    public string Id { get; init; } = default!;
+    [JsonPropertyName("last_seen_at")]
+    public DateTimeOffset? LastSeenAt { get; init; }
+    [JsonPropertyName("publisher")]
+    public string Publisher { get; init; } = default!;
+    [JsonPropertyName("sources")]
+    public IReadOnlyList<string>? Sources { get; init; } = default!;
+}
+
+public sealed record DeploymentSource
+{
+    [JsonPropertyName("bound")]
+    public bool Bound { get; init; }
+    [JsonPropertyName("id")]
+    public string Id { get; init; } = default!;
+    [JsonPropertyName("publisher")]
+    public string? Publisher { get; init; }
 }
 
 public sealed record DiffInputBody1
@@ -2822,6 +2930,32 @@ public sealed record ViewsOutputBody
 {
     [JsonPropertyName("views")]
     public IReadOnlyList<ActivityViewResult>? Views { get; init; } = default!;
+}
+
+public sealed record WorkflowDeployment
+{
+    [JsonPropertyName("environment")]
+    public string Environment { get; init; } = default!;
+    [JsonPropertyName("problems")]
+    public IReadOnlyList<string>? Problems { get; init; } = default!;
+    [JsonPropertyName("recent_results")]
+    public DeploymentCounts RecentResults { get; init; } = default!;
+    [JsonPropertyName("required_sources")]
+    public IReadOnlyList<DeploymentSource>? RequiredSources { get; init; } = default!;
+    [JsonPropertyName("runtime")]
+    public DeploymentRuntime? Runtime { get; init; }
+    [JsonPropertyName("semantic_hash")]
+    public string SemanticHash { get; init; } = default!;
+    [JsonPropertyName("status")]
+    public string Status { get; init; } = default!;
+    [JsonPropertyName("title")]
+    public string Title { get; init; } = default!;
+    [JsonPropertyName("updated_at")]
+    public DateTimeOffset UpdatedAt { get; init; }
+    [JsonPropertyName("version_id")]
+    public string VersionId { get; init; } = default!;
+    [JsonPropertyName("workflow")]
+    public string Workflow { get; init; } = default!;
 }
 
 public sealed record WorkflowSetupGuide

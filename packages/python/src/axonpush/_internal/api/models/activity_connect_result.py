@@ -13,6 +13,9 @@ if TYPE_CHECKING:
     from ..models.activity_connect_otlp import ActivityConnectOTLP
     from ..models.activity_connect_result_env import ActivityConnectResultEnv
     from ..models.activity_connect_sdk import ActivityConnectSDK
+    from ..models.activity_connect_workflow_runtime import (
+        ActivityConnectWorkflowRuntime,
+    )
     from ..models.link import Link
 
 
@@ -40,6 +43,7 @@ class ActivityConnectResult:
         sentry_dsn (str | Unset): Sentry SDK DSN; present only when this call minted it
         sentry_dsn_unavailable (str | Unset): Why sentryDsn is absent
         warnings (list[str] | None | Unset):
+        workflow_runtime (ActivityConnectWorkflowRuntime | Unset):
     """
 
     api_url: str
@@ -58,12 +62,16 @@ class ActivityConnectResult:
     sentry_dsn: str | Unset = UNSET
     sentry_dsn_unavailable: str | Unset = UNSET
     warnings: list[str] | None | Unset = UNSET
+    workflow_runtime: ActivityConnectWorkflowRuntime | Unset = UNSET
 
     def to_dict(self) -> dict[str, Any]:
         from ..models.activity_connect_key import ActivityConnectKey
         from ..models.activity_connect_otlp import ActivityConnectOTLP
         from ..models.activity_connect_result_env import ActivityConnectResultEnv
         from ..models.activity_connect_sdk import ActivityConnectSDK
+        from ..models.activity_connect_workflow_runtime import (
+            ActivityConnectWorkflowRuntime,
+        )
         from ..models.link import Link
 
         api_url = self.api_url
@@ -114,6 +122,10 @@ class ActivityConnectResult:
         else:
             warnings = self.warnings
 
+        workflow_runtime: dict[str, Any] | Unset = UNSET
+        if not isinstance(self.workflow_runtime, Unset):
+            workflow_runtime = self.workflow_runtime.to_dict()
+
         field_dict: dict[str, Any] = {}
 
         field_dict.update(
@@ -143,6 +155,8 @@ class ActivityConnectResult:
             field_dict["sentryDsnUnavailable"] = sentry_dsn_unavailable
         if warnings is not UNSET:
             field_dict["warnings"] = warnings
+        if workflow_runtime is not UNSET:
+            field_dict["workflowRuntime"] = workflow_runtime
 
         return field_dict
 
@@ -152,6 +166,9 @@ class ActivityConnectResult:
         from ..models.activity_connect_otlp import ActivityConnectOTLP
         from ..models.activity_connect_result_env import ActivityConnectResultEnv
         from ..models.activity_connect_sdk import ActivityConnectSDK
+        from ..models.activity_connect_workflow_runtime import (
+            ActivityConnectWorkflowRuntime,
+        )
         from ..models.link import Link
 
         d = dict(src_dict)
@@ -222,6 +239,15 @@ class ActivityConnectResult:
 
         warnings = _parse_warnings(d.pop("warnings", UNSET))
 
+        _workflow_runtime = d.pop("workflowRuntime", UNSET)
+        workflow_runtime: ActivityConnectWorkflowRuntime | Unset
+        if isinstance(_workflow_runtime, Unset):
+            workflow_runtime = UNSET
+        else:
+            workflow_runtime = ActivityConnectWorkflowRuntime.from_dict(
+                _workflow_runtime
+            )
+
         activity_connect_result = cls(
             api_url=api_url,
             created=created,
@@ -239,6 +265,7 @@ class ActivityConnectResult:
             sentry_dsn=sentry_dsn,
             sentry_dsn_unavailable=sentry_dsn_unavailable,
             warnings=warnings,
+            workflow_runtime=workflow_runtime,
         )
 
         return activity_connect_result

@@ -57,9 +57,9 @@ def sync_detailed(
     """Start here: explains this workspace in plain language plus the spec format, roles and draft ops an
     agent uses to change it
 
-     Use this for optional business observability: entities, profiles, activity views and existing Nova
-    integrations. For workflow requirements and outcome verification, start with workflows_describe in
-    an explicit environment; that definition activation is separate from this workspace draft.
+     Use this for optional business observability: entities, profiles and activity views. For workflow
+    requirements and outcome verification, start with workflows_describe in an explicit environment;
+    that definition activation is separate from this workspace draft.
 
     axonpush adapts per installation. A workspace spec declares, as data, what this application stores:
     - attributes: the data dictionary. Every attribute key the app may send, with a type, an optional
@@ -128,9 +128,9 @@ def sync(
     """Start here: explains this workspace in plain language plus the spec format, roles and draft ops an
     agent uses to change it
 
-     Use this for optional business observability: entities, profiles, activity views and existing Nova
-    integrations. For workflow requirements and outcome verification, start with workflows_describe in
-    an explicit environment; that definition activation is separate from this workspace draft.
+     Use this for optional business observability: entities, profiles and activity views. For workflow
+    requirements and outcome verification, start with workflows_describe in an explicit environment;
+    that definition activation is separate from this workspace draft.
 
     axonpush adapts per installation. A workspace spec declares, as data, what this application stores:
     - attributes: the data dictionary. Every attribute key the app may send, with a type, an optional
@@ -194,9 +194,9 @@ async def asyncio_detailed(
     """Start here: explains this workspace in plain language plus the spec format, roles and draft ops an
     agent uses to change it
 
-     Use this for optional business observability: entities, profiles, activity views and existing Nova
-    integrations. For workflow requirements and outcome verification, start with workflows_describe in
-    an explicit environment; that definition activation is separate from this workspace draft.
+     Use this for optional business observability: entities, profiles and activity views. For workflow
+    requirements and outcome verification, start with workflows_describe in an explicit environment;
+    that definition activation is separate from this workspace draft.
 
     axonpush adapts per installation. A workspace spec declares, as data, what this application stores:
     - attributes: the data dictionary. Every attribute key the app may send, with a type, an optional
@@ -263,9 +263,9 @@ async def asyncio(
     """Start here: explains this workspace in plain language plus the spec format, roles and draft ops an
     agent uses to change it
 
-     Use this for optional business observability: entities, profiles, activity views and existing Nova
-    integrations. For workflow requirements and outcome verification, start with workflows_describe in
-    an explicit environment; that definition activation is separate from this workspace draft.
+     Use this for optional business observability: entities, profiles and activity views. For workflow
+    requirements and outcome verification, start with workflows_describe in an explicit environment;
+    that definition activation is separate from this workspace draft.
 
     axonpush adapts per installation. A workspace spec declares, as data, what this application stores:
     - attributes: the data dictionary. Every attribute key the app may send, with a type, an optional

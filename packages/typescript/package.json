@@ -1,6 +1,23 @@
 {
   "name": "@axonpush/sdk",
   "version": "0.0.12",
+  "description": "TypeScript SDK for AxonPush: deploy verifiable customer workflows, send evidence, and inspect cases and outcomes. Includes diagnostics for agents, events and OpenTelemetry.",
+  "keywords": [
+    "axonpush",
+    "workflow",
+    "workflow-verification",
+    "verification",
+    "automation",
+    "cases",
+    "obligations",
+    "evidence",
+    "zod",
+    "effect",
+    "observability",
+    "opentelemetry",
+    "ai-agents",
+    "sdk"
+  ],
   "type": "module",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
