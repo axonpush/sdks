@@ -64,12 +64,12 @@ def sync_detailed(
     client: AuthenticatedClient | Client,
     environment: str | Unset = UNSET,
 ) -> Response[ErrorModel | WorkflowSetupGuide]:
-    """Start here: guided workflow setup questions, exact tool sequence and a deterministic booking
-    example; read-only
+    """Start here: workflow setup questions, the tool sequence from runtime connection to evaluated case,
+    and a booking example; read-only
 
-     Choose the workspace and an explicit environment first. Read this guide before generating hooks or
-    configuring a workflow. Ask the user only what the repository cannot answer. Follow its setup steps
-    without changing existing business observability.
+     Choose the workspace and an explicit environment first. Read this guide before generating hooks,
+    connecting a runtime or deploying a workflow. Ask the user only what the repository cannot answer.
+    Following it does not change existing observability.
 
     Args:
         workspace_id (str):
@@ -101,12 +101,12 @@ def sync(
     client: AuthenticatedClient | Client,
     environment: str | Unset = UNSET,
 ) -> ErrorModel | WorkflowSetupGuide | None:
-    """Start here: guided workflow setup questions, exact tool sequence and a deterministic booking
-    example; read-only
+    """Start here: workflow setup questions, the tool sequence from runtime connection to evaluated case,
+    and a booking example; read-only
 
-     Choose the workspace and an explicit environment first. Read this guide before generating hooks or
-    configuring a workflow. Ask the user only what the repository cannot answer. Follow its setup steps
-    without changing existing business observability.
+     Choose the workspace and an explicit environment first. Read this guide before generating hooks,
+    connecting a runtime or deploying a workflow. Ask the user only what the repository cannot answer.
+    Following it does not change existing observability.
 
     Args:
         workspace_id (str):
@@ -133,12 +133,12 @@ async def asyncio_detailed(
     client: AuthenticatedClient | Client,
     environment: str | Unset = UNSET,
 ) -> Response[ErrorModel | WorkflowSetupGuide]:
-    """Start here: guided workflow setup questions, exact tool sequence and a deterministic booking
-    example; read-only
+    """Start here: workflow setup questions, the tool sequence from runtime connection to evaluated case,
+    and a booking example; read-only
 
-     Choose the workspace and an explicit environment first. Read this guide before generating hooks or
-    configuring a workflow. Ask the user only what the repository cannot answer. Follow its setup steps
-    without changing existing business observability.
+     Choose the workspace and an explicit environment first. Read this guide before generating hooks,
+    connecting a runtime or deploying a workflow. Ask the user only what the repository cannot answer.
+    Following it does not change existing observability.
 
     Args:
         workspace_id (str):
@@ -168,12 +168,12 @@ async def asyncio(
     client: AuthenticatedClient | Client,
     environment: str | Unset = UNSET,
 ) -> ErrorModel | WorkflowSetupGuide | None:
-    """Start here: guided workflow setup questions, exact tool sequence and a deterministic booking
-    example; read-only
+    """Start here: workflow setup questions, the tool sequence from runtime connection to evaluated case,
+    and a booking example; read-only
 
-     Choose the workspace and an explicit environment first. Read this guide before generating hooks or
-    configuring a workflow. Ask the user only what the repository cannot answer. Follow its setup steps
-    without changing existing business observability.
+     Choose the workspace and an explicit environment first. Read this guide before generating hooks,
+    connecting a runtime or deploying a workflow. Ask the user only what the repository cannot answer.
+    Following it does not change existing observability.
 
     Args:
         workspace_id (str):

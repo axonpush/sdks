@@ -51,7 +51,7 @@ const workflow = defineEffectWorkflow({
   },
 });
 
-// Both calls require AXONPUSH_WORKFLOW_BINARY pointing to compiler 0.1.0.
+// Both calls use compiler 0.1.0 bundled with the SDK.
 const bundle = await compileEffectWorkflow(workflow);
 await writeFile("booking.effect.contract.json", workflow.source);
 const result = await verifyEffectWorkflow(workflow, {

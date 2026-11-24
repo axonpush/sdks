@@ -12,7 +12,10 @@
     },
     "packages/typescript": {
       "name": "@axonpush/sdk",
-      "version": "0.0.12",
+      "version": "0.0.13",
+      "bin": {
+        "axonpush": "./dist/workflow-cli.js",
+      },
       "dependencies": {
         "consola": "^3.4.2",
         "p-queue": "^9",

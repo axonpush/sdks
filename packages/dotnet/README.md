@@ -10,6 +10,24 @@
 
 Targets `net8.0` and above.
 
+## Workflow deployments
+
+Install the core client with `dotnet add package AxonPush --version 0.0.7`.
+Use a workspace-scoped API key and select the environment explicitly.
+
+```csharp
+using AxonPush;
+
+using var client = new AxonPushClient(new AxonPushOptions {
+    ApiKey = Environment.GetEnvironmentVariable("AXONPUSH_API_KEY")
+});
+var deployments = await client.Workflows.DeploymentsAsync("my-workspace", environment: "dev");
+```
+
+`client.Workflows` also exposes deployment preview and apply, simulation, facts,
+cases and action operations. Simulation calls the hosted verifier. For offline
+contract generation and fixture testing, use the TypeScript or Python SDK.
+
 ## Business operations
 
 The SDK provides typed workspace authoring, immutable revisions, pinned templates,

@@ -29,6 +29,7 @@ public sealed class AxonPushClient : IDisposable, IAsyncDisposable
         Audit = new AuditResource(_transport);
         AuditProduct = new AuditProductResource(_transport);
         Workspaces = new WorkspacesResource(_transport);
+        Workflows = new WorkflowsResource(_transport);
         Templates = new TemplatesResource(_transport);
         Observations = new ObservationsResource(_transport);
         Activity = new ActivityResource(_transport);
@@ -42,6 +43,7 @@ public sealed class AxonPushClient : IDisposable, IAsyncDisposable
     public AuditResource Audit { get; }
     public AuditProductResource AuditProduct { get; }
     public WorkspacesResource Workspaces { get; }
+    public WorkflowsResource Workflows { get; }
     public TemplatesResource Templates { get; }
     public ObservationsResource Observations { get; }
     public ActivityResource Activity { get; }

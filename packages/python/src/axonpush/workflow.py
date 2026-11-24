@@ -6,6 +6,7 @@ import json
 import os
 import platform
 import subprocess
+import sys
 from importlib.resources import files
 from pathlib import Path
 from typing import Any
@@ -16,6 +17,11 @@ from axonpush._internal.api.models import Input as WorkflowInput
 __all__ = ["run", "resolve_binary", "PublishWorkflowFacts", "WorkflowInput", "COMPILER_VERSION"]
 
 COMPILER_VERSION = "0.1.0"
+
+
+def main() -> int:
+    """Forward CLI arguments, streams and exit status to the native workflow tool."""
+    return subprocess.call([resolve_binary(), *sys.argv[1:]])
 
 
 def resolve_binary() -> str:
@@ -42,8 +48,15 @@ def run(*arguments: str, binary: str | None = None, timeout: float = 30) -> Any:
     Supply AXONPUSH_WORKFLOW_BINARY or an explicit path to a verified release
     binary. Publishing is deliberately excluded from this offline helper.
     """
-    if not arguments or arguments[0] not in {"validate", "generate", "test", "action-test", "diff"}:
-        raise ValueError("Expected validate, generate, test, action-test or diff")
+    if not arguments or arguments[0] not in {
+        "init",
+        "validate",
+        "generate",
+        "test",
+        "action-test",
+        "diff",
+    }:
+        raise ValueError("Expected init, validate, generate, test, action-test or diff")
     executable = binary or resolve_binary()
     if not Path(executable).is_file():
         raise ValueError("Workflow compiler executable does not exist")

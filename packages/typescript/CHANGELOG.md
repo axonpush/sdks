@@ -1,6 +1,9 @@
 # Changelog
 
-## Unreleased
+## [0.0.13]
+
+- Add workflow deployment preview, apply and status operations. Add customer-side workflow action workers. Add Zod and Effect Schema providers for the shared workflow verifier.
+- Update billing clients for Polar checkout and capped telemetry overages.
 
 - Add `client.observe`, `client.identify` and `client.group` for the per-installation workspace model: the core observation envelope (`event`, `refs`, `attributes`), batching by 100, profile traits with merge and null deletes. Regenerate drafts, catalog, describe, identify and views operations from the contract.
 - Add contract-generated business workspace, template, observation and activity resources; immutable revisions, rebuild activation and rollback, pinned template provenance, receipt/projection separation and lifecycle queries.

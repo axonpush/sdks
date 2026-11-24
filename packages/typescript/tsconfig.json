@@ -11,6 +11,10 @@
 
     // Bundler mode
     "moduleResolution": "bundler",
+    "paths": {
+      "@axonpush/sdk/workflow/effect": ["./src/workflow-effect.ts"],
+      "@axonpush/sdk/workflow/zod": ["./src/workflow-zod.ts"]
+    },
     "allowImportingTsExtensions": false,
     "verbatimModuleSyntax": true,
     "noEmit": true,

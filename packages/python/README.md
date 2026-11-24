@@ -52,13 +52,27 @@ How it behaves:
 
 ### Local validation
 
-`axonpush.workflow.run` runs `validate`, `generate`, `test`, `action-test` and `diff` locally through the platform binary bundled with the package (resolved by OS and architecture; set `AXONPUSH_WORKFLOW_BINARY` to override). Extra arguments are passed to the binary's `workflow` command. It makes no server calls and does not publish. It returns the parsed JSON output.
+Install with `python -m pip install axonpush==0.0.20`. In an empty directory,
+create a starter contract and generate typed Python hooks. On Windows, Linux and
+macOS (x64 or ARM64) the package includes the same native verifier used by the
+server. Local authoring requires no API key or Go installation.
+
+With your virtual environment active, run `axonpush workflow version`. To try a
+booking scenario, run `axonpush workflow init --template booking-reschedule --out booking`
+then `axonpush workflow action-test --file booking/workflow.yaml --fixture booking/review.json`.
 
 ```python
 from axonpush import workflow
 
-result = workflow.run("validate")  # add arguments as the workflow command requires
+workflow.run("init", "--file", "workflow.yaml")
+bundle = workflow.run("validate", "--file", "workflow.yaml")
+print(bundle["semantic_hash"])
+workflow.run("generate", "--file", "workflow.yaml", "--language", "python", "--out", "generated")
 ```
+
+Commit the YAML and generated hooks. Use `test --file workflow.yaml --fixture case.json`
+to evaluate evidence at a fixed clock, or `action-test` for an action scenario.
+Use `AXONPUSH_WORKFLOW_BINARY` for an explicit compiler 0.1.0 executable.
 
 ## Supporting diagnostics
 

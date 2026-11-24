@@ -1,6 +1,9 @@
 # Changelog
 
-## Unreleased
+## [0.0.7]
+
+- Add workflow deployment preview, apply and status operations.
+- Update billing clients for Polar checkout and capped telemetry overages.
 
 - Add contract-generated business workspace, template, observation and activity resources; immutable revisions, rebuild activation and rollback, pinned template provenance, receipt/projection separation and lifecycle queries.
 - Preserve original event occurrence time and stable retry identity.

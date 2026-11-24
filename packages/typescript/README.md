@@ -20,6 +20,11 @@ bun add @axonpush/sdk
 
 ## Workflow runtime
 
+Run `npx axonpush workflow version` to check the bundled CLI. Try a packaged
+scenario in a new directory with `npx axonpush workflow init --template booking-reschedule --out booking`, then
+`npx axonpush workflow action-test --file booking/workflow.yaml --fixture booking/review.json`.
+The fixture expects the reschedule to require review.
+
 When a workflow declares actions, run a handler beside the system that performs
 them. `WorkflowRuntime` leases one command at a time, calls your `execute` or
 `lookup`, and reports a receipt.
@@ -62,10 +67,17 @@ The runtime requires HTTPS (loopback HTTP is allowed for local development).
 Keep provider credentials in your app; the runtime does not send them to AxonPush.
 
 For local `validate`, `test` and `diff` without network calls, use `runWorkflow`
-from the same entrypoint. It runs a pinned platform binary: the
-`@axonpush/workflow-<platform>-<arch>` package when installed, or the executable
-named by `AXONPUSH_WORKFLOW_BINARY`. See
-[Offline compiler commands](#offline-compiler-commands).
+from the same entrypoint. Version `0.0.13` includes compiler `0.1.0` for Windows,
+Linux and macOS on x64 and ARM64. To try it in an empty project:
+
+```js
+import { runWorkflow } from "@axonpush/sdk/workflow";
+await runWorkflow(["init", "--file", "workflow.yaml"]);
+console.log(await runWorkflow(["validate", "--file", "workflow.yaml"]));
+await runWorkflow(["generate", "--file", "workflow.yaml", "--language", "typescript", "--out", "generated"]);
+```
+
+Run as an ES module (`node example.mjs`). No credentials are needed locally.
 
 ## Workflow quickstart
 
@@ -140,20 +152,19 @@ Useful next calls:
 Zod and Effect Schema are optional authoring providers. Both compile through the
 same pinned compiler as the server.
 
-### Zod provider (development)
+### Zod provider
 
 The `@axonpush/sdk/workflow/zod` entrypoint provides `defineZodWorkflow`,
 `compileZodWorkflow` and `verifyZodWorkflow`. Define fact schemas as strict Zod 4
 objects; the provider emits stable contract source and delegates compilation and
 verification to the same Go executable used by the server. There is no separate
-TypeScript evaluator. Set `AXONPUSH_WORKFLOW_BINARY` to compiler `0.1.0`.
+TypeScript evaluator. Install with `npm install @axonpush/sdk@0.0.13 zod@4`.
 
 Supported fields: plain `z.string()`, `z.number()`, `z.boolean()` and
 `z.iso.datetime({ offset: true })`. Unsupported checks, transforms, refinements,
 coercion, defaults, optional fields and nested structures fail explicitly.
 See [the complete runnable example](examples/workflow-zod.ts) and
-[the provider guide](https://docs.axonpush.xyz/workflows-zod) (published when the
-matching docs revision is deployed). Existing npm releases may not include this export.
+[the provider guide](https://docs.axonpush.xyz/workflows-zod).
 
 Build the SDK first, then run `bun run examples/workflow-zod.ts`. It writes
 `booking.contract.json`; commit that generated artifact alongside your TypeScript
@@ -165,26 +176,24 @@ For native parity tests, set the binary environment variable and run
 The parity test is skipped when the executable is not configured; schema rejection
 and source determinism tests always run.
 
-### Effect Schema provider (development)
+### Effect Schema provider
 
 `@axonpush/sdk/workflow/effect` exports `defineEffectWorkflow`,
 `compileEffectWorkflow`, `verifyEffectWorkflow` and `WorkflowTimestamp`. Install
-the optional peer `effect@^4.1.5` to use it. Effect 3 is not supported. Define facts
+with `npm install @axonpush/sdk@0.0.13 effect@^4.1.5` to use it. Effect 3 is not supported. Define facts
 with `Schema.Struct`, plain scalar fields and the exported timestamp helper.
 Custom filters, transformations and unsupported constraints fail explicitly.
 Compilation and verification share the same native Go bridge as the Zod provider.
 
 See [the runnable example](examples/workflow-effect.ts) and
-[the provider guide](https://docs.axonpush.xyz/workflows-effect), available when the
-matching docs revision is deployed. Build the SDK before running the example and
-set `AXONPUSH_WORKFLOW_BINARY` to compiler `0.1.0`. For native parity tests, run
+[the provider guide](https://docs.axonpush.xyz/workflows-effect), which uses the bundled compiler. To run the repository parity tests against an explicit compiler `0.1.0`, set `AXONPUSH_WORKFLOW_BINARY` and run
 `bunx vitest run src/__tests__/workflow-effect.test.ts` with that variable set.
 Native tests skip when no executable is configured; schema tests always run.
 
 ### Offline compiler commands
 
 `@axonpush/sdk/workflow` exports `runWorkflow(args)`, a shell-free wrapper over the
-pinned compiler's `validate`, `generate`, `test`, `action-test` and `diff` commands,
+pinned compiler's `init`, `validate`, `generate`, `test`, `action-test` and `diff` commands,
 plus `resolveWorkflowBinary()`. It makes no network calls and refuses a compiler
 whose version is not `workflowCompilerVersion`.
 

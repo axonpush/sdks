@@ -168,15 +168,8 @@ internal sealed class MockOtlpReceiver : IDisposable
         _ = Task.Run(AcceptLoop);
     }
 
-    public async Task<CapturedRequest> WaitForRequestAsync(TimeSpan timeout)
-    {
-        var completed = await Task.WhenAny(_received.Task, Task.Delay(timeout));
-        if (completed != _received.Task)
-        {
-            throw new TimeoutException("Mock OTLP receiver did not receive a request in time.");
-        }
-        return await _received.Task;
-    }
+    public Task<CapturedRequest> WaitForRequestAsync(TimeSpan timeout) =>
+        _received.Task.WaitAsync(timeout);
 
     private async Task AcceptLoop()
     {

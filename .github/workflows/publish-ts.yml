@@ -30,6 +30,11 @@ jobs:
         run: bunx vitest run
       - working-directory: packages/typescript
         run: bun run build
+      - uses: actions/setup-go@v6
+        with:
+          go-version: '1.27.4'
+          cache: false
+      - run: python3 tools/workflow-compiler/bundle.py typescript
       - working-directory: packages/typescript
         run: bunx publint
       # Trusted publishing: npm exchanges the workflow's OIDC identity for a
@@ -43,7 +48,10 @@ jobs:
         run: npm install -g npm@latest
       - name: Publish
         working-directory: packages/typescript
-        run: npm publish --access public
+        run: |
+          artifact=$(npm pack --silent --pack-destination "$RUNNER_TEMP")
+          python3 ../../tools/workflow-compiler/test-package.py "$RUNNER_TEMP/$artifact"
+          npm publish "$RUNNER_TEMP/$artifact" --access public
       - uses: softprops/action-gh-release@v3
         with:
           files: packages/typescript/dist/*

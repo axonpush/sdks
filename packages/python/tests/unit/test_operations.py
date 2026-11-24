@@ -9,20 +9,28 @@ import httpx
 import pytest
 import respx
 
+from axonpush import AsyncAxonPush, AxonPush, Observation
+from axonpush._internal.api.models import WorkspaceIngestInputBody
+from axonpush.exceptions import AuthenticationError
+
+
 def test_workflow_receipt_is_storage_not_verification() -> None:
     from axonpush.workflow import PublishWorkflowFacts
 
-    body = PublishWorkflowFacts.from_dict({"workflow": "example", "input": {"case_id": "case-1", "facts": [], "coverage": []}})
+    body = PublishWorkflowFacts.from_dict(
+        {"workflow": "example", "input": {"case_id": "case-1", "facts": [], "coverage": []}}
+    )
     with respx.mock(base_url=BASE) as router, client() as sdk:
-        route = router.post("/workspaces/workspace-1/workflows/facts").mock(return_value=httpx.Response(200, json={"status": "stored", "case_key": "opaque-case-key"}))
+        route = router.post("/workspaces/workspace-1/workflows/facts").mock(
+            return_value=httpx.Response(
+                200, json={"status": "stored", "case_key": "opaque-case-key"}
+            )
+        )
         receipt = sdk.workflows.facts("workspace-1", body, params={"environment": "dev"})
         assert receipt is not None and receipt.status == "stored"
         assert "verified" not in receipt.to_dict()
         assert route.calls.last.request.url.params["environment"] == "dev"
 
-from axonpush import AsyncAxonPush, AxonPush, Observation
-from axonpush._internal.api.models import WorkspaceIngestInputBody
-from axonpush.exceptions import AuthenticationError
 
 ROOT = Path(__file__).resolve().parents[4]
 FIXTURE = json.loads((ROOT / "tests/fixtures/activity-observation.json").read_text())

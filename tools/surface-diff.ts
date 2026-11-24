@@ -121,6 +121,7 @@ for (const resource of [
   "workspaces",
   "telemetry",
   "capabilities",
+  "workflows",
 ]) {
   const expected = ts.get(resource);
   const actual = dotnet.get(resource);

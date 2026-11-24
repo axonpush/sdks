@@ -5,5 +5,5 @@ field_constraints: true
 content_type_overrides:
   application/json: "application/json"
 post_hooks:
-  - "ruff check --fix --exit-zero --select I"
-  - "ruff format"
+  - "ruff check --fix --exit-zero --select I --line-length 88"
+  - "ruff format --line-length 88"

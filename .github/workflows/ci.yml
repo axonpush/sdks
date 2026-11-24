@@ -69,7 +69,9 @@ jobs:
         run: bunx tsc --noEmit
       - name: Test
         working-directory: packages/typescript
-        run: bunx vitest run
+        run: |
+          python3 ../../tools/workflow-compiler/bundle.py --host-only typescript
+          AXONPUSH_WORKFLOW_BINARY="$PWD/bin/linux-amd64/axonpush" bunx vitest run
       - name: Build
         working-directory: packages/typescript
         run: bun run build
@@ -80,6 +82,8 @@ jobs:
         run: |
           bunx publint
           bunx @arethetypeswrong/cli --pack --profile esm-only
+          artifact=$(npm pack --silent --pack-destination "$RUNNER_TEMP")
+          python3 ../../tools/workflow-compiler/test-package.py "$RUNNER_TEMP/$artifact"
 
   codegen-clean:
     name: Generated clients match the contract
@@ -164,7 +168,9 @@ jobs:
       - uses: astral-sh/setup-uv@v10.2.0
       # the generated attrs models pull in dateutil; this catches an
       # undeclared transitive dep before it reaches PyPI
+      - run: uv run --python 3.12 --no-project ../../tools/workflow-compiler/bundle.py --host-only python
       - run: uv build
+      - run: python3 ../../tools/workflow-compiler/test-package.py dist/*.whl
       - run: |
           uv venv /tmp/clean
           VIRTUAL_ENV=/tmp/clean uv pip install dist/*.whl
