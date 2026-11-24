@@ -68,7 +68,9 @@ class ListInvitationsOutputBody:
                 invitations_type_0 = []
                 _invitations_type_0 = data
                 for invitations_type_0_item_data in _invitations_type_0:
-                    invitations_type_0_item = InvitationDTO.from_dict(invitations_type_0_item_data)
+                    invitations_type_0_item = InvitationDTO.from_dict(
+                        invitations_type_0_item_data
+                    )
 
                     invitations_type_0.append(invitations_type_0_item)
 

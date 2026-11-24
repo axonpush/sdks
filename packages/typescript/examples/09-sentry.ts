@@ -2,12 +2,13 @@
  * 09 — Sentry installer
  *
  * `installSentry(Sentry, opts)` builds a DSN of the shape
- *   <scheme>://<apiKey>@<host>/<channelId>
+ *   <scheme>://<publicToken>@<host>/<integer project id>
+ * from a channel-scoped public ingest token (pt_...). API keys are refused.
  * and forwards it to `Sentry.init`. Any extra fields on the options bag
  * are passed through (e.g. `tracesSampleRate`).
  *
  * Required env vars:
- *   AXONPUSH_API_KEY, AXONPUSH_CHANNEL_ID
+ *   AXONPUSH_PUBLIC_TOKEN, AXONPUSH_CHANNEL_ID
  *
  * Optional peer dep:
  *   bun add @sentry/node
@@ -20,11 +21,11 @@ import { buildSentryDsn, installSentry, type SentryLike } from "../src/index";
 import { CHANNEL_ID, requireEnv, tryImport } from "./config";
 
 async function main() {
-  const apiKey = requireEnv("AXONPUSH_API_KEY");
+  const publicToken = requireEnv("AXONPUSH_PUBLIC_TOKEN");
   if (!CHANNEL_ID) throw new Error("AXONPUSH_CHANNEL_ID required");
 
-  const dsn = buildSentryDsn(apiKey, CHANNEL_ID, "api.axonpush.xyz");
-  console.log("derived DSN:", dsn.replace(apiKey, "<api-key>"));
+  const dsn = buildSentryDsn(publicToken, CHANNEL_ID, "api.axonpush.xyz");
+  console.log("derived DSN:", dsn.replace(publicToken, "<public-token>"));
 
   type SentryNodeMod = SentryLike & {
     captureException: (err: unknown) => string;
@@ -41,7 +42,7 @@ async function main() {
   }
 
   installSentry(sentry, {
-    apiKey,
+    publicToken,
     channelId: CHANNEL_ID,
     environment: process.env.AXONPUSH_ENVIRONMENT ?? "development",
     release: "examples@0.0.5",

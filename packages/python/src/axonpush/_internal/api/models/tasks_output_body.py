@@ -9,7 +9,9 @@ from attrs import field as _attrs_field
 from ..types import UNSET, Unset
 
 if TYPE_CHECKING:
-    from ..models.tasks_output_body_items_type_0_item import TasksOutputBodyItemsType0Item
+    from ..models.tasks_output_body_items_type_0_item import (
+        TasksOutputBodyItemsType0Item,
+    )
 
 
 T = TypeVar("T", bound="TasksOutputBody")
@@ -29,7 +31,9 @@ class TasksOutputBody:
     next_cursor: str | Unset = UNSET
 
     def to_dict(self) -> dict[str, Any]:
-        from ..models.tasks_output_body_items_type_0_item import TasksOutputBodyItemsType0Item
+        from ..models.tasks_output_body_items_type_0_item import (
+            TasksOutputBodyItemsType0Item,
+        )
 
         items: list[dict[str, Any]] | None
         if isinstance(self.items, list):
@@ -61,7 +65,9 @@ class TasksOutputBody:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        from ..models.tasks_output_body_items_type_0_item import TasksOutputBodyItemsType0Item
+        from ..models.tasks_output_body_items_type_0_item import (
+            TasksOutputBodyItemsType0Item,
+        )
 
         d = dict(src_dict)
 

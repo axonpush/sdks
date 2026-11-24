@@ -18,7 +18,7 @@ from axonpush._internal.api.models import (
     ReleaseHoldInputBody,
     SegmentListOutputBody,
     SegmentOutputBody,
-    StatusOutputBody,
+    StatusOutputBody1,
     StorageOutputBody,
     VerifyOutputBody,
     VerifyResult,
@@ -141,7 +141,7 @@ class Audit:
         """Verify immutable archive bytes."""
         return self._client._invoke(_segment_verify_op, segment_id=segment_id)
 
-    def status(self) -> StatusOutputBody | None:
+    def status(self) -> StatusOutputBody1 | None:
         """Read archive integrity and storage status."""
         return self._client._invoke(_status_op)
 
@@ -248,7 +248,7 @@ class AsyncAudit:
         """Verify immutable archive bytes."""
         return await self._client._invoke(_segment_verify_op, segment_id=segment_id)
 
-    async def status(self) -> StatusOutputBody | None:
+    async def status(self) -> StatusOutputBody1 | None:
         """Read archive integrity and storage status."""
         return await self._client._invoke(_status_op)
 

@@ -15,14 +15,23 @@ T = TypeVar("T", bound="EraseEvidenceOutputBody")
 class EraseEvidenceOutputBody:
     """
     Attributes:
+        erased (int): Events scrubbed by this call (at most 500)
+        more (bool): True when more events for the subject remain; call again until false. The subject is tombstoned on
+            the first call, so remaining events are already hidden from reads.
         status (str):
         schema (str | Unset): A URL to the JSON Schema for this object.
     """
 
+    erased: int
+    more: bool
     status: str
     schema: str | Unset = UNSET
 
     def to_dict(self) -> dict[str, Any]:
+        erased = self.erased
+
+        more = self.more
+
         status = self.status
 
         schema = self.schema
@@ -31,6 +40,8 @@ class EraseEvidenceOutputBody:
 
         field_dict.update(
             {
+                "erased": erased,
+                "more": more,
                 "status": status,
             }
         )
@@ -42,11 +53,17 @@ class EraseEvidenceOutputBody:
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         d = dict(src_dict)
+        erased = d.pop("erased")
+
+        more = d.pop("more")
+
         status = d.pop("status")
 
         schema = d.pop("$schema", UNSET)
 
         erase_evidence_output_body = cls(
+            erased=erased,
+            more=more,
             status=status,
             schema=schema,
         )

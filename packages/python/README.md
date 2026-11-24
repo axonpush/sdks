@@ -2,13 +2,83 @@
 
 [![PyPI](https://img.shields.io/pypi/v/axonpush.svg)](https://pypi.org/project/axonpush/)
 
-Python SDK for [axonpush](https://axonpush.xyz), observability and event infrastructure for AI agent systems.
-
-Publish, trace, and deliver agent events. Drop-in integrations for LangChain, LangGraph Deep Agents, OpenAI Agents SDK, Anthropic, CrewAI, and the Python observability stack (stdlib `logging`, Loguru, structlog, OpenTelemetry, Sentry).
+Python SDK for [axonpush](https://axonpush.xyz), workflow-first verification for automation providers. Run workflow side effects with stable identities, recover uncertain outcomes, and check results against evaluated cases. Telemetry, tracing, and observability integrations remain available as supporting diagnostics.
 
 > Migrating an older client? The Go/Huma API migration is documented under `0.0.18` in [CHANGELOG.md](CHANGELOG.md). Models are exposed through `axonpush.models`; use app-scoped channel methods and `events.search()` for event reads. The removed realtime connection APIs are not part of this SDK.
 
-## Agent operations
+## Workflow runtime
+
+`WorkflowWorker` polls AxonPush for workflow commands, runs your code, and posts a receipt for each one. It makes outbound requests only and requires HTTPS (or loopback HTTP for local development).
+
+```python
+import threading
+
+from axonpush.workflow_worker import WorkflowWorker
+
+worker = WorkflowWorker(
+    base_url="https://api.axonpush.xyz",
+    workspace="my-workspace",
+    environment="production",
+    api_key="ak_…",
+    handler="send-refund",
+)
+
+
+def execute(action: dict) -> dict:
+    # Perform the side effect, keyed by a stable identity such as
+    # action["id"] or action["case_key"], and return its output.
+    return {"refund_id": "re_123"}
+
+
+def lookup(action: dict) -> dict:
+    # Report whether the side effect already happened. Return a receipt
+    # whose "result" is "found", "absent" or "unavailable".
+    return {"result": "absent"}
+
+
+stop = threading.Event()
+worker.run(execute, lookup, stop=stop)  # blocks until stop.set()
+```
+
+`WorkflowWorker.from_env(handler)` reads `AXONPUSH_API_URL`, `AXONPUSH_WORKSPACE`, `AXONPUSH_ENVIRONMENT` and `AXONPUSH_API_KEY`. `run` retries transport errors and server errors, and closes the HTTP client when it returns.
+
+How it behaves:
+
+- **Idempotent side effects.** Give every side effect a stable identity so a repeated command cannot apply it twice.
+- **Ambiguous execute failures.** If `execute` raises, the worker reports `ambiguous`. The side effect is not rerun blindly, because it may have partly or fully happened.
+- **Lookup recovery.** AxonPush then sends a lookup command, and the worker calls `lookup`, which reports `found`, `absent`, or `unavailable` (also reported if `lookup` raises).
+- **Commit first.** Publish workflow facts and checkpoints only after the source transaction has committed.
+- **Ready is not proven.** A ready deployment means it is configured. Evaluated cases are what prove outcomes.
+
+### Local validation
+
+Install with `python -m pip install axonpush==0.0.20`. In an empty directory,
+create a starter contract and generate typed Python hooks. On Windows, Linux and
+macOS (x64 or ARM64) the package includes the same native verifier used by the
+server. Local authoring requires no API key or Go installation.
+
+With your virtual environment active, run `axonpush workflow version`. To try a
+booking scenario, run `axonpush workflow init --template booking-reschedule --out booking`
+then `axonpush workflow action-test --file booking/workflow.yaml --fixture booking/review.json`.
+
+```python
+from axonpush import workflow
+
+workflow.run("init", "--file", "workflow.yaml")
+bundle = workflow.run("validate", "--file", "workflow.yaml")
+print(bundle["semantic_hash"])
+workflow.run("generate", "--file", "workflow.yaml", "--language", "python", "--out", "generated")
+```
+
+Commit the YAML and generated hooks. Use `test --file workflow.yaml --fixture case.json`
+to evaluate evidence at a fixed clock, or `action-test` for an action scenario.
+Use `AXONPUSH_WORKFLOW_BINARY` for an explicit compiler 0.1.0 executable.
+
+## Supporting diagnostics
+
+The rest of this README covers telemetry, event publishing, and framework integrations. These help you inspect and debug agent systems alongside workflows: drop-in integrations for LangChain, LangGraph Deep Agents, OpenAI Agents SDK, Anthropic, CrewAI, and the Python observability stack (stdlib `logging`, Loguru, structlog, OpenTelemetry, Sentry).
+
+### Agent operations
 
 Each workspace declares its own data dictionary and entities (usually drafted by
 your coding agent over MCP). Your app then sends observations and profile traits.
@@ -303,7 +373,7 @@ def handler(event, context):
 
 ### Which should I use
 
-The OTel-native path above is the recommended way to send traces. The legacy per-framework event-model exporter (`axonpush.integrations.otel.AxonPushSpanExporter`, which maps calls to `/event` payloads) still works and is kept for compatibility, but it is being superseded by OTel-native. Frame it as the compatibility path: keep it if you already depend on channel fan-out on the events plane, otherwise reach for `axonpush.telemetry`. Traces from both land in the same dashboard (`/v2/traces`); the server reconciles them through the OTLP normalizer, so you can migrate call sites incrementally without a gap in your traces.
+The OTel-native path above is the recommended way to send traces. The legacy per-framework event-model exporter (`axonpush.integrations.otel.AxonPushSpanExporter`, which maps calls to `/event` payloads) still works and is kept for compatibility, but it is being superseded by OTel-native. Frame it as the compatibility path: keep it if you already depend on channel fan-out on the events plane, otherwise reach for `axonpush.telemetry`. Traces from both land in the same trace views (`GET /traces`); the server reconciles them through the OTLP normalizer, so you can migrate call sites incrementally without a gap in your traces.
 
 ## Examples
 

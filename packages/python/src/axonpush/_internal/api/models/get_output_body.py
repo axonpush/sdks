@@ -68,7 +68,9 @@ class GetOutputBody:
                 decisions_type_0 = []
                 _decisions_type_0 = data
                 for decisions_type_0_item_data in _decisions_type_0:
-                    decisions_type_0_item = DecisionDTO.from_dict(decisions_type_0_item_data)
+                    decisions_type_0_item = DecisionDTO.from_dict(
+                        decisions_type_0_item_data
+                    )
 
                     decisions_type_0.append(decisions_type_0_item)
 

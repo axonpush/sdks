@@ -27,6 +27,7 @@ import { TelemetryResource } from "./resources/telemetry.js";
 import { TemplatesResource } from "./resources/templates.js";
 import { TracesResource } from "./resources/traces.js";
 import { WebhooksResource } from "./resources/webhooks.js";
+import { WorkflowsResource } from "./resources/workflows.js";
 import { WorkspacesResource } from "./resources/workspaces.js";
 import { getOrCreateTrace, type TraceContext } from "./tracing.js";
 
@@ -78,6 +79,8 @@ export class AxonPush {
   readonly errors: ErrorsResource;
   /** Server capabilities — version, feature flags, license, scopes. */
   readonly capabilities: CapabilitiesResource;
+  /** Workflow contracts, evidence receipts and business-case verification. */
+  readonly workflows: WorkflowsResource;
 
   /**
    * @param options Optional caller overrides; falsy fields fall through to
@@ -89,6 +92,7 @@ export class AxonPush {
     this.audit = new AuditResource(this);
     this.auditProduct = new AuditProductResource(this);
     this.workspaces = new WorkspacesResource(this);
+    this.workflows = new WorkflowsResource(this);
     this.templates = new TemplatesResource(this);
     this.observations = new ObservationsResource(this);
     this.activity = new ActivityResource(this);

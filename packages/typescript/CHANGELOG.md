@@ -1,11 +1,20 @@
 # Changelog
 
-## Unreleased
+## [0.0.13]
+
+- Add workflow deployment preview, apply and status operations. Add customer-side workflow action workers. Add Zod and Effect Schema providers for the shared workflow verifier.
+- Update billing clients for Polar checkout and capped telemetry overages.
 
 - Add `client.observe`, `client.identify` and `client.group` for the per-installation workspace model: the core observation envelope (`event`, `refs`, `attributes`), batching by 100, profile traits with merge and null deletes. Regenerate drafts, catalog, describe, identify and views operations from the contract.
 - Add contract-generated business workspace, template, observation and activity resources; immutable revisions, rebuild activation and rollback, pinned template provenance, receipt/projection separation and lifecycle queries.
 - Preserve original event occurrence time and stable retry identity.
 - Remove gateway routing helpers and runtime moderation/governance/spend enforcement resources from the public SDK surface. Passive tracing, errors, usage and observational alerts remain.
+- **Breaking:** `installSentry` takes `publicToken` (a `pt_` public ingest token, or `AXONPUSH_PUBLIC_TOKEN`) instead of `apiKey`, and `buildSentryDsn` takes a public token; the server refuses API keys for Sentry ingest. The DSN project segment is now an integer derived from the channel id (new `sentryProjectId` export), as Sentry SDKs reject non-integer project ids. `channelId` is optional.
+- Fix the per-call `environment` on `events.publish` being silently ignored; it is now sent as the `X-Axonpush-Environment` header and overrides the client default.
+- `traces.list` passes through every `GET /traces` filter (`q`, `service`, `operation`, `model`, `agent`, `tool`, `errorsOnly`, `minDurationMs`, `sort`, ...); previously all but the window and paging were dropped. `TraceListParams` is now the generated query type.
+- `events.search` accepts `serviceName`, `operationName` and `errorType`.
+- Add the `@axonpush/sdk/integrations/bullmq` sub-path export.
+- Widen the `@opentelemetry/sdk-trace-base`, `sdk-trace-node` and `resources` peer ranges to `^1.18` to match the docs; nothing newer is used. The 2.x SDK is not supported (`configureTelemetry` uses the 1.x `Resource` class and `addSpanProcessor`).
 
 
 ## [0.0.12]

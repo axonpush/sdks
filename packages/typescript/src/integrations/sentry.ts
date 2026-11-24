@@ -1,22 +1,22 @@
 /**
  * Sentry SDK integration helper.
  *
- * Builds a Sentry DSN from AxonPush credentials and forwards to
+ * Builds a Sentry DSN for the AxonPush Sentry ingest
+ * (`/api/:projectId/envelope/` and `/api/:projectId/store/`) and forwards to
  * `Sentry.init(...)`. Usable with `@sentry/node`, `@sentry/browser`,
  * `@sentry/nextjs`, etc.
  *
- * Tested against `@sentry/*@^8`. The DSN format
- * `<scheme>://<apiKey>@<host>/<channelId>` matches the AxonPush backend's
- * envelope ingest at `/api/:projectId/{store|envelope|minidump|security}`,
- * where `:projectId` is treated as the channel id (string-typed on the
- * backend, so a UUID works as-is — and a numeric id from v0.0.4 still
- * works).
+ * The DSN key must be a channel-scoped public ingest token (`pt_...`); the
+ * server resolves the org, channel and environment from it and refuses API
+ * keys. Sentry SDKs require an integer project id, so the project segment is a
+ * placeholder derived from the channel id (the same derivation the dashboard
+ * uses) and is not used for routing.
  *
  * Usage (Node):
  *   import * as Sentry from "@sentry/node";
  *   import { installSentry } from "@axonpush/sdk/integrations/sentry";
  *   installSentry(Sentry, {
- *     apiKey: process.env.AXONPUSH_API_KEY!,
+ *     publicToken: process.env.AXONPUSH_PUBLIC_TOKEN!,
  *     channelId: "ch-uuid",
  *     environment: "production",
  *     release: process.env.RELEASE,
@@ -24,7 +24,7 @@
  */
 
 import { logger } from "../logger.js";
-import { type ChannelIdInput, coerceChannelId } from "./_base.js";
+import type { ChannelIdInput } from "./_base.js";
 
 const ENV_PRECEDENCE = [
   "AXONPUSH_ENVIRONMENT",
@@ -43,10 +43,18 @@ function detectEnvironment(): string | undefined {
   return undefined;
 }
 
+function readEnv(name: string): string | undefined {
+  if (typeof process === "undefined" || !process.env) return undefined;
+  return process.env[name] || undefined;
+}
+
 export interface InstallSentryOptions {
-  apiKey?: string;
+  /** Channel-scoped public ingest token (`pt_...`). Falls back to `AXONPUSH_PUBLIC_TOKEN`. */
+  publicToken?: string;
+  /** Only used to derive the integer project id placeholder. Falls back to `AXONPUSH_CHANNEL_ID`. */
   channelId?: ChannelIdInput;
   host?: string;
+  /** Fully-formed DSN (as shown in the dashboard). Overrides the other AxonPush options. */
   dsn?: string;
   environment?: string;
   release?: string;
@@ -57,29 +65,50 @@ export interface SentryLike {
   init: (options: Record<string, unknown>) => unknown;
 }
 
-export function buildDsn(apiKey: string, channelId: ChannelIdInput, host: string): string {
+export function sentryProjectId(channelId: ChannelIdInput | undefined): number {
+  if (channelId === undefined) return 1;
+  const hex = String(channelId).replace(/-/g, "").slice(0, 8);
+  return Number.parseInt(hex, 16) || 1;
+}
+
+function requirePublicToken(token: string): void {
+  if (!token.startsWith("pt_")) {
+    throw new Error(
+      "Sentry ingest needs a channel-scoped public ingest token (pt_...), not an API key. " +
+        "Mint one in the dashboard or via /public-ingest-tokens.",
+    );
+  }
+}
+
+export function buildDsn(
+  publicToken: string,
+  channelId: ChannelIdInput | undefined,
+  host: string,
+): string {
+  requirePublicToken(publicToken);
   const scheme = host.startsWith("localhost") || host.startsWith("127.") ? "http" : "https";
-  return `${scheme}://${apiKey}@${host}/${coerceChannelId(channelId)}`;
+  return `${scheme}://${publicToken}@${host}/${sentryProjectId(channelId)}`;
 }
 
 export function installSentry(sentry: SentryLike, options: InstallSentryOptions = {}): void {
+  if ("apiKey" in options) {
+    throw new Error(
+      "installSentry no longer accepts apiKey: Sentry ingest refuses API keys. " +
+        "Pass publicToken: 'pt_...' or the dsn shown in the dashboard.",
+    );
+  }
   let dsn = options.dsn;
   if (!dsn) {
-    const apiKey = options.apiKey ?? process.env.AXONPUSH_API_KEY;
-    const channelIdRaw: ChannelIdInput | undefined =
-      options.channelId !== undefined
-        ? options.channelId
-        : process.env.AXONPUSH_CHANNEL_ID
-          ? process.env.AXONPUSH_CHANNEL_ID
-          : undefined;
-    const host = options.host ?? process.env.AXONPUSH_HOST ?? "api.axonpush.xyz";
-    if (!apiKey || !channelIdRaw) {
+    const publicToken = options.publicToken ?? readEnv("AXONPUSH_PUBLIC_TOKEN");
+    const channelId = options.channelId ?? readEnv("AXONPUSH_CHANNEL_ID");
+    const host = options.host ?? readEnv("AXONPUSH_HOST") ?? "api.axonpush.xyz";
+    if (!publicToken) {
       throw new Error(
-        "installSentry needs apiKey + channelId (or a fully-formed dsn). " +
-          "Pass them in options or set AXONPUSH_API_KEY / AXONPUSH_CHANNEL_ID.",
+        "installSentry needs a publicToken (pt_...) or a fully-formed dsn. " +
+          "Pass one in options or set AXONPUSH_PUBLIC_TOKEN.",
       );
     }
-    dsn = buildDsn(apiKey, channelIdRaw, host);
+    dsn = buildDsn(publicToken, channelId, host);
   }
 
   const resolvedEnv = options.environment ?? detectEnvironment();
@@ -88,7 +117,7 @@ export function installSentry(sentry: SentryLike, options: InstallSentryOptions 
   );
 
   const {
-    apiKey: _a,
+    publicToken: _p,
     channelId: _c,
     host: _h,
     dsn: _d,
@@ -96,7 +125,7 @@ export function installSentry(sentry: SentryLike, options: InstallSentryOptions 
     release: _r,
     ...extraInitOptions
   } = options;
-  void _a;
+  void _p;
   void _c;
   void _h;
   void _d;

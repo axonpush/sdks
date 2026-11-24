@@ -10,7 +10,7 @@ the same callback hook surface as LangChain (``BaseCallbackHandler`` /
 We classify those tool names into AxonPush event types
 (``AGENT_HANDOFF`` for sub-agents, ``AGENT_TOOL_CALL_*`` for the rest)
 and propagate ``run_id`` / ``parent_run_id`` as ``span_id`` /
-``parent_event_id``.
+``parent_span_id``.
 
 Tested against ``deepagents>=0.1.0,<2.0`` (Python >=3.11) and
 ``langchain-core>=0.1,<0.4``.
@@ -159,7 +159,7 @@ def _publish_kwargs(
         "metadata": metadata,
     }
     if parent_run_id is not None:
-        out["parent_event_id"] = str(parent_run_id)
+        out["parent_span_id"] = str(parent_run_id)
         out["metadata"] = {
             **out["metadata"],
             "langchain_parent_run_id": str(parent_run_id),

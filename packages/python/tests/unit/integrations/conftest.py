@@ -6,10 +6,16 @@ without HTTP, keeping integration behavior independent from transport tests.
 
 from __future__ import annotations
 
+import inspect
 import threading
 from typing import Any, Dict, List
 
 import pytest
+
+from axonpush.resources.events import AsyncEvents, Events
+
+_SYNC_PUBLISH = inspect.signature(Events.publish)
+_ASYNC_PUBLISH = inspect.signature(AsyncEvents.publish)
 
 
 class _FakeSyncEvents:
@@ -19,6 +25,7 @@ class _FakeSyncEvents:
         self._lock = threading.Lock()
 
     def publish(self, **kwargs: Any) -> Dict[str, Any]:
+        _SYNC_PUBLISH.bind(self, **kwargs)
         with self._lock:
             self.calls.append(kwargs)
             if self.exception is not None:
@@ -39,6 +46,7 @@ class _FakeAsyncEvents:
         self.exception: BaseException | None = None
 
     async def publish(self, **kwargs: Any) -> Dict[str, Any]:
+        _ASYNC_PUBLISH.bind(self, **kwargs)
         self.calls.append(kwargs)
         if self.exception is not None:
             raise self.exception

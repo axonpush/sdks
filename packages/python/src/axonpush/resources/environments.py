@@ -16,6 +16,7 @@ from axonpush._internal.api.models import (
     ListEnvironmentsOutputBody,
     OkOutputBody,
     UpdateEnvironmentInputBody,
+    EnvironmentDTO,
 )
 from axonpush.models import Environment
 
@@ -74,7 +75,7 @@ class Environments:
         color: str | None = None,
         is_production: bool | None = None,
         is_default: bool | None = None,
-    ) -> Environment | None:
+    ) -> EnvironmentDTO | None:
         """Create an environment.
 
         Args:
@@ -96,7 +97,7 @@ class Environments:
         name: str | None = None,
         color: str | None = None,
         is_production: bool | None = None,
-    ) -> Environment | None:
+    ) -> EnvironmentDTO | None:
         """Edit a mutable subset of environment fields (addressed by slug)."""
         body = _build_update_dto(name=name, color=color, is_production=is_production)
         return self._client._invoke(_update_op, slug=slug, body=body)
@@ -105,7 +106,7 @@ class Environments:
         """Delete an environment by slug."""
         return self._client._invoke(_remove_op, slug=slug)
 
-    def promote(self, slug: str) -> Environment | None:
+    def promote(self, slug: str) -> EnvironmentDTO | None:
         """Promote an environment (by slug) to the org-wide default."""
         return self._client._invoke(_promote_op, slug=slug)
 
@@ -132,7 +133,7 @@ class AsyncEnvironments:
         color: str | None = None,
         is_production: bool | None = None,
         is_default: bool | None = None,
-    ) -> Environment | None:
+    ) -> EnvironmentDTO | None:
         """Create an environment.
 
         Args:
@@ -154,7 +155,7 @@ class AsyncEnvironments:
         name: str | None = None,
         color: str | None = None,
         is_production: bool | None = None,
-    ) -> Environment | None:
+    ) -> EnvironmentDTO | None:
         """Edit a mutable subset of environment fields (addressed by slug)."""
         body = _build_update_dto(name=name, color=color, is_production=is_production)
         return await self._client._invoke(_update_op, slug=slug, body=body)
@@ -163,7 +164,7 @@ class AsyncEnvironments:
         """Delete an environment by slug."""
         return await self._client._invoke(_remove_op, slug=slug)
 
-    async def promote(self, slug: str) -> Environment | None:
+    async def promote(self, slug: str) -> EnvironmentDTO | None:
         """Promote an environment (by slug) to the org-wide default."""
         return await self._client._invoke(_promote_op, slug=slug)
 

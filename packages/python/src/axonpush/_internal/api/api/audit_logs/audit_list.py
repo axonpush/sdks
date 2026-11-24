@@ -17,6 +17,7 @@ def _get_kwargs(
     resource_type: str | Unset = UNSET,
     source: str | Unset = UNSET,
     before: str | Unset = UNSET,
+    before_id: str | Unset = UNSET,
     limit: int | Unset = 50,
 ) -> dict[str, Any]:
 
@@ -29,6 +30,8 @@ def _get_kwargs(
     params["source"] = source
 
     params["before"] = before
+
+    params["beforeId"] = before_id
 
     params["limit"] = limit
 
@@ -74,6 +77,7 @@ def sync_detailed(
     resource_type: str | Unset = UNSET,
     source: str | Unset = UNSET,
     before: str | Unset = UNSET,
+    before_id: str | Unset = UNSET,
     limit: int | Unset = 50,
 ) -> Response[ErrorModel | ListOutputBody2]:
     """List audit log entries
@@ -82,7 +86,10 @@ def sync_detailed(
         action (str | Unset):
         resource_type (str | Unset):
         source (str | Unset): Filter by origin: dashboard, apikey, or mcp
-        before (str | Unset): RFC3339 upper bound (exclusive); defaults to now
+        before (str | Unset): RFC3339 upper bound (exclusive); defaults to now. To page, pass the
+            last row's createdAt here and its id as beforeId
+        before_id (str | Unset): Id of the last row on the previous page; with before, pages on
+            (createdAt, id) so rows sharing the boundary timestamp are not skipped
         limit (int | Unset):  Default: 50.
 
     Raises:
@@ -98,6 +105,7 @@ def sync_detailed(
         resource_type=resource_type,
         source=source,
         before=before,
+        before_id=before_id,
         limit=limit,
     )
 
@@ -115,6 +123,7 @@ def sync(
     resource_type: str | Unset = UNSET,
     source: str | Unset = UNSET,
     before: str | Unset = UNSET,
+    before_id: str | Unset = UNSET,
     limit: int | Unset = 50,
 ) -> ErrorModel | ListOutputBody2 | None:
     """List audit log entries
@@ -123,7 +132,10 @@ def sync(
         action (str | Unset):
         resource_type (str | Unset):
         source (str | Unset): Filter by origin: dashboard, apikey, or mcp
-        before (str | Unset): RFC3339 upper bound (exclusive); defaults to now
+        before (str | Unset): RFC3339 upper bound (exclusive); defaults to now. To page, pass the
+            last row's createdAt here and its id as beforeId
+        before_id (str | Unset): Id of the last row on the previous page; with before, pages on
+            (createdAt, id) so rows sharing the boundary timestamp are not skipped
         limit (int | Unset):  Default: 50.
 
     Raises:
@@ -140,6 +152,7 @@ def sync(
         resource_type=resource_type,
         source=source,
         before=before,
+        before_id=before_id,
         limit=limit,
     ).parsed
 
@@ -151,6 +164,7 @@ async def asyncio_detailed(
     resource_type: str | Unset = UNSET,
     source: str | Unset = UNSET,
     before: str | Unset = UNSET,
+    before_id: str | Unset = UNSET,
     limit: int | Unset = 50,
 ) -> Response[ErrorModel | ListOutputBody2]:
     """List audit log entries
@@ -159,7 +173,10 @@ async def asyncio_detailed(
         action (str | Unset):
         resource_type (str | Unset):
         source (str | Unset): Filter by origin: dashboard, apikey, or mcp
-        before (str | Unset): RFC3339 upper bound (exclusive); defaults to now
+        before (str | Unset): RFC3339 upper bound (exclusive); defaults to now. To page, pass the
+            last row's createdAt here and its id as beforeId
+        before_id (str | Unset): Id of the last row on the previous page; with before, pages on
+            (createdAt, id) so rows sharing the boundary timestamp are not skipped
         limit (int | Unset):  Default: 50.
 
     Raises:
@@ -175,6 +192,7 @@ async def asyncio_detailed(
         resource_type=resource_type,
         source=source,
         before=before,
+        before_id=before_id,
         limit=limit,
     )
 
@@ -190,6 +208,7 @@ async def asyncio(
     resource_type: str | Unset = UNSET,
     source: str | Unset = UNSET,
     before: str | Unset = UNSET,
+    before_id: str | Unset = UNSET,
     limit: int | Unset = 50,
 ) -> ErrorModel | ListOutputBody2 | None:
     """List audit log entries
@@ -198,7 +217,10 @@ async def asyncio(
         action (str | Unset):
         resource_type (str | Unset):
         source (str | Unset): Filter by origin: dashboard, apikey, or mcp
-        before (str | Unset): RFC3339 upper bound (exclusive); defaults to now
+        before (str | Unset): RFC3339 upper bound (exclusive); defaults to now. To page, pass the
+            last row's createdAt here and its id as beforeId
+        before_id (str | Unset): Id of the last row on the previous page; with before, pages on
+            (createdAt, id) so rows sharing the boundary timestamp are not skipped
         limit (int | Unset):  Default: 50.
 
     Raises:
@@ -216,6 +238,7 @@ async def asyncio(
             resource_type=resource_type,
             source=source,
             before=before,
+            before_id=before_id,
             limit=limit,
         )
     ).parsed

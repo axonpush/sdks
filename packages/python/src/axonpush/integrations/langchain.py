@@ -6,7 +6,7 @@ Both a sync :class:`AxonPushCallbackHandler` (extends
 :class:`langchain_core.callbacks.AsyncCallbackHandler`) are exposed.
 
 The handlers propagate LangChain's ``run_id`` / ``parent_run_id`` through
-to AxonPush as ``span_id`` / ``parent_event_id`` so a chain hierarchy in
+to AxonPush as ``span_id`` / ``parent_span_id`` so a chain hierarchy in
 LangChain projects cleanly into the AxonPush trace tree.
 
 Tested against ``langchain-core>=0.1,<0.4``. The 0.2 callback API
@@ -122,7 +122,7 @@ def _publish_kwargs(
         "metadata": metadata,
     }
     if parent_run_id is not None:
-        out["parent_event_id"] = str(parent_run_id)
+        out["parent_span_id"] = str(parent_run_id)
         out["metadata"] = {
             **out["metadata"],
             "langchain_parent_run_id": str(parent_run_id),

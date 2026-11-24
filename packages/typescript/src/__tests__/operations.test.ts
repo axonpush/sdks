@@ -34,6 +34,25 @@ const receipt = {
 };
 
 describe("shared business operations contract", () => {
+  it("keeps a workflow stored receipt distinct from verification", async () => {
+    server.use(
+      http.post(`${BASE}/workspaces/workspace-1/workflows/facts`, async ({ request }) => {
+        expect(new URL(request.url).searchParams.get("environment")).toBe("dev");
+        expect(((await request.json()) as { input: { case_id: string } }).input.case_id).toBe(
+          "case-1",
+        );
+        return HttpResponse.json({ status: "stored", case_key: "opaque-case-key" });
+      }),
+    );
+    const sdk = client();
+    const result = await sdk.workflows.facts(
+      "workspace-1",
+      { workflow: "example", input: { case_id: "case-1", facts: [], coverage: [] } },
+      { environment: "dev" },
+    );
+    expect(result?.status).toBe("stored");
+    expect(result).not.toHaveProperty("verified");
+  });
   it("preserves retry identity, original occurrence and stored/projected receipts", async () => {
     const bodies: unknown[] = [];
     let projected = false;

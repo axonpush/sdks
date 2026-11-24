@@ -53,7 +53,9 @@ class ActivityFunnelSplit:
         if isinstance(self.failure_categories, list):
             failure_categories = []
             for failure_categories_type_0_item_data in self.failure_categories:
-                failure_categories_type_0_item = failure_categories_type_0_item_data.to_dict()
+                failure_categories_type_0_item = (
+                    failure_categories_type_0_item_data.to_dict()
+                )
                 failure_categories.append(failure_categories_type_0_item)
 
         else:
@@ -110,7 +112,9 @@ class ActivityFunnelSplit:
         d = dict(src_dict)
         entities = d.pop("entities")
 
-        def _parse_failure_categories(data: object) -> list[ActivityFailureCount] | None:
+        def _parse_failure_categories(
+            data: object,
+        ) -> list[ActivityFailureCount] | None:
             if data is None:
                 return data
             try:
@@ -151,7 +155,9 @@ class ActivityFunnelSplit:
                 stages_type_0 = []
                 _stages_type_0 = data
                 for stages_type_0_item_data in _stages_type_0:
-                    stages_type_0_item = ActivityStageCount.from_dict(stages_type_0_item_data)
+                    stages_type_0_item = ActivityStageCount.from_dict(
+                        stages_type_0_item_data
+                    )
 
                     stages_type_0.append(stages_type_0_item)
 

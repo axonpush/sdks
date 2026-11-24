@@ -68,7 +68,9 @@ class ConnectionsOutputBody:
                 connections_type_0 = []
                 _connections_type_0 = data
                 for connections_type_0_item_data in _connections_type_0:
-                    connections_type_0_item = Connection.from_dict(connections_type_0_item_data)
+                    connections_type_0_item = Connection.from_dict(
+                        connections_type_0_item_data
+                    )
 
                     connections_type_0.append(connections_type_0_item)
 

@@ -6,7 +6,9 @@ import httpx
 
 from ... import errors
 from ...client import AuthenticatedClient, Client
-from ...models.audit_product_packs_download_format import AuditProductPacksDownloadFormat
+from ...models.audit_product_packs_download_format import (
+    AuditProductPacksDownloadFormat,
+)
 from ...models.error_model import ErrorModel
 from ...types import UNSET, Response, Unset
 
@@ -14,7 +16,8 @@ from ...types import UNSET, Response, Unset
 def _get_kwargs(
     id: str,
     *,
-    format_: AuditProductPacksDownloadFormat | Unset = AuditProductPacksDownloadFormat.JSON,
+    format_: AuditProductPacksDownloadFormat
+    | Unset = AuditProductPacksDownloadFormat.JSON,
 ) -> dict[str, Any]:
 
     params: dict[str, Any] = {}
@@ -65,7 +68,8 @@ def sync_detailed(
     id: str,
     *,
     client: AuthenticatedClient | Client,
-    format_: AuditProductPacksDownloadFormat | Unset = AuditProductPacksDownloadFormat.JSON,
+    format_: AuditProductPacksDownloadFormat
+    | Unset = AuditProductPacksDownloadFormat.JSON,
 ) -> Response[ErrorModel | str]:
     """Download a signed evidence pack
 
@@ -98,7 +102,8 @@ def sync(
     id: str,
     *,
     client: AuthenticatedClient | Client,
-    format_: AuditProductPacksDownloadFormat | Unset = AuditProductPacksDownloadFormat.JSON,
+    format_: AuditProductPacksDownloadFormat
+    | Unset = AuditProductPacksDownloadFormat.JSON,
 ) -> ErrorModel | str | None:
     """Download a signed evidence pack
 
@@ -126,7 +131,8 @@ async def asyncio_detailed(
     id: str,
     *,
     client: AuthenticatedClient | Client,
-    format_: AuditProductPacksDownloadFormat | Unset = AuditProductPacksDownloadFormat.JSON,
+    format_: AuditProductPacksDownloadFormat
+    | Unset = AuditProductPacksDownloadFormat.JSON,
 ) -> Response[ErrorModel | str]:
     """Download a signed evidence pack
 
@@ -157,7 +163,8 @@ async def asyncio(
     id: str,
     *,
     client: AuthenticatedClient | Client,
-    format_: AuditProductPacksDownloadFormat | Unset = AuditProductPacksDownloadFormat.JSON,
+    format_: AuditProductPacksDownloadFormat
+    | Unset = AuditProductPacksDownloadFormat.JSON,
 ) -> ErrorModel | str | None:
     """Download a signed evidence pack
 

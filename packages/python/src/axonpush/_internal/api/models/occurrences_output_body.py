@@ -68,7 +68,9 @@ class OccurrencesOutputBody:
                 data_type_0 = []
                 _data_type_0 = data
                 for data_type_0_item_data in _data_type_0:
-                    data_type_0_item = AlertOccurrenceDTO.from_dict(data_type_0_item_data)
+                    data_type_0_item = AlertOccurrenceDTO.from_dict(
+                        data_type_0_item_data
+                    )
 
                     data_type_0.append(data_type_0_item)
 

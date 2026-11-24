@@ -33,6 +33,10 @@ class Manifest:
         seal_hash (str):
         sealed_at (str):
         sequence (int):
+        audit_head (str | Unset):
+        audit_seq (int | Unset):
+        compression (str | Unset):
+        format_ (int | Unset):
     """
 
     content: Object
@@ -49,6 +53,10 @@ class Manifest:
     seal_hash: str
     sealed_at: str
     sequence: int
+    audit_head: str | Unset = UNSET
+    audit_seq: int | Unset = UNSET
+    compression: str | Unset = UNSET
+    format_: int | Unset = UNSET
 
     def to_dict(self) -> dict[str, Any]:
         from ..models.object_ import Object
@@ -81,6 +89,14 @@ class Manifest:
 
         sequence = self.sequence
 
+        audit_head = self.audit_head
+
+        audit_seq = self.audit_seq
+
+        compression = self.compression
+
+        format_ = self.format_
+
         field_dict: dict[str, Any] = {}
 
         field_dict.update(
@@ -101,6 +117,14 @@ class Manifest:
                 "sequence": sequence,
             }
         )
+        if audit_head is not UNSET:
+            field_dict["auditHead"] = audit_head
+        if audit_seq is not UNSET:
+            field_dict["auditSeq"] = audit_seq
+        if compression is not UNSET:
+            field_dict["compression"] = compression
+        if format_ is not UNSET:
+            field_dict["format"] = format_
 
         return field_dict
 
@@ -137,6 +161,14 @@ class Manifest:
 
         sequence = d.pop("sequence")
 
+        audit_head = d.pop("auditHead", UNSET)
+
+        audit_seq = d.pop("auditSeq", UNSET)
+
+        compression = d.pop("compression", UNSET)
+
+        format_ = d.pop("format", UNSET)
+
         manifest = cls(
             content=content,
             lock_mode=lock_mode,
@@ -152,6 +184,10 @@ class Manifest:
             seal_hash=seal_hash,
             sealed_at=sealed_at,
             sequence=sequence,
+            audit_head=audit_head,
+            audit_seq=audit_seq,
+            compression=compression,
+            format_=format_,
         )
 
         return manifest

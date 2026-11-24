@@ -1,12 +1,16 @@
 from __future__ import annotations
 
 from collections.abc import Mapping
-from typing import TYPE_CHECKING, Any, BinaryIO, Generator, TextIO, TypeVar
+from typing import TYPE_CHECKING, Any, BinaryIO, Generator, TextIO, TypeVar, cast
 
 from attrs import define as _attrs_define
 from attrs import field as _attrs_field
 
 from ..types import UNSET, Unset
+
+if TYPE_CHECKING:
+    from ..models.features import Features
+
 
 T = TypeVar("T", bound="OrganizationDTO")
 
@@ -15,7 +19,11 @@ T = TypeVar("T", bound="OrganizationDTO")
 class OrganizationDTO:
     """
     Attributes:
+        archive_lock (str):
+        archive_retention_days (int):
         created_at (str):
+        features (Features):
+        hot_retention_days (int):
         name (str):
         org_id (str):
         plan (str):
@@ -29,7 +37,11 @@ class OrganizationDTO:
         updated_at (str | Unset):
     """
 
+    archive_lock: str
+    archive_retention_days: int
     created_at: str
+    features: Features
+    hot_retention_days: int
     name: str
     org_id: str
     plan: str
@@ -43,7 +55,17 @@ class OrganizationDTO:
     updated_at: str | Unset = UNSET
 
     def to_dict(self) -> dict[str, Any]:
+        from ..models.features import Features
+
+        archive_lock = self.archive_lock
+
+        archive_retention_days = self.archive_retention_days
+
         created_at = self.created_at
+
+        features = self.features.to_dict()
+
+        hot_retention_days = self.hot_retention_days
 
         name = self.name
 
@@ -71,7 +93,11 @@ class OrganizationDTO:
 
         field_dict.update(
             {
+                "archiveLock": archive_lock,
+                "archiveRetentionDays": archive_retention_days,
                 "createdAt": created_at,
+                "features": features,
+                "hotRetentionDays": hot_retention_days,
                 "name": name,
                 "orgId": org_id,
                 "plan": plan,
@@ -96,8 +122,18 @@ class OrganizationDTO:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
+        from ..models.features import Features
+
         d = dict(src_dict)
+        archive_lock = d.pop("archiveLock")
+
+        archive_retention_days = d.pop("archiveRetentionDays")
+
         created_at = d.pop("createdAt")
+
+        features = Features.from_dict(d.pop("features"))
+
+        hot_retention_days = d.pop("hotRetentionDays")
 
         name = d.pop("name")
 
@@ -122,7 +158,11 @@ class OrganizationDTO:
         updated_at = d.pop("updatedAt", UNSET)
 
         organization_dto = cls(
+            archive_lock=archive_lock,
+            archive_retention_days=archive_retention_days,
             created_at=created_at,
+            features=features,
+            hot_retention_days=hot_retention_days,
             name=name,
             org_id=org_id,
             plan=plan,

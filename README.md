@@ -2,6 +2,18 @@
 
 Every public axonpush client, generated from one contract.
 
+## Start with a workflow
+
+| How you want to work | Install | First step |
+|---|---|---|
+| YAML or a Node/Bun worker | `npm install @axonpush/sdk@0.0.13` | Run `npx axonpush workflow init --file workflow.yaml`. Import `WorkflowRuntime` from `@axonpush/sdk/workflow` for customer-side actions. |
+| Zod 4 or Effect Schema 4 | Add `zod@4` or `effect@^4.1.5` to that project | Follow the [Zod booking example](packages/typescript/examples/workflow-zod.ts) or [Effect booking example](packages/typescript/examples/workflow-effect.ts). Both use the same verifier as YAML. |
+| Python | `python -m pip install axonpush==0.0.20` | Run `axonpush workflow init --file workflow.yaml`. Import `axonpush.workflow.run` for local tooling or `WorkflowWorker` from `axonpush.workflow_worker` for action handling. |
+| .NET | `dotnet add package AxonPush --version 0.0.7` | Use [AxonPushClient.Workflows](packages/dotnet/README.md#workflow-deployments) for hosted operations. |
+
+Try the [booking walkthrough](https://docs.axonpush.xyz/workflows-quickstart) to
+generate hooks, run fixtures, and deploy to a specific workspace and environment.
+
 | package | registry | source |
 |---|---|---|
 | [`@axonpush/sdk`](https://www.npmjs.com/package/@axonpush/sdk) | npm | [`packages/typescript`](packages/typescript) |
@@ -88,6 +100,16 @@ the package manifest. Versions are independent: the Python SDK moving is no
 reason for the .NET one to.
 
 Changelogs are hand-written, one per package.
+
+The npm and PyPI release workflows build the same compiler snapshot for Linux,
+macOS and Windows (amd64 and arm64). To reproduce the native package checks,
+run `python tools/workflow-compiler/bundle.py python typescript` with Python 3.12+
+and Go, then `uv build` in `packages/python` and `bun run build` followed by
+`npm pack` in `packages/typescript`. Run
+`python tools/workflow-compiler/test-package.py PATH_TO_WHEEL_OR_TARBALL` for each
+artifact. This installs it in a fresh project and uses its bundled executable.
+`bundle.py` records the upstream commit and checksum for the Apache-licensed
+compiler snapshot. Update the snapshot from the matching server revision.
 
 ## History
 

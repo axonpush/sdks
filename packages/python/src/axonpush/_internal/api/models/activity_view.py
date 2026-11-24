@@ -228,7 +228,9 @@ class ActivityView:
                 exclude_type_0 = []
                 _exclude_type_0 = data
                 for exclude_type_0_item_data in _exclude_type_0:
-                    exclude_type_0_item = ActivityViewFilter.from_dict(exclude_type_0_item_data)
+                    exclude_type_0_item = ActivityViewFilter.from_dict(
+                        exclude_type_0_item_data
+                    )
 
                     exclude_type_0.append(exclude_type_0_item)
 

@@ -87,7 +87,9 @@ class WorkspaceEntitiesOutputBody:
                 entities_type_0 = []
                 _entities_type_0 = data
                 for entities_type_0_item_data in _entities_type_0:
-                    entities_type_0_item = ActivityEntity.from_dict(entities_type_0_item_data)
+                    entities_type_0_item = ActivityEntity.from_dict(
+                        entities_type_0_item_data
+                    )
 
                     entities_type_0.append(entities_type_0_item)
 

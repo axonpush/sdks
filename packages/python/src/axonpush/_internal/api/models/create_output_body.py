@@ -15,40 +15,174 @@ T = TypeVar("T", bound="CreateOutputBody")
 class CreateOutputBody:
     """
     Attributes:
-        id (str):
+        alert_rule_id (str):
+        created_at (str):
+        destination (str):
+        destination_type (str):
+        enabled (bool):
+        metric (str):
+        name (str):
+        operator (str):
+        org_id (str):
+        threshold (float):
+        updated_at (str):
+        webhook_secret (str): Signs webhook deliveries (X-AxonPush-Timestamp, X-AxonPush-Signature-V2); only returned on
+            create and rotate
         schema (str | Unset): A URL to the JSON Schema for this object.
+        app_id (str | Unset):
+        environment_id (str | Unset):
+        model (str | Unset):
+        release (str | Unset):
+        service (str | Unset):
     """
 
-    id: str
+    alert_rule_id: str
+    created_at: str
+    destination: str
+    destination_type: str
+    enabled: bool
+    metric: str
+    name: str
+    operator: str
+    org_id: str
+    threshold: float
+    updated_at: str
+    webhook_secret: str
     schema: str | Unset = UNSET
+    app_id: str | Unset = UNSET
+    environment_id: str | Unset = UNSET
+    model: str | Unset = UNSET
+    release: str | Unset = UNSET
+    service: str | Unset = UNSET
 
     def to_dict(self) -> dict[str, Any]:
-        id = self.id
+        alert_rule_id = self.alert_rule_id
+
+        created_at = self.created_at
+
+        destination = self.destination
+
+        destination_type = self.destination_type
+
+        enabled = self.enabled
+
+        metric = self.metric
+
+        name = self.name
+
+        operator = self.operator
+
+        org_id = self.org_id
+
+        threshold = self.threshold
+
+        updated_at = self.updated_at
+
+        webhook_secret = self.webhook_secret
 
         schema = self.schema
+
+        app_id = self.app_id
+
+        environment_id = self.environment_id
+
+        model = self.model
+
+        release = self.release
+
+        service = self.service
 
         field_dict: dict[str, Any] = {}
 
         field_dict.update(
             {
-                "id": id,
+                "alertRuleId": alert_rule_id,
+                "createdAt": created_at,
+                "destination": destination,
+                "destinationType": destination_type,
+                "enabled": enabled,
+                "metric": metric,
+                "name": name,
+                "operator": operator,
+                "orgId": org_id,
+                "threshold": threshold,
+                "updatedAt": updated_at,
+                "webhookSecret": webhook_secret,
             }
         )
         if schema is not UNSET:
             field_dict["$schema"] = schema
+        if app_id is not UNSET:
+            field_dict["appId"] = app_id
+        if environment_id is not UNSET:
+            field_dict["environmentId"] = environment_id
+        if model is not UNSET:
+            field_dict["model"] = model
+        if release is not UNSET:
+            field_dict["release"] = release
+        if service is not UNSET:
+            field_dict["service"] = service
 
         return field_dict
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         d = dict(src_dict)
-        id = d.pop("id")
+        alert_rule_id = d.pop("alertRuleId")
+
+        created_at = d.pop("createdAt")
+
+        destination = d.pop("destination")
+
+        destination_type = d.pop("destinationType")
+
+        enabled = d.pop("enabled")
+
+        metric = d.pop("metric")
+
+        name = d.pop("name")
+
+        operator = d.pop("operator")
+
+        org_id = d.pop("orgId")
+
+        threshold = d.pop("threshold")
+
+        updated_at = d.pop("updatedAt")
+
+        webhook_secret = d.pop("webhookSecret")
 
         schema = d.pop("$schema", UNSET)
 
+        app_id = d.pop("appId", UNSET)
+
+        environment_id = d.pop("environmentId", UNSET)
+
+        model = d.pop("model", UNSET)
+
+        release = d.pop("release", UNSET)
+
+        service = d.pop("service", UNSET)
+
         create_output_body = cls(
-            id=id,
+            alert_rule_id=alert_rule_id,
+            created_at=created_at,
+            destination=destination,
+            destination_type=destination_type,
+            enabled=enabled,
+            metric=metric,
+            name=name,
+            operator=operator,
+            org_id=org_id,
+            threshold=threshold,
+            updated_at=updated_at,
+            webhook_secret=webhook_secret,
             schema=schema,
+            app_id=app_id,
+            environment_id=environment_id,
+            model=model,
+            release=release,
+            service=service,
         )
 
         return create_output_body

@@ -13,6 +13,10 @@ if TYPE_CHECKING:
     from ..models.activity_connect_otlp import ActivityConnectOTLP
     from ..models.activity_connect_result_env import ActivityConnectResultEnv
     from ..models.activity_connect_sdk import ActivityConnectSDK
+    from ..models.activity_connect_workflow_runtime import (
+        ActivityConnectWorkflowRuntime,
+    )
+    from ..models.link import Link
 
 
 T = TypeVar("T", bound="ActivityConnectResult")
@@ -33,11 +37,13 @@ class ActivityConnectResult:
         sdk (ActivityConnectSDK):
         workspace_id (str):
         schema (str | Unset): A URL to the JSON Schema for this object.
+        claim (Link | Unset):
         hint (str | Unset):
         revoked_key_ids (list[str] | None | Unset): Keys revoked by rotate
         sentry_dsn (str | Unset): Sentry SDK DSN; present only when this call minted it
         sentry_dsn_unavailable (str | Unset): Why sentryDsn is absent
         warnings (list[str] | None | Unset):
+        workflow_runtime (ActivityConnectWorkflowRuntime | Unset):
     """
 
     api_url: str
@@ -50,17 +56,23 @@ class ActivityConnectResult:
     sdk: ActivityConnectSDK
     workspace_id: str
     schema: str | Unset = UNSET
+    claim: Link | Unset = UNSET
     hint: str | Unset = UNSET
     revoked_key_ids: list[str] | None | Unset = UNSET
     sentry_dsn: str | Unset = UNSET
     sentry_dsn_unavailable: str | Unset = UNSET
     warnings: list[str] | None | Unset = UNSET
+    workflow_runtime: ActivityConnectWorkflowRuntime | Unset = UNSET
 
     def to_dict(self) -> dict[str, Any]:
         from ..models.activity_connect_key import ActivityConnectKey
         from ..models.activity_connect_otlp import ActivityConnectOTLP
         from ..models.activity_connect_result_env import ActivityConnectResultEnv
         from ..models.activity_connect_sdk import ActivityConnectSDK
+        from ..models.activity_connect_workflow_runtime import (
+            ActivityConnectWorkflowRuntime,
+        )
+        from ..models.link import Link
 
         api_url = self.api_url
 
@@ -81,6 +93,10 @@ class ActivityConnectResult:
         workspace_id = self.workspace_id
 
         schema = self.schema
+
+        claim: dict[str, Any] | Unset = UNSET
+        if not isinstance(self.claim, Unset):
+            claim = self.claim.to_dict()
 
         hint = self.hint
 
@@ -106,6 +122,10 @@ class ActivityConnectResult:
         else:
             warnings = self.warnings
 
+        workflow_runtime: dict[str, Any] | Unset = UNSET
+        if not isinstance(self.workflow_runtime, Unset):
+            workflow_runtime = self.workflow_runtime.to_dict()
+
         field_dict: dict[str, Any] = {}
 
         field_dict.update(
@@ -123,6 +143,8 @@ class ActivityConnectResult:
         )
         if schema is not UNSET:
             field_dict["$schema"] = schema
+        if claim is not UNSET:
+            field_dict["claim"] = claim
         if hint is not UNSET:
             field_dict["hint"] = hint
         if revoked_key_ids is not UNSET:
@@ -133,6 +155,8 @@ class ActivityConnectResult:
             field_dict["sentryDsnUnavailable"] = sentry_dsn_unavailable
         if warnings is not UNSET:
             field_dict["warnings"] = warnings
+        if workflow_runtime is not UNSET:
+            field_dict["workflowRuntime"] = workflow_runtime
 
         return field_dict
 
@@ -142,6 +166,10 @@ class ActivityConnectResult:
         from ..models.activity_connect_otlp import ActivityConnectOTLP
         from ..models.activity_connect_result_env import ActivityConnectResultEnv
         from ..models.activity_connect_sdk import ActivityConnectSDK
+        from ..models.activity_connect_workflow_runtime import (
+            ActivityConnectWorkflowRuntime,
+        )
+        from ..models.link import Link
 
         d = dict(src_dict)
         api_url = d.pop("apiUrl")
@@ -163,6 +191,13 @@ class ActivityConnectResult:
         workspace_id = d.pop("workspaceId")
 
         schema = d.pop("$schema", UNSET)
+
+        _claim = d.pop("claim", UNSET)
+        claim: Link | Unset
+        if isinstance(_claim, Unset):
+            claim = UNSET
+        else:
+            claim = Link.from_dict(_claim)
 
         hint = d.pop("hint", UNSET)
 
@@ -204,6 +239,15 @@ class ActivityConnectResult:
 
         warnings = _parse_warnings(d.pop("warnings", UNSET))
 
+        _workflow_runtime = d.pop("workflowRuntime", UNSET)
+        workflow_runtime: ActivityConnectWorkflowRuntime | Unset
+        if isinstance(_workflow_runtime, Unset):
+            workflow_runtime = UNSET
+        else:
+            workflow_runtime = ActivityConnectWorkflowRuntime.from_dict(
+                _workflow_runtime
+            )
+
         activity_connect_result = cls(
             api_url=api_url,
             created=created,
@@ -215,11 +259,13 @@ class ActivityConnectResult:
             sdk=sdk,
             workspace_id=workspace_id,
             schema=schema,
+            claim=claim,
             hint=hint,
             revoked_key_ids=revoked_key_ids,
             sentry_dsn=sentry_dsn,
             sentry_dsn_unavailable=sentry_dsn_unavailable,
             warnings=warnings,
+            workflow_runtime=workflow_runtime,
         )
 
         return activity_connect_result

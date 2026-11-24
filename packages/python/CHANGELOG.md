@@ -1,11 +1,18 @@
 # Changelog
 
-## Unreleased
+## [0.0.20]
+
+- Add workflow deployment preview, apply and status operations. Add customer-side workflow action workers.
+- Update billing clients for Polar checkout and capped telemetry overages.
 
 - Add `observe`, `observe_many`, `identify` and `group` on `AxonPush` and `AsyncAxonPush` for the per-installation workspace model: the core observation envelope (`event`, `refs`, `attributes`), batching by 100, profile traits with merge and `None` deletes. Regenerate drafts, catalog, describe, identify and views operations from the contract.
 - Add contract-generated business workspace, template, observation and activity resources; immutable revisions, rebuild activation and rollback, pinned template provenance, receipt/projection separation and lifecycle queries.
 - Preserve original event occurrence time and stable retry identity.
 - Remove gateway routing helpers and runtime moderation/governance/spend enforcement resources from the public SDK surface. Passive tracing, errors, usage and observational alerts remain.
+- Fix nested LangChain and Deep Agents runs and OpenTelemetry child spans being dropped: parent linkage is now sent as `parent_span_id`.
+- `events.publish` accepts `environment=`, sent as the `X-Axonpush-Environment` header. Fixes the logging handler and OpenTelemetry exporter failing on every publish when `environment` was set.
+- `events.search` accepts `service_name`, `operation_name` and `error_type`.
+- **Breaking:** `install_sentry` takes `public_token` (a `pt_` public ingest token, or `AXONPUSH_PUBLIC_TOKEN`) instead of `api_key`; the server refuses API keys for Sentry ingest. The DSN project segment is now an integer derived from the channel id, as Sentry SDKs reject non-integer project ids. `channel_id` is optional.
 
 
 All notable changes to the axonpush Python SDK are documented here. The

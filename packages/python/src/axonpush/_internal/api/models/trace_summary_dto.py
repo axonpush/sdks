@@ -30,6 +30,7 @@ class TraceSummaryDTO:
         root_span_name (str):
         service_name (str):
         session_id (str):
+        source (str): Ingest source of the root span: sdk, otlp, sentry, ...
         span_count (int):
         started_at (str):
         total_tokens (int):
@@ -52,6 +53,7 @@ class TraceSummaryDTO:
     root_span_name: str
     service_name: str
     session_id: str
+    source: str
     span_count: int
     started_at: str
     total_tokens: int
@@ -99,6 +101,8 @@ class TraceSummaryDTO:
 
         session_id = self.session_id
 
+        source = self.source
+
         span_count = self.span_count
 
         started_at = self.started_at
@@ -128,6 +132,7 @@ class TraceSummaryDTO:
                 "rootSpanName": root_span_name,
                 "serviceName": service_name,
                 "sessionId": session_id,
+                "source": source,
                 "spanCount": span_count,
                 "startedAt": started_at,
                 "totalTokens": total_tokens,
@@ -197,6 +202,8 @@ class TraceSummaryDTO:
 
         session_id = d.pop("sessionId")
 
+        source = d.pop("source")
+
         span_count = d.pop("spanCount")
 
         started_at = d.pop("startedAt")
@@ -223,6 +230,7 @@ class TraceSummaryDTO:
             root_span_name=root_span_name,
             service_name=service_name,
             session_id=session_id,
+            source=source,
             span_count=span_count,
             started_at=started_at,
             total_tokens=total_tokens,

@@ -1,13 +1,17 @@
 [project]
 name = "axonpush"
-version = "0.0.19"
-description = "Python SDK for AxonPush — observability and event infrastructure for AI agent systems"
+version = "0.0.20"
+description = "Python SDK for AxonPush — workflow-first verification for automation providers, with telemetry and observability diagnostics"
 readme = "README.md"
 license = "MIT"
 requires-python = ">=3.10"
 authors = [{ name = "AxonPush" }]
 keywords = [
     "axonpush",
+    "workflow",
+    "workflow-verification",
+    "automation",
+    "idempotency",
     "ai-agents",
     "events",
     "tracing",
@@ -31,6 +35,7 @@ classifiers = [
     "Typing :: Typed",
     "Topic :: Software Development :: Libraries :: Python Modules",
     "Topic :: Scientific/Engineering :: Artificial Intelligence",
+    "Topic :: Software Development :: Testing",
     "Topic :: System :: Monitoring",
     "Framework :: Pydantic :: 2",
     "Programming Language :: Python :: 3",
@@ -97,12 +102,19 @@ dev = [
     "types-requests>=2.32.4.20260107",
 ]
 
+[project.scripts]
+axonpush = "axonpush.workflow:main"
+
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/axonpush"]
+
+[tool.hatch.build]
+artifacts = ["src/axonpush/bin/**"]
+include = ["src/axonpush/**/*.py", "src/axonpush/py.typed", "src/axonpush/bin/**/*"]
 
 [tool.ruff]
 target-version = "py310"

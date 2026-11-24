@@ -9,12 +9,13 @@ from __future__ import annotations
 import json
 import re
 import subprocess
+import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 spec = json.loads((ROOT / "contract/openapi.sdk.json").read_text())
 schemas = spec["components"]["schemas"]
-groups = {"workspaces": "Workspaces", "templates": "Templates", "observations": "Observations", "activity": "Activity", "telemetry": "Telemetry", "capabilities": "Capabilities", "audit": "Audit", "auditProduct": "AuditProduct"}
+groups = {"workflows": "Workflows", "workspaces": "Workspaces", "templates": "Templates", "observations": "Observations", "activity": "Activity", "telemetry": "Telemetry", "capabilities": "Capabilities", "audit": "Audit", "auditProduct": "AuditProduct"}
 ops: dict[str, list[dict]] = {g: [] for g in groups}
 
 
@@ -217,4 +218,4 @@ subprocess.run(["uv", "run", "ruff", "check", "--fix", *python_paths], cwd=ROOT 
 subprocess.run(["uv", "run", "ruff", "format", *python_paths], cwd=ROOT / "packages/python", check=True)
 
 # Refresh compatibility facades from their single synchronous source.
-subprocess.run(["python", str(ROOT / "tools/generate-resource-facades.py")], cwd=ROOT, check=True)
+subprocess.run([sys.executable, str(ROOT / "tools/generate-resource-facades.py")], cwd=ROOT, check=True)

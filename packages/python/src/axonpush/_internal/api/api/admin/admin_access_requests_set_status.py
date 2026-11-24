@@ -8,7 +8,9 @@ from ... import errors
 from ...client import AuthenticatedClient, Client
 from ...models.error_model import ErrorModel
 from ...models.ok_output_body import OkOutputBody
-from ...models.set_access_request_status_input_body import SetAccessRequestStatusInputBody
+from ...models.set_access_request_status_input_body import (
+    SetAccessRequestStatusInputBody,
+)
 from ...types import UNSET, Response
 
 

@@ -101,7 +101,9 @@ class TraceGroupsBody:
                 groups_type_0 = []
                 _groups_type_0 = data
                 for groups_type_0_item_data in _groups_type_0:
-                    groups_type_0_item = TraceGroupDTO.from_dict(groups_type_0_item_data)
+                    groups_type_0_item = TraceGroupDTO.from_dict(
+                        groups_type_0_item_data
+                    )
 
                     groups_type_0.append(groups_type_0_item)
 

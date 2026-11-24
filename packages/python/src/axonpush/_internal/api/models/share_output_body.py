@@ -10,7 +10,9 @@ from ..types import UNSET, Unset
 
 if TYPE_CHECKING:
     from ..models.share_output_body_grant import ShareOutputBodyGrant
-    from ..models.share_output_body_packs_type_0_item import ShareOutputBodyPacksType0Item
+    from ..models.share_output_body_packs_type_0_item import (
+        ShareOutputBodyPacksType0Item,
+    )
 
 
 T = TypeVar("T", bound="ShareOutputBody")
@@ -33,7 +35,9 @@ class ShareOutputBody:
 
     def to_dict(self) -> dict[str, Any]:
         from ..models.share_output_body_grant import ShareOutputBodyGrant
-        from ..models.share_output_body_packs_type_0_item import ShareOutputBodyPacksType0Item
+        from ..models.share_output_body_packs_type_0_item import (
+            ShareOutputBodyPacksType0Item,
+        )
 
         grant = self.grant.to_dict()
 
@@ -68,7 +72,9 @@ class ShareOutputBody:
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         from ..models.share_output_body_grant import ShareOutputBodyGrant
-        from ..models.share_output_body_packs_type_0_item import ShareOutputBodyPacksType0Item
+        from ..models.share_output_body_packs_type_0_item import (
+            ShareOutputBodyPacksType0Item,
+        )
 
         d = dict(src_dict)
         grant = ShareOutputBodyGrant.from_dict(d.pop("grant"))

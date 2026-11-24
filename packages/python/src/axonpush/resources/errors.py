@@ -17,7 +17,7 @@ from axonpush._internal.api.models import (
     IssueTriageDTO,
     ListErrorEventsOutputBody,
     ListErrorsOutputBody,
-    PatchErrorInputBody,
+    PatchErrorInputBody as PatchErrorInputBody,
 )
 
 if TYPE_CHECKING:

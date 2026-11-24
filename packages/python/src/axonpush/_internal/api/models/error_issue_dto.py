@@ -157,7 +157,9 @@ class ErrorIssueDTO:
                 sparkline_type_0 = []
                 _sparkline_type_0 = data
                 for sparkline_type_0_item_data in _sparkline_type_0:
-                    sparkline_type_0_item = IssueBucketDTO.from_dict(sparkline_type_0_item_data)
+                    sparkline_type_0_item = IssueBucketDTO.from_dict(
+                        sparkline_type_0_item_data
+                    )
 
                     sparkline_type_0.append(sparkline_type_0_item)
 

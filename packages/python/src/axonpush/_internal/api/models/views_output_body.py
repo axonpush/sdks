@@ -68,7 +68,9 @@ class ViewsOutputBody:
                 views_type_0 = []
                 _views_type_0 = data
                 for views_type_0_item_data in _views_type_0:
-                    views_type_0_item = ActivityViewResult.from_dict(views_type_0_item_data)
+                    views_type_0_item = ActivityViewResult.from_dict(
+                        views_type_0_item_data
+                    )
 
                     views_type_0.append(views_type_0_item)
 

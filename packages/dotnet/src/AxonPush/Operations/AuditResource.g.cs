@@ -12,13 +12,14 @@ public sealed class AuditResource
     internal AuditResource(AxonPushTransport transport) => _transport = transport;
 
     /// <summary>List audit log entries.</summary>
-    public Task<ListOutputBody2?> ListAsync(string? action = null, string? resourceType = null, string? source = null, string? before = null, long? limit = null, CancellationToken cancellationToken = default)
+    public Task<ListOutputBody2?> ListAsync(string? action = null, string? resourceType = null, string? source = null, string? before = null, string? beforeId = null, long? limit = null, CancellationToken cancellationToken = default)
     {
         var path = $"audit-logs";
         path = AddQuery(path, "action", action);
         path = AddQuery(path, "resourceType", resourceType);
         path = AddQuery(path, "source", source);
         path = AddQuery(path, "before", before);
+        path = AddQuery(path, "beforeId", beforeId);
         path = AddQuery(path, "limit", limit);
         return _transport.SendAsync<ListOutputBody2>(HttpMethod.Get, path, null, cancellationToken);
     }
@@ -164,10 +165,10 @@ public sealed class AuditResource
     }
 
     /// <summary>Read archive integrity and storage status.</summary>
-    public Task<StatusOutputBody?> StatusAsync(CancellationToken cancellationToken = default)
+    public Task<StatusOutputBody1?> StatusAsync(CancellationToken cancellationToken = default)
     {
         var path = $"audit/status";
-        return _transport.SendAsync<StatusOutputBody>(HttpMethod.Get, path, null, cancellationToken);
+        return _transport.SendAsync<StatusOutputBody1>(HttpMethod.Get, path, null, cancellationToken);
     }
 
     /// <summary>Read bounded projected storage tiers and configured price estimates.</summary>

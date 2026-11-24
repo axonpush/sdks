@@ -30,7 +30,7 @@ from axonpush._internal.api.api.analytics import (
 from axonpush._internal.api.models import (
     AnalyticsOverviewOutputBody,
     BreakdownOutputBody,
-    DiffInputBody,
+    DiffInputBody as DiffInputBody,
     DiffOutputBody,
     DimensionsOutputBody,
     DimensionValuesOutputBody,

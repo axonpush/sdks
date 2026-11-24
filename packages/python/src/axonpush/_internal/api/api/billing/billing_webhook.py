@@ -15,11 +15,19 @@ from ...types import UNSET, File, FileTypes, Response, Unset
 def _get_kwargs(
     *,
     body: File,
-    x_signature: str | Unset = UNSET,
+    webhook_id: str | Unset = UNSET,
+    webhook_timestamp: str | Unset = UNSET,
+    webhook_signature: str | Unset = UNSET,
 ) -> dict[str, Any]:
     headers: dict[str, Any] = {}
-    if not isinstance(x_signature, Unset):
-        headers["X-Signature"] = x_signature
+    if not isinstance(webhook_id, Unset):
+        headers["webhook-id"] = webhook_id
+
+    if not isinstance(webhook_timestamp, Unset):
+        headers["webhook-timestamp"] = webhook_timestamp
+
+    if not isinstance(webhook_signature, Unset):
+        headers["webhook-signature"] = webhook_signature
 
     _kwargs: dict[str, Any] = {
         "method": "post",
@@ -62,12 +70,18 @@ def sync_detailed(
     *,
     client: AuthenticatedClient | Client,
     body: File,
-    x_signature: str | Unset = UNSET,
+    webhook_id: str | Unset = UNSET,
+    webhook_timestamp: str | Unset = UNSET,
+    webhook_signature: str | Unset = UNSET,
 ) -> Response[ErrorModel | WebhookOutputBody]:
-    """LemonSqueezy webhook
+    """Polar webhook
+
+     Receives Polar subscription and order events, signed with Standard Webhooks.
 
     Args:
-        x_signature (str | Unset):
+        webhook_id (str | Unset):
+        webhook_timestamp (str | Unset):
+        webhook_signature (str | Unset):
         body (File):
 
     Raises:
@@ -80,7 +94,9 @@ def sync_detailed(
 
     kwargs = _get_kwargs(
         body=body,
-        x_signature=x_signature,
+        webhook_id=webhook_id,
+        webhook_timestamp=webhook_timestamp,
+        webhook_signature=webhook_signature,
     )
 
     response = client.get_httpx_client().request(
@@ -94,12 +110,18 @@ def sync(
     *,
     client: AuthenticatedClient | Client,
     body: File,
-    x_signature: str | Unset = UNSET,
+    webhook_id: str | Unset = UNSET,
+    webhook_timestamp: str | Unset = UNSET,
+    webhook_signature: str | Unset = UNSET,
 ) -> ErrorModel | WebhookOutputBody | None:
-    """LemonSqueezy webhook
+    """Polar webhook
+
+     Receives Polar subscription and order events, signed with Standard Webhooks.
 
     Args:
-        x_signature (str | Unset):
+        webhook_id (str | Unset):
+        webhook_timestamp (str | Unset):
+        webhook_signature (str | Unset):
         body (File):
 
     Raises:
@@ -113,7 +135,9 @@ def sync(
     return sync_detailed(
         client=client,
         body=body,
-        x_signature=x_signature,
+        webhook_id=webhook_id,
+        webhook_timestamp=webhook_timestamp,
+        webhook_signature=webhook_signature,
     ).parsed
 
 
@@ -121,12 +145,18 @@ async def asyncio_detailed(
     *,
     client: AuthenticatedClient | Client,
     body: File,
-    x_signature: str | Unset = UNSET,
+    webhook_id: str | Unset = UNSET,
+    webhook_timestamp: str | Unset = UNSET,
+    webhook_signature: str | Unset = UNSET,
 ) -> Response[ErrorModel | WebhookOutputBody]:
-    """LemonSqueezy webhook
+    """Polar webhook
+
+     Receives Polar subscription and order events, signed with Standard Webhooks.
 
     Args:
-        x_signature (str | Unset):
+        webhook_id (str | Unset):
+        webhook_timestamp (str | Unset):
+        webhook_signature (str | Unset):
         body (File):
 
     Raises:
@@ -139,7 +169,9 @@ async def asyncio_detailed(
 
     kwargs = _get_kwargs(
         body=body,
-        x_signature=x_signature,
+        webhook_id=webhook_id,
+        webhook_timestamp=webhook_timestamp,
+        webhook_signature=webhook_signature,
     )
 
     response = await client.get_async_httpx_client().request(**kwargs)
@@ -151,12 +183,18 @@ async def asyncio(
     *,
     client: AuthenticatedClient | Client,
     body: File,
-    x_signature: str | Unset = UNSET,
+    webhook_id: str | Unset = UNSET,
+    webhook_timestamp: str | Unset = UNSET,
+    webhook_signature: str | Unset = UNSET,
 ) -> ErrorModel | WebhookOutputBody | None:
-    """LemonSqueezy webhook
+    """Polar webhook
+
+     Receives Polar subscription and order events, signed with Standard Webhooks.
 
     Args:
-        x_signature (str | Unset):
+        webhook_id (str | Unset):
+        webhook_timestamp (str | Unset):
+        webhook_signature (str | Unset):
         body (File):
 
     Raises:
@@ -171,6 +209,8 @@ async def asyncio(
         await asyncio_detailed(
             client=client,
             body=body,
-            x_signature=x_signature,
+            webhook_id=webhook_id,
+            webhook_timestamp=webhook_timestamp,
+            webhook_signature=webhook_signature,
         )
     ).parsed

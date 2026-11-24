@@ -107,8 +107,10 @@ class TrustOutputBody:
                 gated_documents_type_0 = []
                 _gated_documents_type_0 = data
                 for gated_documents_type_0_item_data in _gated_documents_type_0:
-                    gated_documents_type_0_item = TrustOutputBodyGatedDocumentsType0Item.from_dict(
-                        gated_documents_type_0_item_data
+                    gated_documents_type_0_item = (
+                        TrustOutputBodyGatedDocumentsType0Item.from_dict(
+                            gated_documents_type_0_item_data
+                        )
                     )
 
                     gated_documents_type_0.append(gated_documents_type_0_item)

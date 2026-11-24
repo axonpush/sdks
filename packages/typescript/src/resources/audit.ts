@@ -43,7 +43,7 @@ import type {
   ReleaseHoldInputBody,
   SegmentListOutputBody,
   SegmentOutputBody,
-  StatusOutputBody,
+  StatusOutputBody1,
   StorageOutputBody,
   VerifyOutputBody,
   VerifyResult,
@@ -154,7 +154,7 @@ export class AuditResource {
   }
 
   /** Read archive integrity and storage status. `GET /audit/status` */
-  async status(): Promise<StatusOutputBody | null> {
+  async status(): Promise<StatusOutputBody1 | null> {
     return this.client.invoke(auditStatus, {});
   }
 

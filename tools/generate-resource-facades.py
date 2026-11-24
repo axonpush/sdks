@@ -78,6 +78,47 @@ def generate(source: Path, destination: Path) -> None:
                 arguments = {
                     a.arg: a for a in [*method.args.args, *method.args.kwonlyargs]
                 }
+                # Anonymous body schemas can be renumbered when any domain is
+                # registered. Preserve the facade's public name while resolving
+                # its imported model from the generated operation, not a suffix.
+                body_arg = next((a for a in kwargs.args.kwonlyargs if a.arg == "body"), None)
+                facade_body = arguments.get("body")
+                if body_arg is not None and facade_body is not None:
+                    if isinstance(body_arg.annotation, ast.Name) and isinstance(facade_body.annotation, ast.Name):
+                        for imported in tree.body:
+                            if isinstance(imported, ast.ImportFrom) and imported.module == "axonpush._internal.api.models":
+                                for alias in imported.names:
+                                    if (alias.asname or alias.name) == facade_body.annotation.id:
+                                        alias.asname = alias.asname or alias.name
+                                        alias.name = body_arg.annotation.id
+                if not any(k.arg == "_coerce" for k in call.keywords):
+                    response = next(n for n in operation.body if isinstance(n, ast.FunctionDef) and n.name == "_parse_response")
+
+                    def without_error(node: ast.expr) -> ast.expr | None:
+                        if isinstance(node, ast.Name) and node.id == "ErrorModel":
+                            return None
+                        if isinstance(node, ast.BinOp) and isinstance(node.op, ast.BitOr):
+                            left, right = without_error(node.left), without_error(node.right)
+                            if left is None:
+                                return right
+                            if right is None:
+                                return left
+                            return ast.BinOp(left=left, op=ast.BitOr(), right=right)
+                        return copy.deepcopy(node)
+
+                    returned = without_error(response.returns)
+                    if returned is not None:
+                        method.returns = ast.BinOp(left=returned, op=ast.BitOr(), right=ast.Constant(None))
+                        model_names = {
+                            alias.name for node in operation.body
+                            if isinstance(node, ast.ImportFrom) and node.module and node.module.startswith("models.")
+                            for alias in node.names
+                        }
+                        needed = {n.id for n in ast.walk(returned) if isinstance(n, ast.Name)} & model_names
+                        models_import = next((n for n in tree.body if isinstance(n, ast.ImportFrom) and n.module == "axonpush._internal.api.models"), None)
+                        if models_import is not None:
+                            exposed = {a.asname or a.name for a in models_import.names}
+                            models_import.names.extend(ast.alias(name=n) for n in sorted(needed - exposed))
                 for arg, default in zip(
                     kwargs.args.kwonlyargs, kwargs.args.kw_defaults
                 ):

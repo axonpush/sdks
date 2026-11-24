@@ -126,7 +126,9 @@ class MeDTO:
                 memberships_type_0 = []
                 _memberships_type_0 = data
                 for memberships_type_0_item_data in _memberships_type_0:
-                    memberships_type_0_item = MembershipDTO.from_dict(memberships_type_0_item_data)
+                    memberships_type_0_item = MembershipDTO.from_dict(
+                        memberships_type_0_item_data
+                    )
 
                     memberships_type_0.append(memberships_type_0_item)
 

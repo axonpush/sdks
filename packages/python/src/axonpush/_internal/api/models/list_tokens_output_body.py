@@ -68,7 +68,9 @@ class ListTokensOutputBody:
                 tokens_type_0 = []
                 _tokens_type_0 = data
                 for tokens_type_0_item_data in _tokens_type_0:
-                    tokens_type_0_item = PublicIngestTokenDTO.from_dict(tokens_type_0_item_data)
+                    tokens_type_0_item = PublicIngestTokenDTO.from_dict(
+                        tokens_type_0_item_data
+                    )
 
                     tokens_type_0.append(tokens_type_0_item)
 

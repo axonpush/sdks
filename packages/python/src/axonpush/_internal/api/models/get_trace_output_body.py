@@ -23,6 +23,7 @@ class GetTraceOutputBody:
         spans (list[EventDTO] | None):
         trace_id (str):
         schema (str | Unset): A URL to the JSON Schema for this object.
+        archived (bool | Unset): true when the spans were read from the archive (traces.getArchived)
         next_cursor (str | Unset):
     """
 
@@ -30,6 +31,7 @@ class GetTraceOutputBody:
     spans: list[EventDTO] | None
     trace_id: str
     schema: str | Unset = UNSET
+    archived: bool | Unset = UNSET
     next_cursor: str | Unset = UNSET
 
     def to_dict(self) -> dict[str, Any]:
@@ -51,6 +53,8 @@ class GetTraceOutputBody:
 
         schema = self.schema
 
+        archived = self.archived
+
         next_cursor = self.next_cursor
 
         field_dict: dict[str, Any] = {}
@@ -64,6 +68,8 @@ class GetTraceOutputBody:
         )
         if schema is not UNSET:
             field_dict["$schema"] = schema
+        if archived is not UNSET:
+            field_dict["archived"] = archived
         if next_cursor is not UNSET:
             field_dict["nextCursor"] = next_cursor
 
@@ -100,6 +106,8 @@ class GetTraceOutputBody:
 
         schema = d.pop("$schema", UNSET)
 
+        archived = d.pop("archived", UNSET)
+
         next_cursor = d.pop("nextCursor", UNSET)
 
         get_trace_output_body = cls(
@@ -107,6 +115,7 @@ class GetTraceOutputBody:
             spans=spans,
             trace_id=trace_id,
             schema=schema,
+            archived=archived,
             next_cursor=next_cursor,
         )
 

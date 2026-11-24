@@ -97,7 +97,9 @@ class ActivityFunnelResult:
                 stages_type_0 = []
                 _stages_type_0 = data
                 for stages_type_0_item_data in _stages_type_0:
-                    stages_type_0_item = ActivityStageCount.from_dict(stages_type_0_item_data)
+                    stages_type_0_item = ActivityStageCount.from_dict(
+                        stages_type_0_item_data
+                    )
 
                     stages_type_0.append(stages_type_0_item)
 

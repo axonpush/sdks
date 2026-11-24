@@ -10,6 +10,24 @@
 
 Targets `net8.0` and above.
 
+## Workflow deployments
+
+Install the core client with `dotnet add package AxonPush --version 0.0.7`.
+Use a workspace-scoped API key and select the environment explicitly.
+
+```csharp
+using AxonPush;
+
+using var client = new AxonPushClient(new AxonPushOptions {
+    ApiKey = Environment.GetEnvironmentVariable("AXONPUSH_API_KEY")
+});
+var deployments = await client.Workflows.DeploymentsAsync("my-workspace", environment: "dev");
+```
+
+`client.Workflows` also exposes deployment preview and apply, simulation, facts,
+cases and action operations. Simulation calls the hosted verifier. For offline
+contract generation and fixture testing, use the TypeScript or Python SDK.
+
 ## Business operations
 
 The SDK provides typed workspace authoring, immutable revisions, pinned templates,
@@ -150,7 +168,7 @@ On serverless hosts (AWS Lambda and friends) the batch processor's exit flush is
 
 ### Which should I use
 
-The OTel-native path above is the recommended way to send traces. The legacy per-framework event-model exporter (`AxonPushSpanExporter` / `AddAxonPushExporter`, which maps `Activity` events to `/event` payloads) still works and is kept for compatibility, but it is being superseded by OTel-native. Frame it as the compatibility path: keep it if you already depend on channel fan-out on the events plane, otherwise reach for `AxonPush.Otel.Telemetry`. Traces from both land in the same dashboard (`/v2/traces`); the server reconciles them through the OTLP normalizer, so you can migrate call sites incrementally without a gap in your traces.
+The OTel-native path above is the recommended way to send traces. The legacy per-framework event-model exporter (`AxonPushSpanExporter` / `AddAxonPushExporter`, which maps `Activity` events to `/event` payloads) still works and is kept for compatibility, but it is being superseded by OTel-native. Frame it as the compatibility path: keep it if you already depend on channel fan-out on the events plane, otherwise reach for `AxonPush.Otel.Telemetry`. Traces from both land in the same trace views (`GET /traces`); the server reconciles them through the OTLP normalizer, so you can migrate call sites incrementally without a gap in your traces.
 
 ## Environment variables
 
@@ -161,7 +179,7 @@ The OTel-native path above is the recommended way to send traces. The legacy per
 | `AXONPUSH_API_KEY` | required | API key. |
 | `AXONPUSH_TENANT_ID` | required | Tenant identifier. |
 | `AXONPUSH_BASE_URL` | `https://api.axonpush.xyz` | Override for self-hosted deployments. |
-| `AXONPUSH_ENVIRONMENT` | (none) | Stamped on every event for filtering. |
+| `AXONPUSH_ENVIRONMENT` | (none) | Sent as the `X-Axonpush-Environment` header; must be within the API key's environment binding. |
 | `AXONPUSH_TIMEOUT` | `30` | Total invocation timeout in seconds, including retries and response reading. |
 | `AXONPUSH_MAX_RETRIES` | `3` | Additional attempts for eligible reads and writes with stable deduplication identities. Other mutations run once. |
 | `AXONPUSH_FAIL_OPEN` | `true` | When true, publish failures are logged and swallowed. |

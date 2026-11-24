@@ -74,7 +74,9 @@ class SegmentListOutputBody:
                 segments_type_0 = []
                 _segments_type_0 = data
                 for segments_type_0_item_data in _segments_type_0:
-                    segments_type_0_item = LedgerSegment.from_dict(segments_type_0_item_data)
+                    segments_type_0_item = LedgerSegment.from_dict(
+                        segments_type_0_item_data
+                    )
 
                     segments_type_0.append(segments_type_0_item)
 

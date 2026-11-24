@@ -68,7 +68,9 @@ class ListAccessRequestsOutputBody:
                 requests_type_0 = []
                 _requests_type_0 = data
                 for requests_type_0_item_data in _requests_type_0:
-                    requests_type_0_item = AccessRequestDTO.from_dict(requests_type_0_item_data)
+                    requests_type_0_item = AccessRequestDTO.from_dict(
+                        requests_type_0_item_data
+                    )
 
                     requests_type_0.append(requests_type_0_item)
 

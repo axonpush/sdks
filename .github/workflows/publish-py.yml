@@ -30,7 +30,13 @@ jobs:
       - run: uv run ruff check .
       - run: uv run mypy --strict src/axonpush
       - run: uv run pytest
+      - uses: actions/setup-go@v6
+        with:
+          go-version: '1.27.4'
+          cache: false
+      - run: uv run --python 3.12 --no-project ../../tools/workflow-compiler/bundle.py python
       - run: uv build
+      - run: python3 ../../tools/workflow-compiler/test-package.py dist/*.whl
       # trusted publishing: no long-lived token
       - run: uv publish
       - uses: softprops/action-gh-release@v3

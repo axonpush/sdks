@@ -30,13 +30,13 @@ class TestSyncHandler:
         assert call["span_id"] == str(run_id)
         assert call["metadata"]["langchain_run_id"] == str(run_id)
 
-    def test_parent_run_id_becomes_parent_event_id(self, fake_sync_client: FakeSyncClient) -> None:
+    def test_parent_run_id_becomes_parent_span_id(self, fake_sync_client: FakeSyncClient) -> None:
         h = AxonPushCallbackHandler(fake_sync_client, "ch_x", mode="sync")
         run_id = uuid.uuid4()
         parent_run_id = uuid.uuid4()
         h.on_chain_start({"name": "Sub"}, {}, run_id=run_id, parent_run_id=parent_run_id)
         call = fake_sync_client.events.calls[0]
-        assert call["parent_event_id"] == str(parent_run_id)
+        assert call["parent_span_id"] == str(parent_run_id)
         assert call["metadata"]["langchain_parent_run_id"] == str(parent_run_id)
 
     def test_chain_error_emits_agent_error(self, fake_sync_client: FakeSyncClient) -> None:
@@ -126,7 +126,7 @@ class TestAsyncHandler:
         parent = uuid.uuid4()
         await h.on_chain_start({"name": "x"}, {}, run_id=uuid.uuid4(), parent_run_id=parent)
         await h.aflush(timeout=1.0)
-        assert fake_async_client.events.calls[0]["parent_event_id"] == str(parent)
+        assert fake_async_client.events.calls[0]["parent_span_id"] == str(parent)
         await h.aclose()
 
 

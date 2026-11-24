@@ -37,7 +37,7 @@ import type {
   ActivityWorkspaceSpec,
   ChangesOutputBody,
   ConnectInputBody,
-  CreateInputBody,
+  CreateInputBody1,
   GrantInputBody,
   GrantListOutputBody,
   GrantUpdateInputBody,
@@ -62,7 +62,7 @@ export class WorkspacesResource {
   }
 
   /** Create a workspace for an application, from a full or blank spec. `POST /workspaces` */
-  async create(body: CreateInputBody): Promise<ActivityWorkspace | null> {
+  async create(body: CreateInputBody1): Promise<ActivityWorkspace | null> {
     return this.client.invoke(workspacesCreate, { body });
   }
 
@@ -135,7 +135,7 @@ export class WorkspacesResource {
     return this.client.invoke(workspacesCatalog, { path: { workspaceId }, query });
   }
 
-  /** Mint the application's publish key and return its env, OTLP, Sentry and SDK setup. `POST /workspaces/{workspaceId}/connect` */
+  /** Connect a workflow runtime or application: mint its key and return env, OTLP, Sentry and SDK setup. `POST /workspaces/{workspaceId}/connect` */
   async connect(
     workspaceId: string,
     body: ConnectInputBody,

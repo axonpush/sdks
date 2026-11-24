@@ -176,7 +176,9 @@ class ComplianceObligation:
                 controls_type_0 = []
                 _controls_type_0 = data
                 for controls_type_0_item_data in _controls_type_0:
-                    controls_type_0_item = ComplianceControl.from_dict(controls_type_0_item_data)
+                    controls_type_0_item = ComplianceControl.from_dict(
+                        controls_type_0_item_data
+                    )
 
                     controls_type_0.append(controls_type_0_item)
 
@@ -216,7 +218,9 @@ class ComplianceObligation:
                 sources_type_0 = []
                 _sources_type_0 = data
                 for sources_type_0_item_data in _sources_type_0:
-                    sources_type_0_item = ComplianceSource.from_dict(sources_type_0_item_data)
+                    sources_type_0_item = ComplianceSource.from_dict(
+                        sources_type_0_item_data
+                    )
 
                     sources_type_0.append(sources_type_0_item)
 

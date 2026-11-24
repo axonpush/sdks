@@ -14,6 +14,124 @@ public sealed record AccessLogOutputBody
     public string? NextCursor { get; init; }
 }
 
+public sealed record ActionChange
+{
+    [JsonPropertyName("actor")]
+    public string Actor { get; init; } = default!;
+    [JsonPropertyName("at")]
+    public DateTimeOffset At { get; init; }
+    [JsonPropertyName("input")]
+    public IReadOnlyDictionary<string, JsonElement>? Input { get; init; }
+    [JsonPropertyName("revision")]
+    public long Revision { get; init; }
+    [JsonPropertyName("status")]
+    public string Status { get; init; } = default!;
+}
+
+public sealed record ActionDecision
+{
+    [JsonPropertyName("decision")]
+    public string Decision { get; init; } = default!;
+    [JsonPropertyName("input")]
+    public IReadOnlyDictionary<string, JsonElement>? Input { get; init; }
+    [JsonPropertyName("revision")]
+    public long Revision { get; init; }
+}
+
+public sealed record ActionReceipt
+{
+    [JsonPropertyName("observed")]
+    public IReadOnlyDictionary<string, JsonElement>? Observed { get; init; }
+    [JsonPropertyName("output")]
+    public IReadOnlyDictionary<string, JsonElement>? Output { get; init; }
+    [JsonPropertyName("result")]
+    public string Result { get; init; } = default!;
+    [JsonPropertyName("revision")]
+    public long Revision { get; init; }
+}
+
+public sealed record ActionRecord
+{
+    [JsonPropertyName("actor")]
+    public string Actor { get; init; } = default!;
+    [JsonPropertyName("approved_at")]
+    public DateTimeOffset ApprovedAt { get; init; }
+    [JsonPropertyName("case_id")]
+    public string CaseId { get; init; } = default!;
+    [JsonPropertyName("case_key")]
+    public string CaseKey { get; init; } = default!;
+    [JsonPropertyName("handler")]
+    public string Handler { get; init; } = default!;
+    [JsonPropertyName("history")]
+    public IReadOnlyList<ActionChange>? History { get; init; } = default!;
+    [JsonPropertyName("id")]
+    public string Id { get; init; } = default!;
+    [JsonPropertyName("input")]
+    public IReadOnlyDictionary<string, JsonElement> Input { get; init; } = default!;
+    [JsonPropertyName("lease_until")]
+    public DateTimeOffset LeaseUntil { get; init; }
+    [JsonPropertyName("mode")]
+    public string? Mode { get; init; }
+    [JsonPropertyName("name")]
+    public string Name { get; init; } = default!;
+    [JsonPropertyName("observed")]
+    public IReadOnlyDictionary<string, JsonElement>? Observed { get; init; }
+    [JsonPropertyName("operation")]
+    public long Operation { get; init; }
+    [JsonPropertyName("original")]
+    public IReadOnlyDictionary<string, JsonElement> Original { get; init; } = default!;
+    [JsonPropertyName("output")]
+    public IReadOnlyDictionary<string, JsonElement>? Output { get; init; }
+    [JsonPropertyName("reason")]
+    public string? Reason { get; init; }
+    [JsonPropertyName("request_hash")]
+    public string RequestHash { get; init; } = default!;
+    [JsonPropertyName("reviewer")]
+    public string? Reviewer { get; init; }
+    [JsonPropertyName("revision")]
+    public long Revision { get; init; }
+    [JsonPropertyName("status")]
+    public string Status { get; init; } = default!;
+    [JsonPropertyName("verification")]
+    public Obligation? Verification { get; init; }
+    [JsonPropertyName("version_id")]
+    public string VersionId { get; init; } = default!;
+}
+
+public sealed record ActionSpec
+{
+    [JsonPropertyName("actors")]
+    public IReadOnlyList<string>? Actors { get; init; } = default!;
+    [JsonPropertyName("always_review")]
+    public bool? AlwaysReview { get; init; }
+    [JsonPropertyName("expected")]
+    public IReadOnlyDictionary<string, string> Expected { get; init; } = default!;
+    [JsonPropertyName("from")]
+    public string From { get; init; } = default!;
+    [JsonPropertyName("handler")]
+    public string Handler { get; init; } = default!;
+    [JsonPropertyName("inputs")]
+    public IReadOnlyDictionary<string, string> Inputs { get; init; } = default!;
+    [JsonPropertyName("outputs")]
+    public IReadOnlyDictionary<string, string> Outputs { get; init; } = default!;
+    [JsonPropertyName("requirement")]
+    public string Requirement { get; init; } = default!;
+    [JsonPropertyName("review_unless")]
+    public IReadOnlyList<ReviewUnless>? ReviewUnless { get; init; }
+    [JsonPropertyName("to")]
+    public string To { get; init; } = default!;
+}
+
+public sealed record ActionsPage
+{
+    [JsonPropertyName("actions")]
+    public IReadOnlyList<ActionRecord>? Actions { get; init; } = default!;
+    [JsonPropertyName("available")]
+    public IReadOnlyDictionary<string, ActionSpec> Available { get; init; } = default!;
+    [JsonPropertyName("next_cursor")]
+    public string? NextCursor { get; init; }
+}
+
 public sealed record ActivateDraftInputBody
 {
     [JsonPropertyName("version")]
@@ -34,6 +152,18 @@ public sealed record ActivateInputBody
     public long Generation { get; init; }
     [JsonPropertyName("revision")]
     public string Revision { get; init; } = default!;
+}
+
+public sealed record ActivateInputBody1
+{
+    [JsonPropertyName("version_id")]
+    public string VersionId { get; init; } = default!;
+}
+
+public sealed record ActivationOutputBody
+{
+    [JsonPropertyName("versions")]
+    public IReadOnlyDictionary<string, string> Versions { get; init; } = default!;
 }
 
 public sealed record ActivityActivation
@@ -244,6 +374,8 @@ public sealed record ActivityConnectResult
 {
     [JsonPropertyName("apiUrl")]
     public string ApiUrl { get; init; } = default!;
+    [JsonPropertyName("claim")]
+    public Link? Claim { get; init; }
     [JsonPropertyName("created")]
     public bool Created { get; init; }
     [JsonPropertyName("env")]
@@ -268,6 +400,8 @@ public sealed record ActivityConnectResult
     public string? SentryDsnUnavailable { get; init; }
     [JsonPropertyName("warnings")]
     public IReadOnlyList<string>? Warnings { get; init; }
+    [JsonPropertyName("workflowRuntime")]
+    public ActivityConnectWorkflowRuntime? WorkflowRuntime { get; init; }
     [JsonPropertyName("workspaceId")]
     public string WorkspaceId { get; init; } = default!;
 }
@@ -278,6 +412,18 @@ public sealed record ActivityConnectSDK
     public string Python { get; init; } = default!;
     [JsonPropertyName("typescript")]
     public string Typescript { get; init; } = default!;
+}
+
+public sealed record ActivityConnectWorkflowRuntime
+{
+    [JsonPropertyName("handlers")]
+    public IReadOnlyList<string>? Handlers { get; init; } = default!;
+    [JsonPropertyName("id")]
+    public string Id { get; init; } = default!;
+    [JsonPropertyName("sources")]
+    public IReadOnlyList<string>? Sources { get; init; } = default!;
+    [JsonPropertyName("workflow")]
+    public string Workflow { get; init; } = default!;
 }
 
 public sealed record ActivityDescription
@@ -1164,6 +1310,18 @@ public sealed record AuditCapability
     public IReadOnlyList<string>? Formats { get; init; } = default!;
 }
 
+public sealed record Bundle
+{
+    [JsonPropertyName("compiler_version")]
+    public string CompilerVersion { get; init; } = default!;
+    [JsonPropertyName("contract")]
+    public Contract Contract { get; init; } = default!;
+    [JsonPropertyName("semantic_hash")]
+    public string SemanticHash { get; init; } = default!;
+    [JsonPropertyName("source_hash")]
+    public string SourceHash { get; init; } = default!;
+}
+
 public sealed record CapabilitiesOutputBody
 {
     [JsonPropertyName("apiKeyScopes")]
@@ -1178,6 +1336,42 @@ public sealed record CapabilitiesOutputBody
     public string Version { get; init; } = default!;
 }
 
+public sealed record Case
+{
+    [JsonPropertyName("dispositions")]
+    public IReadOnlyDictionary<string, Disposition> Dispositions { get; init; } = default!;
+    [JsonPropertyName("input")]
+    public Input Input { get; init; } = default!;
+    [JsonPropertyName("key")]
+    public string Key { get; init; } = default!;
+    [JsonPropertyName("pending")]
+    public bool Pending { get; init; }
+    [JsonPropertyName("result")]
+    public Result Result { get; init; } = default!;
+    [JsonPropertyName("revision")]
+    public long Revision { get; init; }
+    [JsonPropertyName("version_id")]
+    public string VersionId { get; init; } = default!;
+    [JsonPropertyName("workflow")]
+    public string Workflow { get; init; } = default!;
+}
+
+public sealed record CaseSchema
+{
+    [JsonPropertyName("fields")]
+    public IReadOnlyDictionary<string, string>? Fields { get; init; }
+    [JsonPropertyName("key")]
+    public string Key { get; init; } = default!;
+}
+
+public sealed record CasesOutputBody
+{
+    [JsonPropertyName("cases")]
+    public IReadOnlyList<Case>? Cases { get; init; } = default!;
+    [JsonPropertyName("next_cursor")]
+    public string? NextCursor { get; init; }
+}
+
 public sealed record ChangesOutputBody
 {
     [JsonPropertyName("baseRevision")]
@@ -1188,6 +1382,18 @@ public sealed record ChangesOutputBody
     public IReadOnlyList<ActivityIssue>? Issues { get; init; } = default!;
     [JsonPropertyName("version")]
     public long Version { get; init; }
+}
+
+public sealed record ClaimRequestBody
+{
+    [JsonPropertyName("handler")]
+    public string Handler { get; init; } = default!;
+}
+
+public sealed record ClaimResponseBody
+{
+    [JsonPropertyName("action")]
+    public ActionRecord? Action { get; init; }
 }
 
 public sealed record ComplianceActionBody
@@ -1400,10 +1606,36 @@ public sealed record ConnectInputBody
 {
     [JsonPropertyName("environment")]
     public string? Environment { get; init; }
+    [JsonPropertyName("handlers")]
+    public IReadOnlyList<string>? Handlers { get; init; }
     [JsonPropertyName("purpose")]
     public string? Purpose { get; init; }
     [JsonPropertyName("rotate")]
     public bool? Rotate { get; init; }
+    [JsonPropertyName("sources")]
+    public IReadOnlyList<string>? Sources { get; init; }
+    [JsonPropertyName("workflow")]
+    public string? Workflow { get; init; }
+}
+
+public sealed record Contract
+{
+    [JsonPropertyName("actions")]
+    public IReadOnlyDictionary<string, ActionSpec>? Actions { get; init; }
+    [JsonPropertyName("case")]
+    public CaseSchema Case { get; init; } = default!;
+    [JsonPropertyName("facts")]
+    public IReadOnlyDictionary<string, FactSchema> Facts { get; init; } = default!;
+    [JsonPropertyName("initial_state")]
+    public string? InitialState { get; init; }
+    [JsonPropertyName("presentation")]
+    public Presentation Presentation { get; init; } = default!;
+    [JsonPropertyName("requirements")]
+    public IReadOnlyDictionary<string, Requirement> Requirements { get; init; } = default!;
+    [JsonPropertyName("schema_version")]
+    public long SchemaVersion { get; init; }
+    [JsonPropertyName("workflow")]
+    public string Workflow { get; init; } = default!;
 }
 
 public sealed record Controls
@@ -1414,6 +1646,18 @@ public sealed record Controls
     public AuditCapability AuditTrail { get; init; } = default!;
     [JsonPropertyName("dataAccess")]
     public DataAccessCapability DataAccess { get; init; } = default!;
+}
+
+public sealed record Coverage
+{
+    [JsonPropertyName("checked_at")]
+    public DateTimeOffset CheckedAt { get; init; }
+    [JsonPropertyName("complete_through")]
+    public DateTimeOffset CompleteThrough { get; init; }
+    [JsonPropertyName("healthy")]
+    public bool Healthy { get; init; }
+    [JsonPropertyName("source")]
+    public string Source { get; init; } = default!;
 }
 
 public sealed record CreateHoldInputBody
@@ -1430,7 +1674,7 @@ public sealed record CreateHoldInputBody
     public DateTimeOffset? To { get; init; }
 }
 
-public sealed record CreateInputBody
+public sealed record CreateInputBody1
 {
     [JsonPropertyName("appId")]
     public string AppId { get; init; } = default!;
@@ -1452,8 +1696,150 @@ public sealed record DataAccessCapability
     public bool ScopedGrants { get; init; }
 }
 
+public sealed record Definition
+{
+    [JsonPropertyName("bundle")]
+    public Bundle Bundle { get; init; } = default!;
+    [JsonPropertyName("id")]
+    public string Id { get; init; } = default!;
+    [JsonPropertyName("source")]
+    public string Source { get; init; } = default!;
+}
+
+public sealed record DefinitionListBody
+{
+    [JsonPropertyName("definitions")]
+    public IReadOnlyList<Definition>? Definitions { get; init; } = default!;
+}
+
+public sealed record DeploymentApplyInputBody
+{
+    [JsonPropertyName("expected_active_version_id")]
+    public string? ExpectedActiveVersionId { get; init; }
+    [JsonPropertyName("runtime_id")]
+    public string RuntimeId { get; init; } = default!;
+    [JsonPropertyName("source")]
+    public string Source { get; init; } = default!;
+}
+
+public sealed record DeploymentCounts
+{
+    [JsonPropertyName("confirmed")]
+    public long Confirmed { get; init; }
+    [JsonPropertyName("could_not_confirm")]
+    public long CouldNotConfirm { get; init; }
+    [JsonPropertyName("no_result")]
+    public long NoResult { get; init; }
+    [JsonPropertyName("not_completed")]
+    public long NotCompleted { get; init; }
+    [JsonPropertyName("pending")]
+    public long Pending { get; init; }
+}
+
+public sealed record DeploymentListOutputBody
+{
+    [JsonPropertyName("deployments")]
+    public IReadOnlyList<WorkflowDeployment>? Deployments { get; init; } = default!;
+}
+
+public sealed record DeploymentPreview
+{
+    [JsonPropertyName("compatible_runtime_ids")]
+    public IReadOnlyList<string>? CompatibleRuntimeIds { get; init; } = default!;
+    [JsonPropertyName("current_semantic_hash")]
+    public string? CurrentSemanticHash { get; init; }
+    [JsonPropertyName("current_version_id")]
+    public string? CurrentVersionId { get; init; }
+    [JsonPropertyName("required_handlers")]
+    public IReadOnlyList<string>? RequiredHandlers { get; init; } = default!;
+    [JsonPropertyName("required_sources")]
+    public IReadOnlyList<string>? RequiredSources { get; init; } = default!;
+    [JsonPropertyName("semantic_changed")]
+    public bool SemanticChanged { get; init; }
+    [JsonPropertyName("semantic_hash")]
+    public string SemanticHash { get; init; } = default!;
+    [JsonPropertyName("source_changed")]
+    public bool SourceChanged { get; init; }
+    [JsonPropertyName("source_hash")]
+    public string SourceHash { get; init; } = default!;
+    [JsonPropertyName("title")]
+    public string Title { get; init; } = default!;
+    [JsonPropertyName("warnings")]
+    public IReadOnlyList<string>? Warnings { get; init; } = default!;
+    [JsonPropertyName("workflow")]
+    public string Workflow { get; init; } = default!;
+}
+
+public sealed record DeploymentPreviewInputBody
+{
+    [JsonPropertyName("source")]
+    public string Source { get; init; } = default!;
+}
+
+public sealed record DeploymentRuntime
+{
+    [JsonPropertyName("handlers")]
+    public IReadOnlyList<string>? Handlers { get; init; } = default!;
+    [JsonPropertyName("id")]
+    public string Id { get; init; } = default!;
+    [JsonPropertyName("last_seen_at")]
+    public DateTimeOffset? LastSeenAt { get; init; }
+    [JsonPropertyName("publisher")]
+    public string Publisher { get; init; } = default!;
+    [JsonPropertyName("sources")]
+    public IReadOnlyList<string>? Sources { get; init; } = default!;
+}
+
+public sealed record DeploymentSource
+{
+    [JsonPropertyName("bound")]
+    public bool Bound { get; init; }
+    [JsonPropertyName("id")]
+    public string Id { get; init; } = default!;
+    [JsonPropertyName("publisher")]
+    public string? Publisher { get; init; }
+}
+
+public sealed record DiffInputBody1
+{
+    [JsonPropertyName("against")]
+    public string Against { get; init; } = default!;
+    [JsonPropertyName("source")]
+    public string Source { get; init; } = default!;
+}
+
+public sealed record DiffOutputBody1
+{
+    [JsonPropertyName("after")]
+    public Bundle After { get; init; } = default!;
+    [JsonPropertyName("before")]
+    public Bundle Before { get; init; } = default!;
+    [JsonPropertyName("semantic_changed")]
+    public bool SemanticChanged { get; init; }
+    [JsonPropertyName("source_changed")]
+    public bool SourceChanged { get; init; }
+}
+
+public sealed record Disposition
+{
+    [JsonPropertyName("actor")]
+    public string Actor { get; init; } = default!;
+    [JsonPropertyName("at")]
+    public DateTimeOffset At { get; init; }
+    [JsonPropertyName("owner")]
+    public string? Owner { get; init; }
+    [JsonPropertyName("reason")]
+    public string Reason { get; init; } = default!;
+    [JsonPropertyName("state")]
+    public string State { get; init; } = default!;
+}
+
 public sealed record EraseEvidenceOutputBody
 {
+    [JsonPropertyName("erased")]
+    public long Erased { get; init; }
+    [JsonPropertyName("more")]
+    public bool More { get; init; }
     [JsonPropertyName("status")]
     public string Status { get; init; } = default!;
 }
@@ -1508,6 +1894,8 @@ public sealed record EventDTO
     public string? OperationName { get; init; }
     [JsonPropertyName("orgId")]
     public string OrgId { get; init; } = default!;
+    [JsonPropertyName("origin")]
+    public string? Origin { get; init; }
     [JsonPropertyName("outputTokens")]
     public long? OutputTokens { get; init; }
     [JsonPropertyName("parentSpanId")]
@@ -1548,6 +1936,44 @@ public sealed record EventDTO
     public double? TtftMs { get; init; }
     [JsonPropertyName("userId")]
     public string? UserId { get; init; }
+}
+
+public sealed record Fact
+{
+    [JsonPropertyName("case_id")]
+    public string CaseId { get; init; } = default!;
+    [JsonPropertyName("event")]
+    public string Event { get; init; } = default!;
+    [JsonPropertyName("fields")]
+    public IReadOnlyDictionary<string, JsonElement> Fields { get; init; } = default!;
+    [JsonPropertyName("id")]
+    public string Id { get; init; } = default!;
+    [JsonPropertyName("occurred_at")]
+    public DateTimeOffset OccurredAt { get; init; }
+    [JsonPropertyName("received_at")]
+    public DateTimeOffset? ReceivedAt { get; init; }
+    [JsonPropertyName("source")]
+    public string Source { get; init; } = default!;
+    [JsonPropertyName("span_id")]
+    public string? SpanId { get; init; }
+    [JsonPropertyName("trace_id")]
+    public string? TraceId { get; init; }
+}
+
+public sealed record FactSchema
+{
+    [JsonPropertyName("evidence_class")]
+    public string? EvidenceClass { get; init; }
+    [JsonPropertyName("fields")]
+    public IReadOnlyDictionary<string, string> Fields { get; init; } = default!;
+}
+
+public sealed record FactsInputBody
+{
+    [JsonPropertyName("input")]
+    public Input Input { get; init; } = default!;
+    [JsonPropertyName("workflow")]
+    public string Workflow { get; init; } = default!;
 }
 
 public sealed record FeatureFlags
@@ -1650,6 +2076,24 @@ public sealed record Inclusion
     public string Schema { get; init; } = default!;
     [JsonPropertyName("size")]
     public long Size { get; init; }
+}
+
+public sealed record Input
+{
+    [JsonPropertyName("case_fields")]
+    public IReadOnlyDictionary<string, JsonElement>? CaseFields { get; init; }
+    [JsonPropertyName("case_id")]
+    public string CaseId { get; init; } = default!;
+    [JsonPropertyName("coverage")]
+    public IReadOnlyList<Coverage>? Coverage { get; init; } = default!;
+    [JsonPropertyName("facts")]
+    public IReadOnlyList<Fact>? Facts { get; init; } = default!;
+    [JsonPropertyName("now")]
+    public DateTimeOffset? Now { get; init; }
+    [JsonPropertyName("previous")]
+    public IReadOnlyList<Obligation>? Previous { get; init; }
+    [JsonPropertyName("subjects")]
+    public IReadOnlyDictionary<string, string>? Subjects { get; init; }
 }
 
 public sealed record LedgerHold
@@ -1788,6 +2232,16 @@ public sealed record LicenseStatus
     public string? Tier { get; init; } = default!;
 }
 
+public sealed record Link
+{
+    [JsonPropertyName("envName")]
+    public string EnvName { get; init; } = default!;
+    [JsonPropertyName("expiresAt")]
+    public DateTimeOffset ExpiresAt { get; init; }
+    [JsonPropertyName("url")]
+    public string Url { get; init; } = default!;
+}
+
 public sealed record ListJobsOutputBody
 {
     [JsonPropertyName("jobs")]
@@ -1850,8 +2304,16 @@ public sealed record LogDTO
 
 public sealed record Manifest
 {
+    [JsonPropertyName("auditHead")]
+    public string? AuditHead { get; init; }
+    [JsonPropertyName("auditSeq")]
+    public long? AuditSeq { get; init; }
+    [JsonPropertyName("compression")]
+    public string? Compression { get; init; }
     [JsonPropertyName("content")]
     public Object Content { get; init; } = default!;
+    [JsonPropertyName("format")]
+    public long? Format { get; init; }
     [JsonPropertyName("lockMode")]
     public string LockMode { get; init; } = default!;
     [JsonPropertyName("lockedUntil")]
@@ -1912,6 +2374,34 @@ public sealed record Object
     public string Sha256 { get; init; } = default!;
     [JsonPropertyName("version")]
     public string Version { get; init; } = default!;
+}
+
+public sealed record Obligation
+{
+    [JsonPropertyName("breach_observed_at")]
+    public DateTimeOffset? BreachObservedAt { get; init; }
+    [JsonPropertyName("decide_at")]
+    public DateTimeOffset DecideAt { get; init; }
+    [JsonPropertyName("due_at")]
+    public DateTimeOffset DueAt { get; init; }
+    [JsonPropertyName("evidence_class")]
+    public string EvidenceClass { get; init; } = default!;
+    [JsonPropertyName("evidence_ids")]
+    public IReadOnlyList<string>? EvidenceIds { get; init; } = default!;
+    [JsonPropertyName("id")]
+    public string Id { get; init; } = default!;
+    [JsonPropertyName("lifecycle")]
+    public string Lifecycle { get; init; } = default!;
+    [JsonPropertyName("reason")]
+    public string Reason { get; init; } = default!;
+    [JsonPropertyName("requirement")]
+    public string Requirement { get; init; } = default!;
+    [JsonPropertyName("state")]
+    public string State { get; init; } = default!;
+    [JsonPropertyName("timing")]
+    public string Timing { get; init; } = default!;
+    [JsonPropertyName("trigger_id")]
+    public string TriggerId { get; init; } = default!;
 }
 
 public sealed record ObligationEvidenceStruct
@@ -1988,6 +2478,28 @@ public sealed record PolicyOutputBody
     public long Version { get; init; }
 }
 
+public sealed record Predicate
+{
+    [JsonPropertyName("all")]
+    public IReadOnlyList<Predicate>? All { get; init; }
+    [JsonPropertyName("any")]
+    public IReadOnlyList<Predicate>? Any { get; init; }
+    [JsonPropertyName("field")]
+    public string? Field { get; init; }
+    [JsonPropertyName("op")]
+    public string? Op { get; init; }
+    [JsonPropertyName("value")]
+    public JsonElement? Value { get; init; }
+}
+
+public sealed record Presentation
+{
+    [JsonPropertyName("stages")]
+    public IReadOnlyList<Stage>? Stages { get; init; }
+    [JsonPropertyName("title")]
+    public string Title { get; init; } = default!;
+}
+
 public sealed record ProofOutputBody
 {
     [JsonPropertyName("eventId")]
@@ -1998,6 +2510,16 @@ public sealed record ProofOutputBody
     public Inclusion Proof { get; init; } = default!;
     [JsonPropertyName("segmentId")]
     public string SegmentId { get; init; } = default!;
+}
+
+public sealed record Proposal
+{
+    [JsonPropertyName("input")]
+    public IReadOnlyDictionary<string, JsonElement> Input { get; init; } = default!;
+    [JsonPropertyName("name")]
+    public string Name { get; init; } = default!;
+    [JsonPropertyName("request_id")]
+    public string RequestId { get; init; } = default!;
 }
 
 public sealed record PublicInputBody
@@ -2042,6 +2564,14 @@ public sealed record ReferenceOutputBody
     public string? SearchWindow { get; init; }
 }
 
+public sealed record RegisterSourceInputBody
+{
+    [JsonPropertyName("publisher")]
+    public string Publisher { get; init; } = default!;
+    [JsonPropertyName("source")]
+    public string Source { get; init; } = default!;
+}
+
 public sealed record ReleaseHoldInputBody
 {
     [JsonPropertyName("reason")]
@@ -2054,6 +2584,64 @@ public sealed record ReplaceInputBody
     public ActivityWorkspaceSpec Spec { get; init; } = default!;
     [JsonPropertyName("version")]
     public long Version { get; init; }
+}
+
+public sealed record ReplayInputBody
+{
+    [JsonPropertyName("apply")]
+    public bool Apply { get; init; }
+    [JsonPropertyName("now")]
+    public DateTimeOffset Now { get; init; }
+    [JsonPropertyName("version_id")]
+    public string VersionId { get; init; } = default!;
+}
+
+public sealed record Requirement
+{
+    [JsonPropertyName("cancel")]
+    public Selector? Cancel { get; init; }
+    [JsonPropertyName("evidence")]
+    public Selector Evidence { get; init; } = default!;
+    [JsonPropertyName("evidence_key")]
+    public string? EvidenceKey { get; init; }
+    [JsonPropertyName("failure")]
+    public Selector? Failure { get; init; }
+    [JsonPropertyName("fresh_for")]
+    public string FreshFor { get; init; } = default!;
+    [JsonPropertyName("grace")]
+    public string Grace { get; init; } = default!;
+    [JsonPropertyName("max_matches")]
+    public long? MaxMatches { get; init; }
+    [JsonPropertyName("source")]
+    public string Source { get; init; } = default!;
+    [JsonPropertyName("trigger")]
+    public Selector Trigger { get; init; } = default!;
+    [JsonPropertyName("within")]
+    public string Within { get; init; } = default!;
+}
+
+public sealed record Result
+{
+    [JsonPropertyName("case_id")]
+    public string CaseId { get; init; } = default!;
+    [JsonPropertyName("evaluated_at")]
+    public DateTimeOffset EvaluatedAt { get; init; }
+    [JsonPropertyName("obligations")]
+    public IReadOnlyList<Obligation>? Obligations { get; init; } = default!;
+    [JsonPropertyName("semantic_hash")]
+    public string SemanticHash { get; init; } = default!;
+}
+
+public sealed record ReviewUnless
+{
+    [JsonPropertyName("case")]
+    public string Case { get; init; } = default!;
+    [JsonPropertyName("input")]
+    public string Input { get; init; } = default!;
+    [JsonPropertyName("op")]
+    public string Op { get; init; } = default!;
+    [JsonPropertyName("timezone")]
+    public string? Timezone { get; init; }
 }
 
 public sealed record RevisionListOutputBody
@@ -2096,6 +2684,16 @@ public sealed record SegmentOutputBody
     public DateTimeOffset VerifiedAt { get; init; }
 }
 
+public sealed record Selector
+{
+    [JsonPropertyName("event")]
+    public string Event { get; init; } = default!;
+    [JsonPropertyName("match")]
+    public IReadOnlyDictionary<string, string>? Match { get; init; }
+    [JsonPropertyName("where")]
+    public Predicate? Where { get; init; }
+}
+
 public sealed record SessionEvidenceBody
 {
     [JsonPropertyName("events")]
@@ -2108,6 +2706,30 @@ public sealed record SessionEvidenceBody
     public long NextOffset { get; init; }
 }
 
+public sealed record SetupQuestion
+{
+    [JsonPropertyName("hint")]
+    public string Hint { get; init; } = default!;
+    [JsonPropertyName("id")]
+    public string Id { get; init; } = default!;
+    [JsonPropertyName("options")]
+    public IReadOnlyList<string>? Options { get; init; }
+    [JsonPropertyName("question")]
+    public string Question { get; init; } = default!;
+}
+
+public sealed record SetupStep
+{
+    [JsonPropertyName("complete_when")]
+    public string CompleteWhen { get; init; } = default!;
+    [JsonPropertyName("id")]
+    public string Id { get; init; } = default!;
+    [JsonPropertyName("instruction")]
+    public string Instruction { get; init; } = default!;
+    [JsonPropertyName("tools")]
+    public IReadOnlyList<string>? Tools { get; init; } = default!;
+}
+
 public sealed record ShareOutputBody
 {
     [JsonPropertyName("grant")]
@@ -2118,7 +2740,53 @@ public sealed record ShareOutputBody
     public bool ReadOnly { get; init; }
 }
 
+public sealed record SimulationInputBody
+{
+    [JsonPropertyName("input")]
+    public Input Input { get; init; } = default!;
+    [JsonPropertyName("source")]
+    public string Source { get; init; } = default!;
+}
+
+public sealed record SourceBinding
+{
+    [JsonPropertyName("id")]
+    public string Id { get; init; } = default!;
+    [JsonPropertyName("publisher")]
+    public string Publisher { get; init; } = default!;
+}
+
+public sealed record SourceInputBody
+{
+    [JsonPropertyName("source")]
+    public string Source { get; init; } = default!;
+}
+
+public sealed record SourcesOutputBody
+{
+    [JsonPropertyName("sources")]
+    public IReadOnlyList<SourceBinding>? Sources { get; init; } = default!;
+}
+
+public sealed record Stage
+{
+    [JsonPropertyName("id")]
+    public string Id { get; init; } = default!;
+    [JsonPropertyName("label")]
+    public string Label { get; init; } = default!;
+    [JsonPropertyName("requirements")]
+    public IReadOnlyList<string>? Requirements { get; init; } = default!;
+}
+
 public sealed record StatusOutputBody
+{
+    [JsonPropertyName("case_key")]
+    public string? CaseKey { get; init; }
+    [JsonPropertyName("status")]
+    public string Status { get; init; } = default!;
+}
+
+public sealed record StatusOutputBody1
 {
     [JsonPropertyName("activeHolds")]
     public long ActiveHolds { get; init; }
@@ -2262,6 +2930,58 @@ public sealed record ViewsOutputBody
 {
     [JsonPropertyName("views")]
     public IReadOnlyList<ActivityViewResult>? Views { get; init; } = default!;
+}
+
+public sealed record WorkflowDeployment
+{
+    [JsonPropertyName("environment")]
+    public string Environment { get; init; } = default!;
+    [JsonPropertyName("problems")]
+    public IReadOnlyList<string>? Problems { get; init; } = default!;
+    [JsonPropertyName("recent_results")]
+    public DeploymentCounts RecentResults { get; init; } = default!;
+    [JsonPropertyName("required_sources")]
+    public IReadOnlyList<DeploymentSource>? RequiredSources { get; init; } = default!;
+    [JsonPropertyName("runtime")]
+    public DeploymentRuntime? Runtime { get; init; }
+    [JsonPropertyName("semantic_hash")]
+    public string SemanticHash { get; init; } = default!;
+    [JsonPropertyName("status")]
+    public string Status { get; init; } = default!;
+    [JsonPropertyName("title")]
+    public string Title { get; init; } = default!;
+    [JsonPropertyName("updated_at")]
+    public DateTimeOffset UpdatedAt { get; init; }
+    [JsonPropertyName("version_id")]
+    public string VersionId { get; init; } = default!;
+    [JsonPropertyName("workflow")]
+    public string Workflow { get; init; } = default!;
+}
+
+public sealed record WorkflowSetupGuide
+{
+    [JsonPropertyName("boundaries")]
+    public IReadOnlyList<string>? Boundaries { get; init; } = default!;
+    [JsonPropertyName("compiler_version")]
+    public string CompilerVersion { get; init; } = default!;
+    [JsonPropertyName("example")]
+    public WorkflowSetupGuideExampleStruct Example { get; init; } = default!;
+    [JsonPropertyName("purpose")]
+    public string Purpose { get; init; } = default!;
+    [JsonPropertyName("questions")]
+    public IReadOnlyList<SetupQuestion>? Questions { get; init; } = default!;
+    [JsonPropertyName("steps")]
+    public IReadOnlyList<SetupStep>? Steps { get; init; } = default!;
+}
+
+public sealed record WorkflowSetupGuideExampleStruct
+{
+    [JsonPropertyName("fixture")]
+    public string Fixture { get; init; } = default!;
+    [JsonPropertyName("label")]
+    public string Label { get; init; } = default!;
+    [JsonPropertyName("source")]
+    public string Source { get; init; } = default!;
 }
 
 public sealed record WorkspaceEntitiesOutputBody

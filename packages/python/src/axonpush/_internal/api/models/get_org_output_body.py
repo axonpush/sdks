@@ -114,7 +114,9 @@ class GetOrgOutputBody:
                 members_type_0 = []
                 _members_type_0 = data
                 for members_type_0_item_data in _members_type_0:
-                    members_type_0_item = OrgMemberDTO.from_dict(members_type_0_item_data)
+                    members_type_0_item = OrgMemberDTO.from_dict(
+                        members_type_0_item_data
+                    )
 
                     members_type_0.append(members_type_0_item)
 
