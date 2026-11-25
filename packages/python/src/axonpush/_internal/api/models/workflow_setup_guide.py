@@ -1,19 +1,20 @@
 from __future__ import annotations
 
 from collections.abc import Mapping
-from typing import TYPE_CHECKING, Any, BinaryIO, Generator, TextIO, TypeVar, cast
+from typing import Any, TypeVar, BinaryIO, TextIO, TYPE_CHECKING, Generator
 
 from attrs import define as _attrs_define
 from attrs import field as _attrs_field
 
 from ..types import UNSET, Unset
 
+from ..types import UNSET, Unset
+from typing import cast
+
 if TYPE_CHECKING:
     from ..models.setup_question import SetupQuestion
     from ..models.setup_step import SetupStep
-    from ..models.workflow_setup_guide_example_struct import (
-        WorkflowSetupGuideExampleStruct,
-    )
+    from ..models.workflow_setup_guide_example_struct import WorkflowSetupGuideExampleStruct
 
 
 T = TypeVar("T", bound="WorkflowSetupGuide")
@@ -43,9 +44,7 @@ class WorkflowSetupGuide:
     def to_dict(self) -> dict[str, Any]:
         from ..models.setup_question import SetupQuestion
         from ..models.setup_step import SetupStep
-        from ..models.workflow_setup_guide_example_struct import (
-            WorkflowSetupGuideExampleStruct,
-        )
+        from ..models.workflow_setup_guide_example_struct import WorkflowSetupGuideExampleStruct
 
         boundaries: list[str] | None
         if isinstance(self.boundaries, list):
@@ -103,9 +102,7 @@ class WorkflowSetupGuide:
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         from ..models.setup_question import SetupQuestion
         from ..models.setup_step import SetupStep
-        from ..models.workflow_setup_guide_example_struct import (
-            WorkflowSetupGuideExampleStruct,
-        )
+        from ..models.workflow_setup_guide_example_struct import WorkflowSetupGuideExampleStruct
 
         d = dict(src_dict)
 
@@ -139,9 +136,7 @@ class WorkflowSetupGuide:
                 questions_type_0 = []
                 _questions_type_0 = data
                 for questions_type_0_item_data in _questions_type_0:
-                    questions_type_0_item = SetupQuestion.from_dict(
-                        questions_type_0_item_data
-                    )
+                    questions_type_0_item = SetupQuestion.from_dict(questions_type_0_item_data)
 
                     questions_type_0.append(questions_type_0_item)
 

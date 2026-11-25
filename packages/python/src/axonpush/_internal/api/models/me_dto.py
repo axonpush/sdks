@@ -1,12 +1,15 @@
 from __future__ import annotations
 
 from collections.abc import Mapping
-from typing import TYPE_CHECKING, Any, BinaryIO, Generator, TextIO, TypeVar, cast
+from typing import Any, TypeVar, BinaryIO, TextIO, TYPE_CHECKING, Generator
 
 from attrs import define as _attrs_define
 from attrs import field as _attrs_field
 
 from ..types import UNSET, Unset
+
+from ..types import UNSET, Unset
+from typing import cast
 
 if TYPE_CHECKING:
     from ..models.membership_dto import MembershipDTO
@@ -126,9 +129,7 @@ class MeDTO:
                 memberships_type_0 = []
                 _memberships_type_0 = data
                 for memberships_type_0_item_data in _memberships_type_0:
-                    memberships_type_0_item = MembershipDTO.from_dict(
-                        memberships_type_0_item_data
-                    )
+                    memberships_type_0_item = MembershipDTO.from_dict(memberships_type_0_item_data)
 
                     memberships_type_0.append(memberships_type_0_item)
 

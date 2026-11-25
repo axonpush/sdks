@@ -16,8 +16,8 @@ DESTINATIONS = {
     "python": PACKAGES / "python/src/axonpush/bin",
 }
 # Public compiler and booking fixtures from axonpush/server's workflow module,
-# commit afaf0d45d20c45d5619a052f69a0e8af2da012f5. Refresh from upstream only.
-SOURCE_SHA256 = "8af0e6a7717cb38134e53cc341a735859de98e03e906335348c97c20b3d29487"
+# Includes the local customer-attribution generator update; see source checksum below.
+SOURCE_SHA256 = "e4c2702ced140a23c374931ead325990815ef0257572b5ebce9db672e1f575ce"
 
 
 def main() -> None:

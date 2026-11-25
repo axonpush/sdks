@@ -1,17 +1,18 @@
 from __future__ import annotations
 
 from collections.abc import Mapping
-from typing import TYPE_CHECKING, Any, BinaryIO, Generator, TextIO, TypeVar, cast
+from typing import Any, TypeVar, BinaryIO, TextIO, TYPE_CHECKING, Generator
 
 from attrs import define as _attrs_define
 from attrs import field as _attrs_field
 
 from ..types import UNSET, Unset
 
+from ..types import UNSET, Unset
+from typing import cast
+
 if TYPE_CHECKING:
-    from ..models.access_log_output_body_items_type_0_item import (
-        AccessLogOutputBodyItemsType0Item,
-    )
+    from ..models.access_log_output_body_items_type_0_item import AccessLogOutputBodyItemsType0Item
 
 
 T = TypeVar("T", bound="AccessLogOutputBody")
@@ -71,9 +72,7 @@ class AccessLogOutputBody:
 
         d = dict(src_dict)
 
-        def _parse_items(
-            data: object,
-        ) -> list[AccessLogOutputBodyItemsType0Item] | None:
+        def _parse_items(data: object) -> list[AccessLogOutputBodyItemsType0Item] | None:
             if data is None:
                 return data
             try:

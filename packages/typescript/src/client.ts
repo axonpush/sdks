@@ -10,6 +10,13 @@ import {
   type ObserveReport,
 } from "./observe.js";
 import { redactTelemetry as applyTelemetryRedaction } from "./redaction.js";
+import {
+  contextObservation,
+  currentRequestContext,
+  type RequestContext,
+  runRequestContext,
+  ScopedAxonPush,
+} from "./request-context.js";
 import { ActivityResource } from "./resources/activity.js";
 import { AlertsResource } from "./resources/alerts.js";
 import { AnalyticsResource } from "./resources/analytics.js";
@@ -29,7 +36,7 @@ import { TracesResource } from "./resources/traces.js";
 import { WebhooksResource } from "./resources/webhooks.js";
 import { WorkflowsResource } from "./resources/workflows.js";
 import { WorkspacesResource } from "./resources/workspaces.js";
-import { getOrCreateTrace, type TraceContext } from "./tracing.js";
+import { getOrCreateTrace, TraceContext } from "./tracing.js";
 
 /**
  * High-level facade over the AxonPush REST API.
@@ -111,6 +118,13 @@ export class AxonPush {
     this.capabilities = new CapabilitiesResource(this);
   }
 
+  /** Bind explicit customer identity to this callback and its async descendants. */
+  withContext<T>(context: RequestContext, work: (scoped: ScopedAxonPush) => T): T {
+    return runRequestContext(this, context, () =>
+      work(new ScopedAxonPush(this, structuredClone(currentRequestContext(this) ?? context))),
+    );
+  }
+
   /** The configured environment label (or `undefined` if none). */
   get environment(): string | undefined {
     return this.settings.environment;
@@ -135,7 +149,7 @@ export class AxonPush {
     observations: ObserveParams | ObserveParams[],
   ): Promise<ObserveReport | null> {
     const list = (Array.isArray(observations) ? observations : [observations]).map((params) =>
-      buildObservation(params, {
+      buildObservation(contextObservation(this, workspaceId, params), {
         environment: this.settings.environment,
         redact: (value) => this.redactTelemetry(value),
       }),
@@ -193,7 +207,7 @@ export class AxonPush {
    * @returns The trace context for the current async flow.
    */
   getOrCreateTrace(seedTraceId?: string): TraceContext {
-    return getOrCreateTrace(seedTraceId);
+    return seedTraceId ? new TraceContext(seedTraceId) : getOrCreateTrace();
   }
 
   /**

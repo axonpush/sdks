@@ -39,12 +39,14 @@ public sealed class WorkflowsResource
     }
 
     /// <summary>List business cases; cursor pagination is scoped to workspace and environment.</summary>
-    public Task<CasesOutputBody?> CasesAsync(string workspaceId, string? environment = null, string? workflow = null, string? cursor = null, CancellationToken cancellationToken = default)
+    public Task<CasesOutputBody?> CasesAsync(string workspaceId, string? environment = null, string? workflow = null, string? cursor = null, string? subject_type = null, string? subject_id = null, CancellationToken cancellationToken = default)
     {
         var path = $"workspaces/{Uri.EscapeDataString(workspaceId)}/workflows/cases";
         path = AddQuery(path, "environment", environment);
         path = AddQuery(path, "workflow", workflow);
         path = AddQuery(path, "cursor", cursor);
+        path = AddQuery(path, "subject_type", subject_type);
+        path = AddQuery(path, "subject_id", subject_id);
         return _transport.SendAsync<CasesOutputBody>(HttpMethod.Get, path, null, cancellationToken);
     }
 

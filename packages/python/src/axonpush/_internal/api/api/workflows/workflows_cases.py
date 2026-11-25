@@ -4,11 +4,14 @@ from urllib.parse import quote
 
 import httpx
 
-from ... import errors
 from ...client import AuthenticatedClient, Client
+from ...types import Response, UNSET
+from ... import errors
+
 from ...models.cases_output_body import CasesOutputBody
 from ...models.error_model import ErrorModel
-from ...types import UNSET, Response, Unset
+from ...types import UNSET, Unset
+from typing import cast
 
 
 def _get_kwargs(
@@ -17,6 +20,8 @@ def _get_kwargs(
     environment: str | Unset = UNSET,
     workflow: str | Unset = UNSET,
     cursor: str | Unset = UNSET,
+    subject_type: str | Unset = UNSET,
+    subject_id: str | Unset = UNSET,
 ) -> dict[str, Any]:
 
     params: dict[str, Any] = {}
@@ -26,6 +31,10 @@ def _get_kwargs(
     params["workflow"] = workflow
 
     params["cursor"] = cursor
+
+    params["subject_type"] = subject_type
+
+    params["subject_id"] = subject_id
 
     params = {k: v for k, v in params.items() if v is not UNSET and v is not None}
 
@@ -71,6 +80,8 @@ def sync_detailed(
     environment: str | Unset = UNSET,
     workflow: str | Unset = UNSET,
     cursor: str | Unset = UNSET,
+    subject_type: str | Unset = UNSET,
+    subject_id: str | Unset = UNSET,
 ) -> Response[CasesOutputBody | ErrorModel]:
     """List business cases; cursor pagination is scoped to workspace and environment
 
@@ -79,6 +90,8 @@ def sync_detailed(
         environment (str | Unset):
         workflow (str | Unset):
         cursor (str | Unset):
+        subject_type (str | Unset):
+        subject_id (str | Unset):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -93,6 +106,8 @@ def sync_detailed(
         environment=environment,
         workflow=workflow,
         cursor=cursor,
+        subject_type=subject_type,
+        subject_id=subject_id,
     )
 
     response = client.get_httpx_client().request(
@@ -109,6 +124,8 @@ def sync(
     environment: str | Unset = UNSET,
     workflow: str | Unset = UNSET,
     cursor: str | Unset = UNSET,
+    subject_type: str | Unset = UNSET,
+    subject_id: str | Unset = UNSET,
 ) -> CasesOutputBody | ErrorModel | None:
     """List business cases; cursor pagination is scoped to workspace and environment
 
@@ -117,6 +134,8 @@ def sync(
         environment (str | Unset):
         workflow (str | Unset):
         cursor (str | Unset):
+        subject_type (str | Unset):
+        subject_id (str | Unset):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -132,6 +151,8 @@ def sync(
         environment=environment,
         workflow=workflow,
         cursor=cursor,
+        subject_type=subject_type,
+        subject_id=subject_id,
     ).parsed
 
 
@@ -142,6 +163,8 @@ async def asyncio_detailed(
     environment: str | Unset = UNSET,
     workflow: str | Unset = UNSET,
     cursor: str | Unset = UNSET,
+    subject_type: str | Unset = UNSET,
+    subject_id: str | Unset = UNSET,
 ) -> Response[CasesOutputBody | ErrorModel]:
     """List business cases; cursor pagination is scoped to workspace and environment
 
@@ -150,6 +173,8 @@ async def asyncio_detailed(
         environment (str | Unset):
         workflow (str | Unset):
         cursor (str | Unset):
+        subject_type (str | Unset):
+        subject_id (str | Unset):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -164,6 +189,8 @@ async def asyncio_detailed(
         environment=environment,
         workflow=workflow,
         cursor=cursor,
+        subject_type=subject_type,
+        subject_id=subject_id,
     )
 
     response = await client.get_async_httpx_client().request(**kwargs)
@@ -178,6 +205,8 @@ async def asyncio(
     environment: str | Unset = UNSET,
     workflow: str | Unset = UNSET,
     cursor: str | Unset = UNSET,
+    subject_type: str | Unset = UNSET,
+    subject_id: str | Unset = UNSET,
 ) -> CasesOutputBody | ErrorModel | None:
     """List business cases; cursor pagination is scoped to workspace and environment
 
@@ -186,6 +215,8 @@ async def asyncio(
         environment (str | Unset):
         workflow (str | Unset):
         cursor (str | Unset):
+        subject_type (str | Unset):
+        subject_id (str | Unset):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -202,5 +233,7 @@ async def asyncio(
             environment=environment,
             workflow=workflow,
             cursor=cursor,
+            subject_type=subject_type,
+            subject_id=subject_id,
         )
     ).parsed

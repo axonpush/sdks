@@ -1,17 +1,18 @@
 from __future__ import annotations
 
-import datetime
 from collections.abc import Mapping
-from typing import TYPE_CHECKING, Any, BinaryIO, Generator, TextIO, TypeVar, cast
+from typing import Any, TypeVar, BinaryIO, TextIO, TYPE_CHECKING, Generator
 
 from attrs import define as _attrs_define
 from attrs import field as _attrs_field
-from dateutil.parser import isoparse
 
-from ..models.activity_observation_schema_version import (
-    ActivityObservationSchemaVersion,
-)
 from ..types import UNSET, Unset
+
+from ..models.activity_observation_schema_version import ActivityObservationSchemaVersion
+from ..types import UNSET, Unset
+from dateutil.parser import isoparse
+from typing import cast
+import datetime
 
 if TYPE_CHECKING:
     from ..models.activity_observation_attributes import ActivityObservationAttributes
@@ -52,9 +53,7 @@ class ActivityObservation:
     trace_id: str | Unset = UNSET
 
     def to_dict(self) -> dict[str, Any]:
-        from ..models.activity_observation_attributes import (
-            ActivityObservationAttributes,
-        )
+        from ..models.activity_observation_attributes import ActivityObservationAttributes
         from ..models.activity_observation_refs import ActivityObservationRefs
         from ..models.activity_source import ActivitySource
 
@@ -115,9 +114,7 @@ class ActivityObservation:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        from ..models.activity_observation_attributes import (
-            ActivityObservationAttributes,
-        )
+        from ..models.activity_observation_attributes import ActivityObservationAttributes
         from ..models.activity_observation_refs import ActivityObservationRefs
         from ..models.activity_source import ActivitySource
 

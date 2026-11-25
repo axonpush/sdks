@@ -1,12 +1,15 @@
 from __future__ import annotations
 
 from collections.abc import Mapping
-from typing import TYPE_CHECKING, Any, BinaryIO, Generator, TextIO, TypeVar, cast
+from typing import Any, TypeVar, BinaryIO, TextIO, TYPE_CHECKING, Generator
 
 from attrs import define as _attrs_define
 from attrs import field as _attrs_field
 
 from ..types import UNSET, Unset
+
+from ..types import UNSET, Unset
+from typing import cast
 
 if TYPE_CHECKING:
     from ..models.metric_name_dto import MetricNameDTO
@@ -68,9 +71,7 @@ class ListMetricNamesOutputBody:
                 metrics_type_0 = []
                 _metrics_type_0 = data
                 for metrics_type_0_item_data in _metrics_type_0:
-                    metrics_type_0_item = MetricNameDTO.from_dict(
-                        metrics_type_0_item_data
-                    )
+                    metrics_type_0_item = MetricNameDTO.from_dict(metrics_type_0_item_data)
 
                     metrics_type_0.append(metrics_type_0_item)
 

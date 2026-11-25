@@ -1,14 +1,17 @@
 from __future__ import annotations
 
-import datetime
 from collections.abc import Mapping
-from typing import TYPE_CHECKING, Any, BinaryIO, Generator, TextIO, TypeVar, cast
+from typing import Any, TypeVar, BinaryIO, TextIO, TYPE_CHECKING, Generator
 
 from attrs import define as _attrs_define
 from attrs import field as _attrs_field
-from dateutil.parser import isoparse
 
 from ..types import UNSET, Unset
+
+from ..types import UNSET, Unset
+from dateutil.parser import isoparse
+from typing import cast
+import datetime
 
 if TYPE_CHECKING:
     from ..models.obligation import Obligation
@@ -88,9 +91,7 @@ class Result:
                 obligations_type_0 = []
                 _obligations_type_0 = data
                 for obligations_type_0_item_data in _obligations_type_0:
-                    obligations_type_0_item = Obligation.from_dict(
-                        obligations_type_0_item_data
-                    )
+                    obligations_type_0_item = Obligation.from_dict(obligations_type_0_item_data)
 
                     obligations_type_0.append(obligations_type_0_item)
 

@@ -1,12 +1,15 @@
 from __future__ import annotations
 
 from collections.abc import Mapping
-from typing import TYPE_CHECKING, Any, BinaryIO, Generator, TextIO, TypeVar, cast
+from typing import Any, TypeVar, BinaryIO, TextIO, TYPE_CHECKING, Generator
 
 from attrs import define as _attrs_define
 from attrs import field as _attrs_field
 
 from ..types import UNSET, Unset
+
+from ..types import UNSET, Unset
+from typing import cast
 
 if TYPE_CHECKING:
     from ..models.dimension_dto import DimensionDTO
@@ -68,9 +71,7 @@ class DimensionsOutputBody:
                 dimensions_type_0 = []
                 _dimensions_type_0 = data
                 for dimensions_type_0_item_data in _dimensions_type_0:
-                    dimensions_type_0_item = DimensionDTO.from_dict(
-                        dimensions_type_0_item_data
-                    )
+                    dimensions_type_0_item = DimensionDTO.from_dict(dimensions_type_0_item_data)
 
                     dimensions_type_0.append(dimensions_type_0_item)
 

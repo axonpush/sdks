@@ -7,7 +7,7 @@ import { fileURLToPath } from "node:url";
 import { promisify } from "node:util";
 
 const execute = promisify(execFile);
-export const workflowCompilerVersion = "0.1.0";
+export const workflowCompilerVersion = "0.1.1";
 export type {
   FactsInputBody as PublishWorkflowFacts,
   Input as WorkflowInput,

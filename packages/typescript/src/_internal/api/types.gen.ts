@@ -13911,6 +13911,8 @@ export type TracesGroupsData = {
          * Keep traces with a span from any of these end-user ids
          */
         user?: Array<string> | null;
+        subject_type?: string;
+        subject_id?: string;
         /**
          * Keep traces with a span of any of these semantic kinds (e.g. llm)
          */
@@ -14039,6 +14041,8 @@ export type TracesGroupMembersData = {
          * Keep traces with a span from any of these end-user ids
          */
         user?: Array<string> | null;
+        subject_type?: string;
+        subject_id?: string;
         /**
          * Keep traces with a span of any of these semantic kinds (e.g. llm)
          */
@@ -14161,6 +14165,8 @@ export type TracesListData = {
          * Keep traces with a span from any of these end-user ids
          */
         user?: Array<string> | null;
+        subject_type?: string;
+        subject_id?: string;
         /**
          * Keep traces with a span of any of these semantic kinds (e.g. llm)
          */
@@ -16090,6 +16096,8 @@ export type WorkflowsCasesData = {
         environment?: string;
         workflow?: string;
         cursor?: string;
+        subject_type?: string;
+        subject_id?: string;
     };
     url: '/workspaces/{workspaceId}/workflows/cases';
 };

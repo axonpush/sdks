@@ -180,3 +180,9 @@ The public MIT-licensed [v1 evidence specification](spec/evidence/v1/README.md)
 defines the event vocabulary, manifest schema and cryptographic format. Offline
 verification requires an independently trusted checkpoint or issuer key. This
 feature branch is not a claim that an older published SDK exposes these APIs.
+
+## Customer identity and request context
+
+Identify profiles separately from request attribution. Use TypeScript `withContext`, Python `with_context`, or .NET `BeginContext` after authentication to link customer subjects to observations, diagnostic events and workflow cases. Capture context before queued jobs and restore it in the worker. Generated workflow publishing helpers accept the same scope; the deterministic verifier is unchanged.
+
+See the [customer attribution guide](https://docs.axonpush.xyz/customer-attribution) for sync/async examples, explicit business reference mappings, OpenTelemetry integration, background work and local validation.

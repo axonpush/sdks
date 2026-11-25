@@ -7,6 +7,8 @@ namespace AxonPush.Otel.Telemetry;
 /// </summary>
 public sealed class AxonPushTelemetryOptions
 {
+    /// <summary>Capture this client's customer context when activities start.</summary>
+    public AxonPushClient? ContextClient { get; set; }
     /// <summary>Backend base URL (<c>AXONPUSH_BASE_URL</c>). Traces post to <c>{BaseUrl}/v1/traces</c>.</summary>
     public string? BaseUrl { get; set; }
 

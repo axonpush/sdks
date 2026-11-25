@@ -47,7 +47,7 @@ with tempfile.TemporaryDirectory() as tmp:
             shutil.copyfile(examples / filename, root / filename)
             verdicts.append(run("bun", "run", filename).split())
         assert verdicts[0] == verdicts[1] and verdicts[0][-1] == "violated", verdicts
-    assert json.loads(run(*cli, "workflow", "version"))["version"] == "0.1.0"
+    assert json.loads(run(*cli, "workflow", "version"))["version"] == "0.1.1"
     run(*cli, "workflow", "init", "--template", "booking-reschedule", "--out", "booking")
     result = run(*cli, "workflow", "action-test", "--file", "booking/workflow.yaml",
                  "--fixture", "booking/review.json")

@@ -52,6 +52,7 @@ public static class AxonPushTelemetry
         this TracerProviderBuilder builder,
         ResolvedTelemetryConfig config)
     {
+        if (config.ContextClient is not null) builder.AddProcessor(new CustomerContextProcessor(config.ContextClient));
         return builder.AddOtlpExporter(otlp =>
         {
             otlp.Endpoint = config.TracesEndpoint;
@@ -87,6 +88,7 @@ public static class AxonPushTelemetry
 /// </summary>
 internal sealed class ResolvedTelemetryConfig
 {
+    public AxonPushClient? ContextClient { get; init; }
     public required Uri TracesEndpoint { get; init; }
     public string? ApiKey { get; init; }
     public string? ChannelId { get; init; }
@@ -125,6 +127,7 @@ internal sealed class ResolvedTelemetryConfig
             ServiceName = serviceName,
             Environment = environment,
             ServiceVersion = options.ServiceVersion,
+            ContextClient = options.ContextClient,
             ContentCapture = options.ContentCapture,
             RedactKeys = options.RedactKeys,
             MaxContentLength = options.MaxContentLength,

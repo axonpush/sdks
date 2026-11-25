@@ -39,6 +39,7 @@ from axonpush._observe import (
     observation_batches,
 )
 from axonpush._redaction import redact_telemetry
+from axonpush.request_context import observation as context_observation
 
 if TYPE_CHECKING:
     from axonpush.resources.workflows import Workflows, AsyncWorkflows
@@ -264,7 +265,7 @@ class AxonPush:
         """Send several observations, in batches of 100, and merge the reports."""
         reports = []
         for body in observation_batches(
-            list(observations),
+            [context_observation(self, workspace_id, o) for o in observations],
             environment=self._settings.environment,
             redact=self._redact_telemetry,
         ):
@@ -272,6 +273,12 @@ class AxonPush:
             if report is not None:
                 reports.append(report)
         return merge_reports(reports)
+
+    def with_context(self, **context: Any):
+        """Bind customer identity for one request. Use with/async with; no profile update is sent."""
+        from axonpush.request_context import RequestScope
+
+        return RequestScope(self, **context)
 
     def identify(
         self, workspace_id: str, entity: str, id: str, traits: Mapping[str, Any]
@@ -581,7 +588,7 @@ class AsyncAxonPush:
         """Send several observations, in batches of 100, and merge the reports."""
         reports = []
         for body in observation_batches(
-            list(observations),
+            [context_observation(self, workspace_id, o) for o in observations],
             environment=self._settings.environment,
             redact=self._redact_telemetry,
         ):
@@ -589,6 +596,12 @@ class AsyncAxonPush:
             if report is not None:
                 reports.append(report)
         return merge_reports(reports)
+
+    def with_context(self, **context: Any):
+        """Bind customer identity for one request. Use with/async with; no profile update is sent."""
+        from axonpush.request_context import RequestScope
+
+        return RequestScope(self, **context)
 
     async def identify(
         self, workspace_id: str, entity: str, id: str, traits: Mapping[str, Any]

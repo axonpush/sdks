@@ -1,12 +1,15 @@
 from __future__ import annotations
 
 from collections.abc import Mapping
-from typing import TYPE_CHECKING, Any, BinaryIO, Generator, TextIO, TypeVar, cast
+from typing import Any, TypeVar, BinaryIO, TextIO, TYPE_CHECKING, Generator
 
 from attrs import define as _attrs_define
 from attrs import field as _attrs_field
 
 from ..types import UNSET, Unset
+
+from ..types import UNSET, Unset
+from typing import cast
 
 if TYPE_CHECKING:
     from ..models.definition import Definition
@@ -68,9 +71,7 @@ class DefinitionListBody:
                 definitions_type_0 = []
                 _definitions_type_0 = data
                 for definitions_type_0_item_data in _definitions_type_0:
-                    definitions_type_0_item = Definition.from_dict(
-                        definitions_type_0_item_data
-                    )
+                    definitions_type_0_item = Definition.from_dict(definitions_type_0_item_data)
 
                     definitions_type_0.append(definitions_type_0_item)
 

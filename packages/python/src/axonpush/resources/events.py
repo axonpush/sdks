@@ -19,6 +19,7 @@ from axonpush._internal.api.types import UNSET
 from axonpush._internal.transport import environment_header
 from axonpush._tracing import get_or_create_trace
 from axonpush._evidence_context import task_metadata
+from axonpush.request_context import capture_event
 from axonpush.models import Event, EventType
 
 if TYPE_CHECKING:
@@ -149,6 +150,11 @@ class Events:
             AxonPushError: For API errors; connection failures also raise when
                 ``fail_open`` is False.
         """
+        context_params = capture_event(
+            self._client, {"metadata": metadata, "environment": environment, "payload": payload}
+        )
+        metadata = context_params.get("metadata")
+        environment = context_params.get("environment")
         body = _build_event_body(
             identifier=identifier,
             payload=payload,
@@ -277,6 +283,11 @@ class AsyncEvents:
         environment: str | None = None,
     ) -> Event | None:
         """Publish a single event to a channel. See :meth:`Events.publish`."""
+        context_params = capture_event(
+            self._client, {"metadata": metadata, "environment": environment, "payload": payload}
+        )
+        metadata = context_params.get("metadata")
+        environment = context_params.get("environment")
         body = _build_event_body(
             identifier=identifier,
             payload=payload,

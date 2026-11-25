@@ -2,6 +2,6 @@
   "source": "axonpush/server",
   "sha": "afaf0d45d20c45d5619a052f69a0e8af2da012f5",
   "ref": "dev",
-  "sha256": "94fde0496442d5211d5f4bda190853398e8e75c5569d570e89e5dddd1c6104ca",
-  "workflow": "workflow-first"
+  "sha256": "802e3ae6e52ee9982e91d7fc31b33ab3feb686e4151cc4887757bf36eef8897e",
+  "workflow": "customer-attribution-local"
 }

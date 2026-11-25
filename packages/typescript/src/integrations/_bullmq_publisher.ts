@@ -1,6 +1,7 @@
 import type { AxonPush } from "../client.js";
 import { captureTask, withoutEvidenceTask } from "../evidence-context.js";
 import { logger as sdkLogger } from "../logger.js";
+import { captureContextEvent, withoutRequestContext } from "../request-context.js";
 import type { PublishParams } from "../resources/events.js";
 
 /**
@@ -73,7 +74,10 @@ export class BullMQPublisher {
   private dropped = 0;
   private closed = false;
 
-  constructor(_client: AxonPush, opts: BullMQPublisherOptions) {
+  constructor(
+    private readonly client: AxonPush,
+    opts: BullMQPublisherOptions,
+  ) {
     if (!opts.connection) {
       throw new Error("BullMQPublisher requires { connection } (IORedis instance or options).");
     }
@@ -87,7 +91,7 @@ export class BullMQPublisher {
   }
 
   submit(params: PublishParams): void {
-    params = captureTask(params);
+    params = captureContextEvent(this.client, captureTask(params));
     if (this.closed) {
       this.dropped++;
       return;
@@ -171,12 +175,14 @@ export async function createBullMQWorker(
     queueName,
     async (job) => {
       const params = job.data as PublishParams;
-      await withoutEvidenceTask(() =>
-        (
-          opts.client as unknown as {
-            events: { publish(p: PublishParams): Promise<unknown> };
-          }
-        ).events.publish(params),
+      await withoutRequestContext(() =>
+        withoutEvidenceTask(() =>
+          (
+            opts.client as unknown as {
+              events: { publish(p: PublishParams): Promise<unknown> };
+            }
+          ).events.publish(params),
+        ),
       );
     },
     { connection: opts.connection },

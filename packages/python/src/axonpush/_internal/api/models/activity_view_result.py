@@ -1,12 +1,15 @@
 from __future__ import annotations
 
 from collections.abc import Mapping
-from typing import TYPE_CHECKING, Any, BinaryIO, Generator, TextIO, TypeVar, cast
+from typing import Any, TypeVar, BinaryIO, TextIO, TYPE_CHECKING, Generator
 
 from attrs import define as _attrs_define
 from attrs import field as _attrs_field
 
 from ..types import UNSET, Unset
+
+from ..types import UNSET, Unset
+from typing import cast
 
 if TYPE_CHECKING:
     from ..models.activity_activation_result import ActivityActivationResult
@@ -203,9 +206,7 @@ class ActivityViewResult:
                 points_type_0 = []
                 _points_type_0 = data
                 for points_type_0_item_data in _points_type_0:
-                    points_type_0_item = ActivityViewPoint.from_dict(
-                        points_type_0_item_data
-                    )
+                    points_type_0_item = ActivityViewPoint.from_dict(points_type_0_item_data)
 
                     points_type_0.append(points_type_0_item)
 
@@ -265,9 +266,7 @@ class ActivityViewResult:
                 series_type_0 = []
                 _series_type_0 = data
                 for series_type_0_item_data in _series_type_0:
-                    series_type_0_item = ActivityViewSeries.from_dict(
-                        series_type_0_item_data
-                    )
+                    series_type_0_item = ActivityViewSeries.from_dict(series_type_0_item_data)
 
                     series_type_0.append(series_type_0_item)
 
@@ -306,9 +305,7 @@ class ActivityViewResult:
                 splits_type_0 = []
                 _splits_type_0 = data
                 for splits_type_0_item_data in _splits_type_0:
-                    splits_type_0_item = ActivityViewSplit.from_dict(
-                        splits_type_0_item_data
-                    )
+                    splits_type_0_item = ActivityViewSplit.from_dict(splits_type_0_item_data)
 
                     splits_type_0.append(splits_type_0_item)
 

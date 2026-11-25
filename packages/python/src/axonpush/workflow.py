@@ -16,7 +16,7 @@ from axonpush._internal.api.models import Input as WorkflowInput
 
 __all__ = ["run", "resolve_binary", "PublishWorkflowFacts", "WorkflowInput", "COMPILER_VERSION"]
 
-COMPILER_VERSION = "0.1.0"
+COMPILER_VERSION = "0.1.1"
 
 
 def main() -> int:

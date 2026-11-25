@@ -1,12 +1,15 @@
 from __future__ import annotations
 
 from collections.abc import Mapping
-from typing import TYPE_CHECKING, Any, BinaryIO, Generator, TextIO, TypeVar, cast
+from typing import Any, TypeVar, BinaryIO, TextIO, TYPE_CHECKING, Generator
 
 from attrs import define as _attrs_define
 from attrs import field as _attrs_field
 
 from ..types import UNSET, Unset
+
+from ..types import UNSET, Unset
+from typing import cast
 
 if TYPE_CHECKING:
     from ..models.invitation_dto import InvitationDTO
@@ -68,9 +71,7 @@ class ListInvitationsOutputBody:
                 invitations_type_0 = []
                 _invitations_type_0 = data
                 for invitations_type_0_item_data in _invitations_type_0:
-                    invitations_type_0_item = InvitationDTO.from_dict(
-                        invitations_type_0_item_data
-                    )
+                    invitations_type_0_item = InvitationDTO.from_dict(invitations_type_0_item_data)
 
                     invitations_type_0.append(invitations_type_0_item)
 

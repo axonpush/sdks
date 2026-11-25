@@ -1,12 +1,15 @@
 from __future__ import annotations
 
 from collections.abc import Mapping
-from typing import TYPE_CHECKING, Any, BinaryIO, Generator, TextIO, TypeVar, cast
+from typing import Any, TypeVar, BinaryIO, TextIO, TYPE_CHECKING, Generator
 
 from attrs import define as _attrs_define
 from attrs import field as _attrs_field
 
 from ..types import UNSET, Unset
+
+from ..types import UNSET, Unset
+from typing import cast
 
 if TYPE_CHECKING:
     from ..models.features import Features
@@ -187,9 +190,7 @@ class PlanDTO:
                 return data
             return cast(int | None, data)
 
-        workflow_cases_monthly = _parse_workflow_cases_monthly(
-            d.pop("workflowCasesMonthly")
-        )
+        workflow_cases_monthly = _parse_workflow_cases_monthly(d.pop("workflowCasesMonthly"))
 
         workflow_history_days = d.pop("workflowHistoryDays")
 

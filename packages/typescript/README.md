@@ -538,3 +538,9 @@ MIT.
 Issues and PRs welcome at [github.com/axonpush/sdks](https://github.com/axonpush/sdks).
 Please run `bun run lint && bun run typecheck && bun run test` before
 sending a PR.
+
+## Customer identity and request context
+
+Identify profiles separately from request attribution. Use TypeScript `withContext`, Python `with_context`, or .NET `BeginContext` after authentication to link customer subjects to observations, diagnostic events and workflow cases. Capture context before queued jobs and restore it in the worker. Generated workflow publishing helpers accept the same scope; the deterministic verifier is unchanged.
+
+See the [customer attribution guide](https://docs.axonpush.xyz/customer-attribution) for sync/async examples, explicit business reference mappings, OpenTelemetry integration, background work and local validation.

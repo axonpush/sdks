@@ -4,13 +4,16 @@ from urllib.parse import quote
 
 import httpx
 
-from ... import errors
 from ...client import AuthenticatedClient, Client
+from ...types import Response, UNSET
+from ... import errors
+
 from ...models.error_model import ErrorModel
 from ...models.trace_groups_body import TraceGroupsBody
 from ...models.traces_groups_activity_class import TracesGroupsActivityClass
 from ...models.traces_groups_sort import TracesGroupsSort
-from ...types import UNSET, Response, Unset
+from ...types import UNSET, Unset
+from typing import cast
 
 
 def _get_kwargs(
@@ -35,6 +38,8 @@ def _get_kwargs(
     status: list[str] | None | Unset = UNSET,
     session: list[str] | None | Unset = UNSET,
     user: list[str] | None | Unset = UNSET,
+    subject_type: str | Unset = UNSET,
+    subject_id: str | Unset = UNSET,
     semantic_kind: list[str] | None | Unset = UNSET,
     errors_only: bool | Unset = UNSET,
     min_duration_ms: float | Unset = UNSET,
@@ -200,6 +205,10 @@ def _get_kwargs(
         json_user = user
     params["user"] = json_user
 
+    params["subject_type"] = subject_type
+
+    params["subject_id"] = subject_id
+
     json_semantic_kind: list[str] | None | Unset
     if isinstance(semantic_kind, Unset):
         json_semantic_kind = UNSET
@@ -280,6 +289,8 @@ def sync_detailed(
     status: list[str] | None | Unset = UNSET,
     session: list[str] | None | Unset = UNSET,
     user: list[str] | None | Unset = UNSET,
+    subject_type: str | Unset = UNSET,
+    subject_id: str | Unset = UNSET,
     semantic_kind: list[str] | None | Unset = UNSET,
     errors_only: bool | Unset = UNSET,
     min_duration_ms: float | Unset = UNSET,
@@ -317,6 +328,8 @@ def sync_detailed(
             ok/error)
         session (list[str] | None | Unset): Keep traces with a span from any of these session ids
         user (list[str] | None | Unset): Keep traces with a span from any of these end-user ids
+        subject_type (str | Unset):
+        subject_id (str | Unset):
         semantic_kind (list[str] | None | Unset): Keep traces with a span of any of these semantic
             kinds (e.g. llm)
         errors_only (bool | Unset): Keep only traces containing an error span
@@ -354,6 +367,8 @@ def sync_detailed(
         status=status,
         session=session,
         user=user,
+        subject_type=subject_type,
+        subject_id=subject_id,
         semantic_kind=semantic_kind,
         errors_only=errors_only,
         min_duration_ms=min_duration_ms,
@@ -391,6 +406,8 @@ def sync(
     status: list[str] | None | Unset = UNSET,
     session: list[str] | None | Unset = UNSET,
     user: list[str] | None | Unset = UNSET,
+    subject_type: str | Unset = UNSET,
+    subject_id: str | Unset = UNSET,
     semantic_kind: list[str] | None | Unset = UNSET,
     errors_only: bool | Unset = UNSET,
     min_duration_ms: float | Unset = UNSET,
@@ -428,6 +445,8 @@ def sync(
             ok/error)
         session (list[str] | None | Unset): Keep traces with a span from any of these session ids
         user (list[str] | None | Unset): Keep traces with a span from any of these end-user ids
+        subject_type (str | Unset):
+        subject_id (str | Unset):
         semantic_kind (list[str] | None | Unset): Keep traces with a span of any of these semantic
             kinds (e.g. llm)
         errors_only (bool | Unset): Keep only traces containing an error span
@@ -466,6 +485,8 @@ def sync(
         status=status,
         session=session,
         user=user,
+        subject_type=subject_type,
+        subject_id=subject_id,
         semantic_kind=semantic_kind,
         errors_only=errors_only,
         min_duration_ms=min_duration_ms,
@@ -497,6 +518,8 @@ async def asyncio_detailed(
     status: list[str] | None | Unset = UNSET,
     session: list[str] | None | Unset = UNSET,
     user: list[str] | None | Unset = UNSET,
+    subject_type: str | Unset = UNSET,
+    subject_id: str | Unset = UNSET,
     semantic_kind: list[str] | None | Unset = UNSET,
     errors_only: bool | Unset = UNSET,
     min_duration_ms: float | Unset = UNSET,
@@ -534,6 +557,8 @@ async def asyncio_detailed(
             ok/error)
         session (list[str] | None | Unset): Keep traces with a span from any of these session ids
         user (list[str] | None | Unset): Keep traces with a span from any of these end-user ids
+        subject_type (str | Unset):
+        subject_id (str | Unset):
         semantic_kind (list[str] | None | Unset): Keep traces with a span of any of these semantic
             kinds (e.g. llm)
         errors_only (bool | Unset): Keep only traces containing an error span
@@ -571,6 +596,8 @@ async def asyncio_detailed(
         status=status,
         session=session,
         user=user,
+        subject_type=subject_type,
+        subject_id=subject_id,
         semantic_kind=semantic_kind,
         errors_only=errors_only,
         min_duration_ms=min_duration_ms,
@@ -606,6 +633,8 @@ async def asyncio(
     status: list[str] | None | Unset = UNSET,
     session: list[str] | None | Unset = UNSET,
     user: list[str] | None | Unset = UNSET,
+    subject_type: str | Unset = UNSET,
+    subject_id: str | Unset = UNSET,
     semantic_kind: list[str] | None | Unset = UNSET,
     errors_only: bool | Unset = UNSET,
     min_duration_ms: float | Unset = UNSET,
@@ -643,6 +672,8 @@ async def asyncio(
             ok/error)
         session (list[str] | None | Unset): Keep traces with a span from any of these session ids
         user (list[str] | None | Unset): Keep traces with a span from any of these end-user ids
+        subject_type (str | Unset):
+        subject_id (str | Unset):
         semantic_kind (list[str] | None | Unset): Keep traces with a span of any of these semantic
             kinds (e.g. llm)
         errors_only (bool | Unset): Keep only traces containing an error span
@@ -682,6 +713,8 @@ async def asyncio(
             status=status,
             session=session,
             user=user,
+            subject_type=subject_type,
+            subject_id=subject_id,
             semantic_kind=semantic_kind,
             errors_only=errors_only,
             min_duration_ms=min_duration_ms,

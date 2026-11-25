@@ -30310,6 +30310,24 @@
             }
           },
           {
+            "explode": false,
+            "in": "query",
+            "name": "subject_type",
+            "schema": {
+              "maxLength": 80,
+              "type": "string"
+            }
+          },
+          {
+            "explode": false,
+            "in": "query",
+            "name": "subject_id",
+            "schema": {
+              "maxLength": 200,
+              "type": "string"
+            }
+          },
+          {
             "description": "Keep traces with a span of any of these semantic kinds (e.g. llm)",
             "explode": true,
             "in": "query",
@@ -30721,6 +30739,24 @@
             }
           },
           {
+            "explode": false,
+            "in": "query",
+            "name": "subject_type",
+            "schema": {
+              "maxLength": 80,
+              "type": "string"
+            }
+          },
+          {
+            "explode": false,
+            "in": "query",
+            "name": "subject_id",
+            "schema": {
+              "maxLength": 200,
+              "type": "string"
+            }
+          },
+          {
             "description": "Keep traces with a span of any of these semantic kinds (e.g. llm)",
             "explode": true,
             "in": "query",
@@ -31121,6 +31157,24 @@
                 "array",
                 "null"
               ]
+            }
+          },
+          {
+            "explode": false,
+            "in": "query",
+            "name": "subject_type",
+            "schema": {
+              "maxLength": 80,
+              "type": "string"
+            }
+          },
+          {
+            "explode": false,
+            "in": "query",
+            "name": "subject_id",
+            "schema": {
+              "maxLength": 200,
+              "type": "string"
             }
           },
           {
@@ -35753,6 +35807,24 @@
             "name": "cursor",
             "schema": {
               "maxLength": 64,
+              "type": "string"
+            }
+          },
+          {
+            "explode": false,
+            "in": "query",
+            "name": "subject_type",
+            "schema": {
+              "maxLength": 80,
+              "type": "string"
+            }
+          },
+          {
+            "explode": false,
+            "in": "query",
+            "name": "subject_id",
+            "schema": {
+              "maxLength": 200,
               "type": "string"
             }
           }

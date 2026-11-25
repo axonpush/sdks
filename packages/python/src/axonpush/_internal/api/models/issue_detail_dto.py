@@ -1,12 +1,15 @@
 from __future__ import annotations
 
 from collections.abc import Mapping
-from typing import TYPE_CHECKING, Any, BinaryIO, Generator, TextIO, TypeVar, cast
+from typing import Any, TypeVar, BinaryIO, TextIO, TYPE_CHECKING, Generator
 
 from attrs import define as _attrs_define
 from attrs import field as _attrs_field
 
 from ..types import UNSET, Unset
+
+from ..types import UNSET, Unset
+from typing import cast
 
 if TYPE_CHECKING:
     from ..models.breadcrumb_dto import BreadcrumbDTO
@@ -204,9 +207,7 @@ class IssueDetailDTO:
                 breadcrumbs_type_0 = []
                 _breadcrumbs_type_0 = data
                 for breadcrumbs_type_0_item_data in _breadcrumbs_type_0:
-                    breadcrumbs_type_0_item = BreadcrumbDTO.from_dict(
-                        breadcrumbs_type_0_item_data
-                    )
+                    breadcrumbs_type_0_item = BreadcrumbDTO.from_dict(breadcrumbs_type_0_item_data)
 
                     breadcrumbs_type_0.append(breadcrumbs_type_0_item)
 
@@ -228,9 +229,7 @@ class IssueDetailDTO:
                 occurrences_type_0 = []
                 _occurrences_type_0 = data
                 for occurrences_type_0_item_data in _occurrences_type_0:
-                    occurrences_type_0_item = IssueBucketDTO.from_dict(
-                        occurrences_type_0_item_data
-                    )
+                    occurrences_type_0_item = IssueBucketDTO.from_dict(occurrences_type_0_item_data)
 
                     occurrences_type_0.append(occurrences_type_0_item)
 
@@ -270,9 +269,7 @@ class IssueDetailDTO:
                 tags_type_0 = []
                 _tags_type_0 = data
                 for tags_type_0_item_data in _tags_type_0:
-                    tags_type_0_item = TagDistributionDTO.from_dict(
-                        tags_type_0_item_data
-                    )
+                    tags_type_0_item = TagDistributionDTO.from_dict(tags_type_0_item_data)
 
                     tags_type_0.append(tags_type_0_item)
 

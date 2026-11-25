@@ -1,13 +1,15 @@
 from __future__ import annotations
 
 from collections.abc import Mapping
-from typing import TYPE_CHECKING, Any, BinaryIO, Generator, TextIO, TypeVar
+from typing import Any, TypeVar, BinaryIO, TextIO, TYPE_CHECKING, Generator
 
 from attrs import define as _attrs_define
 from attrs import field as _attrs_field
 
-from ..models.activity_change_kind import ActivityChangeKind
 from ..types import UNSET, Unset
+
+from ..models.activity_change_kind import ActivityChangeKind
+
 
 T = TypeVar("T", bound="ActivityChange")
 

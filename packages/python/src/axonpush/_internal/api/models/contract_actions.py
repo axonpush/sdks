@@ -1,12 +1,14 @@
 from __future__ import annotations
 
 from collections.abc import Mapping
-from typing import TYPE_CHECKING, Any, BinaryIO, Generator, TextIO, TypeVar, cast
+from typing import Any, TypeVar, BinaryIO, TextIO, TYPE_CHECKING, Generator
 
 from attrs import define as _attrs_define
 from attrs import field as _attrs_field
 
 from ..types import UNSET, Unset
+
+from typing import cast
 
 if TYPE_CHECKING:
     from ..models.action_spec import ActionSpec
@@ -19,9 +21,7 @@ T = TypeVar("T", bound="ContractActions")
 class ContractActions:
     """ """
 
-    additional_properties: dict[str, ActionSpec] = _attrs_field(
-        init=False, factory=dict
-    )
+    additional_properties: dict[str, ActionSpec] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
         from ..models.action_spec import ActionSpec

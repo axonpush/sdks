@@ -1,3 +1,5 @@
+import type { AxonPush } from "../client.js";
+import { contextAttributes, currentRequestContext } from "../request-context.js";
 /**
  * OTel-native telemetry for AxonPush (TypeScript).
  *
@@ -86,6 +88,8 @@ export interface TracerProvider {
 type ContentCaptureMode = ResolvedSettings["contentCaptureMode"];
 
 export interface ConfigureTelemetryOptions {
+  /** Capture this client's request identity when spans start. */
+  client?: AxonPush;
   baseUrl?: string;
   apiKey?: string;
   channelId?: string;
@@ -116,7 +120,10 @@ export interface TelemetryHandle {
 //: that all reuse the global provider.
 const INSTALLED = new WeakMap<
   ProviderLike,
-  Map<string, { processor: OtelProcessor; apiKey: string | undefined; refs: number }>
+  Map<
+    string,
+    { processor: OtelProcessor; apiKey: string | undefined; refs: number; client?: AxonPush }
+  >
 >();
 
 interface ProviderLike extends TracerProvider {
@@ -145,8 +152,8 @@ export async function configureTelemetry(
   const otel = await loadOtel();
 
   const settings = resolveSettings({
-    baseUrl: options.baseUrl,
-    apiKey: options.apiKey,
+    baseUrl: options.baseUrl ?? options.client?.settings.baseUrl,
+    apiKey: options.apiKey ?? options.client?.settings.apiKey,
     contentCaptureMode: options.contentCapture,
     redactKeys: options.redactKeys,
   });
@@ -159,6 +166,7 @@ export async function configureTelemetry(
     endpoint,
     apiKey: settings.apiKey,
     channelId,
+    client: options.client,
   });
 
   const serverless = detectServerless();
@@ -275,7 +283,12 @@ function isSdkProvider(provider: TracerProvider): provider is ProviderLike {
 function installProcessor(
   otel: Otel,
   provider: ProviderLike,
-  cfg: { endpoint: string; apiKey: string | undefined; channelId: string | undefined },
+  cfg: {
+    endpoint: string;
+    apiKey: string | undefined;
+    channelId: string | undefined;
+    client?: AxonPush;
+  },
 ): OtelProcessor {
   const key = `${cfg.endpoint}|${cfg.channelId ?? ""}`;
   let registry = INSTALLED.get(provider);
@@ -284,7 +297,7 @@ function installProcessor(
     INSTALLED.set(provider, registry);
   }
   let entry = registry.get(key);
-  if (entry && entry.apiKey !== cfg.apiKey)
+  if (entry && (entry.apiKey !== cfg.apiKey || entry.client !== cfg.client))
     throw new Error("Telemetry provider already configured with different credentials");
   if (!entry) {
     if (typeof provider.addSpanProcessor !== "function")
@@ -298,8 +311,21 @@ function installProcessor(
       compression: "gzip",
     });
     const processor = new otel.BatchSpanProcessor(exporter);
+    const originalStart = (
+      processor as OtelProcessor & { onStart?: (span: TelemetrySpan, parent: unknown) => void }
+    ).onStart?.bind(processor);
+    if (cfg.client) {
+      const owner = cfg.client;
+      (
+        processor as OtelProcessor & { onStart: (span: TelemetrySpan, parent: unknown) => void }
+      ).onStart = (span, parent) => {
+        for (const [key, value] of Object.entries(contextAttributes(currentRequestContext(owner))))
+          span.setAttribute(key, typeof value === "object" ? JSON.stringify(value) : value);
+        originalStart?.(span, parent);
+      };
+    }
     provider.addSpanProcessor(processor);
-    entry = { processor, apiKey: cfg.apiKey, refs: 0 };
+    entry = { processor, apiKey: cfg.apiKey, refs: 0, client: cfg.client };
     registry.set(key, entry);
   }
   entry.refs++;

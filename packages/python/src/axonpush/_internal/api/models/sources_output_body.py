@@ -1,12 +1,15 @@
 from __future__ import annotations
 
 from collections.abc import Mapping
-from typing import TYPE_CHECKING, Any, BinaryIO, Generator, TextIO, TypeVar, cast
+from typing import Any, TypeVar, BinaryIO, TextIO, TYPE_CHECKING, Generator
 
 from attrs import define as _attrs_define
 from attrs import field as _attrs_field
 
 from ..types import UNSET, Unset
+
+from ..types import UNSET, Unset
+from typing import cast
 
 if TYPE_CHECKING:
     from ..models.source_binding import SourceBinding
@@ -68,9 +71,7 @@ class SourcesOutputBody:
                 sources_type_0 = []
                 _sources_type_0 = data
                 for sources_type_0_item_data in _sources_type_0:
-                    sources_type_0_item = SourceBinding.from_dict(
-                        sources_type_0_item_data
-                    )
+                    sources_type_0_item = SourceBinding.from_dict(sources_type_0_item_data)
 
                     sources_type_0.append(sources_type_0_item)
 

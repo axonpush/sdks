@@ -388,3 +388,9 @@ For internal contracts, the resource ownership matrix, the OpenAPI codegen layer
 MIT
 
 See [declared framework task lifecycles](../../docs/framework-task-lifecycle.md) for opt-in root goals, failure boundaries and callback correlation.
+
+## Customer identity and request context
+
+Identify profiles separately from request attribution. Use TypeScript `withContext`, Python `with_context`, or .NET `BeginContext` after authentication to link customer subjects to observations, diagnostic events and workflow cases. Capture context before queued jobs and restore it in the worker. Generated workflow publishing helpers accept the same scope; the deterministic verifier is unchanged.
+
+See the [customer attribution guide](https://docs.axonpush.xyz/customer-attribution) for sync/async examples, explicit business reference mappings, OpenTelemetry integration, background work and local validation.

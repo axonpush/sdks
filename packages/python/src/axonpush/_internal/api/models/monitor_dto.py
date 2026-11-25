@@ -1,13 +1,16 @@
 from __future__ import annotations
 
 from collections.abc import Mapping
-from typing import TYPE_CHECKING, Any, BinaryIO, Generator, TextIO, TypeVar, cast
+from typing import Any, TypeVar, BinaryIO, TextIO, TYPE_CHECKING, Generator
 
 from attrs import define as _attrs_define
 from attrs import field as _attrs_field
 
+from ..types import UNSET, Unset
+
 from ..models.monitor_dto_status import MonitorDTOStatus
 from ..types import UNSET, Unset
+from typing import cast
 
 if TYPE_CHECKING:
     from ..models.monitor_check_in_summary_dto import MonitorCheckInSummaryDTO
@@ -86,9 +89,7 @@ class MonitorDTO:
         if isinstance(self.recent_check_ins, list):
             recent_check_ins = []
             for recent_check_ins_type_0_item_data in self.recent_check_ins:
-                recent_check_ins_type_0_item = (
-                    recent_check_ins_type_0_item_data.to_dict()
-                )
+                recent_check_ins_type_0_item = recent_check_ins_type_0_item_data.to_dict()
                 recent_check_ins.append(recent_check_ins_type_0_item)
 
         else:
@@ -174,9 +175,7 @@ class MonitorDTO:
 
         muted = d.pop("muted")
 
-        def _parse_recent_check_ins(
-            data: object,
-        ) -> list[MonitorCheckInSummaryDTO] | None:
+        def _parse_recent_check_ins(data: object) -> list[MonitorCheckInSummaryDTO] | None:
             if data is None:
                 return data
             try:

@@ -1,12 +1,15 @@
 from __future__ import annotations
 
 from collections.abc import Mapping
-from typing import TYPE_CHECKING, Any, BinaryIO, Generator, TextIO, TypeVar, cast
+from typing import Any, TypeVar, BinaryIO, TextIO, TYPE_CHECKING, Generator
 
 from attrs import define as _attrs_define
 from attrs import field as _attrs_field
 
 from ..types import UNSET, Unset
+
+from ..types import UNSET, Unset
+from typing import cast
 
 if TYPE_CHECKING:
     from ..models.compliance_metrics import ComplianceMetrics
@@ -94,9 +97,7 @@ class ComplianceOverview:
 
         d = dict(src_dict)
 
-        def _parse_attention(
-            data: object,
-        ) -> list[ComplianceOverviewAttentionType0Item] | None:
+        def _parse_attention(data: object) -> list[ComplianceOverviewAttentionType0Item] | None:
             if data is None:
                 return data
             try:
@@ -105,10 +106,8 @@ class ComplianceOverview:
                 attention_type_0 = []
                 _attention_type_0 = data
                 for attention_type_0_item_data in _attention_type_0:
-                    attention_type_0_item = (
-                        ComplianceOverviewAttentionType0Item.from_dict(
-                            attention_type_0_item_data
-                        )
+                    attention_type_0_item = ComplianceOverviewAttentionType0Item.from_dict(
+                        attention_type_0_item_data
                     )
 
                     attention_type_0.append(attention_type_0_item)

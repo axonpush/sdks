@@ -93,3 +93,8 @@ export function withTrace<T>(seedTraceId: string | undefined, fn: () => T): T {
   const ctx = new TraceContext(seedTraceId);
   return storage.run(ctx, fn);
 }
+
+/** Run detached worker work without inheriting its creator's request trace. */
+export function withoutTrace<T>(work: () => T): T {
+  return storage.exit(work);
+}

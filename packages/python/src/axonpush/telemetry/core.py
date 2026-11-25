@@ -41,7 +41,7 @@ import json
 import logging as _stdlib_logging
 import os
 from contextlib import contextmanager
-from typing import TYPE_CHECKING, Any, Callable, Iterator, Optional, Sequence, Set, Tuple
+from typing import TYPE_CHECKING, Any, Callable, Iterator, Optional, Sequence, Tuple
 
 try:
     from opentelemetry import trace as _trace_api
@@ -75,7 +75,7 @@ _internal_logger = _stdlib_logging.getLogger("axonpush")
 #: Guards against attaching our processor to the same (endpoint, channel)
 #: twice — e.g. when ``configure_telemetry`` is called from multiple modules
 #: that all reuse the global provider.
-_INSTALLED: Set[Tuple[str, Optional[str]]] = set()
+_INSTALLED: set[tuple[int, str, Optional[str], int]] = set()
 
 
 class TelemetryHandle:
@@ -123,6 +123,7 @@ def configure_telemetry(
     environment: Optional[str] = None,
     service_version: Optional[str] = None,
     tracer_provider: Optional[TracerProvider] = None,
+    client: Any = None,
     content_capture: ContentCaptureMode = "metadata_only",
     redact_keys: Optional[Sequence[str]] = None,
 ) -> TelemetryHandle:
@@ -149,6 +150,9 @@ def configure_telemetry(
         settings_kwargs["base_url"] = base_url
     if api_key is not None:
         settings_kwargs["api_key"] = api_key
+    if client is not None:
+        settings_kwargs.setdefault("base_url", client._settings.base_url)
+        settings_kwargs.setdefault("api_key", client._settings.api_key)
     settings = Settings(**settings_kwargs)
     base = str(settings.base_url).rstrip("/")
     resolved_api_key = settings.api_key.get_secret_value() if settings.api_key else None
@@ -167,6 +171,7 @@ def configure_telemetry(
         endpoint=endpoint,
         api_key=resolved_api_key,
         channel_id=resolved_channel,
+        client=client,
     )
 
     if detect_serverless() is not None:
@@ -216,8 +221,9 @@ def _install_processor(
     endpoint: str,
     api_key: Optional[str],
     channel_id: Optional[str],
+    client: Any = None,
 ) -> BatchSpanProcessor:
-    key = (endpoint, channel_id)
+    key = (id(provider), endpoint, channel_id, id(client))
     headers: dict[str, str] = {}
     if api_key is not None:
         headers["X-API-Key"] = api_key
@@ -237,6 +243,19 @@ def _install_processor(
         compression=Compression.Gzip,
     )
     processor = BatchSpanProcessor(exporter)
+    if client is not None:
+        from axonpush.request_context import current_context, attributes
+        import json
+
+        original_start = processor.on_start
+
+        def on_start(span: Any, parent_context: Any = None) -> None:
+            for key, value in attributes(current_context(client)).items():
+                span.set_attribute(key, json.dumps(value) if isinstance(value, dict) else value)
+            original_start(span, parent_context)
+
+        processor.on_start = on_start
+
     if key not in _INSTALLED:
         provider.add_span_processor(processor)
         _INSTALLED.add(key)

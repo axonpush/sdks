@@ -1,14 +1,17 @@
 from __future__ import annotations
 
-import datetime
 from collections.abc import Mapping
-from typing import TYPE_CHECKING, Any, BinaryIO, Generator, TextIO, TypeVar, cast
+from typing import Any, TypeVar, BinaryIO, TextIO, TYPE_CHECKING, Generator
 
 from attrs import define as _attrs_define
 from attrs import field as _attrs_field
-from dateutil.parser import isoparse
 
 from ..types import UNSET, Unset
+
+from ..types import UNSET, Unset
+from dateutil.parser import isoparse
+from typing import cast
+import datetime
 
 if TYPE_CHECKING:
     from ..models.action_change import ActionChange
@@ -211,9 +214,7 @@ class ActionRecord:
                 history_type_0 = []
                 _history_type_0 = data
                 for history_type_0_item_data in _history_type_0:
-                    history_type_0_item = ActionChange.from_dict(
-                        history_type_0_item_data
-                    )
+                    history_type_0_item = ActionChange.from_dict(history_type_0_item_data)
 
                     history_type_0.append(history_type_0_item)
 

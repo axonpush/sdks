@@ -1,14 +1,17 @@
 from __future__ import annotations
 
 from collections.abc import Mapping
-from typing import TYPE_CHECKING, Any, BinaryIO, Generator, TextIO, TypeVar, cast
+from typing import Any, TypeVar, BinaryIO, TextIO, TYPE_CHECKING, Generator
 
 from attrs import define as _attrs_define
 from attrs import field as _attrs_field
 
+from ..types import UNSET, Unset
+
 from ..models.activity_view_type import ActivityViewType
 from ..models.activity_view_window import ActivityViewWindow
 from ..types import UNSET, Unset
+from typing import cast
 
 if TYPE_CHECKING:
     from ..models.activity_event_match import ActivityEventMatch
@@ -228,9 +231,7 @@ class ActivityView:
                 exclude_type_0 = []
                 _exclude_type_0 = data
                 for exclude_type_0_item_data in _exclude_type_0:
-                    exclude_type_0_item = ActivityViewFilter.from_dict(
-                        exclude_type_0_item_data
-                    )
+                    exclude_type_0_item = ActivityViewFilter.from_dict(exclude_type_0_item_data)
 
                     exclude_type_0.append(exclude_type_0_item)
 

@@ -1,12 +1,15 @@
 from __future__ import annotations
 
 from collections.abc import Mapping
-from typing import TYPE_CHECKING, Any, BinaryIO, Generator, TextIO, TypeVar, cast
+from typing import Any, TypeVar, BinaryIO, TextIO, TYPE_CHECKING, Generator
 
 from attrs import define as _attrs_define
 from attrs import field as _attrs_field
 
 from ..types import UNSET, Unset
+
+from ..types import UNSET, Unset
+from typing import cast
 
 if TYPE_CHECKING:
     from ..models.trace_summary_dto import TraceSummaryDTO
@@ -68,9 +71,7 @@ class ListTracesOutputBody:
                 traces_type_0 = []
                 _traces_type_0 = data
                 for traces_type_0_item_data in _traces_type_0:
-                    traces_type_0_item = TraceSummaryDTO.from_dict(
-                        traces_type_0_item_data
-                    )
+                    traces_type_0_item = TraceSummaryDTO.from_dict(traces_type_0_item_data)
 
                     traces_type_0.append(traces_type_0_item)
 

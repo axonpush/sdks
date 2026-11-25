@@ -1,12 +1,15 @@
 from __future__ import annotations
 
 from collections.abc import Mapping
-from typing import TYPE_CHECKING, Any, BinaryIO, Generator, TextIO, TypeVar, cast
+from typing import Any, TypeVar, BinaryIO, TextIO, TYPE_CHECKING, Generator
 
 from attrs import define as _attrs_define
 from attrs import field as _attrs_field
 
 from ..types import UNSET, Unset
+
+from ..types import UNSET, Unset
+from typing import cast
 
 if TYPE_CHECKING:
     from ..models.action_record import ActionRecord
@@ -82,9 +85,7 @@ class ActionsPage:
                 actions_type_0 = []
                 _actions_type_0 = data
                 for actions_type_0_item_data in _actions_type_0:
-                    actions_type_0_item = ActionRecord.from_dict(
-                        actions_type_0_item_data
-                    )
+                    actions_type_0_item = ActionRecord.from_dict(actions_type_0_item_data)
 
                     actions_type_0.append(actions_type_0_item)
 

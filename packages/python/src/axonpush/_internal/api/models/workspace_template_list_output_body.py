@@ -1,12 +1,15 @@
 from __future__ import annotations
 
 from collections.abc import Mapping
-from typing import TYPE_CHECKING, Any, BinaryIO, Generator, TextIO, TypeVar, cast
+from typing import Any, TypeVar, BinaryIO, TextIO, TYPE_CHECKING, Generator
 
 from attrs import define as _attrs_define
 from attrs import field as _attrs_field
 
 from ..types import UNSET, Unset
+
+from ..types import UNSET, Unset
+from typing import cast
 
 if TYPE_CHECKING:
     from ..models.activity_template import ActivityTemplate
@@ -68,9 +71,7 @@ class WorkspaceTemplateListOutputBody:
                 templates_type_0 = []
                 _templates_type_0 = data
                 for templates_type_0_item_data in _templates_type_0:
-                    templates_type_0_item = ActivityTemplate.from_dict(
-                        templates_type_0_item_data
-                    )
+                    templates_type_0_item = ActivityTemplate.from_dict(templates_type_0_item_data)
 
                     templates_type_0.append(templates_type_0_item)
 

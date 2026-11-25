@@ -1,12 +1,15 @@
 from __future__ import annotations
 
 from collections.abc import Mapping
-from typing import TYPE_CHECKING, Any, BinaryIO, Generator, TextIO, TypeVar, cast
+from typing import Any, TypeVar, BinaryIO, TextIO, TYPE_CHECKING, Generator
 
 from attrs import define as _attrs_define
 from attrs import field as _attrs_field
 
 from ..types import UNSET, Unset
+
+from ..types import UNSET, Unset
+from typing import cast
 
 if TYPE_CHECKING:
     from ..models.public_ingest_token_dto import PublicIngestTokenDTO
@@ -68,9 +71,7 @@ class ListTokensOutputBody:
                 tokens_type_0 = []
                 _tokens_type_0 = data
                 for tokens_type_0_item_data in _tokens_type_0:
-                    tokens_type_0_item = PublicIngestTokenDTO.from_dict(
-                        tokens_type_0_item_data
-                    )
+                    tokens_type_0_item = PublicIngestTokenDTO.from_dict(tokens_type_0_item_data)
 
                     tokens_type_0.append(tokens_type_0_item)
 

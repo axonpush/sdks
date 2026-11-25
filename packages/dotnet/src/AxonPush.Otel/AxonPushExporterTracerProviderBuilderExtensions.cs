@@ -26,7 +26,7 @@ public static class AxonPushExporterTracerProviderBuilderExtensions
 
         var exporterOptions = CreateExporterOptions(configureExporter);
         var exporter = new AxonPushSpanExporter(client, exporterOptions, loggerFactory);
-        return builder.AddProcessor(new BatchActivityExportProcessor(exporter));
+        return builder.AddProcessor(new CustomerContextProcessor(client)).AddProcessor(new BatchActivityExportProcessor(exporter));
     }
 
     /// <summary>
@@ -60,4 +60,9 @@ public static class AxonPushExporterTracerProviderBuilderExtensions
         }
         return options;
     }
+}
+
+internal sealed class CustomerContextProcessor(AxonPushClient client) : BaseProcessor<System.Diagnostics.Activity>
+{
+    public override void OnStart(System.Diagnostics.Activity activity) => client.AnnotateActivity(activity);
 }

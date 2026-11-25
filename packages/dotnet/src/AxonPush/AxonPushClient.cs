@@ -12,6 +12,9 @@ namespace AxonPush;
 public sealed class AxonPushClient : IDisposable, IAsyncDisposable
 {
     private readonly AxonPushTransport _transport;
+    internal object ContextOwner => _transport;
+    public RequestContextScope BeginContext(RequestContext context) => new(this, context);
+    public void AnnotateActivity(System.Diagnostics.Activity activity) { var context = RequestContextScope.Read(_transport); if (context is null) return; foreach (var p in RequestContextScope.Attributes(context)) activity.SetTag(p.Key, p.Value is IReadOnlyDictionary<string, string> ? System.Text.Json.JsonSerializer.Serialize(p.Value) : p.Value); }
 
     public AxonPushClient(AxonPushOptions options, ILoggerFactory? loggerFactory = null)
         : this(options, null, loggerFactory)

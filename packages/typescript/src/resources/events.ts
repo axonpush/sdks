@@ -3,6 +3,7 @@ import { createEvent, eventsSearch } from "../_internal/api/sdk.gen.js";
 import type { EventBody, EventsSearchData } from "../_internal/api/types.gen.js";
 import { taskMetadata } from "../evidence-context.js";
 import type { Event, EventDetails, EventType, SearchEventsOutputBody } from "../models.js";
+import { captureContextEvent } from "../request-context.js";
 import type { ResourceClient } from "./_client.js";
 
 /** Parameters accepted by {@link EventsResource.publish}. */
@@ -114,6 +115,7 @@ export class EventsResource {
    * @throws {AxonPushError} when fail_open is false and the call fails.
    */
   async publish(params: PublishParams): Promise<Event | null> {
+    params = captureContextEvent(this.client, params);
     const trace = this.client.getOrCreateTrace(params.traceId);
 
     const hasMeta =

@@ -1,12 +1,15 @@
 from __future__ import annotations
 
 from collections.abc import Mapping
-from typing import TYPE_CHECKING, Any, BinaryIO, Generator, TextIO, TypeVar, cast
+from typing import Any, TypeVar, BinaryIO, TextIO, TYPE_CHECKING, Generator
 
 from attrs import define as _attrs_define
 from attrs import field as _attrs_field
 
 from ..types import UNSET, Unset
+
+from ..types import UNSET, Unset
+from typing import cast
 
 if TYPE_CHECKING:
     from ..models.ingest_category_total_dto import IngestCategoryTotalDTO
@@ -84,9 +87,7 @@ class ListOutcomesOutputBody:
                 outcomes_type_0 = []
                 _outcomes_type_0 = data
                 for outcomes_type_0_item_data in _outcomes_type_0:
-                    outcomes_type_0_item = IngestOutcomeDTO.from_dict(
-                        outcomes_type_0_item_data
-                    )
+                    outcomes_type_0_item = IngestOutcomeDTO.from_dict(outcomes_type_0_item_data)
 
                     outcomes_type_0.append(outcomes_type_0_item)
 
@@ -106,9 +107,7 @@ class ListOutcomesOutputBody:
                 totals_type_0 = []
                 _totals_type_0 = data
                 for totals_type_0_item_data in _totals_type_0:
-                    totals_type_0_item = IngestCategoryTotalDTO.from_dict(
-                        totals_type_0_item_data
-                    )
+                    totals_type_0_item = IngestCategoryTotalDTO.from_dict(totals_type_0_item_data)
 
                     totals_type_0.append(totals_type_0_item)
 

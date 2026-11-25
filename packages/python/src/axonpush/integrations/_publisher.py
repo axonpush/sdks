@@ -48,6 +48,8 @@ import threading
 import time
 import weakref
 from axonpush._evidence_context import capture_task, current_task
+from axonpush.request_context import capture_event, _current
+from axonpush._tracing import _current_trace
 from functools import wraps
 from typing import (
     TYPE_CHECKING,
@@ -245,11 +247,15 @@ class BackgroundPublisher:
                     return
                 token = _in_publisher_path.set(True)
                 task_token = current_task.set(None)
+                customer_token = _current.set({})
+                trace_token = _current_trace.set(None)
                 try:
                     self._client.events.publish(**item)
                 except Exception as exc:
                     _log_publish_failure(exc)
                 finally:
+                    _current_trace.reset(trace_token)
+                    _current.reset(customer_token)
                     current_task.reset(task_token)
                     _in_publisher_path.reset(token)
             finally:
@@ -257,7 +263,7 @@ class BackgroundPublisher:
 
     def submit(self, publish_kwargs: PublishKwargs) -> None:
         """Enqueue a publish, dropping per ``overflow_policy`` when full."""
-        publish_kwargs = capture_task(publish_kwargs)
+        publish_kwargs = capture_event(self._client, capture_task(publish_kwargs))
         if self._closed:
             return
         try:
@@ -380,6 +386,8 @@ class AsyncBackgroundPublisher:
                     return
                 token = _in_publisher_path.set(True)
                 task_token = current_task.set(None)
+                customer_token = _current.set({})
+                trace_token = _current_trace.set(None)
                 try:
                     await self._client.events.publish(**item)
                 except asyncio.CancelledError:
@@ -388,6 +396,8 @@ class AsyncBackgroundPublisher:
                 except Exception as exc:
                     _log_publish_failure(exc)
                 finally:
+                    _current_trace.reset(trace_token)
+                    _current.reset(customer_token)
                     current_task.reset(task_token)
                     _in_publisher_path.reset(token)
             finally:
@@ -395,7 +405,7 @@ class AsyncBackgroundPublisher:
 
     def submit(self, publish_kwargs: PublishKwargs) -> None:
         """Enqueue a publish on the running event loop, drop on full."""
-        publish_kwargs = capture_task(publish_kwargs)
+        publish_kwargs = capture_event(self._client, capture_task(publish_kwargs))
         if self._closed:
             return
         q = self._ensure_worker()
@@ -510,6 +520,7 @@ class RqPublisher:
                 "RQ publisher requires a tenant id. Pass tenant_id= to the client "
                 "or set AXONPUSH_TENANT_ID."
             )
+        self._client = client
         self._api_key: str = settings.api_key.get_secret_value()
         self._tenant_id: str = settings.tenant_id
         self._base_url: str = str(settings.base_url).rstrip("/")
@@ -522,7 +533,7 @@ class RqPublisher:
         self._closed = False
 
     def submit(self, publish_kwargs: PublishKwargs) -> None:
-        publish_kwargs = capture_task(publish_kwargs)
+        publish_kwargs = capture_event(self._client, capture_task(publish_kwargs))
         if self._closed:
             return
         try:

@@ -111,6 +111,7 @@ export {
   type ObserveParams,
   type ObserveReport,
 } from "./observe.js";
+export { type RequestContext, ScopedAxonPush } from "./request-context.js";
 export { ActivityResource } from "./resources/activity.js";
 export { AlertsResource } from "./resources/alerts.js";
 export { AnalyticsResource } from "./resources/analytics.js";
