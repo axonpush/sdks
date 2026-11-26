@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.0.21] - 2026-11-26
+
+- Add sync/async request-scoped customer attribution with `with_context`, explicit observation bindings, captured background-job context and OpenTelemetry attributes.
+- Add scoped workflow fact publishing to generated Python hooks. Bundle CLI/generator 0.1.1 while retaining verifier/bundle format 0.1.0.
+- Fix strict typing for request scopes and use a typed OpenTelemetry processor for customer attribution.
+
 ## [0.0.20]
 
 - Add workflow deployment preview, apply and status operations. Add customer-side workflow action workers.

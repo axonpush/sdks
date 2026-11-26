@@ -1,19 +1,15 @@
 from http import HTTPStatus
+from io import BytesIO
 from typing import Any, cast
 from urllib.parse import quote
 
 import httpx
 
-from ...client import AuthenticatedClient, Client
-from ...types import Response, UNSET
 from ... import errors
-
+from ...client import AuthenticatedClient, Client
 from ...models.error_model import ErrorModel
 from ...models.webhook_output_body import WebhookOutputBody
-from ...types import File, FileTypes
-from ...types import UNSET, Unset
-from io import BytesIO
-from typing import cast
+from ...types import UNSET, File, FileTypes, Response, Unset
 
 
 def _get_kwargs(

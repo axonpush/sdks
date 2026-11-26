@@ -1,17 +1,14 @@
 from __future__ import annotations
 
+import datetime
 from collections.abc import Mapping
-from typing import Any, TypeVar, BinaryIO, TextIO, TYPE_CHECKING, Generator
+from typing import TYPE_CHECKING, Any, BinaryIO, Generator, TextIO, TypeVar, cast
 
 from attrs import define as _attrs_define
 from attrs import field as _attrs_field
-
-from ..types import UNSET, Unset
-
-from ..types import UNSET, Unset
 from dateutil.parser import isoparse
-from typing import cast
-import datetime
+
+from ..types import UNSET, Unset
 
 if TYPE_CHECKING:
     from ..models.coverage import Coverage
@@ -194,7 +191,9 @@ class Input:
                 previous_type_0 = []
                 _previous_type_0 = data
                 for previous_type_0_item_data in _previous_type_0:
-                    previous_type_0_item = Obligation.from_dict(previous_type_0_item_data)
+                    previous_type_0_item = Obligation.from_dict(
+                        previous_type_0_item_data
+                    )
 
                     previous_type_0.append(previous_type_0_item)
 

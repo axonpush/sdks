@@ -12,7 +12,7 @@ Targets `net8.0` and above.
 
 ## Workflow deployments
 
-Install the core client with `dotnet add package AxonPush --version 0.0.7`.
+Install the core client with `dotnet add package AxonPush --version 0.0.8`.
 Use a workspace-scoped API key and select the environment explicitly.
 
 ```csharp

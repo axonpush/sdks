@@ -4,13 +4,11 @@ from urllib.parse import quote
 
 import httpx
 
-from ...client import AuthenticatedClient, Client
-from ...types import Response, UNSET
 from ... import errors
-
+from ...client import AuthenticatedClient, Client
 from ...models.error_model import ErrorModel
 from ...models.revision_list_output_body import RevisionListOutputBody
-from typing import cast
+from ...types import UNSET, Response
 
 
 def _get_kwargs(

@@ -1,21 +1,18 @@
 from __future__ import annotations
 
+import datetime
 from collections.abc import Mapping
-from typing import Any, TypeVar, BinaryIO, TextIO, TYPE_CHECKING, Generator
+from typing import TYPE_CHECKING, Any, BinaryIO, Generator, TextIO, TypeVar, cast
 
 from attrs import define as _attrs_define
 from attrs import field as _attrs_field
-
-from ..types import UNSET, Unset
+from dateutil.parser import isoparse
 
 from ..models.activity_workspace_series_bucket import ActivityWorkspaceSeriesBucket
 from ..models.activity_workspace_series_metric import ActivityWorkspaceSeriesMetric
 from ..models.activity_workspace_series_source import ActivityWorkspaceSeriesSource
 from ..models.activity_workspace_series_window import ActivityWorkspaceSeriesWindow
 from ..types import UNSET, Unset
-from dateutil.parser import isoparse
-from typing import cast
-import datetime
 
 if TYPE_CHECKING:
     from ..models.activity_metric_series import ActivityMetricSeries
@@ -122,7 +119,9 @@ class ActivityWorkspaceSeries:
                 series_type_0 = []
                 _series_type_0 = data
                 for series_type_0_item_data in _series_type_0:
-                    series_type_0_item = ActivityMetricSeries.from_dict(series_type_0_item_data)
+                    series_type_0_item = ActivityMetricSeries.from_dict(
+                        series_type_0_item_data
+                    )
 
                     series_type_0.append(series_type_0_item)
 

@@ -1,6 +1,6 @@
 {
   "name": "@axonpush/sdk",
-  "version": "0.0.13",
+  "version": "0.0.14",
   "description": "TypeScript SDK for AxonPush: deploy verifiable customer workflows, send evidence, and inspect cases and outcomes. Includes diagnostics for agents, events and OpenTelemetry.",
   "keywords": [
     "axonpush",

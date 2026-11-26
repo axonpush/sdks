@@ -1,22 +1,21 @@
 from __future__ import annotations
 
 from collections.abc import Mapping
-from typing import Any, TypeVar, BinaryIO, TextIO, TYPE_CHECKING, Generator
+from typing import TYPE_CHECKING, Any, BinaryIO, Generator, TextIO, TypeVar, cast
 
 from attrs import define as _attrs_define
 from attrs import field as _attrs_field
 
 from ..types import UNSET, Unset
 
-from ..types import UNSET, Unset
-from typing import cast
-
 if TYPE_CHECKING:
     from ..models.activity_connect_key import ActivityConnectKey
     from ..models.activity_connect_otlp import ActivityConnectOTLP
     from ..models.activity_connect_result_env import ActivityConnectResultEnv
     from ..models.activity_connect_sdk import ActivityConnectSDK
-    from ..models.activity_connect_workflow_runtime import ActivityConnectWorkflowRuntime
+    from ..models.activity_connect_workflow_runtime import (
+        ActivityConnectWorkflowRuntime,
+    )
     from ..models.link import Link
 
 
@@ -70,7 +69,9 @@ class ActivityConnectResult:
         from ..models.activity_connect_otlp import ActivityConnectOTLP
         from ..models.activity_connect_result_env import ActivityConnectResultEnv
         from ..models.activity_connect_sdk import ActivityConnectSDK
-        from ..models.activity_connect_workflow_runtime import ActivityConnectWorkflowRuntime
+        from ..models.activity_connect_workflow_runtime import (
+            ActivityConnectWorkflowRuntime,
+        )
         from ..models.link import Link
 
         api_url = self.api_url
@@ -165,7 +166,9 @@ class ActivityConnectResult:
         from ..models.activity_connect_otlp import ActivityConnectOTLP
         from ..models.activity_connect_result_env import ActivityConnectResultEnv
         from ..models.activity_connect_sdk import ActivityConnectSDK
-        from ..models.activity_connect_workflow_runtime import ActivityConnectWorkflowRuntime
+        from ..models.activity_connect_workflow_runtime import (
+            ActivityConnectWorkflowRuntime,
+        )
         from ..models.link import Link
 
         d = dict(src_dict)
@@ -241,7 +244,9 @@ class ActivityConnectResult:
         if isinstance(_workflow_runtime, Unset):
             workflow_runtime = UNSET
         else:
-            workflow_runtime = ActivityConnectWorkflowRuntime.from_dict(_workflow_runtime)
+            workflow_runtime = ActivityConnectWorkflowRuntime.from_dict(
+                _workflow_runtime
+            )
 
         activity_connect_result = cls(
             api_url=api_url,

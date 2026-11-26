@@ -6,10 +6,10 @@ Every public axonpush client, generated from one contract.
 
 | How you want to work | Install | First step |
 |---|---|---|
-| YAML or a Node/Bun worker | `npm install @axonpush/sdk@0.0.13` | Run `npx axonpush workflow init --file workflow.yaml`. Import `WorkflowRuntime` from `@axonpush/sdk/workflow` for customer-side actions. |
+| YAML or a Node/Bun worker | `npm install @axonpush/sdk@0.0.14` | Run `npx axonpush workflow init --file workflow.yaml`. Import `WorkflowRuntime` from `@axonpush/sdk/workflow` for customer-side actions. |
 | Zod 4 or Effect Schema 4 | Add `zod@4` or `effect@^4.1.5` to that project | Follow the [Zod booking example](packages/typescript/examples/workflow-zod.ts) or [Effect booking example](packages/typescript/examples/workflow-effect.ts). Both use the same verifier as YAML. |
-| Python | `python -m pip install axonpush==0.0.20` | Run `axonpush workflow init --file workflow.yaml`. Import `axonpush.workflow.run` for local tooling or `WorkflowWorker` from `axonpush.workflow_worker` for action handling. |
-| .NET | `dotnet add package AxonPush --version 0.0.7` | Use [AxonPushClient.Workflows](packages/dotnet/README.md#workflow-deployments) for hosted operations. |
+| Python | `python -m pip install axonpush==0.0.21` | Run `axonpush workflow init --file workflow.yaml`. Import `axonpush.workflow.run` for local tooling or `WorkflowWorker` from `axonpush.workflow_worker` for action handling. |
+| .NET | `dotnet add package AxonPush --version 0.0.8` | Use [AxonPushClient.Workflows](packages/dotnet/README.md#workflow-deployments) for hosted operations. |
 
 Try the [booking walkthrough](https://docs.axonpush.xyz/workflows-quickstart) to
 generate hooks, run fixtures, and deploy to a specific workspace and environment.

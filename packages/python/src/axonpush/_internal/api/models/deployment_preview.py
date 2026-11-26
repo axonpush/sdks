@@ -1,16 +1,12 @@
 from __future__ import annotations
 
 from collections.abc import Mapping
-from typing import Any, TypeVar, BinaryIO, TextIO, TYPE_CHECKING, Generator
+from typing import TYPE_CHECKING, Any, BinaryIO, Generator, TextIO, TypeVar, cast
 
 from attrs import define as _attrs_define
 from attrs import field as _attrs_field
 
 from ..types import UNSET, Unset
-
-from ..types import UNSET, Unset
-from typing import cast
-
 
 T = TypeVar("T", bound="DeploymentPreview")
 
@@ -137,7 +133,9 @@ class DeploymentPreview:
                 pass
             return cast(list[str] | None, data)
 
-        compatible_runtime_ids = _parse_compatible_runtime_ids(d.pop("compatible_runtime_ids"))
+        compatible_runtime_ids = _parse_compatible_runtime_ids(
+            d.pop("compatible_runtime_ids")
+        )
 
         def _parse_required_handlers(data: object) -> list[str] | None:
             if data is None:

@@ -52,7 +52,7 @@ How it behaves:
 
 ### Local validation
 
-Install with `python -m pip install axonpush==0.0.20`. In an empty directory,
+Install with `python -m pip install axonpush==0.0.21`. In an empty directory,
 create a starter contract and generate typed Python hooks. On Windows, Linux and
 macOS (x64 or ARM64) the package includes the same native verifier used by the
 server. Local authoring requires no API key or Go installation.
@@ -72,7 +72,7 @@ workflow.run("generate", "--file", "workflow.yaml", "--language", "python", "--o
 
 Commit the YAML and generated hooks. Use `test --file workflow.yaml --fixture case.json`
 to evaluate evidence at a fixed clock, or `action-test` for an action scenario.
-Use `AXONPUSH_WORKFLOW_BINARY` for an explicit compiler 0.1.0 executable.
+Use `AXONPUSH_WORKFLOW_BINARY` for an explicit CLI/compiler 0.1.1 executable.
 
 ## Supporting diagnostics
 

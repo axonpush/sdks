@@ -1,18 +1,15 @@
 from __future__ import annotations
 
+import datetime
 from collections.abc import Mapping
-from typing import Any, TypeVar, BinaryIO, TextIO, TYPE_CHECKING, Generator
+from typing import TYPE_CHECKING, Any, BinaryIO, Generator, TextIO, TypeVar, cast
 
 from attrs import define as _attrs_define
 from attrs import field as _attrs_field
-
-from ..types import UNSET, Unset
+from dateutil.parser import isoparse
 
 from ..models.activity_analytics_source import ActivityAnalyticsSource
 from ..types import UNSET, Unset
-from dateutil.parser import isoparse
-from typing import cast
-import datetime
 
 if TYPE_CHECKING:
     from ..models.activity_breakdown import ActivityBreakdown
@@ -127,7 +124,9 @@ class ActivityAnalytics:
                 clients_type_0 = []
                 _clients_type_0 = data
                 for clients_type_0_item_data in _clients_type_0:
-                    clients_type_0_item = ActivityBreakdown.from_dict(clients_type_0_item_data)
+                    clients_type_0_item = ActivityBreakdown.from_dict(
+                        clients_type_0_item_data
+                    )
 
                     clients_type_0.append(clients_type_0_item)
 
@@ -147,7 +146,9 @@ class ActivityAnalytics:
                 funnels_type_0 = []
                 _funnels_type_0 = data
                 for funnels_type_0_item_data in _funnels_type_0:
-                    funnels_type_0_item = ActivityFunnelResult.from_dict(funnels_type_0_item_data)
+                    funnels_type_0_item = ActivityFunnelResult.from_dict(
+                        funnels_type_0_item_data
+                    )
 
                     funnels_type_0.append(funnels_type_0_item)
 
@@ -167,7 +168,9 @@ class ActivityAnalytics:
                 splits_type_0 = []
                 _splits_type_0 = data
                 for splits_type_0_item_data in _splits_type_0:
-                    splits_type_0_item = ActivityFunnelSplit.from_dict(splits_type_0_item_data)
+                    splits_type_0_item = ActivityFunnelSplit.from_dict(
+                        splits_type_0_item_data
+                    )
 
                     splits_type_0.append(splits_type_0_item)
 

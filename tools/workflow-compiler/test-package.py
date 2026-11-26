@@ -33,6 +33,13 @@ with tempfile.TemporaryDirectory() as tmp:
             "from axonpush.workflow_worker import WorkflowWorker; from axonpush.workflow import run; "
             "run('init'); assert run('validate')['semantic_hash']; "
             "run('generate', '--language', 'python', '--out', 'generated')")
+        run(python, "-I", "-c",
+            "from axonpush import AxonPush\n"
+            "with AxonPush(api_key='ak_package_test', tenant_id='package-test') as client:\n"
+            "    with client.with_context(workspace_id='package-test', environment='test', "
+            "subjects={'user': 'customer-test'}) as scope:\n"
+            "        assert scope.capture()['subjects'] == {'user': 'customer-test'}\n"
+            "        assert callable(scope.workflows.facts)\n")
     else:
         (root / "package.json").write_text('{"private":true,"type":"module"}')
         run("npm", "install", "--no-audit", "--no-fund", str(artifact), "zod@4", "effect@^4.1.5")
@@ -41,6 +48,13 @@ with tempfile.TemporaryDirectory() as tmp:
             'import { runWorkflow, WorkflowRuntime } from "@axonpush/sdk/workflow"; '
             'await runWorkflow(["init"]); if (!(await runWorkflow(["validate"])).semantic_hash) throw Error(); '
             'await runWorkflow(["generate","--language","typescript","--out","generated"]);')
+        run("node", "--input-type=module", "-e",
+            'import { AxonPush } from "@axonpush/sdk"; '
+            'const client = new AxonPush({apiKey:"ak_package_test",tenantId:"package-test"}); '
+            'await client.withContext({workspaceId:"package-test",environment:"test",'
+            'subjects:{user:"customer-test"}}, scope => {'
+            'if(scope.context.subjects.user !== "customer-test" || '
+            'typeof scope.workflows.facts !== "function") throw Error("Missing scoped publisher");});')
         verdicts = []
         for provider in ("zod", "effect"):
             filename = f"workflow-{provider}.ts"

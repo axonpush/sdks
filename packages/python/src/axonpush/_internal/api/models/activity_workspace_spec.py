@@ -1,15 +1,12 @@
 from __future__ import annotations
 
 from collections.abc import Mapping
-from typing import Any, TypeVar, BinaryIO, TextIO, TYPE_CHECKING, Generator
+from typing import TYPE_CHECKING, Any, BinaryIO, Generator, TextIO, TypeVar, cast
 
 from attrs import define as _attrs_define
 from attrs import field as _attrs_field
 
 from ..types import UNSET, Unset
-
-from ..types import UNSET, Unset
-from typing import cast
 
 if TYPE_CHECKING:
     from ..models.activity_alert import ActivityAlert
@@ -190,7 +187,9 @@ class ActivityWorkspaceSpec:
                 alerts_type_0 = []
                 _alerts_type_0 = data
                 for alerts_type_0_item_data in _alerts_type_0:
-                    alerts_type_0_item = ActivityAlert.from_dict(alerts_type_0_item_data)
+                    alerts_type_0_item = ActivityAlert.from_dict(
+                        alerts_type_0_item_data
+                    )
 
                     alerts_type_0.append(alerts_type_0_item)
 
@@ -227,7 +226,9 @@ class ActivityWorkspaceSpec:
 
         description = d.pop("description", UNSET)
 
-        def _parse_entities(data: object) -> list[ActivityEntityDefinition] | None | Unset:
+        def _parse_entities(
+            data: object,
+        ) -> list[ActivityEntityDefinition] | None | Unset:
             if data is None:
                 return data
             if isinstance(data, Unset):
@@ -262,7 +263,9 @@ class ActivityWorkspaceSpec:
                 funnels_type_0 = []
                 _funnels_type_0 = data
                 for funnels_type_0_item_data in _funnels_type_0:
-                    funnels_type_0_item = ActivityFunnel.from_dict(funnels_type_0_item_data)
+                    funnels_type_0_item = ActivityFunnel.from_dict(
+                        funnels_type_0_item_data
+                    )
 
                     funnels_type_0.append(funnels_type_0_item)
 

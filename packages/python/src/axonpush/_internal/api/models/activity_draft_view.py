@@ -1,15 +1,12 @@
 from __future__ import annotations
 
 from collections.abc import Mapping
-from typing import Any, TypeVar, BinaryIO, TextIO, TYPE_CHECKING, Generator
+from typing import TYPE_CHECKING, Any, BinaryIO, Generator, TextIO, TypeVar, cast
 
 from attrs import define as _attrs_define
 from attrs import field as _attrs_field
 
 from ..types import UNSET, Unset
-
-from ..types import UNSET, Unset
-from typing import cast
 
 if TYPE_CHECKING:
     from ..models.activity_draft import ActivityDraft
@@ -81,7 +78,9 @@ class ActivityDraftView:
                 issues_type_0 = []
                 _issues_type_0 = data
                 for issues_type_0_item_data in _issues_type_0:
-                    issues_type_0_item = ActivityIssue.from_dict(issues_type_0_item_data)
+                    issues_type_0_item = ActivityIssue.from_dict(
+                        issues_type_0_item_data
+                    )
 
                     issues_type_0.append(issues_type_0_item)
 

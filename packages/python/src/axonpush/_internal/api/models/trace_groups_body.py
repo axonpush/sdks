@@ -1,15 +1,12 @@
 from __future__ import annotations
 
 from collections.abc import Mapping
-from typing import Any, TypeVar, BinaryIO, TextIO, TYPE_CHECKING, Generator
+from typing import TYPE_CHECKING, Any, BinaryIO, Generator, TextIO, TypeVar, cast
 
 from attrs import define as _attrs_define
 from attrs import field as _attrs_field
 
 from ..types import UNSET, Unset
-
-from ..types import UNSET, Unset
-from typing import cast
 
 if TYPE_CHECKING:
     from ..models.trace_group_dto import TraceGroupDTO
@@ -104,7 +101,9 @@ class TraceGroupsBody:
                 groups_type_0 = []
                 _groups_type_0 = data
                 for groups_type_0_item_data in _groups_type_0:
-                    groups_type_0_item = TraceGroupDTO.from_dict(groups_type_0_item_data)
+                    groups_type_0_item = TraceGroupDTO.from_dict(
+                        groups_type_0_item_data
+                    )
 
                     groups_type_0.append(groups_type_0_item)
 

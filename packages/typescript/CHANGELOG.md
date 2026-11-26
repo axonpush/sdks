@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.0.14] - 2026-11-26
+
+- Add request-scoped customer attribution with `withContext`, explicit observation bindings, captured background-job context and OpenTelemetry attributes.
+- Add scoped workflow fact publishing to generated YAML, Zod and Effect hooks. Bundle CLI/generator 0.1.1 while retaining verifier/bundle format 0.1.0.
+
 ## [0.0.13]
 
 - Add workflow deployment preview, apply and status operations. Add customer-side workflow action workers. Add Zod and Effect Schema providers for the shared workflow verifier.

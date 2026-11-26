@@ -42,6 +42,7 @@ from axonpush._redaction import redact_telemetry
 from axonpush.request_context import observation as context_observation
 
 if TYPE_CHECKING:
+    from axonpush.request_context import RequestScope
     from axonpush.resources.workflows import Workflows, AsyncWorkflows
     from axonpush._internal.api.client import AuthenticatedClient
     from axonpush._internal.api.models import ActivityIngestReport, IdentifyOutputBody
@@ -274,7 +275,7 @@ class AxonPush:
                 reports.append(report)
         return merge_reports(reports)
 
-    def with_context(self, **context: Any):
+    def with_context(self, **context: Any) -> RequestScope:
         """Bind customer identity for one request. Use with/async with; no profile update is sent."""
         from axonpush.request_context import RequestScope
 
@@ -597,7 +598,7 @@ class AsyncAxonPush:
                 reports.append(report)
         return merge_reports(reports)
 
-    def with_context(self, **context: Any):
+    def with_context(self, **context: Any) -> RequestScope:
         """Bind customer identity for one request. Use with/async with; no profile update is sent."""
         from axonpush.request_context import RequestScope
 

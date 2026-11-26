@@ -1,6 +1,6 @@
 [project]
 name = "axonpush"
-version = "0.0.20"
+version = "0.0.21"
 description = "Python SDK for AxonPush — workflow-first verification for automation providers, with telemetry and observability diagnostics"
 readme = "README.md"
 license = "MIT"

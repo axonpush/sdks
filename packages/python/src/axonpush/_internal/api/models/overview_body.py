@@ -1,15 +1,12 @@
 from __future__ import annotations
 
 from collections.abc import Mapping
-from typing import Any, TypeVar, BinaryIO, TextIO, TYPE_CHECKING, Generator
+from typing import TYPE_CHECKING, Any, BinaryIO, Generator, TextIO, TypeVar, cast
 
 from attrs import define as _attrs_define
 from attrs import field as _attrs_field
 
 from ..types import UNSET, Unset
-
-from ..types import UNSET, Unset
-from typing import cast
 
 if TYPE_CHECKING:
     from ..models.key_count import KeyCount
@@ -46,7 +43,9 @@ class OverviewBody:
     def to_dict(self) -> dict[str, Any]:
         from ..models.key_count import KeyCount
         from ..models.overview_body_events_struct import OverviewBodyEventsStruct
-        from ..models.overview_body_managed_llm_struct import OverviewBodyManagedLlmStruct
+        from ..models.overview_body_managed_llm_struct import (
+            OverviewBodyManagedLlmStruct,
+        )
         from ..models.overview_body_mrr_struct import OverviewBodyMrrStruct
         from ..models.overview_body_totals_struct import OverviewBodyTotalsStruct
 
@@ -60,7 +59,9 @@ class OverviewBody:
         if isinstance(self.plan_distribution, list):
             plan_distribution = []
             for plan_distribution_type_0_item_data in self.plan_distribution:
-                plan_distribution_type_0_item = plan_distribution_type_0_item_data.to_dict()
+                plan_distribution_type_0_item = (
+                    plan_distribution_type_0_item_data.to_dict()
+                )
                 plan_distribution.append(plan_distribution_type_0_item)
 
         else:
@@ -107,7 +108,9 @@ class OverviewBody:
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         from ..models.key_count import KeyCount
         from ..models.overview_body_events_struct import OverviewBodyEventsStruct
-        from ..models.overview_body_managed_llm_struct import OverviewBodyManagedLlmStruct
+        from ..models.overview_body_managed_llm_struct import (
+            OverviewBodyManagedLlmStruct,
+        )
         from ..models.overview_body_mrr_struct import OverviewBodyMrrStruct
         from ..models.overview_body_totals_struct import OverviewBodyTotalsStruct
 
@@ -140,7 +143,9 @@ class OverviewBody:
 
         plan_distribution = _parse_plan_distribution(d.pop("planDistribution"))
 
-        def _parse_subscription_status_distribution(data: object) -> list[KeyCount] | None:
+        def _parse_subscription_status_distribution(
+            data: object,
+        ) -> list[KeyCount] | None:
             if data is None:
                 return data
             try:

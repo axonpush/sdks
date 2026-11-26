@@ -146,7 +146,7 @@ class RequestScope:
             ):
                 raise ValueError("Subjects require nonempty entity types and opaque IDs")
         self._owner = owner
-        self._context = deepcopy(
+        self._context: dict[str, Any] = deepcopy(
             dict(
                 workspace_id=workspace_id,
                 environment=environment,
@@ -164,9 +164,10 @@ class RequestScope:
     def __enter__(self) -> RequestScope:
         if self._token is not None:
             raise RuntimeError("Create a fresh scope for each invocation")
+        trace_id = self._context.get("trace_id")
         trace = (
-            TraceContext(self._context.get("trace_id"))
-            if self._context.get("trace_id")
+            TraceContext(trace_id)
+            if trace_id
             else (current_trace() or TraceContext())
         )
         self._trace_token = set_current_trace(trace)

@@ -1,6 +1,6 @@
 # SDK infrastructure libraries
 
-Package versions are unchanged; this work does not publish any SDK.
+These transport behaviors ship in TypeScript SDK `0.0.14`, Python SDK `0.0.21` and .NET packages `0.0.8`.
 
 TypeScript uses p-retry 7 and p-queue 9, preserving Node 20+ support. Python uses
 Tenacity 9; .NET uses Polly 8. maxRetries still means additional attempts. Delays

@@ -1,15 +1,12 @@
 from __future__ import annotations
 
 from collections.abc import Mapping
-from typing import Any, TypeVar, BinaryIO, TextIO, TYPE_CHECKING, Generator
+from typing import TYPE_CHECKING, Any, BinaryIO, Generator, TextIO, TypeVar, cast
 
 from attrs import define as _attrs_define
 from attrs import field as _attrs_field
 
 from ..types import UNSET, Unset
-
-from ..types import UNSET, Unset
-from typing import cast
 
 if TYPE_CHECKING:
     from ..models.monitor_dto import MonitorDTO
@@ -71,7 +68,9 @@ class ListMonitorsOutputBody:
                 monitors_type_0 = []
                 _monitors_type_0 = data
                 for monitors_type_0_item_data in _monitors_type_0:
-                    monitors_type_0_item = MonitorDTO.from_dict(monitors_type_0_item_data)
+                    monitors_type_0_item = MonitorDTO.from_dict(
+                        monitors_type_0_item_data
+                    )
 
                     monitors_type_0.append(monitors_type_0_item)
 

@@ -215,6 +215,19 @@ def _resolve_provider(
     return provider, True
 
 
+class _ContextBatchSpanProcessor(BatchSpanProcessor):
+    def __init__(self, exporter: OTLPSpanExporter, client: Any) -> None:
+        super().__init__(exporter)
+        self._context_client = client
+
+    def on_start(self, span: Any, parent_context: Any = None) -> None:
+        from axonpush.request_context import current_context, attributes
+
+        for key, value in attributes(current_context(self._context_client)).items():
+            span.set_attribute(key, json.dumps(value) if isinstance(value, dict) else value)
+        super().on_start(span, parent_context)
+
+
 def _install_processor(
     provider: TracerProvider,
     *,
@@ -242,19 +255,11 @@ def _install_processor(
         headers=headers,
         compression=Compression.Gzip,
     )
-    processor = BatchSpanProcessor(exporter)
-    if client is not None:
-        from axonpush.request_context import current_context, attributes
-        import json
-
-        original_start = processor.on_start
-
-        def on_start(span: Any, parent_context: Any = None) -> None:
-            for key, value in attributes(current_context(client)).items():
-                span.set_attribute(key, json.dumps(value) if isinstance(value, dict) else value)
-            original_start(span, parent_context)
-
-        processor.on_start = on_start
+    processor = (
+        _ContextBatchSpanProcessor(exporter, client)
+        if client is not None
+        else BatchSpanProcessor(exporter)
+    )
 
     if key not in _INSTALLED:
         provider.add_span_processor(processor)

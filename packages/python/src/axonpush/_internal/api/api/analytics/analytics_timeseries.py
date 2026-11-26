@@ -4,16 +4,15 @@ from urllib.parse import quote
 
 import httpx
 
-from ...client import AuthenticatedClient, Client
-from ...types import Response, UNSET
 from ... import errors
-
-from ...models.analytics_timeseries_activity_class import AnalyticsTimeseriesActivityClass
+from ...client import AuthenticatedClient, Client
+from ...models.analytics_timeseries_activity_class import (
+    AnalyticsTimeseriesActivityClass,
+)
 from ...models.analytics_timeseries_bucket import AnalyticsTimeseriesBucket
 from ...models.error_model import ErrorModel
 from ...models.timeseries_output_body import TimeseriesOutputBody
-from ...types import UNSET, Unset
-from typing import cast
+from ...types import UNSET, Response, Unset
 
 
 def _get_kwargs(

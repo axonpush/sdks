@@ -9,8 +9,9 @@ const program = ts.createProgram(parsed.fileNames, parsed.options);
 const checker = program.getTypeChecker();
 let count = 0;
 const issues: string[] = [];
+const resourcePrefix = resolve(root, "src/resources").replaceAll("\\", "/") + "/";
 for (const source of program.getSourceFiles()) {
-  if (!source.fileName.startsWith(root + "/src/resources/")) continue;
+  if (!source.fileName.replaceAll("\\", "/").startsWith(resourcePrefix)) continue;
   const visit = (node: ts.Node) => {
     if (
       ts.isCallExpression(node) &&
@@ -51,5 +52,6 @@ for (const source of program.getSourceFiles()) {
   visit(source);
 }
 console.log(`Audited ${count} operation request body/query/path aliases`);
+if (!count) issues.push("No resource aliases were audited; check source path matching");
 for (const issue of issues) console.log(issue);
 if (issues.length) process.exitCode = 1;

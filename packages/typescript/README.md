@@ -67,7 +67,7 @@ The runtime requires HTTPS (loopback HTTP is allowed for local development).
 Keep provider credentials in your app; the runtime does not send them to AxonPush.
 
 For local `validate`, `test` and `diff` without network calls, use `runWorkflow`
-from the same entrypoint. Version `0.0.13` includes compiler `0.1.0` for Windows,
+from the same entrypoint. Version `0.0.14` includes CLI/compiler `0.1.1` for Windows,
 Linux and macOS on x64 and ARM64. To try it in an empty project:
 
 ```js
@@ -158,7 +158,7 @@ The `@axonpush/sdk/workflow/zod` entrypoint provides `defineZodWorkflow`,
 `compileZodWorkflow` and `verifyZodWorkflow`. Define fact schemas as strict Zod 4
 objects; the provider emits stable contract source and delegates compilation and
 verification to the same Go executable used by the server. There is no separate
-TypeScript evaluator. Install with `npm install @axonpush/sdk@0.0.13 zod@4`.
+TypeScript evaluator. Install with `npm install @axonpush/sdk@0.0.14 zod@4`.
 
 Supported fields: plain `z.string()`, `z.number()`, `z.boolean()` and
 `z.iso.datetime({ offset: true })`. Unsupported checks, transforms, refinements,
@@ -180,13 +180,13 @@ and source determinism tests always run.
 
 `@axonpush/sdk/workflow/effect` exports `defineEffectWorkflow`,
 `compileEffectWorkflow`, `verifyEffectWorkflow` and `WorkflowTimestamp`. Install
-with `npm install @axonpush/sdk@0.0.13 effect@^4.1.5` to use it. Effect 3 is not supported. Define facts
+with `npm install @axonpush/sdk@0.0.14 effect@^4.1.5` to use it. Effect 3 is not supported. Define facts
 with `Schema.Struct`, plain scalar fields and the exported timestamp helper.
 Custom filters, transformations and unsupported constraints fail explicitly.
 Compilation and verification share the same native Go bridge as the Zod provider.
 
 See [the runnable example](examples/workflow-effect.ts) and
-[the provider guide](https://docs.axonpush.xyz/workflows-effect), which uses the bundled compiler. To run the repository parity tests against an explicit compiler `0.1.0`, set `AXONPUSH_WORKFLOW_BINARY` and run
+[the provider guide](https://docs.axonpush.xyz/workflows-effect), which uses the bundled compiler. To run the repository parity tests against an explicit CLI/compiler `0.1.1`, set `AXONPUSH_WORKFLOW_BINARY` and run
 `bunx vitest run src/__tests__/workflow-effect.test.ts` with that variable set.
 Native tests skip when no executable is configured; schema tests always run.
 

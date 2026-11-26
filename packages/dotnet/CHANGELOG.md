@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.0.8] - 2026-11-26
+
+- Add request-scoped customer attribution with `BeginContext`, explicit observation bindings, captured background-job context and OpenTelemetry attributes.
+- Regenerate workflow and diagnostic operations for customer filtering and the deployed backend contract. Release AxonPush, AxonPush.Otel and AxonPush.SemanticKernel together.
+
 ## [0.0.7]
 
 - Add workflow deployment preview, apply and status operations.
