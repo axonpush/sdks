@@ -165,11 +165,7 @@ class RequestScope:
         if self._token is not None:
             raise RuntimeError("Create a fresh scope for each invocation")
         trace_id = self._context.get("trace_id")
-        trace = (
-            TraceContext(trace_id)
-            if trace_id
-            else (current_trace() or TraceContext())
-        )
+        trace = TraceContext(trace_id) if trace_id else (current_trace() or TraceContext())
         self._trace_token = set_current_trace(trace)
         self._context["trace_id"] = trace.w3c_trace_id()
         self._token = _current.set({**_current.get(), self._owner: self._context})
