@@ -15,7 +15,7 @@ touch "$GITHUB_ENV" "$GITHUB_OUTPUT"
 export MISE_TRUSTED_CONFIG_PATHS="$CI_WORKSPACE"
 if [ "${WOODPECKER_TOOLS_READY:-}" != 1 ]; then
   tools=()
-  tools+=(go@stable)
+  tools+=(go@latest)
   tools+=(uv@latest)
   export WOODPECKER_TOOLS_READY=1
   exec mise exec "${tools[@]}" -- bash "$0"
