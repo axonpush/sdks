@@ -53,12 +53,6 @@ printf '%s\n' 'Resource aliases match operation contracts'
 bun run packages/typescript/tools/check-resource-contract.ts
 )
 
-printf '%s\n' Typecheck
-(
-  cd packages/python
-uv run mypy --sqlite-cache src/axonpush examples
-)
-
 printf '%s\n' Test
 (
   cd packages/python

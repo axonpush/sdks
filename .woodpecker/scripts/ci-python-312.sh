@@ -33,8 +33,15 @@ printf '%s\n' 'Step 4'
 uv sync --extra dev --extra all
 )
 
-# Shared Ruff, resource-contract and mypy (configured python_version=3.10)
-# checks run once in python-310; runtime tests still run on every version.
+# Shared Ruff and resource-contract checks run once in python-310.
+# Mypy runs with all optional integrations in python-312; runtime tests run on every version.
+# The configured mypy target remains Python 3.10.
+printf '%s\n' Typecheck
+(
+  cd packages/python
+uv run mypy --sqlite-cache src/axonpush examples
+)
+
 printf '%s\n' Test
 (
   cd packages/python
