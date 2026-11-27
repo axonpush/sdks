@@ -16,7 +16,6 @@ export MISE_TRUSTED_CONFIG_PATHS="$CI_WORKSPACE"
 export UV_PYTHON=''3.10''
 if [ "${WOODPECKER_TOOLS_READY:-}" != 1 ]; then
   tools=()
-  tools+=(go@latest)
   tools+=(uv@latest)
   tools+=(bun@latest)
   export WOODPECKER_TOOLS_READY=1
@@ -57,7 +56,7 @@ bun run packages/typescript/tools/check-resource-contract.ts
 printf '%s\n' Typecheck
 (
   cd packages/python
-uv run mypy src/axonpush examples
+uv run mypy --sqlite-cache src/axonpush examples
 )
 
 printf '%s\n' Test

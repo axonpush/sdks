@@ -15,7 +15,6 @@ touch "$GITHUB_ENV" "$GITHUB_OUTPUT"
 export MISE_TRUSTED_CONFIG_PATHS="$CI_WORKSPACE"
 if [ "${WOODPECKER_TOOLS_READY:-}" != 1 ]; then
   tools=()
-  tools+=(go@latest)
   tools+=(dotnet@9.0)
   export WOODPECKER_TOOLS_READY=1
   exec mise exec "${tools[@]}" -- bash "$0"
@@ -30,7 +29,7 @@ dotnet restore
 printf '%s\n' 'Step 4'
 (
   cd packages/dotnet
-dotnet format --verify-no-changes
+dotnet format --verify-no-changes --no-restore
 )
 
 printf '%s\n' 'Step 5'

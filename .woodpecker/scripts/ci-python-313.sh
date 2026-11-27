@@ -16,9 +16,7 @@ export MISE_TRUSTED_CONFIG_PATHS="$CI_WORKSPACE"
 export UV_PYTHON=''3.13''
 if [ "${WOODPECKER_TOOLS_READY:-}" != 1 ]; then
   tools=()
-  tools+=(go@latest)
   tools+=(uv@latest)
-  tools+=(bun@latest)
   export WOODPECKER_TOOLS_READY=1
   exec mise exec "${tools[@]}" -- bash "$0"
 fi
@@ -35,31 +33,8 @@ printf '%s\n' 'Step 4'
 uv sync --extra dev --extra all
 )
 
-printf '%s\n' Lint
-(
-  cd packages/python
-uv run ruff check .
-uv run ruff format --check .
-)
-
-printf '%s\n' 'Install TypeScript tooling'
-(
-  cd .
-bun install --frozen-lockfile
-)
-
-printf '%s\n' 'Resource aliases match operation contracts'
-(
-  cd .
-bun run packages/typescript/tools/check-resource-contract.ts
-)
-
-printf '%s\n' Typecheck
-(
-  cd packages/python
-uv run mypy src/axonpush examples
-)
-
+# Shared Ruff, resource-contract and mypy (configured python_version=3.10)
+# checks run once in python-310; runtime tests still run on every version.
 printf '%s\n' Test
 (
   cd packages/python
