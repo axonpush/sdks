@@ -1,0 +1,321 @@
+# Checks share disposable tool and compiler caches; no persistent host cache.
+labels:
+  platform: linux/amd64
+when:
+- event: push
+  branch:
+  - '**'
+  path:
+    include:
+    - packages/dotnet/**
+    - contract/**
+    - .woodpecker/**
+- event: pull_request
+  path:
+    include:
+    - packages/dotnet/**
+    - contract/**
+    - .woodpecker/**
+- event: push
+  branch:
+  - '**'
+- event: pull_request
+- event: push
+  branch:
+  - '**'
+  path:
+    include:
+    - packages/python/**
+    - contract/**
+    - .woodpecker/**
+- event: pull_request
+  path:
+    include:
+    - packages/python/**
+    - contract/**
+    - .woodpecker/**
+- event: push
+  branch:
+  - '**'
+  path:
+    include:
+    - packages/typescript/**
+    - contract/**
+    - biome.json
+    - package.json
+    - .woodpecker/**
+- event: pull_request
+  path:
+    include:
+    - packages/typescript/**
+    - contract/**
+    - biome.json
+    - package.json
+    - .woodpecker/**
+- event: push
+  branch:
+  - '**'
+  path:
+    include:
+    - packages/typescript/**
+    - contract/**
+    - biome.json
+    - package.json
+    - packages/python/**
+    - .woodpecker/**
+- event: pull_request
+  path:
+    include:
+    - packages/typescript/**
+    - contract/**
+    - biome.json
+    - package.json
+    - packages/python/**
+    - .woodpecker/**
+clone:
+- name: git
+  image: docker.io/woodpeckerci/plugin-git:2.12.1
+  settings:
+    partial: false
+    depth: 1
+steps:
+- name: dotnet
+  image: localhost/woodpecker/toolbox:personal-3
+  commands:
+  - timeout --kill-after=30s 30m bash .woodpecker/scripts/ci-dotnet.sh
+  when:
+  - event: push
+    branch:
+    - '**'
+    path:
+      include:
+      - packages/dotnet/**
+      - contract/**
+      - .woodpecker/**
+    status:
+    - success
+    - failure
+  - event: pull_request
+    path:
+      include:
+      - packages/dotnet/**
+      - contract/**
+      - .woodpecker/**
+    status:
+    - success
+    - failure
+- name: parity
+  image: localhost/woodpecker/toolbox:personal-3
+  commands:
+  - timeout --kill-after=30s 30m bash .woodpecker/scripts/ci-parity.sh
+  when:
+  - event: push
+    branch:
+    - '**'
+    status:
+    - success
+    - failure
+  - event: pull_request
+    status:
+    - success
+    - failure
+- name: python-310
+  image: localhost/woodpecker/toolbox:personal-3
+  commands:
+  - timeout --kill-after=30s 30m bash .woodpecker/scripts/ci-python-310.sh
+  when:
+  - event: push
+    branch:
+    - '**'
+    path:
+      include:
+      - packages/python/**
+      - contract/**
+      - .woodpecker/**
+    status:
+    - success
+    - failure
+  - event: pull_request
+    path:
+      include:
+      - packages/python/**
+      - contract/**
+      - .woodpecker/**
+    status:
+    - success
+    - failure
+- name: python-311
+  image: localhost/woodpecker/toolbox:personal-3
+  commands:
+  - timeout --kill-after=30s 30m bash .woodpecker/scripts/ci-python-311.sh
+  when:
+  - event: push
+    branch:
+    - '**'
+    path:
+      include:
+      - packages/python/**
+      - contract/**
+      - .woodpecker/**
+    status:
+    - success
+    - failure
+  - event: pull_request
+    path:
+      include:
+      - packages/python/**
+      - contract/**
+      - .woodpecker/**
+    status:
+    - success
+    - failure
+- name: python-312
+  image: localhost/woodpecker/toolbox:personal-3
+  commands:
+  - timeout --kill-after=30s 30m bash .woodpecker/scripts/ci-python-312.sh
+  when:
+  - event: push
+    branch:
+    - '**'
+    path:
+      include:
+      - packages/python/**
+      - contract/**
+      - .woodpecker/**
+    status:
+    - success
+    - failure
+  - event: pull_request
+    path:
+      include:
+      - packages/python/**
+      - contract/**
+      - .woodpecker/**
+    status:
+    - success
+    - failure
+- name: python-313
+  image: localhost/woodpecker/toolbox:personal-3
+  commands:
+  - timeout --kill-after=30s 30m bash .woodpecker/scripts/ci-python-313.sh
+  when:
+  - event: push
+    branch:
+    - '**'
+    path:
+      include:
+      - packages/python/**
+      - contract/**
+      - .woodpecker/**
+    status:
+    - success
+    - failure
+  - event: pull_request
+    path:
+      include:
+      - packages/python/**
+      - contract/**
+      - .woodpecker/**
+    status:
+    - success
+    - failure
+- name: python-minimal-install
+  image: localhost/woodpecker/toolbox:personal-3
+  commands:
+  - timeout --kill-after=30s 30m bash .woodpecker/scripts/ci-python-minimal-install.sh
+  when:
+  - event: push
+    branch:
+    - '**'
+    path:
+      include:
+      - packages/python/**
+      - contract/**
+      - .woodpecker/**
+    status:
+    - success
+    - failure
+  - event: pull_request
+    path:
+      include:
+      - packages/python/**
+      - contract/**
+      - .woodpecker/**
+    status:
+    - success
+    - failure
+- name: typescript
+  image: localhost/woodpecker/toolbox:personal-3
+  commands:
+  - timeout --kill-after=30s 30m bash .woodpecker/scripts/ci-typescript.sh
+  when:
+  - event: push
+    branch:
+    - '**'
+    path:
+      include:
+      - packages/typescript/**
+      - contract/**
+      - biome.json
+      - package.json
+      - .woodpecker/**
+    status:
+    - success
+    - failure
+  - event: pull_request
+    path:
+      include:
+      - packages/typescript/**
+      - contract/**
+      - biome.json
+      - package.json
+      - .woodpecker/**
+    status:
+    - success
+    - failure
+- name: versions
+  image: localhost/woodpecker/toolbox:personal-3
+  commands:
+  - timeout --kill-after=30s 30m bash .woodpecker/scripts/ci-versions.sh
+  when:
+  - event: push
+    branch:
+    - '**'
+    status:
+    - success
+    - failure
+  - event: pull_request
+    status:
+    - success
+    - failure
+- name: codegen-clean
+  image: localhost/woodpecker/toolbox:personal-3
+  commands:
+  - timeout --kill-after=30s 30m bash .woodpecker/scripts/ci-codegen-clean.sh
+  when:
+  - event: push
+    branch:
+    - '**'
+    path:
+      include:
+      - packages/typescript/**
+      - contract/**
+      - biome.json
+      - package.json
+      - packages/python/**
+      - .woodpecker/**
+    status:
+    - success
+    - failure
+  - event: pull_request
+    path:
+      include:
+      - packages/typescript/**
+      - contract/**
+      - biome.json
+      - package.json
+      - packages/python/**
+      - .woodpecker/**
+    status:
+    - success
+    - failure
