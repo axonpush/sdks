@@ -13,7 +13,7 @@ concurrency:
 
 jobs:
   changes:
-    runs-on: vantible-runner
+    runs-on: ubuntu-24.04
     outputs:
       ts: ${{ steps.filter.outputs.ts }}
       py: ${{ steps.filter.outputs.py }}
@@ -38,7 +38,7 @@ jobs:
 
   versions:
     name: Package versions agree
-    runs-on: vantible-runner
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v7
       - uses: oven-sh/setup-bun@v2
@@ -46,7 +46,7 @@ jobs:
 
   parity:
     name: SDK surfaces match
-    runs-on: vantible-runner
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v7
       - uses: oven-sh/setup-bun@v2
@@ -55,7 +55,7 @@ jobs:
   typescript:
     needs: changes
     if: needs.changes.outputs.ts == 'true'
-    runs-on: vantible-runner
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v7
       - uses: oven-sh/setup-bun@v2
@@ -89,7 +89,7 @@ jobs:
     name: Generated clients match the contract
     needs: changes
     if: needs.changes.outputs.ts == 'true' || needs.changes.outputs.py == 'true'
-    runs-on: vantible-runner
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v7
       - uses: oven-sh/setup-bun@v2
@@ -122,7 +122,7 @@ jobs:
   python:
     needs: changes
     if: needs.changes.outputs.py == 'true'
-    runs-on: vantible-runner
+    runs-on: ubuntu-24.04
     strategy:
       fail-fast: false
       matrix:
@@ -159,7 +159,7 @@ jobs:
     name: Wheel imports in a clean venv
     needs: changes
     if: needs.changes.outputs.py == 'true'
-    runs-on: vantible-runner
+    runs-on: ubuntu-24.04
     defaults:
       run:
         working-directory: packages/python
@@ -179,7 +179,7 @@ jobs:
   dotnet:
     needs: changes
     if: needs.changes.outputs.dotnet == 'true'
-    runs-on: vantible-runner
+    runs-on: ubuntu-24.04
     defaults:
       run:
         working-directory: packages/dotnet
