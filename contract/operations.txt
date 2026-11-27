@@ -184,6 +184,10 @@ errors.feedback
 errors.get
 errors.list
 errors.triage
+events.fields
+events.live
+events.query
+events.queryCheck
 events.search
 export.create
 export.delete

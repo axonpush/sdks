@@ -1,5 +1,5 @@
 {
-  "description": "HMAC scheme for webhooks in both directions. Outbound deliveries carry the signature in X-AxonPush-Signature; inbound ingest expects x-webhook-signature. Both sign the exact request body bytes, with no timestamp or version prefix.",
+  "description": "HMAC scheme for webhooks in both directions. Inbound ingest expects x-webhook-signature over the exact body bytes. Outbound deliveries (webhook endpoints, incident notifications, alert webhooks) carry X-AxonPush-Timestamp (Unix seconds) and X-AxonPush-Signature-V2 = hex HMAC over timestamp + '.' + body; receivers should reject timestamps more than a few minutes old. The body-only X-AxonPush-Signature is still sent for one release and is deprecated.",
   "algorithm": "hmac-sha256",
   "encoding": "hex",
   "signedPayload": "raw request body, verbatim",
@@ -22,5 +22,24 @@
       "body": "{\"nested\":{\"a\":[1,2,3]},\"unicode\":\"ünïcode\"}",
       "signature": "794c548dd1968747019dca43bd444d65dcb54593d2bfec40622852243c0af6b6"
     }
-  ]
+  ],
+  "outboundV2": {
+    "timestampHeader": "X-AxonPush-Timestamp",
+    "signatureHeader": "X-AxonPush-Signature-V2",
+    "signedPayload": "timestamp + '.' + raw request body",
+    "vectors": [
+      {
+        "secret": "whsec_test_1",
+        "timestamp": "1700000000",
+        "body": "{\"hello\":\"world\"}",
+        "signature": "70f39832166dc2bb9d80c2645052488a115e149671384b25c9f109b3f01f8809"
+      },
+      {
+        "secret": "whsec_test_2",
+        "timestamp": "1763467200",
+        "body": "{}",
+        "signature": "3820ad1afbb21ff1445edaaeab0fb9fbe5cd9bc6b3f4ea76f5ab4ccbd0852fec"
+      }
+    ]
+  }
 }
