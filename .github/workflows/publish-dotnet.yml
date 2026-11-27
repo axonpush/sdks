@@ -11,7 +11,7 @@ permissions:
 
 jobs:
   publish:
-    runs-on: ubuntu-latest
+    runs-on: vantible-runner
     defaults:
       run:
         working-directory: packages/dotnet
